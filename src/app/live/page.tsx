@@ -385,7 +385,7 @@ function Staircase3D({
 	const railingRoughMap = useLoader(TextureLoader, (railingRoughnessUrl || '/images/products/white-onyx.jpg'));
 	React.useEffect(() => {
 		if (railingMap) {
-			// @ts-expect-error
+			// @ts-ignore
 			railingMap.colorSpace = SRGBColorSpace;
 			railingMap.wrapS = railingMap.wrapT = ClampToEdgeWrapping;
 			railingMap.generateMipmaps = false;
@@ -3205,5 +3205,6 @@ export default function LivePage() {
 		</>
 	);
 }
+
 
 

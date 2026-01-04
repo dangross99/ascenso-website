@@ -476,7 +476,7 @@ const Header: React.FC = () => {
     <>
       {/* Top Bar */}
       <div className="w-full bg-gray-900 text-gray-100 text-xs">
-        <div className="w-full px-0 md:pr-6 md:pl-0 py-1 md:py-1 flex items-center gap-3 flex-wrap justify-center md:justify-start" dir="rtl">
+        <div className="w-full px-0 md:pr-6 md:pl-0 py-2 md:py-1 flex items-center gap-3 flex-wrap justify-center md:justify-start" dir="rtl">
           <span className="flex items-center gap-2">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>
@@ -1144,7 +1144,7 @@ const Header: React.FC = () => {
 
       {/* Main Header */}
       <header className="w-full bg-white shadow flex flex-col items-center" suppressHydrationWarning>
-        <div className="w-full relative grid grid-cols-3 items-center px-0 md:px-8 py-2 md:py-3">
+        <div className="w-full relative grid grid-cols-3 items-center px-0 md:px-8 py-3 md:py-3">
           {/* left - phone and links */}
           <div className="hidden md:flex items-center space-x-4 md:space-x-6 text-gray-700 text-sm min-w-0 justify-start md:col-start-1 md:justify-self-start">
             <a

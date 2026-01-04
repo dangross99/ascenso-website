@@ -1,0 +1,38 @@
+{
+  "name": "ascensoweb",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "process:materials": "node scripts/process-materials.mjs assets/materials_src public/images/materials",
+    "process:materials:clean": "node scripts/main-does-not-exist || node scripts/process-materials.mjs assets/materials_src public/images/materials --clean"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.4.2",
+    "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
+    "embla-carousel-react": "^8.6.0",
+    "next": "16.1.1",
+    "react": "19.2.3",
+    "react-datepicker": "^9.1.0",
+    "react-dom": "19.2.3",
+    "react-simple-maps": "^3.0.0",
+    "three": "^0.182.0",
+    "sharp": "^0.33.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-datepicker": "^6.2.0",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.1",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

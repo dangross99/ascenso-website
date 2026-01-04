@@ -137,11 +137,14 @@ export default function Home() {
     if (!el) return;
     const onScroll = () => {
       const cards = Array.from(el.querySelectorAll<HTMLDivElement>(".step-card"));
+      const containerRect = el.getBoundingClientRect();
+      const containerCenter = containerRect.left + containerRect.width / 2;
       let nearestIdx = 0;
       let minDist = Number.POSITIVE_INFINITY;
       for (let i = 0; i < cards.length; i++) {
-        const left = cards[i].offsetLeft;
-        const dist = Math.abs(left - el.scrollLeft);
+        const r = cards[i].getBoundingClientRect();
+        const cardCenter = r.left + r.width / 2;
+        const dist = Math.abs(cardCenter - containerCenter);
         if (dist < minDist) {
           minDist = dist;
           nearestIdx = i;
@@ -660,7 +663,7 @@ export default function Home() {
               className="overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar"
               ref={stepsScrollRef}
               id="steps-viewport"
-              dir="ltr"
+              dir="rtl"
             >
               <div className="flex gap-4 px-4">
                 {/* Slide 1 */}

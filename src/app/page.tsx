@@ -560,7 +560,7 @@ export default function Home() {
             )}
           </div>
           <div className="text-center mt-12" dir="rtl">
-            <a href="/materials" className="inline-block px-12 py-3 border border-gray-900 text-gray-900 text-sm font-bold tracking-widest hover:bg-gray-900 hover:text-white transition-colors duration-300 rounded-full">
+            <a href="/materials" className="inline-block px-12 py-3 border border-gray-900 text-gray-900 text-sm font-bold tracking-widest hover:bg-gray-900 hover:text-white transition-colors duration-300 rounded-md">
               לכל הטקסטורות
             </a>
           </div>

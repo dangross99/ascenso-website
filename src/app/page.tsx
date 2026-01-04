@@ -571,9 +571,9 @@ export default function Home() {
       <section className="w-full py-4 md:py-6" dir="rtl">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           {/* Columns */}
-          <div className="materials-group flex flex-col md:flex-row gap-3 md:gap-4 h-[420px] md:h-[520px]">
+          <div className="materials-group flex flex-col md:flex-row gap-3 md:gap-4 h-[480px] md:h-[560px]">
             {/* Stone */}
-            <a href="/materials?category=stone" className="materials-col relative rounded-xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-[#C5A059]">
+            <a href="/materials?category=stone" className="materials-col relative overflow-hidden group focus:outline-none focus:ring-2 focus:ring-[#C5A059]">
               <div className="absolute inset-0">
                 <img
                   src="/images/products/white-onyx.jpg"
@@ -581,15 +581,12 @@ export default function Home() {
                   className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             />
           </div>
-              <div className="absolute inset-0 bg-black/55 transition-colors duration-300 group-hover:bg-black/40" />
-              <div className="relative h-full flex flex-col items-center justify-center text-center px-6">
-                <h3 className="text-white text-2xl md:text-3xl font-semibold mb-2">אבן טבעית</h3>
-                <p className="text-white/80 text-sm md:text-base">כיתוב משנה ייכנס כאן – מרקמים יוקרתיים לשימוש ארכיטקטוני.</p>
-        </div>
+              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/40 to-transparent pointer-events-none transition-opacity duration-300 group-hover:opacity-80" />
+              <span className="absolute bottom-4 right-4 px-3 py-2 text-xs md:text-sm bg-white/85 text-[#1a1a2e] rounded-md shadow-sm">אבן טבעית</span>
             </a>
 
             {/* Wood */}
-            <a href="/materials?category=wood" className="materials-col relative rounded-xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-[#C5A059]">
+            <a href="/materials?category=wood" className="materials-col relative overflow-hidden group focus:outline-none focus:ring-2 focus:ring-[#C5A059]">
               <div className="absolute inset-0">
                 <img
                   src="/images/products/travertine-wall.jpg"
@@ -597,15 +594,12 @@ export default function Home() {
                   className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                         />
                       </div>
-              <div className="absolute inset-0 bg-black/55 transition-colors duration-300 group-hover:bg-black/40" />
-              <div className="relative h-full flex flex-col items-center justify-center text-center px-6">
-                <h3 className="text-white text-2xl md:text-3xl font-semibold mb-2">עץ פרימיום</h3>
-                <p className="text-white/80 text-sm md:text-base">כיתוב משנה ייכנס כאן – עץ טבעי בגימורים מוקפדים.</p>
-                      </div>
+              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/40 to-transparent pointer-events-none transition-opacity duration-300 group-hover:opacity-80" />
+              <span className="absolute bottom-4 right-4 px-3 py-2 text-xs md:text-sm bg-white/85 text-[#1a1a2e] rounded-md shadow-sm">עץ</span>
             </a>
 
             {/* Metal */}
-            <a href="/materials?category=metal" className="materials-col relative rounded-xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-[#C5A059]">
+            <a href="/materials?category=metal" className="materials-col relative overflow-hidden group focus:outline-none focus:ring-2 focus:ring-[#C5A059]">
               <div className="absolute inset-0">
                 <img
                   src="/images/products/nero-marquina.jpg"
@@ -613,11 +607,8 @@ export default function Home() {
                   className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 />
           </div>
-              <div className="absolute inset-0 bg-black/55 transition-colors duration-300 group-hover:bg-black/40" />
-              <div className="relative h-full flex flex-col items-center justify-center text-center px-6">
-                <h3 className="text-white text-2xl md:text-3xl font-semibold mb-2">מתכת ארכיטקטונית</h3>
-                <p className="text-white/80 text-sm md:text-base">כיתוב משנה ייכנס כאן – פלדות ונירוסטה בגימור יוקרתי.</p>
-              </div>
+              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/40 to-transparent pointer-events-none transition-opacity duration-300 group-hover:opacity-80" />
+              <span className="absolute bottom-4 right-4 px-3 py-2 text-xs md:text-sm bg-white/85 text-[#1a1a2e] rounded-md shadow-sm">מתכת</span>
             </a>
           </div>
 

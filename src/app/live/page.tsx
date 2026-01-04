@@ -906,7 +906,7 @@ function Staircase3D({
 				if (!stepRailingStates) return null;
 				const distance = 0.01; // מרחק מהקצה (1 ס"מ)
 				const topY = floorBounds.y + (typeof cablePreviewHeight === 'number' ? cablePreviewHeight : 5.0);
-				const items: JSX.Element[] = [];
+				const items: React.ReactElement[] = [];
 				let sIdx = 0;
 				let lIdx = 0;
 				for (let i = 0; i < treads.length; i++) {
@@ -1313,7 +1313,7 @@ function Staircase3D({
 						const offU = (1 - repU) / 2;
 						const offV = (1 - repV) / 2;
 						const mapTex = railingMap.clone();
-						// @ts-expect-error
+						// @ts-ignore
 						mapTex.colorSpace = SRGBColorSpace;
 						mapTex.wrapS = mapTex.wrapT = ClampToEdgeWrapping;
 						mapTex.generateMipmaps = false;
@@ -2391,7 +2391,7 @@ export default function LivePage() {
 								})()}
 							/>
 							{/* סביבת תאורה רכה */}
-							<Environment preset="apartment" intensity={0.7} />
+							<Environment preset="apartment" />
 							<OrbitControls ref={orbitRef} enableDamping makeDefault zoomToCursor />
 						</Canvas>
 						{/* בלון מחיר בתוך הקונפיגטור – תמיד גלוי בתוך המסגרת */}
@@ -2446,7 +2446,7 @@ export default function LivePage() {
 							) : (
 								<div className="px-4 py-3 border-b flex items-center justify-between">
 									<div className="text-sm text-gray-500">פירוט</div>
-									<div className="text-sm text-gray-600">מעקה: {RAILING_INFO[railing].title}</div>
+									<div className="text-sm text-gray-600">מעקה</div>
 								</div>
 							)}
 							<div className="px-4 py-3 text-sm text-gray-700 space-y-4">
@@ -2611,21 +2611,21 @@ export default function LivePage() {
 													<span className={it.type === 'landing' ? 'text-gray-800' : ''}>{it.label}</span>
 													{it.type === 'step' ? (
 														<div className="flex items-center gap-2">
-															<span className={`text-xs ${(stepRailing[it.stepIdx!] ?? (railing !== 'none')) ? 'text-green-700 font-medium' : 'text-gray-500'}`}>
-																{(stepRailing[it.stepIdx!] ?? (railing !== 'none')) ? 'עם מעקה' : 'ללא מעקה'}
+															<span className={`text-xs ${(stepRailing[it.stepIdx!] ?? true) ? 'text-green-700 font-medium' : 'text-gray-500'}`}>
+																{(stepRailing[it.stepIdx!] ?? true) ? 'עם מעקה' : 'ללא מעקה'}
 															</span>
 															<button
 																className="text-xs px-2 py-0.5 rounded border hover:bg-gray-100"
 																onClick={() =>
 																	setStepRailing(prev => {
 																		const out = prev.slice();
-																		const current = (prev[it.stepIdx!] ?? (railing !== 'none'));
+																		const current = (prev[it.stepIdx!] ?? true);
 																		out[it.stepIdx!] = !current;
 																		return out;
 																	})
 																}
 															>
-																{(stepRailing[it.stepIdx!] ?? (railing !== 'none')) ? 'הסר' : 'הוסף'}
+																{(stepRailing[it.stepIdx!] ?? true) ? 'הסר' : 'הוסף'}
 															</button>
 															<button
 																className="text-xs px-2 py-0.5 rounded border hover:bg-gray-100"
@@ -2661,21 +2661,21 @@ export default function LivePage() {
 																<span className="text-xs text-gray-500">פודסט עם פנייה – מעקה לא אפשרי</span>
 															) : (
 																<>
-																	<span className={`text-xs ${(landingRailing[it.landingIdx!] ?? (railing !== 'none')) ? 'text-green-700 font-medium' : 'text-gray-500'}`}>
-																		{(landingRailing[it.landingIdx!] ?? (railing !== 'none')) ? 'עם מעקה' : 'ללא מעקה'}
+																	<span className={`text-xs ${(landingRailing[it.landingIdx!] ?? true) ? 'text-green-700 font-medium' : 'text-gray-500'}`}>
+																		{(landingRailing[it.landingIdx!] ?? true) ? 'עם מעקה' : 'ללא מעקה'}
 																	</span>
 																	<button
 																		className="text-xs px-2 py-0.5 rounded border hover:bg-gray-100"
 																		onClick={() =>
 																			setLandingRailing(prev => {
 																				const out = prev.slice();
-																				const current = (prev[it.landingIdx!] ?? (railing !== 'none'));
+																				const current = (prev[it.landingIdx!] ?? true);
 																				out[it.landingIdx!] = !current;
 																				return out;
 																			})
 																		}
 																	>
-																		{(landingRailing[it.landingIdx!] ?? (railing !== 'none')) ? 'הסר' : 'הוסף'}
+																		{(landingRailing[it.landingIdx!] ?? true) ? 'הסר' : 'הוסף'}
 																	</button>
 																	<button
 																		className="text-xs px-2 py-0.5 rounded border hover:bg-gray-100"

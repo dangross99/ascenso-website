@@ -636,60 +636,105 @@ export default function Home() {
       {/* 5. תהליך העבודה */}
       <section className="bg-white py-4 md:py-6" dir="rtl">
         <div className="w-full px-8 md:px-16 lg:px-24">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-16 lg:gap-24">
-            {/* שלב 1 */}
-            <div className="text-center">
-              <div className="w-16 h-16 bg-[#1a1a2e] text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
-                1
+          <div className="relative">
+            <div className="overflow-hidden" ref={emblaRef2}>
+              <div className="flex -ml-4">
+                {/* Slide 1 */}
+                <div className="flex-[0_0_85%] sm:flex-[0_0_60%] md:flex-[0_0_40%] lg:flex-[0_0_33%] pl-4">
+                  <div className="h-full bg-white border rounded-lg shadow-sm p-6 text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3">בחירת דגם וטקסטורה</h3>
+                    <p className="text-gray-600 leading-relaxed text-sm md:text-base">נכנסים להדמייה LIVE, בוחרים צורה, חומר ומעקה.</p>
+                  </div>
+                </div>
+                {/* Slide 2 */}
+                <div className="flex-[0_0_85%] sm:flex-[0_0_60%] md:flex-[0_0_40%] lg:flex-[0_0_33%] pl-4">
+                  <div className="h-full bg-white border rounded-lg shadow-sm p-6 text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m0-12c-2 0-3.5 1-3.5 2.5S10 11 12 11s3.5 1 3.5 2.5S14 16 12 16m0 2c2 0 3.5-1 3.5-2.5" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3">מחיר משוער מיידי</h3>
+                    <p className="text-gray-600 leading-relaxed text-sm md:text-base">רואים את המחיר מתעדכן בזמן אמת לפי הבחירות שלכם.</p>
+                  </div>
+                </div>
+                {/* Slide 3 */}
+                <div className="flex-[0_0_85%] sm:flex-[0_0_60%] md:flex-[0_0_40%] lg:flex-[0_0_33%] pl-4">
+                  <div className="h-full bg-white border rounded-lg shadow-sm p-6 text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 7h18M3 17h18M7 7v10M11 7v4M15 7v6M19 7v8" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3">תיאום מדידה בשטח</h3>
+                    <p className="text-gray-600 leading-relaxed text-sm md:text-base">קובעים ביקור למדידה, התאמות וסגירת מפרט.</p>
+                  </div>
+                </div>
+                {/* Slide 4 */}
+                <div className="flex-[0_0_85%] sm:flex-[0_0_60%] md:flex-[0_0_40%] lg:flex-[0_0_33%] pl-4">
+                  <div className="h-full bg-white border rounded-lg shadow-sm p-6 text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3l.45 2.7a7 7 0 012.7 0L13.3 3h1.4l.6 2.9a7 7 0 011.9 1.1l2.7-1.2.7.7-1.2 2.7a7 7 0 01.5 2.1l2.9.6v1.4l-2.9.6a7 7 0 01-.5 2.1l1.2 2.7-.7.7-2.7-1.2a7 7 0 01-1.9 1.1l-.6 2.9h-1.4l-.55-2.7a7 7 0 01-2.7 0L9.7 21H8.3l-.6-2.9a7 7 0 01-1.9-1.1L3.1 18l-.7-.7 1.2-2.7a7 7 0 01-.5-2.1L.2 11v-1.4l2.9-.6a7 7 0 01.5-2.1L2.4 4.2l.7-.7 2.7 1.2a7 7 0 011.9-1.1L8.3 0h1.45zM12 9.75A2.25 2.25 0 109.75 12 2.25 2.25 0 0012 9.75z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3">תכנון וייצור</h3>
+                    <p className="text-gray-600 leading-relaxed text-sm md:text-base">מהנדס מלווה, תכנון מוקפד וייצור קפדני.</p>
+                  </div>
+                </div>
+                {/* Slide 5 */}
+                <div className="flex-[0_0_85%] sm:flex-[0_0_60%] md:flex-[0_0_40%] lg:flex-[0_0_33%] pl-4">
+                  <div className="h-full bg-white border rounded-lg shadow-sm p-6 text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 21l6-6m0 0l3 3m-3-3L7 13a4 4 0 115.66-5.66L14 5l5 5-2.34 2.34A4 4 0 1111 16l-2 2z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3">התקנה נקייה ומהירה</h3>
+                    <p className="text-gray-600 leading-relaxed text-sm md:text-base">צוות התקנה מקצועי, עמידה בזמנים ותוצאה מושלמת.</p>
+                  </div>
+                </div>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">בחירת דגם וטקסטורה</h3>
-              <p className="text-gray-600 leading-relaxed">נכנסים להדמייה LIVE, בוחרים צורה, חומר ומעקה.</p>
             </div>
 
-            {/* שלב 2 */}
-            <div className="text-center">
-              <div className="w-16 h-16 bg-[#1a1a2e] text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
-                2
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">מחיר משוער מיידי</h3>
-              <p className="text-gray-600 leading-relaxed">רואים את המחיר המשוער מתעדכן בזמן אמת לפי הבחירות שלכם.</p>
-            </div>
+            {mounted && (
+              <>
+                <button
+                  onClick={scrollPrev2}
+                  className="absolute top-1/2 -translate-y-1/2 -left-6 md:-left-10 z-10 flex items-center justify-center w-10 h-10 bg-white rounded-full shadow-md hover:bg-gray-100 transition-all"
+                  aria-label="Previous"
+                  suppressHydrationWarning
+                >
+                  <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <button
+                  onClick={scrollNext2}
+                  className="absolute top-1/2 -translate-y-1/2 -right-6 md:-right-10 z-10 flex items-center justify-center w-10 h-10 bg-white rounded-full shadow-md hover:bg-gray-100 transition-all"
+                  aria-label="Next"
+                  suppressHydrationWarning
+                >
+                  <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </>
+            )}
 
-            {/* שלב 3 */}
-            <div className="text-center">
-              <div className="w-16 h-16 bg-[#1a1a2e] text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
-                3
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">תיאום מדידה בשטח</h3>
-              <p className="text-gray-600 leading-relaxed">מתאמים ביקור למדידה, התאמות תכנוניות וסגירת מפרט סופי.</p>
+            <div className="text-center mt-10">
+              <a
+                href="/live"
+                className="inline-block bg-[#1a1a2e] text-white font-bold text-lg px-8 py-4 shadow-lg hover:bg-[#bfa980] hover:text-[#1a1a2e] transition-all duration-300 hover:shadow-xl hover:-translate-y-1 transform"
+              >
+                פתח הדמייה LIVE
+              </a>
             </div>
-
-            {/* שלב 4 */}
-            <div className="text-center">
-              <div className="w-16 h-16 bg-[#1a1a2e] text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
-                4
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">תכנון וייצור</h3>
-              <p className="text-gray-600 leading-relaxed">מהנדס מלווה, תכנון מוקפד וייצור קפדני של המדרגות והמעקה.</p>
-            </div>
-
-            {/* שלב 5 */}
-            <div className="text-center">
-              <div className="w-16 h-16 bg-[#1a1a2e] text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
-                5
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">התקנה נקייה ומהירה</h3>
-              <p className="text-gray-600 leading-relaxed">צוות התקנה מקצועי, עמידה בזמנים ותוצאה מושלמת בשטח.</p>
-            </div>
-          </div>
-
-          <div className="text-center mt-12">
-            <a
-              href="/live"
-              className="inline-block bg-[#1a1a2e] text-white font-bold text-lg px-8 py-4 shadow-lg hover:bg-[#bfa980] hover:text-[#1a1a2e] transition-all duration-300 hover:shadow-xl hover:-translate-y-1 transform"
-            >
-              פתח הדמייה LIVE
-            </a>
           </div>
         </div>
       </section>

@@ -122,28 +122,37 @@ export default function Home() {
     containScroll: "trimSnaps",
   });
 
-  const [emblaRef2, emblaApi2] = useEmblaCarousel({
-    loop: true,
-    align: "start",
-    dragFree: true,
-    containScroll: "trimSnaps",
-  });
-
-  // Slider dots for "steps" section
-  const [stepsSelectedIndex, setStepsSelectedIndex] = React.useState(0);
-  const [stepsSnapCount, setStepsSnapCount] = React.useState<number>(0);
+  // Steps slider (native scroll-snap)
+  const stepsScrollRef = React.useRef<HTMLDivElement>(null);
+  const [stepsIndex, setStepsIndex] = React.useState(0);
+  const scrollToStep = React.useCallback((idx: number) => {
+    const el = stepsScrollRef.current;
+    if (!el) return;
+    const cards = el.querySelectorAll<HTMLDivElement>(".step-card");
+    const target = cards[idx];
+    if (target) target.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+  }, []);
   React.useEffect(() => {
-    if (!emblaApi2) return;
-    const onSelect = () => setStepsSelectedIndex(emblaApi2.selectedScrollSnap());
-    setStepsSnapCount(emblaApi2.scrollSnapList().length);
-    emblaApi2.on("select", onSelect);
-    onSelect();
-  }, [emblaApi2]);
-  const scrollToStep = React.useCallback(
-    (idx: number) => emblaApi2 && emblaApi2.scrollTo(idx),
-    [emblaApi2]
-  );
-  // Note: גלילת עכבר נשארת גלילת עמוד; הסליידר נשלט בגרירה/נקודות.
+    const el = stepsScrollRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const cards = Array.from(el.querySelectorAll<HTMLDivElement>(".step-card"));
+      let nearestIdx = 0;
+      let minDist = Number.POSITIVE_INFINITY;
+      for (let i = 0; i < cards.length; i++) {
+        const left = cards[i].offsetLeft;
+        const dist = Math.abs(left - el.scrollLeft);
+        if (dist < minDist) {
+          minDist = dist;
+          nearestIdx = i;
+        }
+      }
+      setStepsIndex(nearestIdx);
+    };
+    onScroll();
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
 
   // Timeline visibility + count-up animation for durations
   const timelineRef = React.useRef<HTMLDivElement>(null);
@@ -653,10 +662,15 @@ export default function Home() {
       <section className="bg-white py-4 md:py-6" dir="rtl">
         <div className="w-full px-8 md:px-16 lg:px-24">
           <div className="relative">
-            <div className="overflow-hidden" ref={emblaRef2} id="steps-viewport">
+            <div
+              className="overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar"
+              ref={stepsScrollRef}
+              id="steps-viewport"
+              dir="ltr"
+            >
               <div className="flex gap-4 px-4">
                 {/* Slide 1 */}
-                <div className="flex-[0_0_90%] sm:flex-[0_0_70%] md:flex-[0_0_55%] lg:flex-[0_0_40%]">
+                <div className="step-card snap-start flex-[0_0_90%] sm:flex-[0_0_70%] md:flex-[0_0_55%] lg:flex-[0_0_40%]">
                   <div className="bg-white border rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#1a1a2e]" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -669,7 +683,7 @@ export default function Home() {
                   </div>
                 </div>
                 {/* Slide 2 */}
-                <div className="flex-[0_0_90%] sm:flex-[0_0_70%] md:flex-[0_0_55%] lg:flex-[0_0_40%]">
+                <div className="step-card snap-start flex-[0_0_90%] sm:flex-[0_0_70%] md:flex-[0_0_55%] lg:flex-[0_0_40%]">
                   <div className="bg-white border rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#1a1a2e]" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -682,7 +696,7 @@ export default function Home() {
                   </div>
                 </div>
                 {/* Slide 3 */}
-                <div className="flex-[0_0_90%] sm:flex-[0_0_70%] md:flex-[0_0_55%] lg:flex-[0_0_40%]">
+                <div className="step-card snap-start flex-[0_0_90%] sm:flex-[0_0_70%] md:flex-[0_0_55%] lg:flex-[0_0_40%]">
                   <div className="bg-white border rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#1a1a2e]" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -695,7 +709,7 @@ export default function Home() {
                   </div>
                 </div>
                 {/* Slide 4 */}
-                <div className="flex-[0_0_90%] sm:flex-[0_0_70%] md:flex-[0_0_55%] lg:flex-[0_0_40%]">
+                <div className="step-card snap-start flex-[0_0_90%] sm:flex-[0_0_70%] md:flex-[0_0_55%] lg:flex-[0_0_40%]">
                   <div className="bg-white border rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#1a1a2e]" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -708,7 +722,7 @@ export default function Home() {
                   </div>
                 </div>
                 {/* Slide 5 */}
-                <div className="flex-[0_0_90%] sm:flex-[0_0_70%] md:flex-[0_0_55%] lg:flex-[0_0_40%]">
+                <div className="step-card snap-start flex-[0_0_90%] sm:flex-[0_0_70%] md:flex-[0_0_55%] lg:flex-[0_0_40%]">
                   <div className="bg-white border rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#1a1a2e]" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -725,11 +739,11 @@ export default function Home() {
 
             {/* Dots pagination */}
             <div className="flex items-center justify-center gap-3 mt-6">
-              {Array.from({ length: stepsSnapCount }).map((_, i) => (
+              {Array.from({ length: 5 }).map((_, i) => (
                 <button
                   key={i}
                   onClick={() => scrollToStep(i)}
-                  className={`w-2.5 h-2.5 rounded-full border border-[#1a1a2e] ${i === stepsSelectedIndex ? 'bg-[#1a1a2e]' : 'bg-transparent'} transition-colors`}
+                  className={`w-2.5 h-2.5 rounded-full border border-[#1a1a2e] ${i === stepsIndex ? 'bg-[#1a1a2e]' : 'bg-transparent'} transition-colors`}
                   aria-label={`Go to slide ${i + 1}`}
                 />
               ))}

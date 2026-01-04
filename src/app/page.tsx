@@ -129,6 +129,21 @@ export default function Home() {
     containScroll: "trimSnaps",
   });
 
+  // Slider dots for "steps" section
+  const [stepsSelectedIndex, setStepsSelectedIndex] = React.useState(0);
+  const [stepsSnapCount, setStepsSnapCount] = React.useState<number>(0);
+  React.useEffect(() => {
+    if (!emblaApi2) return;
+    const onSelect = () => setStepsSelectedIndex(emblaApi2.selectedScrollSnap());
+    setStepsSnapCount(emblaApi2.scrollSnapList().length);
+    emblaApi2.on("select", onSelect);
+    onSelect();
+  }, [emblaApi2]);
+  const scrollToStep = React.useCallback(
+    (idx: number) => emblaApi2 && emblaApi2.scrollTo(idx),
+    [emblaApi2]
+  );
+
   // Timeline visibility + count-up animation for durations
   const timelineRef = React.useRef<HTMLDivElement>(null);
   const [tlActive, setTlActive] = React.useState(false);
@@ -641,91 +656,83 @@ export default function Home() {
               <div className="flex -ml-4">
                 {/* Slide 1 */}
                 <div className="flex-[0_0_85%] sm:flex-[0_0_60%] md:flex-[0_0_40%] lg:flex-[0_0_33%] pl-4">
-                  <div className="h-full bg-white border rounded-lg shadow-sm p-6 text-center">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center">
-                      <svg viewBox="0 0 24 24" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
+                  <div className="h-full bg-white border rounded-lg p-8 text-center">
+                    <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#1a1a2e]" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h6v6H4zM14 6h6v6h-6zM9 12h6v6H9z" />
                       </svg>
                     </div>
-                    <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3">בחירת דגם וטקסטורה</h3>
-                    <p className="text-gray-600 leading-relaxed text-sm md:text-base">נכנסים להדמייה LIVE, בוחרים צורה, חומר ומעקה.</p>
+                    <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">בחירת דגם וטקסטורה</h3>
+                    <p className="text-gray-700 leading-relaxed text-base">נכנסים להדמייה LIVE, בוחרים צורה, חומר ומעקה.</p>
+                    <a href="/live" className="inline-flex items-center justify-center mt-6 px-8 py-3 rounded-full bg-[#1a1a2e] text-white uppercase tracking-[0.3em] text-sm">See More</a>
                   </div>
                 </div>
                 {/* Slide 2 */}
                 <div className="flex-[0_0_85%] sm:flex-[0_0_60%] md:flex-[0_0_40%] lg:flex-[0_0_33%] pl-4">
-                  <div className="h-full bg-white border rounded-lg shadow-sm p-6 text-center">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center">
-                      <svg viewBox="0 0 24 24" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m0-12c-2 0-3.5 1-3.5 2.5S10 11 12 11s3.5 1 3.5 2.5S14 16 12 16m0 2c2 0 3.5-1 3.5-2.5" />
+                  <div className="h-full bg-white border rounded-lg p-8 text-center">
+                    <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#1a1a2e]" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 6h10M7 14h10M9 18h6" />
                       </svg>
                     </div>
-                    <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3">מחיר משוער מיידי</h3>
-                    <p className="text-gray-600 leading-relaxed text-sm md:text-base">רואים את המחיר מתעדכן בזמן אמת לפי הבחירות שלכם.</p>
+                    <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">מחיר מיידי</h3>
+                    <p className="text-gray-700 leading-relaxed text-base">רואים את המחיר מתעדכן בזמן אמת לפי הבחירות שלכם.</p>
+                    <a href="/live" className="inline-flex items-center justify-center mt-6 px-8 py-3 rounded-full bg-[#1a1a2e] text-white uppercase tracking-[0.3em] text-sm">See More</a>
                   </div>
                 </div>
                 {/* Slide 3 */}
                 <div className="flex-[0_0_85%] sm:flex-[0_0_60%] md:flex-[0_0_40%] lg:flex-[0_0_33%] pl-4">
-                  <div className="h-full bg-white border rounded-lg shadow-sm p-6 text-center">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center">
-                      <svg viewBox="0 0 24 24" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 7h18M3 17h18M7 7v10M11 7v4M15 7v6M19 7v8" />
+                  <div className="h-full bg-white border rounded-lg p-8 text-center">
+                    <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#1a1a2e]" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 11.5a3 3 0 100-6 3 3 0 000 6zM5.5 10.5C5.5 6 9 3 12 3s6.5 3 6.5 7.5S12 21 12 21s-6.5-4.5-6.5-10.5z" />
                       </svg>
                     </div>
-                    <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3">תיאום מדידה בשטח</h3>
-                    <p className="text-gray-600 leading-relaxed text-sm md:text-base">קובעים ביקור למדידה, התאמות וסגירת מפרט.</p>
+                    <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">תיאום מדידה בשטח</h3>
+                    <p className="text-gray-700 leading-relaxed text-base">קובעים ביקור למדידה, התאמות וסגירת מפרט.</p>
+                    <a href="/live" className="inline-flex items-center justify-center mt-6 px-8 py-3 rounded-full bg-[#1a1a2e] text-white uppercase tracking-[0.3em] text-sm">See More</a>
                   </div>
                 </div>
                 {/* Slide 4 */}
                 <div className="flex-[0_0_85%] sm:flex-[0_0_60%] md:flex-[0_0_40%] lg:flex-[0_0_33%] pl-4">
-                  <div className="h-full bg-white border rounded-lg shadow-sm p-6 text-center">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center">
-                      <svg viewBox="0 0 24 24" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3l.45 2.7a7 7 0 012.7 0L13.3 3h1.4l.6 2.9a7 7 0 011.9 1.1l2.7-1.2.7.7-1.2 2.7a7 7 0 01.5 2.1l2.9.6v1.4l-2.9.6a7 7 0 01-.5 2.1l1.2 2.7-.7.7-2.7-1.2a7 7 0 01-1.9 1.1l-.6 2.9h-1.4l-.55-2.7a7 7 0 01-2.7 0L9.7 21H8.3l-.6-2.9a7 7 0 01-1.9-1.1L3.1 18l-.7-.7 1.2-2.7a7 7 0 01-.5-2.1L.2 11v-1.4l2.9-.6a7 7 0 01.5-2.1L2.4 4.2l.7-.7 2.7 1.2a7 7 0 011.9-1.1L8.3 0h1.45zM12 9.75A2.25 2.25 0 109.75 12 2.25 2.25 0 0012 9.75z" />
+                  <div className="h-full bg-white border rounded-lg p-8 text-center">
+                    <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#1a1a2e]" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3l.75 3a8 8 0 013 0l.75-3M4.5 13.5l2.5-1.5m10 1.5l2.5-1.5M9 20.5l3-2 3 2" />
                       </svg>
                     </div>
-                    <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3">תכנון וייצור</h3>
-                    <p className="text-gray-600 leading-relaxed text-sm md:text-base">מהנדס מלווה, תכנון מוקפד וייצור קפדני.</p>
+                    <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">תכנון וייצור</h3>
+                    <p className="text-gray-700 leading-relaxed text-base">מהנדס מלווה, תכנון מוקפד וייצור קפדני.</p>
+                    <a href="/live" className="inline-flex items-center justify-center mt-6 px-8 py-3 rounded-full bg-[#1a1a2e] text-white uppercase tracking-[0.3em] text-sm">See More</a>
                   </div>
                 </div>
                 {/* Slide 5 */}
                 <div className="flex-[0_0_85%] sm:flex-[0_0_60%] md:flex-[0_0_40%] lg:flex-[0_0_33%] pl-4">
-                  <div className="h-full bg-white border rounded-lg shadow-sm p-6 text-center">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center">
-                      <svg viewBox="0 0 24 24" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 21l6-6m0 0l3 3m-3-3L7 13a4 4 0 115.66-5.66L14 5l5 5-2.34 2.34A4 4 0 1111 16l-2 2z" />
+                  <div className="h-full bg-white border rounded-lg p-8 text-center">
+                    <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#1a1a2e]" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
-                    <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3">התקנה נקייה ומהירה</h3>
-                    <p className="text-gray-600 leading-relaxed text-sm md:text-base">צוות התקנה מקצועי, עמידה בזמנים ותוצאה מושלמת.</p>
+                    <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">התקנה נקייה ומהירה</h3>
+                    <p className="text-gray-700 leading-relaxed text-base">צוות התקנה מקצועי, עמידה בזמנים ותוצאה מושלמת.</p>
+                    <a href="/live" className="inline-flex items-center justify-center mt-6 px-8 py-3 rounded-full bg-[#1a1a2e] text-white uppercase tracking-[0.3em] text-sm">See More</a>
                   </div>
                 </div>
               </div>
             </div>
 
-            {mounted && (
-              <>
+            {/* Dots pagination */}
+            <div className="flex items-center justify-center gap-3 mt-6">
+              {Array.from({ length: stepsSnapCount }).map((_, i) => (
                 <button
-                  onClick={scrollPrev2}
-                  className="absolute top-1/2 -translate-y-1/2 -left-6 md:-left-10 z-10 flex items-center justify-center w-10 h-10 bg-white rounded-full shadow-md hover:bg-gray-100 transition-all"
-                  aria-label="Previous"
-                  suppressHydrationWarning
-                >
-                  <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                <button
-                  onClick={scrollNext2}
-                  className="absolute top-1/2 -translate-y-1/2 -right-6 md:-right-10 z-10 flex items-center justify-center w-10 h-10 bg-white rounded-full shadow-md hover:bg-gray-100 transition-all"
-                  aria-label="Next"
-                  suppressHydrationWarning
-                >
-                  <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </>
-            )}
+                  key={i}
+                  onClick={() => scrollToStep(i)}
+                  className={`w-2.5 h-2.5 rounded-full border border-[#1a1a2e] ${i === stepsSelectedIndex ? 'bg-[#1a1a2e]' : 'bg-transparent'} transition-colors`}
+                  aria-label={`Go to slide ${i + 1}`}
+                />
+              ))}
+            </div>
 
             <div className="text-center mt-10">
               <a

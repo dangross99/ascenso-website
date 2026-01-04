@@ -441,9 +441,9 @@ export default function Home() {
         ></div>
         {/* Overlay gradient for better text readability */}
         <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-black/70 via-black/25 to-transparent"></div>
-        <div className="relative z-10 w-full flex flex-col gap-3 justify-end items-stretch px-4 md:px-14 lg:px-20 pb-8 md:pb-14 lg:pb-16 md:flex-row md:items-end md:justify-between" dir="rtl">
+        <div className="relative z-10 w-full flex flex-col gap-3 justify-center items-center px-4 md:px-14 lg:px-20 pb-8 md:pb-14 lg:pb-16 md:flex-row md:items-end md:justify-between" dir="rtl">
           {/* Right side: Text (RTL) */}
-          <div className="text-right w-full md:w-[60%] max-w-none lg:whitespace-nowrap">
+          <div className="text-center md:text-right w-full md:w-[60%] max-w-none lg:whitespace-nowrap">
             <h1
               className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white mb-2 md:mb-4 leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]"
               style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
@@ -458,19 +458,13 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Left side: Buttons */}
-          <div className="flex flex-col gap-2 w-full md:w-auto md:flex-row md:gap-3 md:mr-auto">
+          {/* Left side: CTA */}
+          <div className="flex flex-col w-full md:w-auto md:mr-auto">
             <a
               href="/live"
-              className="w-full md:w-auto px-7 py-3.5 bg-[#bfa980] text-[#1a1a2e] text-base md:text-lg font-bold shadow-lg hover:bg-[#a98e61] transition-all duration-300 hover:shadow-xl active:scale-[0.98]"
+              className="w-full md:w-auto mx-auto md:mx-0 px-7 py-3.5 bg-[#bfa980] text-[#1a1a2e] text-base md:text-lg font-bold shadow-lg hover:bg-[#a98e61] transition-all duration-300 hover:shadow-xl active:scale-[0.98]"
             >
               פתח הדמייה LIVE
-            </a>
-            <a
-              href="/materials"
-              className="w-full md:w-auto px-7 py-3.5 bg-transparent text-white text-base md:text-lg font-semibold transition-all duration-300 border-2 border-white hover:bg-white hover:text-gray-900 active:scale-[0.98]"
-            >
-              טקסטורות
             </a>
           </div>
         </div>
@@ -534,46 +528,46 @@ export default function Home() {
             </div>
             {mounted && (
               <>
-                <button
-                  onClick={scrollPrev}
-                  className="absolute top-[40%] -translate-y-1/2 -left-16 z-10 flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-md hover:bg-gray-100 transition-all"
-                  aria-label="Previous slide"
+            <button
+              onClick={scrollPrev}
+              className="absolute top-[40%] -translate-y-1/2 -left-16 z-10 flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-md hover:bg-gray-100 transition-all"
+              aria-label="Previous slide"
                   suppressHydrationWarning
-                >
-                  <svg
-                    className="w-6 h-6 text-gray-800"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 19l-7-7 7-7"
-                    />
-                  </svg>
-                </button>
-                <button
-                  onClick={scrollNext}
-                  className="absolute top-[40%] -translate-y-1/2 -right-16 z-10 flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-md hover:bg-gray-100 transition-all"
-                  aria-label="Next slide"
+            >
+              <svg
+                className="w-6 h-6 text-gray-800"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+            <button
+              onClick={scrollNext}
+              className="absolute top-[40%] -translate-y-1/2 -right-16 z-10 flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-md hover:bg-gray-100 transition-all"
+              aria-label="Next slide"
                   suppressHydrationWarning
-                >
-                  <svg
-                    className="w-6 h-6 text-gray-800"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </button>
+            >
+              <svg
+                className="w-6 h-6 text-gray-800"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
               </>
             )}
           </div>
@@ -735,7 +729,7 @@ export default function Home() {
                   loading="lazy"
                 />
               </div>
-            </div>
+                </div>
             {/* טקסט */}
             <div className="order-2 lg:order-1">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">

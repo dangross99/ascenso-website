@@ -660,14 +660,14 @@ export default function Home() {
         <div className="w-full px-8 md:px-16 lg:px-24">
           <div className="relative">
             <div
-              className="overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar"
+              className="overflow-x-auto scroll-smooth no-scrollbar"
               ref={stepsScrollRef}
               id="steps-viewport"
               dir="rtl"
             >
               <div className="flex gap-0 px-0">
                 {/* Slide 1 */}
-                <div className="step-card snap-start flex-[0_0_100%] sm:flex-[0_0_100%] md:flex-[0_0_100%] lg:flex-[0_0_100%]">
+                <div className="step-card flex-[0_0_100%] sm:flex-[0_0_100%] md:flex-[0_0_100%] lg:flex-[0_0_100%]">
                   <div className="bg-white rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <span className="text-4xl md:text-5xl font-bold text-[#1a1a2e]">1</span>
@@ -678,7 +678,7 @@ export default function Home() {
                   </div>
                 </div>
                 {/* Slide 2 */}
-                <div className="step-card snap-start flex-[0_0_100%] sm:flex-[0_0_100%] md:flex-[0_0_100%] lg:flex-[0_0_100%]">
+                <div className="step-card flex-[0_0_100%] sm:flex-[0_0_100%] md:flex-[0_0_100%] lg:flex-[0_0_100%]">
                   <div className="bg-white rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <span className="text-4xl md:text-5xl font-bold text-[#1a1a2e]">2</span>
@@ -689,7 +689,7 @@ export default function Home() {
                   </div>
                 </div>
                 {/* Slide 3 */}
-                <div className="step-card snap-start flex-[0_0_100%] sm:flex-[0_0_100%] md:flex-[0_0_100%] lg:flex-[0_0_100%]">
+                <div className="step-card flex-[0_0_100%] sm:flex-[0_0_100%] md:flex-[0_0_100%] lg:flex-[0_0_100%]">
                   <div className="bg-white rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <span className="text-4xl md:text-5xl font-bold text-[#1a1a2e]">3</span>
@@ -700,7 +700,7 @@ export default function Home() {
                   </div>
                 </div>
                 {/* Slide 4 */}
-                <div className="step-card snap-start flex-[0_0_100%] sm:flex-[0_0_100%] md:flex-[0_0_100%] lg:flex-[0_0_100%]">
+                <div className="step-card flex-[0_0_100%] sm:flex-[0_0_100%] md:flex-[0_0_100%] lg:flex-[0_0_100%]">
                   <div className="bg-white rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <span className="text-4xl md:text-5xl font-bold text-[#1a1a2e]">4</span>
@@ -711,7 +711,7 @@ export default function Home() {
                   </div>
                 </div>
                 {/* Slide 5 */}
-                <div className="step-card snap-start flex-[0_0_100%] sm:flex-[0_0_100%] md:flex-[0_0_100%] lg:flex-[0_0_100%]">
+                <div className="step-card flex-[0_0_100%] sm:flex-[0_0_100%] md:flex-[0_0_100%] lg:flex-[0_0_100%]">
                   <div className="bg-white rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <span className="text-4xl md:text-5xl font-bold text-[#1a1a2e]">5</span>

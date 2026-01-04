@@ -481,6 +481,26 @@ const Header: React.FC = () => {
       }
     } catch {}
   };
+  const openWhatsApp = (encodedMessage: string) => {
+    try {
+      vibrate(30);
+      const appUrl = `whatsapp://send?phone=972549994995&text=${encodedMessage}`;
+      const webUrl = `https://api.whatsapp.com/send?phone=972549994995&text=${encodedMessage}`;
+      // Try opening the app; fallback to web after a short delay
+      window.location.href = appUrl;
+      setTimeout(() => {
+        try {
+          window.open(webUrl, '_blank', 'noopener');
+        } catch {
+          window.location.href = webUrl;
+        }
+      }, 400);
+    } catch {
+      // Fallback to web immediately
+      const webUrl = `https://api.whatsapp.com/send?phone=972549994995&text=${encodedMessage}`;
+      window.location.href = webUrl;
+    }
+  };
 
   return (
     <>
@@ -1163,6 +1183,10 @@ const Header: React.FC = () => {
               rel="noopener noreferrer"
               className="flex items-center hover:underline space-x-1 cursor-pointer"
               title="פנייה ב‑WhatsApp"
+              onClick={(e) => {
+                e.preventDefault();
+                openWhatsApp(whatsappMessage);
+              }}
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="#25D366">
                 <path d="M20.52 3.48A11.86 11.86 0 0012.07 0C5.7 0 .57 5.13.57 11.5c0 2.03.54 4 .1 5.38L0 24l7.3-1.9a12.02 12.02 0 004.77.97h.01c6.37 0 11.5-5.13 11.5-11.5 0-3.07-1.2-5.96-3.06-8.09zM12.08 21.5h-.01a9.96 9.96 0 01-5.08-1.4l-.36-.21-4.34 1.13 1.16-4.22-.23-.43a9.97 9.97 0 01-1.45-5.14C1.77 6.24 6.01 2 11.06 2c2.67 0 5.17 1.04 7.06 2.93a9.94 9.94 0 012.93 7.06c0 5.05-4.24 9.51-9.97 9.51zm5.75-7.2c-.32-.16-1.9-.94-2.19-1.05-.29-.11-.5-.16-.72.16-.21.32-.83 1.05-1.02 1.27-.19.21-.37.24-.7.08-.32-.16-1.35-.5-2.57-1.6-.95-.85-1.59-1.9-1.78-2.22-.19-.32-.02-.49.14-.65.15-.15.32-.37.48-.56.16-.19.21-.32.32-.53.11-.21.05-.4-.03-.56-.08-.16-.72-1.74-.99-2.39-.26-.63-.53-.54-.72-.55h-.62c-.21 0-.55.08-.84.4-.29.32-1.1 1.08-1.1 2.63 0 1.55 1.13 3.05 1.29 3.27.16.21 2.22 3.38 5.38 4.73.75.32 1.34.51 1.79.65.75.24 1.44.21 1.98.13.6-.09 1.9-.78 2.17-1.53.27-.75.27-1.39.19-1.53-.08-.13-.29-.21-.61-.37z"/>
@@ -1189,7 +1213,7 @@ const Header: React.FC = () => {
             </Link>
           </div>
           {/* right - icons */}
-          <div className="flex justify-end items-center space-x-4 md:space-x-6 text-gray-700 justify-self-end z-10 md:z-0 md:col-start-3 md:justify-self-end absolute right-[6px] top-1/2 -translate-y-1/2 md:static md:transform-none md:translate-y-0">
+          <div className="flex justify-end items-center space-x-4 md:space-x-6 text-gray-700 justify-self-end z-30 md:z-0 md:col-start-3 md:justify-self-end absolute right-[6px] top-1/2 -translate-y-1/2 md:static md:transform-none md:translate-y-0 pointer-events-auto">
             {/* Mobile-only icons group (WhatsApp black + Call) */}
             <div className="flex items-center gap-3 md:hidden">
               <a
@@ -1199,7 +1223,10 @@ const Header: React.FC = () => {
                 aria-label="פנייה ב‑WhatsApp"
                 title="פנייה ב‑WhatsApp"
                 className="cursor-pointer text-[#1a1a2e] transition-transform duration-150 active:scale-90 active:opacity-80 select-none touch-manipulation"
-                onClick={() => vibrate(30)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  openWhatsApp(whatsappMessage);
+                }}
               >
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M20.52 3.48A11.86 11.86 0 0012.07 0C5.7 0 .57 5.13.57 11.5c0 2.03.54 4 .1 5.38L0 24l7.3-1.9a12.02 12.02 0 004.77.97h.01c6.37 0 11.5-5.13 11.5-11.5 0-3.07-1.2-5.96-3.06-8.09zM12.08 21.5h-.01a9.96 9.96 0 01-5.08-1.4l-.36-.21-4.34 1.13 1.16-4.22-.23-.43a9.97 9.97 0 01-1.45-5.14C1.77 6.24 6.01 2 11.06 2c2.67 0 5.17 1.04 7.06 2.93a9.94 9.94 0 012.93 7.06c0 5.05-4.24 9.51-9.97 9.51zm5.75-7.2c-.32-.16-1.9-.94-2.19-1.05-.29-.11-.5-.16-.72.16-.21.32-.83 1.05-1.02 1.27-.19.21-.37.24-.7.08-.32-.16-1.35-.5-2.57-1.6-.95-.85-1.59-1.9-1.78-2.22-.19-.32-.02-.49.14-.65.15-.15.32-.37.48-.56.16-.19.21-.32.32-.53.11-.21.05-.4-.03-.56-.08-.16-.72-1.74-.99-2.39-.26-.63-.53-.54-.72-.55h-.62c-.21 0-.55.08-.84.4-.29.32-1.1 1.08-1.1 2.63 0 1.55 1.13 3.05 1.29 3.27.16.21 2.22 3.38 5.38 4.73.75.32 1.34.51 1.79.65.75.24 1.44.21 1.98.13.6-.09 1.9-.78 2.17-1.53.27-.75.27-1.39.19-1.53-.08-.13-.29-.21-.61-.37z"/>

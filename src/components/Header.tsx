@@ -1171,7 +1171,7 @@ const Header: React.FC = () => {
             </a>
           </div>
           {/* center - centered logo (אבסולוטי בדסקטופ לשמירה על מרכז אמיתי) */}
-          <div className="justify-self-end md:justify-self-auto md:absolute md:left-1/2 md:-translate-x-1/2 select-none z-10">
+          <div className="absolute left-[6px] top-1/2 -translate-y-1/2 md:left-1/2 md:-translate-x-1/2 select-none z-10">
             <Link href="/" aria-label="דף הבית" className="select-none">
               <span className="text-[34px] md:text-[44px] font-serif font-prosto font-semibold tracking-widest text-[#1a1a2e] uppercase">
                 ASCENSO
@@ -1179,7 +1179,7 @@ const Header: React.FC = () => {
             </Link>
           </div>
           {/* right - icons */}
-          <div className="flex justify-end items-center space-x-4 md:space-x-6 text-gray-700 justify-self-end z-10 md:z-0 md:col-start-3 md:justify-self-end absolute right-[4px] top-1/2 -translate-y-1/2 md:static md:transform-none md:translate-y-0">
+          <div className="flex justify-end items-center space-x-4 md:space-x-6 text-gray-700 justify-self-end z-10 md:z-0 md:col-start-3 md:justify-self-end absolute right-[6px] top-1/2 -translate-y-1/2 md:static md:transform-none md:translate-y-0">
             {/* Mobile-only icons group (WhatsApp black + Call) */}
             <div className="flex items-center gap-3 md:hidden">
               <a
@@ -1324,7 +1324,7 @@ const Header: React.FC = () => {
             </div>
             {/* Wishlist */}
             <button
-              className="hover:text-gray-900 relative cursor-pointer mr-[2px] md:mr-0"
+              className="hover:text-gray-900 relative cursor-pointer"
               aria-label="מועדפים"
               onClick={() => setWishlistOpen(true)}
               suppressHydrationWarning

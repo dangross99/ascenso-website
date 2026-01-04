@@ -448,21 +448,16 @@ export default function Home() {
               className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white mb-2 md:mb-4 leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]"
               style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
             >
-              מדרגות מרחפות בהתאמה אישית
+              מדרגות מרחפות
             </h1>
-            <p
-              className="text-gray-100 text-sm md:text-xl lg:text-2xl max-w-2xl"
-              style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
-            >
-              בחרו צורה, טקסטורה ומעקה – וראו הכל בהדמייה LIVE עם חישוב מחיר משוער.
-            </p>
+            
           </div>
 
           {/* Left side: CTA */}
           <div className="flex flex-col w-full md:w-auto md:mr-auto">
             <a
               href="/live"
-              className="mx-auto md:mx-0 px-6 py-3 bg-white text-[#1a1a2e] text-base md:text-lg font-bold shadow-md hover:bg-gray-100 transition-all duration-300 active:scale-[0.98] rounded-md"
+              className="mx-auto md:mx-0 px-6 py-3 bg-white/80 text-[#1a1a2e]/90 text-base md:text-lg font-semibold shadow-sm hover:bg-white/70 transition-all duration-300 active:scale-[0.98] rounded-md border border-white/40"
             >
               התחל הזמנה
             </a>

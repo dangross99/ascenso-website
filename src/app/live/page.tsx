@@ -1380,7 +1380,7 @@ function Staircase3D({
 	);
 }
 
-export default function LivePage() {
+function LivePageInner() {
 	const router = useRouter();
 	const search = useSearchParams();
 
@@ -3203,6 +3203,14 @@ export default function LivePage() {
 			</div>
 		)}
 		</>
+	);
+}
+
+export default function LivePage() {
+	return (
+		<React.Suspense fallback={null}>
+			<LivePageInner />
+		</React.Suspense>
 	);
 }
 

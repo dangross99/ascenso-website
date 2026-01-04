@@ -432,7 +432,7 @@ function Staircase3D({
 			t.wrapS = t.wrapT = ClampToEdgeWrapping;
 			t.repeat.set(repU, repV);
 			t.offset.set(offU, offV);
-			// @ts-expect-error
+			// @ts-ignore
 			t.colorSpace = SRGBColorSpace;
 			t.generateMipmaps = false;
 			t.minFilter = LinearFilter;
@@ -462,7 +462,7 @@ function Staircase3D({
 			}
 			// תיקון מרחב צבע לעץ/טקסטורות כדי למנוע הברקה "מתכתית"
 			// ולהציג צבעים נאמנים
-			// @ts-expect-error colorSpace exists on Texture in three >= 0.152
+			// @ts-ignore colorSpace exists on Texture in three >= 0.152
 			map.colorSpace = SRGBColorSpace;
 			map.anisotropy = 8;
 			map.needsUpdate = true;
@@ -1218,7 +1218,7 @@ function Staircase3D({
 						const offU = (1 - repU) / 2;
 						const offV = (1 - repV) / 2;
 						const mapTex = railingMap.clone();
-						// @ts-expect-error
+						// @ts-ignore
 						mapTex.colorSpace = SRGBColorSpace;
 						mapTex.wrapS = mapTex.wrapT = ClampToEdgeWrapping;
 						mapTex.generateMipmaps = false;
@@ -3205,6 +3205,5 @@ export default function LivePage() {
 		</>
 	);
 }
-
 
 

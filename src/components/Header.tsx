@@ -1185,7 +1185,7 @@ const Header: React.FC = () => {
             <Link href="/" aria-label="דף הבית" className="select-none" onClick={() => vibrate(30)}>
               <span className="text-[34px] md:text-[44px] font-serif font-prosto font-semibold tracking-widest text-[#1a1a2e] uppercase">
                 ASCEN
-                <span style={{ fontWeight: 230 }}>S</span>
+                <span style={{ fontWeight: 170 }}>S</span>
                 O
               </span>
             </Link>

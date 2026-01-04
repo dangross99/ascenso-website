@@ -574,16 +574,30 @@ export default function Home() {
           <div className="materials-group flex flex-col md:flex-row gap-3 md:gap-4 h-[828px] md:h-[966px]">
             {/* Stone */}
             <div className="materials-col relative overflow-hidden group focus:outline-none focus:ring-2 focus:ring-[#C5A059]">
-              {/* Top half */}
-              <div className="absolute inset-x-0 top-0 overflow-hidden" style={{ height: "calc(50% - 36px)" }}>
+              {/* Top half — torn edge variant A (higher tear) */}
+              <div
+                className="absolute inset-x-0 top-0 overflow-hidden"
+                style={{
+                  height: "calc(42% - 36px)",
+                  clipPath:
+                    "polygon(0% 0%, 100% 0%, 100% 84%, 88% 80%, 78% 86%, 66% 79%, 54% 85%, 42% 80%, 28% 83%, 14% 78%, 0% 82%)",
+                }}
+              >
                 <img
                   src="/images/products/white-onyx.jpg"
                   alt="Marble placeholder"
                   className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
                 />
               </div>
-              {/* Bottom half */}
-              <div className="absolute inset-x-0 bottom-0 overflow-hidden" style={{ height: "calc(50% - 36px)" }}>
+              {/* Bottom half — torn edge counterpart */}
+              <div
+                className="absolute inset-x-0 bottom-0 overflow-hidden"
+                style={{
+                  height: "calc(58% - 36px)",
+                  clipPath:
+                    "polygon(0% 18%, 12% 22%, 26% 17%, 40% 22%, 54% 16%, 68% 21%, 82% 15%, 100% 19%, 100% 100%, 0% 100%)",
+                }}
+              >
                 <img
                   src="/images/products/white-onyx.jpg"
                   alt="Marble placeholder"
@@ -592,25 +606,43 @@ export default function Home() {
               </div>
               {/* Story content in the gap */}
               <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-center z-10 px-3">
-                <div className="bg-black/55 text-white rounded-md px-3 py-2 text-center shadow-md backdrop-blur-[2px]">
-                  <div className="text-sm md:text-base font-bold">אבן טבעית</div>
-                  <div className="text-xs md:text-sm opacity-90">מראה יוקרתי, עומק וטקסטורה חיה</div>
+                <div className="text-white text-center">
+                  <div className="text-base md:text-lg font-extrabold drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                    אבן טבעית
+                  </div>
+                  <div className="text-xs md:text-sm opacity-95 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                    מראה יוקרתי, עומק וטקסטורה חיה
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Wood */}
             <div className="materials-col relative overflow-hidden group focus:outline-none focus:ring-2 focus:ring-[#C5A059]">
-              {/* Top half */}
-              <div className="absolute inset-x-0 top-0 overflow-hidden" style={{ height: "calc(50% - 36px)" }}>
+              {/* Top half — torn edge variant B (lower tear) */}
+              <div
+                className="absolute inset-x-0 top-0 overflow-hidden"
+                style={{
+                  height: "calc(60% - 36px)",
+                  clipPath:
+                    "polygon(0 0, 100% 0, 100% 90%, 90% 86%, 78% 92%, 64% 87%, 50% 93%, 36% 88%, 22% 91%, 10% 86%, 0 89%)",
+                }}
+              >
                 <img
                   src="/images/products/travertine-wall.jpg"
                   alt="Oak wood placeholder"
                   className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
                 />
               </div>
-              {/* Bottom half */}
-              <div className="absolute inset-x-0 bottom-0 overflow-hidden" style={{ height: "calc(50% - 36px)" }}>
+              {/* Bottom half — torn edge counterpart */}
+              <div
+                className="absolute inset-x-0 bottom-0 overflow-hidden"
+                style={{
+                  height: "calc(40% - 36px)",
+                  clipPath:
+                    "polygon(0 11%, 10% 14%, 24% 9%, 38% 14%, 52% 8%, 66% 13%, 80% 7%, 100% 11%, 100% 100%, 0 100%)",
+                }}
+              >
                 <img
                   src="/images/products/travertine-wall.jpg"
                   alt="Oak wood placeholder"
@@ -619,25 +651,43 @@ export default function Home() {
               </div>
               {/* Story content in the gap */}
               <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-center z-10 px-3">
-                <div className="bg-black/55 text-white rounded-md px-3 py-2 text-center shadow-md backdrop-blur-[2px]">
-                  <div className="text-sm md:text-base font-bold">עץ</div>
-                  <div className="text-xs md:text-sm opacity-90">חום טבעי ואופי נצחי</div>
+                <div className="text-white text-center">
+                  <div className="text-base md:text-lg font-extrabold drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                    עץ
+                  </div>
+                  <div className="text-xs md:text-sm opacity-95 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                    חום טבעי ואופי נצחי
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Metal */}
             <div className="materials-col relative overflow-hidden group focus:outline-none focus:ring-2 focus:ring-[#C5A059]">
-              {/* Top half */}
-              <div className="absolute inset-x-0 top-0 overflow-hidden" style={{ height: "calc(50% - 36px)" }}>
+              {/* Top half — torn edge variant C (center tear) */}
+              <div
+                className="absolute inset-x-0 top-0 overflow-hidden"
+                style={{
+                  height: "calc(50% - 36px)",
+                  clipPath:
+                    "polygon(0% 0%, 100% 0%, 100% 82%, 86% 78%, 74% 84%, 60% 79%, 50% 83%, 38% 78%, 24% 82%, 12% 77%, 0% 81%)",
+                }}
+              >
                 <img
                   src="/images/products/nero-marquina.jpg"
                   alt="Brushed metal placeholder"
                   className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
                 />
               </div>
-              {/* Bottom half */}
-              <div className="absolute inset-x-0 bottom-0 overflow-hidden" style={{ height: "calc(50% - 36px)" }}>
+              {/* Bottom half — torn edge counterpart */}
+              <div
+                className="absolute inset-x-0 bottom-0 overflow-hidden"
+                style={{
+                  height: "calc(50% - 36px)",
+                  clipPath:
+                    "polygon(0% 19%, 10% 15%, 24% 20%, 36% 16%, 50% 21%, 64% 17%, 76% 22%, 90% 18%, 100% 22%, 100% 100%, 0% 100%)",
+                }}
+              >
                 <img
                   src="/images/products/nero-marquina.jpg"
                   alt="Brushed metal placeholder"
@@ -646,9 +696,13 @@ export default function Home() {
               </div>
               {/* Story content in the gap */}
               <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-center z-10 px-3">
-                <div className="bg-black/55 text-white rounded-md px-3 py-2 text-center shadow-md backdrop-blur-[2px]">
-                  <div className="text-sm md:text-base font-bold">מתכת</div>
-                  <div className="text-xs md:text-sm opacity-90">דיוק, עוצמה וגימור נקי</div>
+                <div className="text-white text-center">
+                  <div className="text-base md:text-lg font-extrabold drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                    מתכת
+                  </div>
+                  <div className="text-xs md:text-sm opacity-95 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                    דיוק, עוצמה וגימור נקי
+                  </div>
                 </div>
               </div>
             </div>

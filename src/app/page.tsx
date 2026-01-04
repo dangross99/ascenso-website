@@ -577,7 +577,7 @@ export default function Home() {
               {/* Stone: image left */}
               <div
                 className="absolute top-0 bottom-0 left-0 overflow-hidden"
-                style={{ width: "64%" }}
+                style={{ width: "66%" }}
               >
                 <img
                   src="/images/products/white-onyx.jpg"
@@ -586,12 +586,15 @@ export default function Home() {
                 />
               </div>
               {/* Stone: right text */}
-              <div className="absolute top-0 bottom-0 right-0 flex items-center justify-center px-4" style={{ width: "36%" }}>
-                <div className="text-[#1a1a2e] text-center">
-                  <div className="text-base md:text-lg font-extrabold leading-tight">אבן טבעית</div>
-                  <div className="mt-1 text-xs md:text-sm leading-relaxed">
+              <div className="absolute top-0 bottom-0 right-0 flex items-center justify-center px-4 md:px-6" style={{ width: "34%" }}>
+                <div className="text-[#1a1a2e] text-right md:border-l border-gray-200 md:pl-5 max-w-[380px]">
+                  <div className="uppercase tracking-[0.2em] text-[10px] md:text-xs text-gray-500/90 mb-1">NATURAL STONE</div>
+                  <div className="text-base md:text-xl font-bold leading-tight">אבן טבעית</div>
+                  <div className="mt-1.5 text-xs md:text-sm leading-relaxed">
                     האבנים שלנו מגיעות ממחצבות בעיקר מאיטליה וברזיל, נבחרות ידנית לפי ורידים, גוון ועומק. עיבוד מדויק, קנטים מוקפדים וגמר מותאם — מט, מוברש או מבריק.
                   </div>
+                  <div className="mt-2 text-[11px] md:text-xs text-gray-500">מקור: איטליה · ברזיל</div>
+                  <span className="mt-3 inline-block px-2.5 py-1 text-[10px] tracking-widest font-semibold rounded border border-[#C5A059] text-[#C5A059]">ASCENSO SELECT</span>
                 </div>
               </div>
             </div>
@@ -599,7 +602,7 @@ export default function Home() {
             {/* Wood */}
             <div className="materials-col relative overflow-hidden group focus:outline-none focus:ring-2 focus:ring-[#C5A059]">
               {/* Wood: image left */}
-              <div className="absolute top-0 bottom-0 left-0 overflow-hidden" style={{ width: "64%" }}>
+              <div className="absolute top-0 bottom-0 left-0 overflow-hidden" style={{ width: "66%" }}>
                 <img
                   src="/images/products/travertine-wall.jpg"
                   alt="Oak wood placeholder"
@@ -607,12 +610,15 @@ export default function Home() {
                 />
               </div>
               {/* Wood: right text */}
-              <div className="absolute top-0 bottom-0 right-0 flex items-center justify-center px-4" style={{ width: "36%" }}>
-                <div className="text-[#1a1a2e] text-center">
-                  <div className="text-base md:text-lg font-extrabold leading-tight">עץ</div>
-                  <div className="mt-1 text-xs md:text-sm leading-relaxed">
+              <div className="absolute top-0 bottom-0 right-0 flex items-center justify-center px-4 md:px-6" style={{ width: "34%" }}>
+                <div className="text-[#1a1a2e] text-right md:border-l border-gray-200 md:pl-5 max-w-[380px]">
+                  <div className="uppercase tracking-[0.2em] text-[10px] md:text-xs text-gray-500/90 mb-1">WOOD</div>
+                  <div className="text-base md:text-xl font-bold leading-tight">עץ</div>
+                  <div className="mt-1.5 text-xs md:text-sm leading-relaxed">
                     עץ מלא מובחר (אלון, אגוז ועוד) מיערות מבוקרים, מיובש בתנור ליציבות מרבית. גמר שמן או לכה עמידה המדגיש את הסיבים ומעניק חום ואופי טבעי.
                   </div>
+                  <div className="mt-2 text-[11px] md:text-xs text-gray-500">מקור: אירופה · צפון אמריקה</div>
+                  <span className="mt-3 inline-block px-2.5 py-1 text-[10px] tracking-widest font-semibold rounded border border-[#C5A059] text-[#C5A059]">ASCENSO SELECT</span>
                 </div>
               </div>
             </div>
@@ -622,7 +628,7 @@ export default function Home() {
               {/* Metal: image left */}
               <div
                 className="absolute top-0 bottom-0 left-0 overflow-hidden"
-                style={{ width: "64%" }}
+                style={{ width: "66%" }}
               >
                 <img
                   src="/images/products/nero-marquina.jpg"
@@ -631,12 +637,15 @@ export default function Home() {
                 />
               </div>
               {/* Metal: right text */}
-              <div className="absolute top-0 bottom-0 right-0 flex items-center justify-center px-4" style={{ width: "36%" }}>
-                <div className="text-[#1a1a2e] text-center">
-                  <div className="text-base md:text-lg font-extrabold leading-tight">מתכת</div>
-                  <div className="mt-1 text-xs md:text-sm leading-relaxed">
+              <div className="absolute top-0 bottom-0 right-0 flex items-center justify-center px-4 md:px-6" style={{ width: "34%" }}>
+                <div className="text-[#1a1a2e] text-right md:border-l border-gray-200 md:pl-5 max-w-[380px]">
+                  <div className="uppercase tracking-[0.2em] text-[10px] md:text-xs text-gray-500/90 mb-1">METAL</div>
+                  <div className="text-base md:text-xl font-bold leading-tight">מתכת</div>
+                  <div className="mt-1.5 text-xs md:text-sm leading-relaxed">
                     פלדות איכות, נירוסטה ואלומיניום בעיבוד מדויק (CNC/לייזר), ריתוכים נקיים וצביעה בתנור. אידאלי לקווים דקים, חיבורי נסתר וגימור מוקפד.
                   </div>
+                  <div className="mt-2 text-[11px] md:text-xs text-gray-500">מקור: גרמניה · איטליה</div>
+                  <span className="mt-3 inline-block px-2.5 py-1 text-[10px] tracking-widest font-semibold rounded border border-[#C5A059] text-[#C5A059]">ASCENSO SELECT</span>
                 </div>
               </div>
             </div>

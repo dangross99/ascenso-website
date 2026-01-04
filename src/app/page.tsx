@@ -448,7 +448,7 @@ export default function Home() {
               className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white mb-2 md:mb-4 leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]"
               style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
             >
-              מדרגות מרחפות
+              <span className="hero-type" style={{ ['--w' as any]: '12ch' }}>מדרגות מרחפות</span>
             </h1>
             <p
               className="text-gray-100 text-sm md:text-xl lg:text-2xl max-w-2xl"
@@ -469,6 +469,28 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <style jsx>{`
+        .hero-type {
+          display: inline-block;
+          white-space: nowrap;
+          overflow: hidden;
+          border-inline-end: 2px solid rgba(255, 255, 255, 0.9);
+          width: 0ch;
+          animation:
+            typing 3.2s steps(12, end) infinite alternate,
+            caret 0.8s step-end infinite;
+        }
+        @keyframes typing {
+          from { width: 0ch; }
+          to { width: var(--w); }
+        }
+        @keyframes caret {
+          50% { border-color: transparent; }
+        }
+        @media (min-width: 768px) {
+          .hero-type { border-inline-end-width: 3px; }
+        }
+      `}</style>
 
       {/* High-end Materials Section */}
       {/* moved below to the former “הבטחת ASCENSO” position */}

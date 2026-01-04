@@ -1179,7 +1179,7 @@ const Header: React.FC = () => {
             </Link>
           </div>
           {/* right - icons */}
-          <div className="flex justify-end items-center space-x-4 md:space-x-6 text-gray-700 justify-self-end z-0 md:col-start-3 md:justify-self-end">
+          <div className="flex justify-end items-center space-x-4 md:space-x-6 text-gray-700 justify-self-end z-10 md:z-0 md:col-start-3 md:justify-self-end absolute right-[2px] top-1/2 -translate-y-1/2 md:static md:transform-none md:translate-y-0">
             {/* Mobile-only icons group (WhatsApp black + Call) */}
             <div className="flex items-center gap-3 md:hidden">
               <a

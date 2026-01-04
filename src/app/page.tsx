@@ -143,21 +143,7 @@ export default function Home() {
     (idx: number) => emblaApi2 && emblaApi2.scrollTo(idx),
     [emblaApi2]
   );
-  // Allow vertical wheel to scroll slides horizontally
-  React.useEffect(() => {
-    const el = document.getElementById("steps-viewport");
-    if (!el || !emblaApi2) return;
-    const onWheel = (e: WheelEvent) => {
-      // if vertical intent, move slider
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && Math.abs(e.deltaY) > 2) {
-        e.preventDefault();
-        if (e.deltaY > 0) emblaApi2.scrollNext();
-        else emblaApi2.scrollPrev();
-      }
-    };
-    el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel as any);
-  }, [emblaApi2]);
+  // Note: גלילת עכבר נשארת גלילת עמוד; הסליידר נשלט בגרירה/נקודות.
 
   // Timeline visibility + count-up animation for durations
   const timelineRef = React.useRef<HTMLDivElement>(null);
@@ -670,7 +656,7 @@ export default function Home() {
             <div className="overflow-hidden" ref={emblaRef2} id="steps-viewport">
               <div className="flex -ml-4">
                 {/* Slide 1 */}
-                <div className="flex-[0_0_85%] sm:flex-[0_0_60%] md:flex-[0_0_40%] lg:flex-[0_0_33%] pl-4">
+                <div className="flex-[0_0_90%] sm:flex-[0_0_70%] md:flex-[0_0_55%] lg:flex-[0_0_40%] pl-4">
                   <div className="h-full bg-white border rounded-lg p-8 text-center">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#1a1a2e]" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -683,7 +669,7 @@ export default function Home() {
                   </div>
                 </div>
                 {/* Slide 2 */}
-                <div className="flex-[0_0_85%] sm:flex-[0_0_60%] md:flex-[0_0_40%] lg:flex-[0_0_33%] pl-4">
+                <div className="flex-[0_0_90%] sm:flex-[0_0_70%] md:flex-[0_0_55%] lg:flex-[0_0_40%] pl-4">
                   <div className="h-full bg-white border rounded-lg p-8 text-center">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#1a1a2e]" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -696,7 +682,7 @@ export default function Home() {
                   </div>
                 </div>
                 {/* Slide 3 */}
-                <div className="flex-[0_0_85%] sm:flex-[0_0_60%] md:flex-[0_0_40%] lg:flex-[0_0_33%] pl-4">
+                <div className="flex-[0_0_90%] sm:flex-[0_0_70%] md:flex-[0_0_55%] lg:flex-[0_0_40%] pl-4">
                   <div className="h-full bg-white border rounded-lg p-8 text-center">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#1a1a2e]" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -709,7 +695,7 @@ export default function Home() {
                   </div>
                 </div>
                 {/* Slide 4 */}
-                <div className="flex-[0_0_85%] sm:flex-[0_0_60%] md:flex-[0_0_40%] lg:flex-[0_0_33%] pl-4">
+                <div className="flex-[0_0_90%] sm:flex-[0_0_70%] md:flex-[0_0_55%] lg:flex-[0_0_40%] pl-4">
                   <div className="h-full bg-white border rounded-lg p-8 text-center">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#1a1a2e]" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -722,7 +708,7 @@ export default function Home() {
                   </div>
                 </div>
                 {/* Slide 5 */}
-                <div className="flex-[0_0_85%] sm:flex-[0_0_60%] md:flex-[0_0_40%] lg:flex-[0_0_33%] pl-4">
+                <div className="flex-[0_0_90%] sm:flex-[0_0_70%] md:flex-[0_0_55%] lg:flex-[0_0_40%] pl-4">
                   <div className="h-full bg-white border rounded-lg p-8 text-center">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#1a1a2e]" fill="none" stroke="currentColor" strokeWidth="1.5">

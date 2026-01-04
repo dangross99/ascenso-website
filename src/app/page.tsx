@@ -462,7 +462,7 @@ export default function Home() {
           <div className="flex flex-col w-full md:w-auto md:mr-auto">
             <a
               href="/live"
-              className="mx-auto md:mx-0 px-6 py-3 bg-white/80 text-[#1a1a2e]/90 text-base md:text-lg font-semibold shadow-sm hover:bg-white/70 transition-all duration-300 active:scale-[0.98] rounded-md border border-white/40"
+              className="mx-auto md:mx-0 px-6 py-2 bg-white/80 text-[#1a1a2e]/90 text-base md:text-lg font-semibold shadow-sm hover:bg-white/70 transition-all duration-300 active:scale-[0.98] rounded-md border border-white/40"
             >
               התחל הזמנה
             </a>

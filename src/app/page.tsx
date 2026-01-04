@@ -202,13 +202,7 @@ export default function Home() {
     if (emblaApi) emblaApi.scrollNext();
   }, [emblaApi]);
 
-  const scrollPrev2 = useCallback(() => {
-    if (emblaApi2) emblaApi2.scrollPrev();
-  }, [emblaApi2]);
-
-  const scrollNext2 = useCallback(() => {
-    if (emblaApi2) emblaApi2.scrollNext();
-  }, [emblaApi2]);
+  // removed legacy embla scroll handlers for steps slider
 
   type Continent = "AF" | "EU" | "AS" | "NA" | "SA" | "OC";
   const [selectedContinent, setSelectedContinent] = useState<Continent | null>(

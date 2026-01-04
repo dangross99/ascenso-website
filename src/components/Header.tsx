@@ -1349,12 +1349,12 @@ const Header: React.FC = () => {
           </div>
         </div>
         {/* Category navigation */}
-        <nav className="w-full flex justify-center space-x-8 py-1 bg-white overflow-x-auto no-scrollbar px-2" dir="rtl">
+        <nav className="w-full flex justify-between md:justify-center gap-2 md:gap-8 py-1 bg-white overflow-x-hidden px-2" dir="rtl">
           {categories.map(cat => (
             <a
               key={cat.label}
               href={cat.href}
-              className={`whitespace-nowrap text-sm font-semibold tracking-wide relative group rounded-md px-3 py-1 transition-colors ${
+              className={`whitespace-nowrap text-xs md:text-sm font-semibold tracking-normal md:tracking-wide relative group rounded-md px-2 md:px-3 py-1 transition-colors ${
                 isActive(cat.href)
                   ? 'bg-gray-200 text-[#1a1a2e]'
                   : 'text-gray-700 hover:bg-gray-50'

@@ -1179,7 +1179,7 @@ const Header: React.FC = () => {
             </Link>
           </div>
           {/* right - icons */}
-          <div className="flex justify-end items-center space-x-4 md:space-x-6 text-gray-700 justify-self-end z-0 md:col-start-3 md:justify-self-end mr-[2px] md:mr-0">
+          <div className="flex justify-end items-center space-x-4 md:space-x-6 text-gray-700 justify-self-end z-0 md:col-start-3 md:justify-self-end">
             {/* Mobile-only icons group (WhatsApp black + Call) */}
             <div className="flex items-center gap-3 md:hidden">
               <a
@@ -1324,7 +1324,7 @@ const Header: React.FC = () => {
             </div>
             {/* Wishlist */}
             <button
-              className="hover:text-gray-900 relative cursor-pointer"
+              className="hover:text-gray-900 relative cursor-pointer mr-[2px] md:mr-0"
               aria-label="מועדפים"
               onClick={() => setWishlistOpen(true)}
               suppressHydrationWarning

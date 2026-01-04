@@ -450,7 +450,12 @@ export default function Home() {
             >
               מדרגות מרחפות
             </h1>
-            
+            <p
+              className="text-gray-100 text-sm md:text-xl lg:text-2xl max-w-2xl"
+              style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
+            >
+              בחרו צורה, טקסטורה ומעקה – וראו הכל בהדמייה LIVE עם חישוב מחיר משוער.
+            </p>
           </div>
 
           {/* Left side: CTA */}

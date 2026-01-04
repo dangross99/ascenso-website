@@ -1144,9 +1144,9 @@ const Header: React.FC = () => {
 
       {/* Main Header */}
       <header className="w-full bg-white shadow flex flex-col items-center" suppressHydrationWarning>
-        <div className="w-full flex items-center px-4 md:px-8 py-3">
+        <div className="w-full grid grid-cols-3 items-center px-4 md:px-8 py-3">
           {/* left - phone and links */}
-          <div className="flex-1 flex items-center space-x-6 text-gray-700 text-sm min-w-0">
+          <div className="flex items-center space-x-4 md:space-x-6 text-gray-700 text-sm min-w-0 justify-start">
             <a
               href={`https://wa.me/972549994995?text=${whatsappMessage}`}
               target="_blank"
@@ -1157,7 +1157,7 @@ const Header: React.FC = () => {
               <svg width="20" height="20" viewBox="0 0 24 24" fill="#25D366">
                 <path d="M20.52 3.48A11.86 11.86 0 0012.07 0C5.7 0 .57 5.13.57 11.5c0 2.03.54 4 .1 5.38L0 24l7.3-1.9a12.02 12.02 0 004.77.97h.01c6.37 0 11.5-5.13 11.5-11.5 0-3.07-1.2-5.96-3.06-8.09zM12.08 21.5h-.01a9.96 9.96 0 01-5.08-1.4l-.36-.21-4.34 1.13 1.16-4.22-.23-.43a9.97 9.97 0 01-1.45-5.14C1.77 6.24 6.01 2 11.06 2c2.67 0 5.17 1.04 7.06 2.93a9.94 9.94 0 012.93 7.06c0 5.05-4.24 9.51-9.97 9.51zm5.75-7.2c-.32-.16-1.9-.94-2.19-1.05-.29-.11-.5-.16-.72.16-.21.32-.83 1.05-1.02 1.27-.19.21-.37.24-.7.08-.32-.16-1.35-.5-2.57-1.6-.95-.85-1.59-1.9-1.78-2.22-.19-.32-.02-.49.14-.65.15-.15.32-.37.48-.56.16-.19.21-.32.32-.53.11-.21.05-.4-.03-.56-.08-.16-.72-1.74-.99-2.39-.26-.63-.53-.54-.72-.55h-.62c-.21 0-.55.08-.84.4-.29.32-1.1 1.08-1.1 2.63 0 1.55 1.13 3.05 1.29 3.27.16.21 2.22 3.38 5.38 4.73.75.32 1.34.51 1.79.65.75.24 1.44.21 1.98.13.6-.09 1.9-.78 2.17-1.53.27-.75.27-1.39.19-1.53-.08-.13-.29-.21-.61-.37z"/>
               </svg>
-              <span>WhatsApp</span>
+              <span className="hidden sm:inline">WhatsApp</span>
             </a>
             <a
               href="tel:+972549994995"
@@ -1167,11 +1167,11 @@ const Header: React.FC = () => {
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.8 19.8 0 0 1 3.11 5.18 2 2 0 0 1 5.1 3h3a2 2 0 0 1 2 1.72c.12.89.32 1.76.6 2.59a2 2 0 0 1-.45 2.11L9.1 10.9a16 16 0 0 0 7 7l1.48-1.15a2 2 0 0 1 2.11-.45c.83.28 1.7.48 2.59.6A2 2 0 0 1 22 16.92z"/>
               </svg>
-              <span>התקשר עכשיו</span>
+              <span className="hidden sm:inline">התקשר עכשיו</span>
             </a>
           </div>
           {/* center - centered logo */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 select-none">
+          <div className="justify-self-center select-none">
             <Link href="/" aria-label="דף הבית" className="select-none">
               <span className="text-[34px] md:text-[44px] font-serif font-prosto font-semibold tracking-widest text-[#1a1a2e] uppercase">
                 ASCENSO
@@ -1179,7 +1179,7 @@ const Header: React.FC = () => {
             </Link>
           </div>
           {/* right - icons */}
-          <div className="flex-1 flex justify-end items-center space-x-6 text-gray-700">
+          <div className="flex justify-end items-center space-x-6 text-gray-700 justify-self-end">
             {/* Search field */}
             <div className="relative w-64 hidden md:block group">
               <input

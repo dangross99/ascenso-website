@@ -387,7 +387,7 @@ const Header: React.FC = () => {
     const msg = items.length
       ? `שלום, אשמח למידע על הפריטים: ${items}`
       : 'שלום, יש לי שאלה';
-    return `https://wa.me/972549994995?text=${encodeURIComponent(msg)}`;
+    return `https://api.whatsapp.com/send?phone=972549994995&text=${encodeURIComponent(msg)}`;
   }, [wishlist]);
   const [activeHash, setActiveHash] = useState<string>('');
   useEffect(() => {
@@ -1158,7 +1158,7 @@ const Header: React.FC = () => {
           {/* left - phone and links */}
           <div className="hidden md:flex items-center space-x-4 md:space-x-6 text-gray-700 text-sm min-w-0 justify-start md:col-start-1 md:justify-self-start">
             <a
-              href={`https://wa.me/972549994995?text=${whatsappMessage}`}
+              href={`https://api.whatsapp.com/send?phone=972549994995&text=${whatsappMessage}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center hover:underline space-x-1 cursor-pointer"
@@ -1193,9 +1193,9 @@ const Header: React.FC = () => {
             {/* Mobile-only icons group (WhatsApp black + Call) */}
             <div className="flex items-center gap-3 md:hidden">
               <a
-                href={`https://wa.me/972549994995?text=${whatsappMessage}`}
+                href={`https://api.whatsapp.com/send?phone=972549994995&text=${whatsappMessage}`}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="nofollow noopener noreferrer"
                 aria-label="פנייה ב‑WhatsApp"
                 title="פנייה ב‑WhatsApp"
                 className="cursor-pointer text-[#1a1a2e] transition-transform duration-150 active:scale-90 active:opacity-80 select-none touch-manipulation"

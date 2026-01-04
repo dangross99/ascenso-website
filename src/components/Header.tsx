@@ -1154,7 +1154,7 @@ const Header: React.FC = () => {
 
       {/* Main Header */}
       <header className="w-full bg-white shadow flex flex-col items-center" suppressHydrationWarning>
-        <div className="w-full relative grid grid-cols-3 items-center px-0 md:px-8 pt-6 pb-5 md:py-3">
+        <div className="w-full relative grid grid-cols-3 items-center px-0 md:px-8 pt-8 pb-7 md:py-3">
           {/* left - phone and links */}
           <div className="hidden md:flex items-center space-x-4 md:space-x-6 text-gray-700 text-sm min-w-0 justify-start md:col-start-1 md:justify-self-start">
             <a
@@ -1364,15 +1364,15 @@ const Header: React.FC = () => {
           </div>
         </div>
         {/* Category navigation */}
-        <nav className="w-full flex justify-between md:justify-center gap-1 md:gap-8 py-1 bg-[#1a1a2e] md:bg-white overflow-x-hidden px-1" dir="rtl">
+        <nav className="w-full flex justify-between md:justify-center gap-1 md:gap-8 py-1 bg-white overflow-x-hidden px-1" dir="rtl">
           {categories.map(cat => (
             <a
               key={cat.label}
               href={cat.href}
-              className={`whitespace-nowrap text-[13px] md:text-sm font-semibold tracking-tight md:tracking-wide relative group rounded-md px-1 md:px-3 py-1 transition-all duration-150 active:scale-95 select-none touch-manipulation ${
+              className={`whitespace-nowrap text-[13px] md:text-sm font-semibold tracking-tight md:tracking-wide relative group rounded-md px-1 md:px-3 py-1 transition-all duration-150 active:scale-95 active:bg-gray-100 select-none touch-manipulation ${
                 isActive(cat.href)
-                  ? 'text-white md:bg-gray-200 md:text-[#1a1a2e]'
-                  : 'text-white md:text-gray-700 md:hover:bg-gray-50'
+                  ? 'bg-gray-200 text-[#1a1a2e]'
+                  : 'text-gray-700 hover:bg-gray-50'
               }`}
               onClick={() => vibrate(20)}
             >

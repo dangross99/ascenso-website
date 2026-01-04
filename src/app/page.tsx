@@ -657,7 +657,7 @@ export default function Home() {
               <div className="flex -ml-4">
                 {/* Slide 1 */}
                 <div className="flex-[0_0_90%] sm:flex-[0_0_70%] md:flex-[0_0_55%] lg:flex-[0_0_40%] pl-4">
-                  <div className="h-full bg-white border rounded-lg p-8 text-center">
+                  <div className="bg-white border rounded-lg p-8 text-center">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#1a1a2e]" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h6v6H4zM14 6h6v6h-6zM9 12h6v6H9z" />
@@ -670,7 +670,7 @@ export default function Home() {
                 </div>
                 {/* Slide 2 */}
                 <div className="flex-[0_0_90%] sm:flex-[0_0_70%] md:flex-[0_0_55%] lg:flex-[0_0_40%] pl-4">
-                  <div className="h-full bg-white border rounded-lg p-8 text-center">
+                  <div className="bg-white border rounded-lg p-8 text-center">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#1a1a2e]" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 6h10M7 14h10M9 18h6" />
@@ -683,7 +683,7 @@ export default function Home() {
                 </div>
                 {/* Slide 3 */}
                 <div className="flex-[0_0_90%] sm:flex-[0_0_70%] md:flex-[0_0_55%] lg:flex-[0_0_40%] pl-4">
-                  <div className="h-full bg-white border rounded-lg p-8 text-center">
+                  <div className="bg-white border rounded-lg p-8 text-center">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#1a1a2e]" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 11.5a3 3 0 100-6 3 3 0 000 6zM5.5 10.5C5.5 6 9 3 12 3s6.5 3 6.5 7.5S12 21 12 21s-6.5-4.5-6.5-10.5z" />
@@ -696,7 +696,7 @@ export default function Home() {
                 </div>
                 {/* Slide 4 */}
                 <div className="flex-[0_0_90%] sm:flex-[0_0_70%] md:flex-[0_0_55%] lg:flex-[0_0_40%] pl-4">
-                  <div className="h-full bg-white border rounded-lg p-8 text-center">
+                  <div className="bg-white border rounded-lg p-8 text-center">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#1a1a2e]" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3l.75 3a8 8 0 013 0l.75-3M4.5 13.5l2.5-1.5m10 1.5l2.5-1.5M9 20.5l3-2 3 2" />
@@ -709,7 +709,7 @@ export default function Home() {
                 </div>
                 {/* Slide 5 */}
                 <div className="flex-[0_0_90%] sm:flex-[0_0_70%] md:flex-[0_0_55%] lg:flex-[0_0_40%] pl-4">
-                  <div className="h-full bg-white border rounded-lg p-8 text-center">
+                  <div className="bg-white border rounded-lg p-8 text-center">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#1a1a2e]" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />

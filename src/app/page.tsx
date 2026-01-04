@@ -574,44 +574,44 @@ export default function Home() {
           <div className="materials-group flex flex-col md:flex-row gap-3 md:gap-4 h-[828px] md:h-[966px]">
             {/* Stone */}
             <div className="materials-col relative overflow-hidden group focus:outline-none focus:ring-2 focus:ring-[#C5A059]">
-              {/* Top half — torn edge variant A (higher tear) */}
+              {/* Left half — vertical torn edge (variant A) */}
               <div
-                className="absolute inset-x-0 top-0 overflow-hidden"
+                className="absolute top-0 bottom-0 left-0 overflow-hidden"
                 style={{
-                  height: "calc(42% - 36px)",
+                  width: "calc(50% - 36px)",
                   clipPath:
-                    "polygon(0% 0%, 100% 0%, 100% 84%, 88% 80%, 78% 86%, 66% 79%, 54% 85%, 42% 80%, 28% 83%, 14% 78%, 0% 82%)",
+                    "polygon(0 0, 100% 0, 94% 10%, 100% 20%, 92% 33%, 100% 46%, 93% 60%, 100% 72%, 95% 86%, 100% 100%, 0 100%)",
                 }}
               >
                 <img
                   src="/images/products/white-onyx.jpg"
                   alt="Marble placeholder"
-                  className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+                  className="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
                 />
               </div>
-              {/* Bottom half — torn edge counterpart */}
+              {/* Right half — vertical torn counterpart */}
               <div
-                className="absolute inset-x-0 bottom-0 overflow-hidden"
+                className="absolute top-0 bottom-0 right-0 overflow-hidden"
                 style={{
-                  height: "calc(58% - 36px)",
+                  width: "calc(50% - 36px)",
                   clipPath:
-                    "polygon(0% 18%, 12% 22%, 26% 17%, 40% 22%, 54% 16%, 68% 21%, 82% 15%, 100% 19%, 100% 100%, 0% 100%)",
+                    "polygon(6% 0, 100% 0, 100% 100%, 6% 100%, 0% 86%, 6% 72%, 0% 60%, 7% 46%, 0% 33%, 8% 20%, 0% 10%)",
                 }}
               >
                 <img
                   src="/images/products/white-onyx.jpg"
                   alt="Marble placeholder"
-                  className="h-full w-full object-cover object-bottom transition-transform duration-700 ease-out group-hover:scale-105"
+                  className="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
                 />
               </div>
-              {/* Story content in the gap */}
-              <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-center z-10 px-3">
-                <div className="text-white text-center">
-                  <div className="text-base md:text-lg font-extrabold drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+              {/* Story content in the vertical gap */}
+              <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 z-10 px-3 text-center pointer-events-none">
+                <div className="text-white text-center max-w-[320px]">
+                  <div className="text-base md:text-lg font-extrabold leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
                     אבן טבעית
                   </div>
-                  <div className="text-xs md:text-sm opacity-95 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
-                    מראה יוקרתי, עומק וטקסטורה חיה
+                  <div className="mt-1 text-xs md:text-sm leading-relaxed opacity-95 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                    האבנים שלנו מגיעות ממחצבות בעיקר מאיטליה וברזיל, נבחרות ידנית לפי ורידים, גוון ועומק. עיבוד מדויק, קנטים מוקפדים וגמר מותאם לפרויקט — מט, מוברש או מבריק.
                   </div>
                 </div>
               </div>
@@ -619,44 +619,44 @@ export default function Home() {
 
             {/* Wood */}
             <div className="materials-col relative overflow-hidden group focus:outline-none focus:ring-2 focus:ring-[#C5A059]">
-              {/* Top half — torn edge variant B (lower tear) */}
+              {/* Left half — vertical torn edge (variant B) */}
               <div
-                className="absolute inset-x-0 top-0 overflow-hidden"
+                className="absolute top-0 bottom-0 left-0 overflow-hidden"
                 style={{
-                  height: "calc(60% - 36px)",
+                  width: "calc(50% - 36px)",
                   clipPath:
-                    "polygon(0 0, 100% 0, 100% 90%, 90% 86%, 78% 92%, 64% 87%, 50% 93%, 36% 88%, 22% 91%, 10% 86%, 0 89%)",
+                    "polygon(0 0, 100% 0, 93% 12%, 100% 24%, 92% 38%, 100% 52%, 94% 66%, 100% 78%, 95% 90%, 100% 100%, 0 100%)",
                 }}
               >
                 <img
                   src="/images/products/travertine-wall.jpg"
                   alt="Oak wood placeholder"
-                  className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+                  className="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
                 />
               </div>
-              {/* Bottom half — torn edge counterpart */}
+              {/* Right half — vertical torn counterpart */}
               <div
-                className="absolute inset-x-0 bottom-0 overflow-hidden"
+                className="absolute top-0 bottom-0 right-0 overflow-hidden"
                 style={{
-                  height: "calc(40% - 36px)",
+                  width: "calc(50% - 36px)",
                   clipPath:
-                    "polygon(0 11%, 10% 14%, 24% 9%, 38% 14%, 52% 8%, 66% 13%, 80% 7%, 100% 11%, 100% 100%, 0 100%)",
+                    "polygon(7% 0, 100% 0, 100% 100%, 7% 100%, 0% 90%, 6% 78%, 0% 66%, 8% 52%, 0% 38%, 9% 24%, 0% 12%)",
                 }}
               >
                 <img
                   src="/images/products/travertine-wall.jpg"
                   alt="Oak wood placeholder"
-                  className="h-full w-full object-cover object-bottom transition-transform duration-700 ease-out group-hover:scale-105"
+                  className="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
                 />
               </div>
-              {/* Story content in the gap */}
-              <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-center z-10 px-3">
-                <div className="text-white text-center">
-                  <div className="text-base md:text-lg font-extrabold drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+              {/* Story content in the vertical gap */}
+              <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 z-10 px-3 text-center pointer-events-none">
+                <div className="text-white text-center max-w-[320px]">
+                  <div className="text-base md:text-lg font-extrabold leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
                     עץ
                   </div>
-                  <div className="text-xs md:text-sm opacity-95 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
-                    חום טבעי ואופי נצחי
+                  <div className="mt-1 text-xs md:text-sm leading-relaxed opacity-95 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                    עץ מלא מובחר (אלון, אגוז ועוד) מיערות מבוקרים, מיובש בתנור ליציבות מרבית. גמר שמן או לכה עמידה המדגיש את הסיבים ומעניק חום ואופי טבעי.
                   </div>
                 </div>
               </div>
@@ -664,44 +664,44 @@ export default function Home() {
 
             {/* Metal */}
             <div className="materials-col relative overflow-hidden group focus:outline-none focus:ring-2 focus:ring-[#C5A059]">
-              {/* Top half — torn edge variant C (center tear) */}
+              {/* Left half — vertical torn edge (variant C) */}
               <div
-                className="absolute inset-x-0 top-0 overflow-hidden"
+                className="absolute top-0 bottom-0 left-0 overflow-hidden"
                 style={{
-                  height: "calc(50% - 36px)",
+                  width: "calc(50% - 36px)",
                   clipPath:
-                    "polygon(0% 0%, 100% 0%, 100% 82%, 86% 78%, 74% 84%, 60% 79%, 50% 83%, 38% 78%, 24% 82%, 12% 77%, 0% 81%)",
+                    "polygon(0 0, 100% 0, 96% 8%, 100% 18%, 94% 30%, 100% 44%, 95% 58%, 100% 70%, 94% 84%, 100% 96%, 0 100%)",
                 }}
               >
                 <img
                   src="/images/products/nero-marquina.jpg"
                   alt="Brushed metal placeholder"
-                  className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+                  className="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
                 />
               </div>
-              {/* Bottom half — torn edge counterpart */}
+              {/* Right half — vertical torn counterpart */}
               <div
-                className="absolute inset-x-0 bottom-0 overflow-hidden"
+                className="absolute top-0 bottom-0 right-0 overflow-hidden"
                 style={{
-                  height: "calc(50% - 36px)",
+                  width: "calc(50% - 36px)",
                   clipPath:
-                    "polygon(0% 19%, 10% 15%, 24% 20%, 36% 16%, 50% 21%, 64% 17%, 76% 22%, 90% 18%, 100% 22%, 100% 100%, 0% 100%)",
+                    "polygon(4% 0, 100% 0, 100% 100%, 4% 100%, 0% 96%, 6% 84%, 0% 70%, 5% 58%, 0% 44%, 6% 30%, 0% 18%)",
                 }}
               >
                 <img
                   src="/images/products/nero-marquina.jpg"
                   alt="Brushed metal placeholder"
-                  className="h-full w-full object-cover object-bottom transition-transform duration-700 ease-out group-hover:scale-105"
+                  className="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
                 />
               </div>
-              {/* Story content in the gap */}
-              <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-center z-10 px-3">
-                <div className="text-white text-center">
-                  <div className="text-base md:text-lg font-extrabold drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+              {/* Story content in the vertical gap */}
+              <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 z-10 px-3 text-center pointer-events-none">
+                <div className="text-white text-center max-w-[320px]">
+                  <div className="text-base md:text-lg font-extrabold leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
                     מתכת
                   </div>
-                  <div className="text-xs md:text-sm opacity-95 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
-                    דיוק, עוצמה וגימור נקי
+                  <div className="mt-1 text-xs md:text-sm leading-relaxed opacity-95 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                    פלדות איכות, נירוסטה ואלומיניום בעיבוד מדויק (CNC/לייזר), ריתוכים נקיים וצביעה בתנור. אידאלי לקווים דקים, חיבורי נסתר וגימור מוקפד.
                   </div>
                 </div>
               </div>

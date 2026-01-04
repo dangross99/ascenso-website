@@ -574,61 +574,82 @@ export default function Home() {
           <div className="materials-group flex flex-col md:flex-row gap-3 md:gap-4 h-[828px] md:h-[966px]">
             {/* Stone */}
             <div className="materials-col relative overflow-hidden group focus:outline-none focus:ring-2 focus:ring-[#C5A059]">
-              <div className="absolute inset-0">
+              {/* Top half */}
+              <div className="absolute inset-x-0 top-0 overflow-hidden" style={{ height: "calc(50% - 36px)" }}>
                 <img
                   src="/images/products/white-onyx.jpg"
                   alt="Marble placeholder"
-                  className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-            />
-          </div>
-              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/40 to-transparent pointer-events-none transition-opacity duration-300 group-hover:opacity-80" />
-              <div className="absolute inset-x-0 bottom-0 pb-4 flex flex-col items-center gap-2 z-10">
-                <span
-                  className="text-white text-base md:text-lg font-extrabold uppercase tracking-widest inline-block rotate-[-2deg] drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]"
-                  style={{ WebkitTextStroke: "1px rgba(0,0,0,0.85)" }}
-                >
-                  NATURAL STONE
-                </span>
+                  className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+              </div>
+              {/* Bottom half */}
+              <div className="absolute inset-x-0 bottom-0 overflow-hidden" style={{ height: "calc(50% - 36px)" }}>
+                <img
+                  src="/images/products/white-onyx.jpg"
+                  alt="Marble placeholder"
+                  className="h-full w-full object-cover object-bottom transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+              </div>
+              {/* Story content in the gap */}
+              <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-center z-10 px-3">
+                <div className="bg-black/55 text-white rounded-md px-3 py-2 text-center shadow-md backdrop-blur-[2px]">
+                  <div className="text-sm md:text-base font-bold">אבן טבעית</div>
+                  <div className="text-xs md:text-sm opacity-90">מראה יוקרתי, עומק וטקסטורה חיה</div>
+                </div>
               </div>
             </div>
 
             {/* Wood */}
             <div className="materials-col relative overflow-hidden group focus:outline-none focus:ring-2 focus:ring-[#C5A059]">
-              <div className="absolute inset-0">
+              {/* Top half */}
+              <div className="absolute inset-x-0 top-0 overflow-hidden" style={{ height: "calc(50% - 36px)" }}>
                 <img
                   src="/images/products/travertine-wall.jpg"
                   alt="Oak wood placeholder"
-                  className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                        />
-                      </div>
-              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/40 to-transparent pointer-events-none transition-opacity duration-300 group-hover:opacity-80" />
-              <div className="absolute inset-x-0 bottom-0 pb-4 flex flex-col items-center gap-2 z-10">
-                <span
-                  className="text-white text-base md:text-lg font-extrabold uppercase tracking-widest inline-block rotate-[-2deg] drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]"
-                  style={{ WebkitTextStroke: "1px rgba(0,0,0,0.85)" }}
-                >
-                  WOOD
-                </span>
+                  className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+              </div>
+              {/* Bottom half */}
+              <div className="absolute inset-x-0 bottom-0 overflow-hidden" style={{ height: "calc(50% - 36px)" }}>
+                <img
+                  src="/images/products/travertine-wall.jpg"
+                  alt="Oak wood placeholder"
+                  className="h-full w-full object-cover object-bottom transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+              </div>
+              {/* Story content in the gap */}
+              <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-center z-10 px-3">
+                <div className="bg-black/55 text-white rounded-md px-3 py-2 text-center shadow-md backdrop-blur-[2px]">
+                  <div className="text-sm md:text-base font-bold">עץ</div>
+                  <div className="text-xs md:text-sm opacity-90">חום טבעי ואופי נצחי</div>
+                </div>
               </div>
             </div>
 
             {/* Metal */}
             <div className="materials-col relative overflow-hidden group focus:outline-none focus:ring-2 focus:ring-[#C5A059]">
-              <div className="absolute inset-0">
+              {/* Top half */}
+              <div className="absolute inset-x-0 top-0 overflow-hidden" style={{ height: "calc(50% - 36px)" }}>
                 <img
                   src="/images/products/nero-marquina.jpg"
                   alt="Brushed metal placeholder"
-                  className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
                 />
-          </div>
-              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/40 to-transparent pointer-events-none transition-opacity duration-300 group-hover:opacity-80" />
-              <div className="absolute inset-x-0 bottom-0 pb-4 flex flex-col items-center gap-2 z-10">
-                <span
-                  className="text-white text-base md:text-lg font-extrabold uppercase tracking-widest inline-block rotate-[-2deg] drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]"
-                  style={{ WebkitTextStroke: "1px rgba(0,0,0,0.85)" }}
-                >
-                  METAL
-                </span>
+              </div>
+              {/* Bottom half */}
+              <div className="absolute inset-x-0 bottom-0 overflow-hidden" style={{ height: "calc(50% - 36px)" }}>
+                <img
+                  src="/images/products/nero-marquina.jpg"
+                  alt="Brushed metal placeholder"
+                  className="h-full w-full object-cover object-bottom transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+              </div>
+              {/* Story content in the gap */}
+              <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-center z-10 px-3">
+                <div className="bg-black/55 text-white rounded-md px-3 py-2 text-center shadow-md backdrop-blur-[2px]">
+                  <div className="text-sm md:text-base font-bold">מתכת</div>
+                  <div className="text-xs md:text-sm opacity-90">דיוק, עוצמה וגימור נקי</div>
+                </div>
               </div>
             </div>
           </div>

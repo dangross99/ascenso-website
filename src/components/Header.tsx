@@ -1193,7 +1193,7 @@ const Header: React.FC = () => {
             {/* Mobile-only icons group (WhatsApp black + Call) */}
             <div className="flex items-center gap-3 md:hidden">
               <a
-                href={`https://api.whatsapp.com/send?phone=972549994995&text=${whatsappMessage}`}
+                href={`https://api.whatsapp.com/send?phone=972539994995&text=${whatsappMessage}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="פנייה ב‑WhatsApp"

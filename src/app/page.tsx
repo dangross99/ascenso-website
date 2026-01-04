@@ -93,6 +93,9 @@ type MaterialRecord = {
 export default function Home() {
   // טקסטורות אמיתיות מתוך materials.json לשימוש ב"פס מוצרים" בדף הבית
   const [topMaterials, setTopMaterials] = useState<MaterialRecord[]>([]);
+  // מניעת Hydration mismatch במרכיבים רגישים לדפדפן/תוספים
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
   React.useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -440,7 +443,7 @@ export default function Home() {
         <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
         <div className="relative z-10 w-full flex justify-between items-end px-6 md:px-14 lg:px-20 pb-10 md:pb-14 lg:pb-16" dir="rtl">
           {/* Right side: Text (RTL) */}
-          <div className="text-right ml-auto w-full md:w-[60%] max-w-none lg:whitespace-nowrap">
+          <div className="text-right ml-auto w-[60%] max-w-none lg:whitespace-nowrap">
             <h1
               className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-4 leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]"
               style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
@@ -456,16 +459,16 @@ export default function Home() {
           </div>
 
           {/* Left side: Buttons */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mr-auto w-full sm:w-auto mt-4 sm:mt-0">
+          <div className="flex items-center gap-3 mr-auto">
             <a
               href="/live"
-              className="px-7 py-3 bg-[#bfa980] text-[#1a1a2e] text-base md:text-lg font-bold shadow-lg hover:bg-[#a98e61] transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 w-full sm:w-auto text-center"
+              className="px-7 py-3 bg-[#bfa980] text-[#1a1a2e] text-base md:text-lg font-bold shadow-lg hover:bg-[#a98e61] transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5"
             >
               פתח הדמייה LIVE
             </a>
             <a
               href="/materials"
-              className="px-7 py-3 bg-transparent text-white text-base md:text-lg font-semibold transition-all duration-300 border-2 border-white hover:bg-white hover:text-gray-900 w-full sm:w-auto text-center"
+              className="px-7 py-3 bg-transparent text-white text-base md:text-lg font-semibold transition-all duration-300 border-2 border-white hover:bg-white hover:text-gray-900"
             >
               טקסטורות
             </a>
@@ -529,47 +532,53 @@ export default function Home() {
                 ))}
               </div>
             </div>
-            <button
-              onClick={scrollPrev}
-              className="absolute top-[40%] -translate-y-1/2 md:-left-6 lg:-left-16 z-10 hidden md:flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-md hover:bg-gray-100 transition-all"
-              aria-label="Previous slide"
-            >
-              <svg
-                className="w-6 h-6 text-gray-800"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
-            <button
-              onClick={scrollNext}
-              className="absolute top-[40%] -translate-y-1/2 md:-right-6 lg:-right-16 z-10 hidden md:flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-md hover:bg-gray-100 transition-all"
-              aria-label="Next slide"
-            >
-              <svg
-                className="w-6 h-6 text-gray-800"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </button>
+            {mounted && (
+              <>
+                <button
+                  onClick={scrollPrev}
+                  className="absolute top-[40%] -translate-y-1/2 -left-16 z-10 flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-md hover:bg-gray-100 transition-all"
+                  aria-label="Previous slide"
+                  suppressHydrationWarning
+                >
+                  <svg
+                    className="w-6 h-6 text-gray-800"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                </button>
+                <button
+                  onClick={scrollNext}
+                  className="absolute top-[40%] -translate-y-1/2 -right-16 z-10 flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-md hover:bg-gray-100 transition-all"
+                  aria-label="Next slide"
+                  suppressHydrationWarning
+                >
+                  <svg
+                    className="w-6 h-6 text-gray-800"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </button>
+              </>
+            )}
           </div>
           <div className="text-center mt-12" dir="rtl">
-            <a href="/materials" className="inline-block w-full sm:w-auto px-12 py-3 border border-gray-900 text-gray-900 text-sm font-bold tracking-widest hover:bg-gray-900 hover:text-white transition-colors duration-300">
+            <a href="/materials" className="inline-block px-12 py-3 border border-gray-900 text-gray-900 text-sm font-bold tracking-widest hover:bg-gray-900 hover:text-white transition-colors duration-300">
               לכל הטקסטורות
             </a>
           </div>
@@ -580,7 +589,7 @@ export default function Home() {
       <section className="w-full py-4 md:py-6" dir="rtl">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           {/* Columns */}
-          <div className="materials-group flex flex-col md:flex-row gap-3 md:gap-4 h-[360px] md:h-[520px]">
+          <div className="materials-group flex flex-col md:flex-row gap-3 md:gap-4 h-[420px] md:h-[520px]">
             {/* Stone */}
             <a href="/materials?category=stone" className="materials-col relative rounded-xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-[#C5A059]">
               <div className="absolute inset-0">
@@ -764,7 +773,7 @@ export default function Home() {
             href={`https://api.whatsapp.com/send?phone=972539994995&text=${encodeURIComponent('*ASCENSO*\nהיי! ראיתי את האתר ואני מעוניינ/ת להתקדם.\nאשמח לשיחת ייעוץ קצרה ולקבל פרטים נוספים. תודה!')}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block w-full sm:w-auto bg-[#25D366] text-[#0b1a13] font-bold text-sm px-6 py-3 rounded-full shadow-lg hover:brightness-95 transition-all duration-300 hover:shadow-xl"
+            className="inline-block bg-[#25D366] text-[#0b1a13] font-bold text-sm px-6 py-3 rounded-full shadow-lg hover:brightness-95 transition-all duration-300 hover:shadow-xl"
             aria-label="צ'אט WhatsApp עם ASCENSO"
           >
             דברו איתנו ב‑WhatsApp

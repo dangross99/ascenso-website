@@ -1144,7 +1144,7 @@ const Header: React.FC = () => {
 
       {/* Main Header */}
       <header className="w-full bg-white shadow flex flex-col items-center" suppressHydrationWarning>
-        <div className="w-full grid grid-cols-3 items-center px-4 md:px-8 py-3">
+        <div className="w-full relative grid grid-cols-3 items-center px-4 md:px-8 py-3">
           {/* left - phone and links */}
           <div className="flex items-center space-x-4 md:space-x-6 text-gray-700 text-sm min-w-0 justify-start">
             <a
@@ -1170,8 +1170,8 @@ const Header: React.FC = () => {
               <span className="hidden sm:inline">התקשר עכשיו</span>
             </a>
           </div>
-          {/* center - centered logo */}
-          <div className="justify-self-center select-none">
+          {/* center - centered logo (אבסולוטי בדסקטופ לשמירה על מרכז אמיתי) */}
+          <div className="justify-self-center md:justify-self-auto md:absolute md:left-1/2 md:-translate-x-1/2 select-none z-10">
             <Link href="/" aria-label="דף הבית" className="select-none">
               <span className="text-[34px] md:text-[44px] font-serif font-prosto font-semibold tracking-widest text-[#1a1a2e] uppercase">
                 ASCENSO
@@ -1179,7 +1179,7 @@ const Header: React.FC = () => {
             </Link>
           </div>
           {/* right - icons */}
-          <div className="flex justify-end items-center space-x-6 text-gray-700 justify-self-end">
+          <div className="flex justify-end items-center space-x-6 text-gray-700 justify-self-end z-0">
             {/* Search field */}
             <div className="relative w-64 hidden md:block group">
               <input

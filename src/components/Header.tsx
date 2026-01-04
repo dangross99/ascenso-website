@@ -1144,7 +1144,7 @@ const Header: React.FC = () => {
 
       {/* Main Header */}
       <header className="w-full bg-white shadow flex flex-col items-center" suppressHydrationWarning>
-        <div className="w-full relative grid grid-cols-3 items-center px-4 md:px-8 py-3">
+        <div className="w-full relative grid grid-cols-3 items-center px-2 md:px-8 py-3">
           {/* left - phone and links */}
           <div className="hidden md:flex items-center space-x-4 md:space-x-6 text-gray-700 text-sm min-w-0 justify-start md:col-start-1 md:justify-self-start">
             <a
@@ -1171,7 +1171,7 @@ const Header: React.FC = () => {
             </a>
           </div>
           {/* center - centered logo (אבסולוטי בדסקטופ לשמירה על מרכז אמיתי) */}
-          <div className="justify-self-center md:justify-self-auto md:absolute md:left-1/2 md:-translate-x-1/2 select-none z-10">
+          <div className="justify-self-end md:justify-self-auto md:absolute md:left-1/2 md:-translate-x-1/2 select-none z-10">
             <Link href="/" aria-label="דף הבית" className="select-none">
               <span className="text-[34px] md:text-[44px] font-serif font-prosto font-semibold tracking-widest text-[#1a1a2e] uppercase">
                 ASCENSO
@@ -1179,9 +1179,9 @@ const Header: React.FC = () => {
             </Link>
           </div>
           {/* right - icons */}
-          <div className="flex justify-end items-center space-x-6 text-gray-700 justify-self-end z-0 md:col-start-3 md:justify-self-end">
+          <div className="flex justify-end items-center space-x-4 md:space-x-6 text-gray-700 justify-self-end z-0 md:col-start-3 md:justify-self-end">
             {/* Mobile-only icons group (WhatsApp black + Call) */}
-            <div className="flex items-center gap-4 md:hidden">
+            <div className="flex items-center gap-3 md:hidden">
               <a
                 href={`https://wa.me/972549994995?text=${whatsappMessage}`}
                 target="_blank"

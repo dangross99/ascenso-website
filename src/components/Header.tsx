@@ -476,7 +476,7 @@ const Header: React.FC = () => {
     <>
       {/* Top Bar */}
       <div className="w-full bg-gray-900 text-gray-100 text-xs">
-        <div className="w-full px-0 md:pr-6 md:pl-0 py-4 md:py-1 flex items-center gap-3 flex-wrap justify-center md:justify-start" dir="rtl">
+        <div className="w-full px-0 md:pr-6 md:pl-0 py-3.5 md:py-1 flex items-center gap-3 flex-wrap justify-center md:justify-start" dir="rtl">
           <span className="flex items-center gap-2">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>

@@ -1364,15 +1364,13 @@ const Header: React.FC = () => {
           </div>
         </div>
         {/* Category navigation */}
-        <nav className="w-full flex justify-between md:justify-center gap-1 md:gap-8 py-1 bg-white overflow-x-hidden px-1" dir="rtl">
+        <nav className="w-full flex justify-between md:justify-center gap-1 md:gap-8 py-1 bg-[#1a1a2e] md:bg-white overflow-x-hidden px-1" dir="rtl">
           {categories.map(cat => (
             <a
               key={cat.label}
               href={cat.href}
-              className={`whitespace-nowrap text-[13px] md:text-sm font-semibold tracking-tight md:tracking-wide relative group rounded-md px-1 md:px-3 py-1 transition-all duration-150 active:scale-95 active:bg-gray-100 select-none touch-manipulation ${
-                isActive(cat.href)
-                  ? 'bg-gray-200 text-[#1a1a2e]'
-                  : 'text-gray-700 hover:bg-gray-50'
+              className={`whitespace-nowrap text-[13px] md:text-sm font-semibold tracking-tight md:tracking-wide relative group rounded-md px-1 md:px-3 py-1 transition-all duration-150 active:scale-95 select-none touch-manipulation ${
+                isActive(cat.href) ? 'text-white md:bg-gray-200 md:text-[#1a1a2e]' : 'text-white md:text-gray-700 md:hover:bg-gray-50'
               }`}
               onClick={() => vibrate(20)}
             >

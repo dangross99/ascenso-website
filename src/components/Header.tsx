@@ -1144,7 +1144,7 @@ const Header: React.FC = () => {
 
       {/* Main Header */}
       <header className="w-full bg-white shadow flex flex-col items-center" suppressHydrationWarning>
-        <div className="w-full relative grid grid-cols-3 items-center px-0 md:px-8 py-5 md:py-3">
+        <div className="w-full relative grid grid-cols-3 items-center px-0 md:px-8 pt-6 pb-5 md:py-3">
           {/* left - phone and links */}
           <div className="hidden md:flex items-center space-x-4 md:space-x-6 text-gray-700 text-sm min-w-0 justify-start md:col-start-1 md:justify-self-start">
             <a

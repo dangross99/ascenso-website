@@ -486,7 +486,7 @@ const Header: React.FC = () => {
     <>
       {/* Top Bar */}
       <div className="w-full bg-gray-900 text-gray-100 text-xs">
-        <div className="w-full px-0 md:pr-6 md:pl-0 py-3.5 md:py-1 flex items-center gap-3 flex-wrap justify-center md:justify-start" dir="rtl">
+        <div className="w-full px-0 md:pr-6 md:pl-0 py-2 md:py-1 flex items-center gap-3 flex-wrap justify-center md:justify-start" dir="rtl">
           <span className="flex items-center gap-2">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>
@@ -1184,7 +1184,9 @@ const Header: React.FC = () => {
           <div className="absolute left-[6px] top-1/2 -translate-y-1/2 md:left-1/2 md:-translate-x-1/2 select-none z-10">
             <Link href="/" aria-label="דף הבית" className="select-none" onClick={() => vibrate(30)}>
               <span className="text-[34px] md:text-[44px] font-serif font-prosto font-semibold tracking-widest text-[#1a1a2e] uppercase">
-                ASCENSO
+                ASCEN
+                <span className="font-normal">S</span>
+                O
               </span>
             </Link>
           </div>
@@ -1364,7 +1366,7 @@ const Header: React.FC = () => {
           </div>
         </div>
         {/* Category navigation */}
-        <nav className="w-full flex justify-between md:justify-center gap-1 md:gap-8 py-1 bg-[#1a1a2e] md:bg-white overflow-x-hidden px-1" dir="rtl">
+        <nav className="w-full flex justify-between md:justify-center gap-1 md:gap-8 py-0.5 md:py-1 bg-[#1a1a2e] md:bg-white overflow-x-hidden px-1" dir="rtl">
           {categories.map(cat => (
             <a
               key={cat.label}

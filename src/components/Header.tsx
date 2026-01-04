@@ -1186,7 +1186,7 @@ const Header: React.FC = () => {
               <span className="text-[34px] md:text-[44px] font-serif font-prosto font-semibold tracking-widest text-[#1a1a2e] uppercase">
                 ASCEN
                 <span style={{ fontWeight: 170 }}>S</span>
-                O
+                <span style={{ fontWeight: 170 }}>O</span>
               </span>
             </Link>
           </div>

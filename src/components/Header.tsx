@@ -476,7 +476,7 @@ const Header: React.FC = () => {
     <>
       {/* Top Bar */}
       <div className="w-full bg-gray-900 text-gray-100 text-xs">
-        <div className="mx-auto px-4 py-1 flex items-center justify-end gap-5">
+        <div className="max-w-7xl mx-auto px-3 py-1 flex items-center justify-center gap-3 flex-wrap">
           <span className="flex items-center gap-2">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>
@@ -1144,7 +1144,7 @@ const Header: React.FC = () => {
 
       {/* Main Header */}
       <header className="w-full bg-white shadow flex flex-col items-center" suppressHydrationWarning>
-        <div className="w-full flex items-center px-8 py-3">
+        <div className="w-full flex items-center px-4 md:px-8 py-3">
           {/* left - phone and links */}
           <div className="flex-1 flex items-center space-x-6 text-gray-700 text-sm min-w-0">
             <a
@@ -1173,7 +1173,7 @@ const Header: React.FC = () => {
           {/* center - centered logo */}
           <div className="absolute left-1/2 transform -translate-x-1/2 select-none">
             <Link href="/" aria-label="דף הבית" className="select-none">
-              <span className="text-[44px] font-serif font-prosto font-semibold tracking-widest text-[#1a1a2e] uppercase">
+              <span className="text-[34px] md:text-[44px] font-serif font-prosto font-semibold tracking-widest text-[#1a1a2e] uppercase">
                 ASCENSO
               </span>
             </Link>
@@ -1324,12 +1324,12 @@ const Header: React.FC = () => {
           </div>
         </div>
         {/* Category navigation */}
-        <nav className="w-full flex justify-center space-x-8 py-1 bg-white" dir="rtl">
+        <nav className="w-full flex justify-center space-x-8 py-1 bg-white overflow-x-auto no-scrollbar px-2" dir="rtl">
           {categories.map(cat => (
             <a
               key={cat.label}
               href={cat.href}
-              className={`text-sm font-semibold tracking-wide relative group rounded-md px-3 py-1 transition-colors ${
+              className={`whitespace-nowrap text-sm font-semibold tracking-wide relative group rounded-md px-3 py-1 transition-colors ${
                 isActive(cat.href)
                   ? 'bg-gray-200 text-[#1a1a2e]'
                   : 'text-gray-700 hover:bg-gray-50'

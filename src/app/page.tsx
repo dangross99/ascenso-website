@@ -569,7 +569,7 @@ export default function Home() {
             </button>
           </div>
           <div className="text-center mt-12" dir="rtl">
-            <a href="/materials" className="inline-block px-12 py-3 border border-gray-900 text-gray-900 text-sm font-bold tracking-widest hover:bg-gray-900 hover:text-white transition-colors duration-300">
+            <a href="/materials" className="inline-block w-full sm:w-auto px-12 py-3 border border-gray-900 text-gray-900 text-sm font-bold tracking-widest hover:bg-gray-900 hover:text-white transition-colors duration-300">
               לכל הטקסטורות
             </a>
           </div>
@@ -764,7 +764,7 @@ export default function Home() {
             href={`https://api.whatsapp.com/send?phone=972539994995&text=${encodeURIComponent('*ASCENSO*\nהיי! ראיתי את האתר ואני מעוניינ/ת להתקדם.\nאשמח לשיחת ייעוץ קצרה ולקבל פרטים נוספים. תודה!')}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block bg-[#25D366] text-[#0b1a13] font-bold text-sm px-6 py-3 rounded-full shadow-lg hover:brightness-95 transition-all duration-300 hover:shadow-xl"
+            className="inline-block w-full sm:w-auto bg-[#25D366] text-[#0b1a13] font-bold text-sm px-6 py-3 rounded-full shadow-lg hover:brightness-95 transition-all duration-300 hover:shadow-xl"
             aria-label="צ'אט WhatsApp עם ASCENSO"
           >
             דברו איתנו ב‑WhatsApp

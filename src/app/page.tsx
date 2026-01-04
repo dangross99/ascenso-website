@@ -475,7 +475,7 @@ export default function Home() {
       {/* moved below to the former “הבטחת ASCENSO” position */}
 
       {/* טקסטורות מובילות */}
-      <section className="bg-white py-4 md:py-6">
+      <section className="bg-white mt-4 md:mt-6 py-4 md:py-6">
         <div className="container mx-auto px-1">
           
           <div className="relative">
@@ -492,17 +492,7 @@ export default function Home() {
                           className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
                         />
                       </div>
-                      <div className="text-center" dir="rtl">
-                        <h3 className="text-base font-medium text-gray-800 mb-1">{mat.name}</h3>
-                        {typeof mat.price === "number" ? (
-                          <p className="text-sm text-gray-500 mb-2">₪{mat.price.toLocaleString("he-IL")}</p>
-                        ) : null}
-                        <div className="mt-2">
-                          <span className="inline-block px-3 py-1 text-xs border rounded hover:bg-gray-50">
-                            לטקסטורה
-                          </span>
-                        </div>
-                      </div>
+                      
                     </a>
                   </div>
                 ))}
@@ -518,10 +508,7 @@ export default function Home() {
                           className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
                         />
                       </div>
-                      <div className="text-center">
-                          <h3 className="text-base font-medium text-gray-800 mb-1">{img.alt}</h3>
-                          <p className="text-sm text-gray-500 mb-2">€{img.price}</p>
-                      </div>
+                      
                     </div>
                   </div>
                 ))}

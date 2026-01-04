@@ -143,6 +143,21 @@ export default function Home() {
     (idx: number) => emblaApi2 && emblaApi2.scrollTo(idx),
     [emblaApi2]
   );
+  // Allow vertical wheel to scroll slides horizontally
+  React.useEffect(() => {
+    const el = document.getElementById("steps-viewport");
+    if (!el || !emblaApi2) return;
+    const onWheel = (e: WheelEvent) => {
+      // if vertical intent, move slider
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && Math.abs(e.deltaY) > 2) {
+        e.preventDefault();
+        if (e.deltaY > 0) emblaApi2.scrollNext();
+        else emblaApi2.scrollPrev();
+      }
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel as any);
+  }, [emblaApi2]);
 
   // Timeline visibility + count-up animation for durations
   const timelineRef = React.useRef<HTMLDivElement>(null);
@@ -652,7 +667,7 @@ export default function Home() {
       <section className="bg-white py-4 md:py-6" dir="rtl">
         <div className="w-full px-8 md:px-16 lg:px-24">
           <div className="relative">
-            <div className="overflow-hidden" ref={emblaRef2}>
+            <div className="overflow-hidden" ref={emblaRef2} id="steps-viewport">
               <div className="flex -ml-4">
                 {/* Slide 1 */}
                 <div className="flex-[0_0_85%] sm:flex-[0_0_60%] md:flex-[0_0_40%] lg:flex-[0_0_33%] pl-4">
@@ -664,7 +679,7 @@ export default function Home() {
                     </div>
                     <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">בחירת דגם וטקסטורה</h3>
                     <p className="text-gray-700 leading-relaxed text-base">נכנסים להדמייה LIVE, בוחרים צורה, חומר ומעקה.</p>
-                    <a href="/live" className="inline-flex items-center justify-center mt-6 px-8 py-3 rounded-full bg-[#1a1a2e] text-white uppercase tracking-[0.3em] text-sm">See More</a>
+                    
                   </div>
                 </div>
                 {/* Slide 2 */}
@@ -677,7 +692,7 @@ export default function Home() {
                     </div>
                     <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">מחיר מיידי</h3>
                     <p className="text-gray-700 leading-relaxed text-base">רואים את המחיר מתעדכן בזמן אמת לפי הבחירות שלכם.</p>
-                    <a href="/live" className="inline-flex items-center justify-center mt-6 px-8 py-3 rounded-full bg-[#1a1a2e] text-white uppercase tracking-[0.3em] text-sm">See More</a>
+                    
                   </div>
                 </div>
                 {/* Slide 3 */}
@@ -690,7 +705,7 @@ export default function Home() {
                     </div>
                     <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">תיאום מדידה בשטח</h3>
                     <p className="text-gray-700 leading-relaxed text-base">קובעים ביקור למדידה, התאמות וסגירת מפרט.</p>
-                    <a href="/live" className="inline-flex items-center justify-center mt-6 px-8 py-3 rounded-full bg-[#1a1a2e] text-white uppercase tracking-[0.3em] text-sm">See More</a>
+                    
                   </div>
                 </div>
                 {/* Slide 4 */}
@@ -703,7 +718,7 @@ export default function Home() {
                     </div>
                     <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">תכנון וייצור</h3>
                     <p className="text-gray-700 leading-relaxed text-base">מהנדס מלווה, תכנון מוקפד וייצור קפדני.</p>
-                    <a href="/live" className="inline-flex items-center justify-center mt-6 px-8 py-3 rounded-full bg-[#1a1a2e] text-white uppercase tracking-[0.3em] text-sm">See More</a>
+                    
                   </div>
                 </div>
                 {/* Slide 5 */}
@@ -716,7 +731,7 @@ export default function Home() {
                     </div>
                     <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">התקנה נקייה ומהירה</h3>
                     <p className="text-gray-700 leading-relaxed text-base">צוות התקנה מקצועי, עמידה בזמנים ותוצאה מושלמת.</p>
-                    <a href="/live" className="inline-flex items-center justify-center mt-6 px-8 py-3 rounded-full bg-[#1a1a2e] text-white uppercase tracking-[0.3em] text-sm">See More</a>
+                    
                   </div>
                 </div>
               </div>

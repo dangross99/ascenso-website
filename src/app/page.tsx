@@ -462,9 +462,9 @@ export default function Home() {
           <div className="flex flex-col w-full md:w-auto md:mr-auto">
             <a
               href="/live"
-              className="w-full md:w-auto mx-auto md:mx-0 px-7 py-3.5 bg-[#bfa980] text-[#1a1a2e] text-base md:text-lg font-bold shadow-lg hover:bg-[#a98e61] transition-all duration-300 hover:shadow-xl active:scale-[0.98]"
+              className="mx-auto md:mx-0 px-6 py-3 bg-white text-[#1a1a2e] text-base md:text-lg font-bold shadow-md hover:bg-gray-100 transition-all duration-300 active:scale-[0.98] rounded-md"
             >
-              פתח הדמייה LIVE
+              התחל הזמנה
             </a>
           </div>
         </div>
@@ -739,12 +739,12 @@ export default function Home() {
                 בהדמייה שלנו אתם בונים את המדרגות בזמן אמת: בוחרים צורה ,טקסטורות, חומרים, וסוג מעקה — זכוכית, מתכת או כבלי נירוסטה. תראו איך המדרגות זורמות בחלל, איך הפודסטים והפניות מתחברים טבעית והמעקה משלים את הקו — והמחיר מתעדכן בכל שינוי. אפשר לשמור הדמיות, לשתף ב‑WhatsApp ולקבוע מדידה בשטח — הכל במקום אחד.
               </p>
               
-              <a
+                  <a
                 href="/live"
                 className="inline-block bg-[#1a1a2e] text-white font-bold text-base md:text-lg px-6 md:px-8 py-3 md:py-4 shadow-lg hover:bg-[#bfa980] hover:text-[#1a1a2e] transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5"
-              >
+                  >
                 פתח הדמייה LIVE
-              </a>
+                  </a>
             </div>
           </div>
         </div>

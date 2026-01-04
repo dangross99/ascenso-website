@@ -431,7 +431,7 @@ export default function Home() {
     <div className="w-full bg-white overflow-x-hidden">
       {/* 1. Hero Section */}
       <section
-        className="relative w-screen min-h-[250px] md:min-h-[400px] lg:min-h-[500px] flex items-end bg-gray-50 overflow-hidden"
+        className="relative w-screen min-h-[320px] md:min-h-[400px] lg:min-h-[500px] flex items-end bg-gray-50 overflow-hidden"
         style={{ marginLeft: "calc(50% - 50vw)", width: "100vw" }}
       >
         {/* To change the hero image, update the HERO_IMAGE variable above */}
@@ -440,18 +440,18 @@ export default function Home() {
           style={{ backgroundImage: `url(${HERO_IMAGE})` }}
         ></div>
         {/* Overlay gradient for better text readability */}
-        <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-        <div className="relative z-10 w-full flex justify-between items-end px-6 md:px-14 lg:px-20 pb-10 md:pb-14 lg:pb-16" dir="rtl">
+        <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-black/70 via-black/25 to-transparent"></div>
+        <div className="relative z-10 w-full flex flex-col gap-3 justify-end items-stretch px-4 md:px-14 lg:px-20 pb-8 md:pb-14 lg:pb-16 md:flex-row md:items-end md:justify-between" dir="rtl">
           {/* Right side: Text (RTL) */}
-          <div className="text-right ml-auto w-[60%] max-w-none lg:whitespace-nowrap">
+          <div className="text-right w-full md:w-[60%] max-w-none lg:whitespace-nowrap">
             <h1
-              className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-4 leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]"
+              className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white mb-2 md:mb-4 leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]"
               style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
             >
               מדרגות מרחפות בהתאמה אישית
             </h1>
             <p
-              className="text-gray-100 text-base md:text-xl lg:text-2xl max-w-2xl"
+              className="text-gray-100 text-sm md:text-xl lg:text-2xl max-w-2xl"
               style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
             >
               בחרו צורה, טקסטורה ומעקה – וראו הכל בהדמייה LIVE עם חישוב מחיר משוער.
@@ -459,16 +459,16 @@ export default function Home() {
           </div>
 
           {/* Left side: Buttons */}
-          <div className="flex items-center gap-3 mr-auto">
+          <div className="flex flex-col gap-2 w-full md:w-auto md:flex-row md:gap-3 md:mr-auto">
             <a
               href="/live"
-              className="px-7 py-3 bg-[#bfa980] text-[#1a1a2e] text-base md:text-lg font-bold shadow-lg hover:bg-[#a98e61] transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5"
+              className="w-full md:w-auto px-7 py-3.5 bg-[#bfa980] text-[#1a1a2e] text-base md:text-lg font-bold shadow-lg hover:bg-[#a98e61] transition-all duration-300 hover:shadow-xl active:scale-[0.98]"
             >
               פתח הדמייה LIVE
             </a>
             <a
               href="/materials"
-              className="px-7 py-3 bg-transparent text-white text-base md:text-lg font-semibold transition-all duration-300 border-2 border-white hover:bg-white hover:text-gray-900"
+              className="w-full md:w-auto px-7 py-3.5 bg-transparent text-white text-base md:text-lg font-semibold transition-all duration-300 border-2 border-white hover:bg-white hover:text-gray-900 active:scale-[0.98]"
             >
               טקסטורות
             </a>

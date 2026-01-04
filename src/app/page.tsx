@@ -659,11 +659,29 @@ export default function Home() {
         </div>
 
         <style jsx>{`
+          .hero-type {
+            display: inline-block;
+            white-space: nowrap;
+            overflow: hidden;
+            border-inline-end: 2px solid rgba(255, 255, 255, 0.9);
+            width: 0ch;
+            animation:
+              typing 3.2s steps(12, end) infinite alternate,
+              caret 0.8s step-end infinite;
+          }
+          @keyframes typing {
+            from { width: 0ch; }
+            to { width: var(--w); }
+          }
+          @keyframes caret {
+            50% { border-color: transparent; }
+          }
           .materials-group .materials-col {
             flex: 1 1 0%;
             transition: flex 400ms ease, transform 400ms ease;
           }
           @media (min-width: 768px) {
+            .hero-type { border-inline-end-width: 3px; }
             .materials-group:hover .materials-col {
               flex: 1 1 0%;
             }

@@ -490,14 +490,21 @@ export default function Home() {
             </a>
           </div>
         </div>
-        <style jsx>{`
+        <style jsx global>{`
+          /* Hide horizontal scrollbar across browsers for the steps viewport */
           #steps-viewport {
-            -ms-overflow-style: none; /* IE and Edge */
+            -ms-overflow-style: none; /* IE/Edge */
             scrollbar-width: none; /* Firefox */
           }
           #steps-viewport::-webkit-scrollbar {
-            display: none; /* Chrome, Safari */
-            height: 0;
+            width: 0px;
+            height: 0px;
+            background: transparent;
+          }
+          #steps-viewport::-webkit-scrollbar-thumb {
+            background: transparent;
+          }
+          #steps-viewport::-webkit-scrollbar-track {
             background: transparent;
           }
         `}</style>

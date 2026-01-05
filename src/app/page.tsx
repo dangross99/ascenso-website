@@ -103,6 +103,7 @@ function StairsPreview() {
 
   const totalX = firstRunSteps * run;
   const totalZ = secondRunSteps * run;
+  const eps = 0.002;            // הפרדה זעירה למניעת חפיפה חזותית
 
   return (
     <group position={[-totalX * 0.45, 0, totalZ * 0.25]}>
@@ -116,7 +117,15 @@ function StairsPreview() {
       ))}
 
       {/* Landing (square 0.90 x 0.90) */}
-      <mesh position={[firstRunSteps * run, firstRunSteps * rise, 0]} castShadow>
+      <mesh
+        position={[
+          // הנחה: הפודסט מתחיל בדיוק אחרי קצה המדרגה האחרונה + רווח זעיר
+          firstRunSteps * run - run / 2 + treadWidth / 2 + eps,
+          firstRunSteps * rise,
+          0,
+        ]}
+        castShadow
+      >
         {/* X = width, Y = thickness, Z = width */}
         <boxGeometry args={[treadWidth, treadThickness, treadWidth]} />
         <meshStandardMaterial color="#b08d57" />
@@ -126,7 +135,13 @@ function StairsPreview() {
       {Array.from({ length: secondRunSteps }).map((_, j) => (
         <mesh
           key={`s2-${j}`}
-          position={[firstRunSteps * run, firstRunSteps * rise + j * rise, -(j + 1) * run]}
+          position={[
+            // אותו X של מרכז הפודסט
+            firstRunSteps * run - run / 2 + treadWidth / 2 + eps,
+            firstRunSteps * rise + j * rise,
+            // התחלה אחרי קצה הפודסט בציר Z + רווח זעיר, ואז כל מדרגה בריצה קבועה
+            -(treadWidth / 2 + run / 2 + eps) - j * run,
+          ]}
           castShadow
         >
           {/* X = width, Y = thickness, Z = run */}

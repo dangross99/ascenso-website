@@ -658,7 +658,7 @@ export default function Home() {
             <div className="overflow-hidden" ref={emblaRef}>
               <div className="flex -ml-4 md:-ml-8">
                 {(topMaterials.length ? topMaterials : []).map((mat, index) => (
-                <div className="flex-[0_0_34%] sm:flex-[0_0_28%] md:flex-[0_0_22%] lg:flex-[0_0_18%] pl-4 md:pl-8" key={mat.id ?? index}>
+                <div className="flex-[0_0_45%] sm:flex-[0_0_28%] md:flex-[0_0_22%] lg:flex-[0_0_18%] pl-4 md:pl-8" key={mat.id ?? index}>
                     <a href="/materials" className="block group">
                     <div className="relative overflow-hidden aspect-[3/4] rounded-lg md:rounded-xl mb-3 md:mb-5 shadow-sm transition-transform duration-300 group-hover:scale-[1.03]">
                         <Image
@@ -674,7 +674,7 @@ export default function Home() {
                 ))}
                 {!topMaterials.length &&
                   images.map((img, index) => (
-                  <div className="flex-[0_0_34%] sm:flex-[0_0_28%] md:flex-[0_0_22%] lg:flex-[0_0_18%] pl-4 md:pl-8" key={`fallback-${index}`}>
+                  <div className="flex-[0_0_45%] sm:flex-[0_0_28%] md:flex-[0_0_22%] lg:flex-[0_0_18%] pl-4 md:pl-8" key={`fallback-${index}`}>
                     <div className="block group">
                       <div className="relative overflow-hidden aspect-[3/4] rounded-lg md:rounded-xl mb-3 md:mb-5 shadow-sm transition-transform duration-300 group-hover:scale-[1.03]">
                         <Image
@@ -735,7 +735,7 @@ export default function Home() {
               </>
             )}
           </div>
-          <div className="text-center mt-12" dir="rtl">
+          <div className="text-center mt-6 md:mt-8" dir="rtl">
             <a
               href="/materials"
               className="inline-block px-12 py-3 bg-[#1a1a2e] text-white text-sm font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90"
@@ -746,65 +746,72 @@ export default function Home() {
         </div>
       </section>
 
-      {/* High-end Materials Section – placed where “הבטחת ASCENSO” was */}
-      <section className="w-full py-4 md:py-6" dir="rtl">
+      {/* High-end Materials Section – “swatch” cards with overlay text */}
+      <section className="w-full py-4 md:py-8" dir="rtl">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
-          {/* Columns */}
-          <div className="materials-group flex flex-col md:flex-row gap-3 md:gap-4 h-[828px] md:h-[966px]">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             {/* Stone */}
-            <div className="materials-col relative overflow-hidden group focus:outline-none focus:ring-2 focus:ring-[#C5A059]">
-              {/* Stone: image full */}
-              <div className="absolute inset-0 overflow-hidden">
+            <a href="/materials?cat=stone" className="group block focus:outline-none focus:ring-2 focus:ring-[#C5A059] rounded-3xl">
+              <div className="relative rounded-3xl overflow-hidden shadow-xl ring-1 ring-black/5 bg-[#EFEFEF]">
                 <img
                   src="/images/products/white-onyx.jpg"
-                  alt="Marble placeholder"
-                  className="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                  alt="אבן טבעית"
+                  className="h-[360px] md:h-[520px] w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                 />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/45 via-black/15 to-transparent pointer-events-none" />
+                <div className="absolute inset-y-0 left-0 p-5 md:p-7 flex flex-col justify-center text-white max-w-[65%] gap-3">
+                  <div className="text-2xl md:text-3xl font-extrabold leading-tight tracking-tight">אלגנטיות טבעית</div>
+                  <p className="text-xs md:text-sm text-white/85 leading-relaxed">
+                    המקור לצורה. מגולף בטבע. מרקמים אותנטיים בגימור על־זמני.
+                  </p>
+                  <span className="mt-1 inline-flex w-max items-center gap-2 border border-white/70 text-white/95 px-3 py-2 rounded-md text-[11px] md:text-xs font-bold tracking-widest uppercase transition-colors hover:bg-white/10">
+                    גלו את האבן
+                  </span>
+                </div>
               </div>
-            </div>
-
+            </a>
             {/* Wood */}
-            <div className="materials-col relative overflow-hidden group focus:outline-none focus:ring-2 focus:ring-[#C5A059]">
-              {/* Wood: image full */}
-              <div className="absolute inset-0 overflow-hidden">
+            <a href="/materials?cat=wood" className="group block focus:outline-none focus:ring-2 focus:ring-[#C5A059] rounded-3xl">
+              <div className="relative rounded-3xl overflow-hidden shadow-xl ring-1 ring-black/5 bg-[#EFEFEF]">
                 <img
                   src="/images/products/travertine-wall.jpg"
-                  alt="Oak wood placeholder"
-                  className="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                  alt="עץ טבעי"
+                  className="h-[360px] md:h-[520px] w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                 />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/45 via-black/15 to-transparent pointer-events-none" />
+                <div className="absolute inset-y-0 left-0 p-5 md:p-7 flex flex-col justify-center text-white max-w-[65%] gap-3">
+                  <div className="text-2xl md:text-3xl font-extrabold leading-tight tracking-tight">חום טבעי</div>
+                  <p className="text-xs md:text-sm text-white/85 leading-relaxed">
+                    טקסטורות עץ חיות ועמוקות — איזון בין דיוק וגולמיות.
+                  </p>
+                  <span className="mt-1 inline-flex w-max items-center gap-2 border border-white/70 text-white/95 px-3 py-2 rounded-md text-[11px] md:text-xs font-bold tracking-widest uppercase transition-colors hover:bg-white/10">
+                    גלו את העץ
+                  </span>
+                </div>
               </div>
-            </div>
-
+            </a>
             {/* Metal */}
-            <div className="materials-col relative overflow-hidden group focus:outline-none focus:ring-2 focus:ring-[#C5A059]">
-              {/* Metal: image full */}
-              <div className="absolute inset-0 overflow-hidden">
+            <a href="/materials?cat=metal" className="group block focus:outline-none focus:ring-2 focus:ring-[#C5A059] rounded-3xl">
+              <div className="relative rounded-3xl overflow-hidden shadow-xl ring-1 ring-black/5 bg-[#EFEFEF]">
                 <img
                   src="/images/products/nero-marquina.jpg"
-                  alt="Brushed metal placeholder"
-                  className="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                  alt="מתכת"
+                  className="h-[360px] md:h-[520px] w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                 />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/45 via-black/15 to-transparent pointer-events-none" />
+                <div className="absolute inset-y-0 left-0 p-5 md:p-7 flex flex-col justify-center text-white max-w-[65%] gap-3">
+                  <div className="text-2xl md:text-3xl font-extrabold leading-tight tracking-tight">דיוק מתכתי</div>
+                  <p className="text-xs md:text-sm text-white/85 leading-relaxed">
+                    פלדה, אלומיניום ונירוסטה במרקמים נקיים ועמידים.
+                  </p>
+                  <span className="mt-1 inline-flex w-max items-center gap-2 border border-white/70 text-white/95 px-3 py-2 rounded-md text-[11px] md:text-xs font-bold tracking-widest uppercase transition-colors hover:bg-white/10">
+                    גלו את המתכת
+                  </span>
+                </div>
               </div>
-            </div>
+            </a>
           </div>
-
-          {/* Social proof ticker removed per request */}
         </div>
-
-        <style jsx>{`
-          .materials-group .materials-col {
-            flex: 1 1 0%;
-            transition: flex 400ms ease, transform 400ms ease;
-          }
-          @media (min-width: 768px) {
-            .materials-group:hover .materials-col {
-              flex: 1 1 0%;
-            }
-            .materials-group .materials-col:hover {
-              flex: 1.35 1 0%;
-            }
-          }
-        `}</style>
       </section>
 
       {/* 4.5. Premium Collections Section (removed per request) */}

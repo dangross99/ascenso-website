@@ -277,6 +277,19 @@ export default function Home() {
     return () => el.removeEventListener("scroll", onScroll);
   }, []);
 
+  // שליטת מבט התחלתית לתצוגת התלת־ממד הקטנה (כך שהזווית ההתחלתית תהיה “בול”)
+  const previewOrbitRef = React.useRef<any>(null);
+  React.useEffect(() => {
+    const c = previewOrbitRef.current;
+    if (!c) return;
+    try {
+      // זווית התחלה: אזימוט אלכסוני ופולר בינוני‑נמוך, מרכז מבט כפי שהוגדר ב-target
+      c.setAzimuthalAngle(-0.85); // סיבוב אופקי (רדיאנים): שלילי = ימינה
+      c.setPolarAngle(1.0);       // זווית אנכית (רדיאנים): קטן יותר = גבוה יותר
+      c.update();
+    } catch {}
+  }, []);
+
   // Timeline visibility + count-up animation for durations
   const timelineRef = React.useRef<HTMLDivElement>(null);
   const [tlActive, setTlActive] = React.useState(false);
@@ -917,7 +930,13 @@ export default function Home() {
                   <directionalLight position={[6, 10, 4]} intensity={0.3} />
                   <directionalLight position={[-6, 8, -4]} intensity={0.22} />
                   <StairsPreview />
-                  <OrbitControls enablePan={false} enableZoom={false} rotateSpeed={0.6} target={[0, 1.1, 0.5]} />
+                  <OrbitControls
+                    ref={previewOrbitRef}
+                    enablePan={false}
+                    enableZoom={false}
+                    rotateSpeed={0.6}
+                    target={[0, 1.1, 0.5]}
+                  />
                 </Canvas>
               </div>
                 </div>

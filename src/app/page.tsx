@@ -606,7 +606,7 @@ export default function Home() {
               className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white mb-2 md:mb-4 leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]"
               style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
             >
-              מדרגות מרחפות
+              ASCENSO
             </h1>
             <p
               className="text-gray-100 text-sm md:text-xl lg:text-2xl max-w-2xl"
@@ -620,7 +620,7 @@ export default function Home() {
           <div className="flex flex-col w-full md:w-auto md:mr-auto">
             <a
               href="/live"
-              className="mx-auto md:mx-0 px-6 py-2 bg-white/80 text-[#1a1a2e]/90 text-base md:text-lg font-semibold shadow-sm hover:bg-white/70 transition-all duration-300 active:scale-[0.98] rounded-md border border-white/40"
+              className="mx-auto md:mx-0 px-6 py-2 bg-white/50 text-[#1a1a2e]/80 text-base md:text-lg font-semibold shadow-sm hover:bg-white/40 transition-all duration-300 active:scale-[0.98] rounded-md border border-white/40"
             >
               התחל הזמנה
             </a>

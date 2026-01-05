@@ -92,17 +92,49 @@ type MaterialRecord = {
 
 // קומפוננטה קלה לתצוגת מדרגות תלת‑ממד בלי קובץ (פרוצדורלי)
 function StairsPreview() {
-  const steps = 12;
-  const treadW = 0.9;
-  const treadH = 0.08;
-  const treadD = 2.0;
-  const rise = 0.16;
-  const run = 0.45;
+  // Preset: 10 steps → landing (right) → 5 steps, long/thick box look
+  const firstRunSteps = 10;
+  const secondRunSteps = 5;
+  const treadWidth = 0.9;    // רוחב המדרגה
+  const treadHeight = 0.11;  // עובי (תיבה "ארוכה"/עבה)
+  const treadDepth = 2.4;    // עומק ארוך
+  const rise = 0.16;         // רום
+  const run = 0.45;          // שליבה אופקית
+
+  const totalX = firstRunSteps * run;
+  const totalZ = secondRunSteps * run;
+
   return (
-    <group position={[-(steps * run) / 2, 0, 0]}>
-      {Array.from({ length: steps }).map((_, i) => (
-        <mesh key={i} position={[i * run, i * rise, 0]} castShadow>
-          <boxGeometry args={[treadW, treadH, treadD]} />
+    <group position={[-totalX * 0.45, 0, totalZ * 0.25]}>
+      {/* First straight segment (X direction) */}
+      {Array.from({ length: firstRunSteps }).map((_, i) => (
+        <mesh key={`s1-${i}`} position={[i * run, i * rise, 0]} castShadow>
+          <boxGeometry args={[treadWidth, treadHeight, treadDepth]} />
+          <meshStandardMaterial color="#C8A165" />
+        </mesh>
+      ))}
+
+      {/* Landing (square-ish platform) */}
+      <mesh
+        position={[firstRunSteps * run, firstRunSteps * rise, 0]}
+        castShadow
+      >
+        <boxGeometry args={[treadWidth + 0.6, treadHeight, treadDepth + 0.6]} />
+        <meshStandardMaterial color="#b08d57" />
+      </mesh>
+
+      {/* Second straight segment, turned "right" (negative Z) */}
+      {Array.from({ length: secondRunSteps }).map((_, j) => (
+        <mesh
+          key={`s2-${j}`}
+          position={[
+            firstRunSteps * run,
+            firstRunSteps * rise + j * rise,
+            -(j + 1) * run,
+          ]}
+          castShadow
+        >
+          <boxGeometry args={[treadWidth, treadHeight, treadDepth]} />
           <meshStandardMaterial color="#C8A165" />
         </mesh>
       ))}

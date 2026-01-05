@@ -290,6 +290,9 @@ export default function Home() {
     } catch {}
   }, []);
 
+  // רמז אינטראקטיביות לתלת‑ממד – כפתור “סיבוב”
+  const [show3DHint, setShow3DHint] = React.useState(true);
+
   // Timeline visibility + count-up animation for durations
   const timelineRef = React.useRef<HTMLDivElement>(null);
   const [tlActive, setTlActive] = React.useState(false);
@@ -923,7 +926,7 @@ export default function Home() {
           <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* תלת‑ממד קליל (בלי קובץ) */}
             <div className="order-1 lg:order-2">
-              <div className="relative h-[220px] md:h-[260px] bg-transparent overflow-hidden rounded">
+              <div className="relative h-[220px] md:h-[260px] bg-transparent overflow-hidden rounded" onPointerDown={() => setShow3DHint(false)}>
                 <Canvas camera={{ position: [3, 7, 1.7], fov: 23 }} dpr={[1, 2]} gl={{ alpha: true, toneMappingExposure: 1.2 }} style={{ background: 'transparent' }}>
                   <hemisphereLight args={['#ffffff', '#d4d4d4', 0.95]} />
                   <ambientLight intensity={0.8} />
@@ -938,6 +941,20 @@ export default function Home() {
                     target={[0, 1.1, 0.5]}
                   />
                 </Canvas>
+                {show3DHint && (
+                  <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
+                    <button
+                      type="button"
+                      onClick={() => setShow3DHint(false)}
+                      className="pointer-events-auto w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#1a1a2e]/85 text-white shadow-lg hover:bg-[#1a1a2e] transition-colors flex items-center justify-center animate-pulse"
+                      aria-label="לחץ כדי להתחיל לסובב"
+                    >
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 6v3l4-4-4-4v3C6.48 4 2 8.48 2 14c0 2.08.64 4 1.73 5.59l1.46-1.46A7.94 7.94 0 0 1 4 14c0-4.42 3.58-8 8-8Zm8.27-1.59L18.81 5.87A7.94 7.94 0 0 1 20 14c0 4.42-3.58 8-8 8v-3l-4 4 4 4v-3c5.52 0 10-4.48 10-10 0-2.08-.64-4-1.73-5.59Z" fill="currentColor"/>
+                      </svg>
+                    </button>
+                  </div>
+                )}
               </div>
                 </div>
             {/* טקסט */}

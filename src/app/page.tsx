@@ -122,6 +122,13 @@ function StairsPreview() {
   const totalX = firstRunSteps * run;
   const totalZ = secondRunTotalSteps * run;
   const eps = 0.002;            // הפרדה זעירה למניעת חפיפה חזותית
+  // פרמטרים לכבלי נירוסטה
+  const cableColor = "#c7ccd1";
+  const cableRadius = 0.005;
+  const cableSegments = 12;
+  const cableSideGap = 0.01; // מרחק מהקצה הצדדי (1 ס"מ)
+  const cableInlineOffset = 0.10; // מרווח בין כבלים על גבי כל מדרגה (10 ס"מ)
+  const cableTopY = (firstRunSteps + secondRunSteps) * rise + 1.0; // גובה סופי לאנכי הכבל
 
   return (
     <group position={[-totalX * 0.45, 0, totalZ * 0.25]}>
@@ -133,6 +140,21 @@ function StairsPreview() {
           <meshStandardMaterial map={woodMap} color="#ffffff" metalness={0.05} roughness={0.85} />
         </mesh>
       ))}
+      {/* כבלי נירוסטה למקטע הראשון (על ציר X) – 3 כבלים לכל מדרגה בצד החיצוני (+Z) */}
+      {Array.from({ length: firstRunSteps }).map((_, i) => {
+        const stepTop = i * rise + treadThickness / 2;
+        const spanH = Math.max(0.05, cableTopY - stepTop);
+        const yCenter = stepTop + spanH / 2;
+        const z = (treadWidth / 2) + cableSideGap;
+        const xCenter = i * run;
+        const offsets = [-cableInlineOffset, 0, cableInlineOffset];
+        return offsets.map((off, k) => (
+          <mesh key={`s1-cable-${i}-${k}`} position={[xCenter + off, yCenter, z]} castShadow receiveShadow>
+            <cylinderGeometry args={[cableRadius, cableRadius, spanH, cableSegments]} />
+            <meshStandardMaterial color={cableColor} metalness={1.0} roughness={0.35} envMapIntensity={0.6} />
+          </mesh>
+        ));
+      })}
 
       {/* Landing (square 0.90 x 0.90) */}
       <mesh
@@ -168,6 +190,21 @@ function StairsPreview() {
           <meshStandardMaterial map={woodMap} color="#ffffff" metalness={0.05} roughness={0.85} />
         </mesh>
       ))}
+      {/* כבלי נירוסטה למקטע השני (על ציר Z) – 3 כבלים לכל מדרגה בצד החיצוני (+X) */}
+      {Array.from({ length: secondRunSteps }).map((_, j) => {
+        const stepTop = (firstRunSteps * rise) + (j + 1) * rise + treadThickness / 2;
+        const spanH = Math.max(0.05, cableTopY - stepTop);
+        const yCenter = stepTop + spanH / 2;
+        const xBase = firstRunSteps * run - run / 2 + treadWidth / 2 + eps + (treadWidth / 2) + cableSideGap;
+        const zCenter = (treadWidth / 2 + run / 2 + eps) + j * run;
+        const offsets = [-cableInlineOffset, 0, cableInlineOffset];
+        return offsets.map((off, k) => (
+          <mesh key={`s2-cable-${j}-${k}`} position={[xBase, yCenter, zCenter + off]} castShadow receiveShadow>
+            <cylinderGeometry args={[cableRadius, cableRadius, spanH, cableSegments]} />
+            <meshStandardMaterial color={cableColor} metalness={1.0} roughness={0.35} envMapIntensity={0.6} />
+          </mesh>
+        ));
+      })}
     </group>
   );
 }

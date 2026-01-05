@@ -9,7 +9,7 @@ import { TextureLoader, SRGBColorSpace, ClampToEdgeWrapping, LinearFilter } from
 // 3D demo imports הוסרו
 
 // HERO IMAGE PATH - change this path to update the hero image
-const HERO_IMAGE = "/images/hero.jpg"; // Local optimized hero image
+const HERO_IMAGE = "/images/hero1.jpg"; // Local optimized hero image
 
 // נתוני דמו ישנים (נשארים לגיבוי אם אין materials.json)
 const images = [

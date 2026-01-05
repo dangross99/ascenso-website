@@ -283,9 +283,9 @@ export default function Home() {
     const c = previewOrbitRef.current;
     if (!c) return;
     try {
-      // זווית התחלה: אזימוט אלכסוני ופולר בינוני‑נמוך, מרכז מבט כפי שהוגדר ב-target
-      c.setAzimuthalAngle(-0.85); // סיבוב אופקי (רדיאנים): שלילי = ימינה
-      c.setPolarAngle(1.0);       // זווית אנכית (רדיאנים): קטן יותר = גבוה יותר
+			// זווית התחלה "פרונט" (מבטים מהחזית): אזימוט 0 ופולר מעט מעל האופק
+			c.setAzimuthalAngle(0);     // 0 ≈ מבט חזיתי (לא באלכסון)
+			c.setPolarAngle(1.08);      // מעט מעל האופק כדי לראות את המדרגה העליונה
       c.update();
     } catch {}
   }, []);

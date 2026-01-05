@@ -27,6 +27,10 @@ body {
 
 /* Force all Tailwind whites to brand light-gray */
 .bg-white { background-color: #EFEFEF !important; }
+.bg-white\/80 { background-color: rgba(239,239,239,0.8) !important; }
+.hover\:bg-white:hover { background-color: #EFEFEF !important; }
+.hover\:bg-white\/70:hover { background-color: rgba(239,239,239,0.7) !important; }
+.border-white\/40 { border-color: rgba(239,239,239,0.4) !important; }
 .bg-gray-50, .bg-gray-100, .bg-gray-200 { background-color: #EFEFEF !important; }
 
 /* Brand font utility */

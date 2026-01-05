@@ -485,7 +485,7 @@ const Header: React.FC = () => {
   return (
     <>
       {/* Top Bar */}
-      <div className="w-full bg-gray-900 text-gray-100 text-xs">
+      <div className="w-full bg-[#1a1a2e] text-white text-xs">
         <div className="w-full px-0 md:pr-6 md:pl-0 py-2 md:py-1 flex items-center gap-3 flex-wrap justify-center md:justify-start" dir="rtl">
           <span className="flex items-center gap-2">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -493,14 +493,14 @@ const Header: React.FC = () => {
             </svg>
             <span>אחריות יצרן</span>
           </span>
-          <span className="hidden sm:inline text-gray-500">|</span>
+          <span className="hidden sm:inline text-white/50">|</span>
           <span className="flex items-center gap-2">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h3l4 4v4a2 2 0 0 1-2 2h-3"/><circle cx="5.5" cy="19.5" r="1.5"/><circle cx="18.5" cy="19.5" r="1.5"/>
             </svg>
             <span>אספקה מהירה</span>
           </span>
-          <span className="hidden sm:inline text-gray-500">|</span>
+          <span className="hidden sm:inline text-white/50">|</span>
           <span className="flex items-center gap-2">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M21 10c0 6-9 12-9 12S3 16 3 10a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/>
@@ -1153,10 +1153,10 @@ const Header: React.FC = () => {
       {/* Removed Virtual Appointment for simple site */}
 
       {/* Main Header */}
-      <header className="w-full bg-[#1a1a2e] shadow flex flex-col items-center" suppressHydrationWarning>
+      <header className="w-full bg-white shadow flex flex-col items-center" suppressHydrationWarning>
         <div className="w-full relative grid grid-cols-3 items-center px-0 md:px-8 pt-8 pb-7 md:py-3">
           {/* left - phone and links */}
-          <div className="hidden md:flex items-center space-x-4 md:space-x-6 text-white text-sm min-w-0 justify-start md:col-start-1 md:justify-self-start">
+          <div className="hidden md:flex items-center space-x-4 md:space-x-6 text-gray-700 text-sm min-w-0 justify-start md:col-start-1 md:justify-self-start">
             <a
               href={`https://api.whatsapp.com/send?phone=972539994995&text=${whatsappMessage}`}
               target="_blank"
@@ -1371,7 +1371,9 @@ const Header: React.FC = () => {
             <a
               key={cat.label}
               href={cat.href}
-              className={`whitespace-nowrap text-[13px] md:text-sm font-semibold tracking-tight md:tracking-wide relative group rounded-md px-1 md:px-3 py-1 transition-all duration-150 active:scale-95 select-none touch-manipulation text-white`}
+              className={`whitespace-nowrap text-[13px] md:text-sm font-semibold tracking-tight md:tracking-wide relative group rounded-md px-1 md:px-3 py-1 transition-all duration-150 active:scale-95 select-none touch-manipulation ${
+                isActive(cat.href) ? 'text-white bg-white/10' : 'text-white hover:bg-white/10'
+              }`}
               onClick={() => vibrate(20)}
             >
               {cat.label}

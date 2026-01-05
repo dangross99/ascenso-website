@@ -490,6 +490,17 @@ export default function Home() {
             </a>
           </div>
         </div>
+        <style jsx>{`
+          #steps-viewport {
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+          }
+          #steps-viewport::-webkit-scrollbar {
+            display: none; /* Chrome, Safari */
+            height: 0;
+            background: transparent;
+          }
+        `}</style>
       </section>
       
 

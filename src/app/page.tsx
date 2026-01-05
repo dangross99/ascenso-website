@@ -195,7 +195,8 @@ function StairsPreview() {
         const stepTop = (firstRunSteps * rise) + (j + 1) * rise + treadThickness / 2;
         const spanH = Math.max(0.05, cableTopY - stepTop);
         const yCenter = stepTop + spanH / 2;
-        const xBase = firstRunSteps * run - run / 2 + treadWidth / 2 + eps + (treadWidth / 2) + cableSideGap;
+        // צד ההפוך: במקום +X, נעבור ל- X שלילי
+        const xBase = firstRunSteps * run - run / 2 + treadWidth / 2 + eps - (treadWidth / 2) - cableSideGap;
         const zCenter = (treadWidth / 2 + run / 2 + eps) + j * run;
         const offsets = [-cableInlineOffset, 0, cableInlineOffset];
         return offsets.map((off, k) => (

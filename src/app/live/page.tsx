@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Canvas, useLoader } from '@react-three/fiber';
 import { OrbitControls, Environment } from '@react-three/drei';
 import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, BufferGeometry, Float32BufferAttribute, Cache } from 'three';
+import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 
 // הפעלת קאש של three עבור טעינות חלקות
 Cache.enabled = true;
@@ -1956,6 +1957,29 @@ function LivePageInner() {
 		return () => { cancelled = true; };
 	}, [railing, cableId, cableOptions]);
 
+	// ייצוא GLB של כל המודל (מדרגות + מעקה)
+	const stairsRef = React.useRef<any>(null);
+	const exportGlb = React.useCallback(() => {
+		try {
+			if (!stairsRef.current) return;
+			const exporter = new GLTFExporter();
+			exporter.parse(
+				stairsRef.current,
+				(glb: ArrayBuffer) => {
+					const blob = new Blob([glb], { type: 'model/gltf-binary' });
+					const url = URL.createObjectURL(blob);
+					const a = document.createElement('a');
+					a.href = url;
+					a.download = `ascenso-stairs-${Date.now()}.glb`;
+					document.body.appendChild(a);
+					a.click();
+					a.remove();
+					setTimeout(() => URL.revokeObjectURL(url), 1500);
+				},
+				{ binary: true }
+			);
+		} catch {}
+	}, []);
 	const activeModel =
 		activeMaterial === 'wood' ? woodModels.find(m => m.id === activeModelId) || woodModels[0] : undefined;
 
@@ -2309,7 +2333,9 @@ function LivePageInner() {
 								shadow-normalBias={0.02}
 								shadow-bias={-0.0002}
 							/>
-							<Staircase3D
+							{/* עוטפים את כל מודל המדרגות בקבוצת export */}
+							<group ref={stairsRef}>
+								<Staircase3D
 								shape={shape}
 								steps={steps}
 								color={COLOR_HEX[activeColor] || '#C8A165'}
@@ -2389,11 +2415,24 @@ function LivePageInner() {
 									const cfg = MODEL_CONFIG[activeTexId || ''] || DEFAULT_MODEL_CONFIG;
 									return cfg.bump;
 								})()}
-							/>
+								/>
+							</group>
 							{/* סביבת תאורה רכה */}
 							<Environment preset="apartment" />
 							<OrbitControls ref={orbitRef} enableDamping makeDefault zoomToCursor />
 						</Canvas>
+						{/* כפתור ייצוא GLB */}
+						<div className="pointer-events-none absolute top-3 right-3 z-20">
+							<button
+								type="button"
+								onClick={exportGlb}
+								className="pointer-events-auto bg-white/95 text-[#1a1a2e] rounded-full px-4 py-2 shadow border border-black/10 hover:bg-white"
+								title="ייצוא GLB"
+								aria-label="ייצוא GLB"
+							>
+								ייצוא GLB
+							</button>
+						</div>
 						{/* בלון מחיר בתוך הקונפיגטור – תמיד גלוי בתוך המסגרת */}
 						<div className="pointer-events-none absolute top-3 left-3 z-20">
 							<button

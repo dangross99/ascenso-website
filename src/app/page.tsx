@@ -138,7 +138,8 @@ function StairsPreview() {
           position={[
             // אותו X של מרכז הפודסט
             firstRunSteps * run - run / 2 + treadWidth / 2 + eps,
-            firstRunSteps * rise + j * rise,
+            // מתחילים גובה אחד מעל הפודסט, ואז ממשיכים בעלייה
+            firstRunSteps * rise + (j + 1) * rise,
             // התחלה אחרי קצה הפודסט בציר Z + רווח זעיר, ואז כל מדרגה בריצה קבועה
             -(treadWidth / 2 + run / 2 + eps) - j * run,
           ]}

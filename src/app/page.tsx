@@ -946,7 +946,7 @@ export default function Home() {
                     <button
                       type="button"
                       onClick={() => setShow3DHint(false)}
-                      className="pointer-events-auto w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#1a1a2e]/85 text-white shadow-lg hover:bg-[#1a1a2e] transition-colors flex items-center justify-center animate-pulse"
+                      className="pointer-events-auto w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#1a1a2e]/85 text-white shadow-lg hover:bg-[#1a1a2e] transition-colors flex items-center justify-center"
                       aria-label="לחץ כדי להתחיל לסובב"
                     >
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">

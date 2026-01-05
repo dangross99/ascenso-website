@@ -130,7 +130,7 @@ function StairsPreview() {
         <mesh key={`s1-${i}`} position={[i * run, i * rise, 0]} castShadow>
           {/* X = run, Y = thickness, Z = width */}
           <boxGeometry args={[treadDepth, treadThickness, treadWidth]} />
-          <meshStandardMaterial map={metalMap} color="#ffffff" metalness={0.85} roughness={0.45} />
+          <meshStandardMaterial map={metalMap} color="#ffffff" metalness={0.55} roughness={0.6} />
         </mesh>
       ))}
 
@@ -146,7 +146,7 @@ function StairsPreview() {
       >
         {/* X = width, Y = thickness, Z = width */}
         <boxGeometry args={[treadWidth, treadThickness, treadWidth]} />
-        <meshStandardMaterial map={metalMap} color="#ffffff" metalness={0.85} roughness={0.45} />
+        <meshStandardMaterial map={metalMap} color="#ffffff" metalness={0.55} roughness={0.6} />
       </mesh>
 
       {/* Second straight segment, turned right (along -Z) */}
@@ -165,7 +165,7 @@ function StairsPreview() {
         >
           {/* X = width, Y = thickness, Z = run */}
           <boxGeometry args={[treadWidth, treadThickness, treadDepth]} />
-          <meshStandardMaterial map={metalMap} color="#ffffff" metalness={0.85} roughness={0.45} />
+          <meshStandardMaterial map={metalMap} color="#ffffff" metalness={0.55} roughness={0.6} />
         </mesh>
       ))}
     </group>
@@ -873,10 +873,11 @@ export default function Home() {
             {/* תלת‑ממד קליל (בלי קובץ) */}
             <div className="order-1 lg:order-2">
               <div className="relative h-[220px] md:h-[260px] bg-transparent overflow-hidden rounded">
-                <Canvas camera={{ position: [3, 2.8, 5], fov: 45 }} dpr={[1, 2]} gl={{ alpha: true, toneMappingExposure: 1.0 }} style={{ background: 'transparent' }}>
-                  <hemisphereLight args={['#ffffff', '#bfbfbf', 0.7]} />
-                  <ambientLight intensity={0.65} />
-                  <directionalLight position={[6, 10, 4]} intensity={0.25} />
+                <Canvas camera={{ position: [3, 2.8, 5], fov: 45 }} dpr={[1, 2]} gl={{ alpha: true, toneMappingExposure: 1.2 }} style={{ background: 'transparent' }}>
+                  <hemisphereLight args={['#ffffff', '#d4d4d4', 0.95]} />
+                  <ambientLight intensity={0.8} />
+                  <directionalLight position={[6, 10, 4]} intensity={0.3} />
+                  <directionalLight position={[-6, 8, -4]} intensity={0.22} />
                   <StairsPreview />
                   <OrbitControls enablePan={false} enableZoom={false} rotateSpeed={0.6} />
                 </Canvas>

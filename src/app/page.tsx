@@ -94,7 +94,9 @@ type MaterialRecord = {
 function StairsPreview() {
   // Preset: 10 steps → landing (right) → 5 steps, matching LIVE dimensions
   const firstRunSteps = 10;
-  const secondRunSteps = 5;
+  // לאחר בקשה: לבטל את המדרגה החמישית אחרי הפודסט (כלומר 4 מדרגות מוצגות)
+  const secondRunTotalSteps = 5; // לשמירת עיגון/offset של הקבוצה
+  const secondRunSteps = 4;      // כמות מדרגות בפועל אחרי הפודסט
   const treadWidth = 0.90;       // רוחב מדרגה (Z)
   const treadThickness = 0.11;   // עובי תיבה "עבה"
   const treadDepth = 0.30;       // עומק/שליבה אופקית (X או Z)
@@ -102,7 +104,7 @@ function StairsPreview() {
   const run = treadDepth;        // נוחות קריאה
 
   const totalX = firstRunSteps * run;
-  const totalZ = secondRunSteps * run;
+  const totalZ = secondRunTotalSteps * run;
   const eps = 0.002;            // הפרדה זעירה למניעת חפיפה חזותית
 
   return (

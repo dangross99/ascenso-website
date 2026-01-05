@@ -656,16 +656,16 @@ export default function Home() {
           
           <div className="relative">
             <div className="overflow-hidden" ref={emblaRef}>
-              <div className="flex -ml-3 md:-ml-6">
+              <div className="flex -ml-4 md:-ml-8">
                 {(topMaterials.length ? topMaterials : []).map((mat, index) => (
-                  <div className="flex-[0_0_40%] sm:flex-[0_0_33%] md:flex-[0_0_25%] lg:flex-[0_0_20%] pl-3 md:pl-6" key={mat.id ?? index}>
+                <div className="flex-[0_0_34%] sm:flex-[0_0_28%] md:flex-[0_0_22%] lg:flex-[0_0_18%] pl-4 md:pl-8" key={mat.id ?? index}>
                     <a href="/materials" className="block group">
-                      <div className="relative overflow-hidden aspect-square rounded-full mb-2 md:mb-4">
+                    <div className="relative overflow-hidden aspect-[3/4] rounded-lg md:rounded-xl mb-3 md:mb-5 shadow-sm transition-transform duration-300 group-hover:scale-[1.03]">
                         <Image
                           src={mat.images?.[0] || "/images/products/white-onyx.jpg"}
                           alt={mat.name}
                           fill
-                          className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+                        className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
                         />
                       </div>
                       
@@ -674,14 +674,14 @@ export default function Home() {
                 ))}
                 {!topMaterials.length &&
                   images.map((img, index) => (
-                    <div className="flex-[0_0_40%] sm:flex-[0_0_33%] md:flex-[0_0_25%] lg:flex-[0_0_20%] pl-3 md:pl-6" key={`fallback-${index}`}>
+                  <div className="flex-[0_0_34%] sm:flex-[0_0_28%] md:flex-[0_0_22%] lg:flex-[0_0_18%] pl-4 md:pl-8" key={`fallback-${index}`}>
                     <div className="block group">
-                      <div className="relative overflow-hidden aspect-square rounded-full mb-2 md:mb-4">
+                      <div className="relative overflow-hidden aspect-[3/4] rounded-lg md:rounded-xl mb-3 md:mb-5 shadow-sm transition-transform duration-300 group-hover:scale-[1.03]">
                         <Image
                           src={img.src}
                           alt={img.alt}
                           fill
-                          className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+                          className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
                         />
                       </div>
                       

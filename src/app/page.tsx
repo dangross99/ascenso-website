@@ -98,8 +98,8 @@ function StairsPreview() {
   // לאחר בקשה: לבטל את המדרגה החמישית אחרי הפודסט (כלומר 4 מדרגות מוצגות)
   const secondRunTotalSteps = 5; // לשמירת עיגון/offset של הקבוצה
   const secondRunSteps = 4;      // כמות מדרגות בפועל אחרי הפודסט
-  // טקסטורת עץ WAVE חום (walnut) מתוך materials.json
-  const woodTextureUrl = "/images/materials/wave_carved_walnut-v1766948002057-600.webp";
+  // טקסטורת עץ WAVE – גוון "אלון" (Oak) מתוך materials.json
+  const woodTextureUrl = "/images/materials/wave_carved_oak-v1766948002057-600.webp";
   const woodMap = useLoader(TextureLoader, woodTextureUrl);
   React.useEffect(() => {
     try {

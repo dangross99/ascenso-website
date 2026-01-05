@@ -958,7 +958,7 @@ export default function Home() {
               </div>
                 </div>
             {/* טקסט */}
-            <div className="order-2 lg:order-1">
+            <div className="order-2 lg:order-1 text-center">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                 <span className="hidden md:inline">תלת‑ממד LIVE — רואים לפני שמחליטים</span>
                 <span className="block md:hidden">תלת‑ממד LIVE —</span>
@@ -970,7 +970,7 @@ export default function Home() {
               
                   <a
                 href="/live"
-                className="inline-block px-12 py-3 bg-[#1a1a2e] text-white text-sm font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90 mx-auto md:mx-0"
+                className="inline-block px-12 py-3 bg-[#1a1a2e] text-white text-sm font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90 mx-auto"
                   >
                 התחל הזמנה
                   </a>

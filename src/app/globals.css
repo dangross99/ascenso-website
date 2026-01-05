@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #EFEFEF;
   --foreground: #171717;
 }
 
@@ -24,6 +24,10 @@ body {
   color: var(--foreground);
   font-family: var(--font-heebo), Arial, Helvetica, sans-serif;
 }
+
+/* Force all Tailwind whites to brand light-gray */
+.bg-white { background-color: #EFEFEF !important; }
+.bg-gray-50, .bg-gray-100, .bg-gray-200 { background-color: #EFEFEF !important; }
 
 /* Brand font utility */
 .font-prosto {
@@ -76,7 +80,7 @@ body {
   height: 100vh;
   width: 370px;
   max-width: 95vw;
-  background: #fff;
+  background: #EFEFEF;
   box-shadow: -8px 0 32px rgba(0, 0, 0, 0.18), -1.5px 0 6px rgba(0, 0, 0, 0.1);
   z-index: 1100;
   padding: 2.5rem 2rem 2rem 2rem;

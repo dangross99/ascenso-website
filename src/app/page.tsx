@@ -911,7 +911,7 @@ export default function Home() {
             {/* תלת‑ממד קליל (בלי קובץ) */}
             <div className="order-1 lg:order-2">
               <div className="relative h-[220px] md:h-[260px] bg-transparent overflow-hidden rounded">
-                <Canvas camera={{ position: [3, 7, 1.7], fov: 17 }} dpr={[1, 2]} gl={{ alpha: true, toneMappingExposure: 1.2 }} style={{ background: 'transparent' }}>
+                <Canvas camera={{ position: [3, 17, 1.7], fov: 23 }} dpr={[1, 2]} gl={{ alpha: true, toneMappingExposure: 1.2 }} style={{ background: 'transparent' }}>
                   <hemisphereLight args={['#ffffff', '#d4d4d4', 0.95]} />
                   <ambientLight intensity={0.8} />
                   <directionalLight position={[6, 10, 4]} intensity={0.3} />

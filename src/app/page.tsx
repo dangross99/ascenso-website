@@ -917,7 +917,7 @@ export default function Home() {
                   <directionalLight position={[6, 10, 4]} intensity={0.3} />
                   <directionalLight position={[-6, 8, -4]} intensity={0.22} />
                   <StairsPreview />
-                  <OrbitControls enablePan={false} enableZoom={false} rotateSpeed={0.6} target={[0, 0.45, 0.4]} />
+                  <OrbitControls enablePan={false} enableZoom={false} rotateSpeed={0.6} target={[0, 1.1, 0.5]} />
                 </Canvas>
               </div>
                 </div>

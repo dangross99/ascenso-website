@@ -3,6 +3,8 @@ import { useState, useCallback } from "react";
 import React from "react";
 import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
 // 3D demo imports הוסרו
 
 // HERO IMAGE PATH - change this path to update the hero image
@@ -88,7 +90,25 @@ type MaterialRecord = {
   variants?: Record<string, string[]>;
 };
 
-// קומפוננטת מודל תלת-מימדי – הוסרה
+// קומפוננטה קלה לתצוגת מדרגות תלת‑ממד בלי קובץ (פרוצדורלי)
+function StairsPreview() {
+  const steps = 12;
+  const treadW = 0.9;
+  const treadH = 0.08;
+  const treadD = 2.0;
+  const rise = 0.16;
+  const run = 0.45;
+  return (
+    <group position={[-(steps * run) / 2, 0, 0]}>
+      {Array.from({ length: steps }).map((_, i) => (
+        <mesh key={i} position={[i * run, i * rise, 0]} castShadow>
+          <boxGeometry args={[treadW, treadH, treadD]} />
+          <meshStandardMaterial color="#C8A165" />
+        </mesh>
+      ))}
+    </group>
+  );
+}
 
 export default function Home() {
   // טקסטורות אמיתיות מתוך materials.json לשימוש ב"פס מוצרים" בדף הבית
@@ -788,15 +808,15 @@ export default function Home() {
       <section className="w-full bg-gray-200 py-4 md:py-6" dir="rtl">
         <div className="w-full px-8 md:px-16 lg:px-24">
           <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* תמונה */}
+            {/* תלת‑ממד קליל (בלי קובץ) */}
             <div className="order-1 lg:order-2">
-              <div className="relative aspect-[4/3] bg-white overflow-hidden rounded shadow-sm">
-                <img
-                  src="/images/צילום מסך 2026-01-03 234215.png"
-                  alt="הדמיית תלת‑ממד של מדרגות מרחפות עם מערכת כבלים"
-                  className="w-full h-full object-contain"
-                  loading="lazy"
-                />
+              <div className="relative h-[220px] md:h-[260px] bg-white overflow-hidden rounded shadow-sm">
+                <Canvas camera={{ position: [3, 2, 5], fov: 45 }} dpr={[1, 2]}>
+                  <ambientLight intensity={0.5} />
+                  <directionalLight position={[5, 6, 4]} intensity={0.6} />
+                  <StairsPreview />
+                  <OrbitControls enablePan={false} zoomSpeed={0.7} rotateSpeed={0.6} />
+                </Canvas>
               </div>
                 </div>
             {/* טקסט */}

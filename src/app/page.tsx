@@ -757,9 +757,9 @@ export default function Home() {
             <div className="text-center mt-10">
               <a
                 href="/live"
-                className="inline-block bg-[#1a1a2e] text-white font-bold text-lg px-8 py-4 shadow-lg hover:bg-[#bfa980] hover:text-[#1a1a2e] transition-all duration-300 hover:shadow-xl hover:-translate-y-1 transform"
+                className="inline-block px-12 py-3 bg-[#1a1a2e] text-white text-sm font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90"
               >
-                פתח הדמייה LIVE
+                התחל הזמנה
               </a>
             </div>
           </div>
@@ -792,9 +792,9 @@ export default function Home() {
               
                   <a
                 href="/live"
-                className="inline-block bg-[#1a1a2e] text-white font-bold text-base md:text-lg px-6 md:px-8 py-3 md:py-4 shadow-lg hover:bg-[#bfa980] hover:text-[#1a1a2e] transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5"
+                className="inline-block px-12 py-3 bg-[#1a1a2e] text-white text-sm font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90"
                   >
-                פתח הדמייה LIVE
+                התחל הזמנה
                   </a>
             </div>
           </div>

@@ -873,9 +873,10 @@ export default function Home() {
             {/* תלת‑ממד קליל (בלי קובץ) */}
             <div className="order-1 lg:order-2">
               <div className="relative h-[220px] md:h-[260px] bg-transparent overflow-hidden rounded">
-                <Canvas camera={{ position: [3, 2.8, 5], fov: 45 }} dpr={[1, 2]} gl={{ alpha: true }} style={{ background: 'transparent' }}>
-                  <ambientLight intensity={0.5} />
-                  <directionalLight position={[5, 6, 4]} intensity={0.6} />
+                <Canvas camera={{ position: [3, 2.8, 5], fov: 45 }} dpr={[1, 2]} gl={{ alpha: true, toneMappingExposure: 1.0 }} style={{ background: 'transparent' }}>
+                  <hemisphereLight args={['#ffffff', '#bfbfbf', 0.7]} />
+                  <ambientLight intensity={0.65} />
+                  <directionalLight position={[6, 10, 4]} intensity={0.25} />
                   <StairsPreview />
                   <OrbitControls enablePan={false} enableZoom={false} rotateSpeed={0.6} />
                 </Canvas>

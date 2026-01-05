@@ -99,7 +99,7 @@ function StairsPreview() {
   const secondRunTotalSteps = 5; // לשמירת עיגון/offset של הקבוצה
   const secondRunSteps = 4;      // כמות מדרגות בפועל אחרי הפודסט
   // טקסטורת מתכת (נלקח מנכס קיים בפרויקט)
-  const metalTextureUrl = "/images/gianluigi-marin-fobNVvDUI2A-unsplash.jpg";
+  const metalTextureUrl = "/images/materials/chatgpt_image_dec_27_2025_09_19_42_pm-v1766948002057-600.webp";
   const metalMap = useLoader(TextureLoader, metalTextureUrl);
   React.useEffect(() => {
     try {

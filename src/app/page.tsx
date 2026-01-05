@@ -92,49 +92,45 @@ type MaterialRecord = {
 
 // קומפוננטה קלה לתצוגת מדרגות תלת‑ממד בלי קובץ (פרוצדורלי)
 function StairsPreview() {
-  // Preset: 10 steps → landing (right) → 5 steps, long/thick box look
+  // Preset: 10 steps → landing (right) → 5 steps, matching LIVE dimensions
   const firstRunSteps = 10;
   const secondRunSteps = 5;
-  const treadWidth = 0.9;    // רוחב המדרגה
-  const treadHeight = 0.11;  // עובי (תיבה "ארוכה"/עבה)
-  const treadDepth = 2.4;    // עומק ארוך
-  const rise = 0.16;         // רום
-  const run = 0.45;          // שליבה אופקית
+  const treadWidth = 0.90;       // רוחב מדרגה (Z)
+  const treadThickness = 0.11;   // עובי תיבה "עבה"
+  const treadDepth = 0.30;       // עומק/שליבה אופקית (X או Z)
+  const rise = 0.16;             // רום
+  const run = treadDepth;        // נוחות קריאה
 
   const totalX = firstRunSteps * run;
   const totalZ = secondRunSteps * run;
 
   return (
     <group position={[-totalX * 0.45, 0, totalZ * 0.25]}>
-      {/* First straight segment (X direction) */}
+      {/* First straight segment (along +X) */}
       {Array.from({ length: firstRunSteps }).map((_, i) => (
         <mesh key={`s1-${i}`} position={[i * run, i * rise, 0]} castShadow>
-          <boxGeometry args={[treadWidth, treadHeight, treadDepth]} />
+          {/* X = run, Y = thickness, Z = width */}
+          <boxGeometry args={[treadDepth, treadThickness, treadWidth]} />
           <meshStandardMaterial color="#C8A165" />
         </mesh>
       ))}
 
-      {/* Landing (square-ish platform) */}
-      <mesh
-        position={[firstRunSteps * run, firstRunSteps * rise, 0]}
-        castShadow
-      >
-        <boxGeometry args={[treadWidth + 0.6, treadHeight, treadDepth + 0.6]} />
+      {/* Landing (square 0.90 x 0.90) */}
+      <mesh position={[firstRunSteps * run, firstRunSteps * rise, 0]} castShadow>
+        {/* X = width, Y = thickness, Z = width */}
+        <boxGeometry args={[treadWidth, treadThickness, treadWidth]} />
         <meshStandardMaterial color="#b08d57" />
       </mesh>
 
-      {/* Second straight segment, turned "right" (negative Z) */}
+      {/* Second straight segment, turned right (along -Z) */}
       {Array.from({ length: secondRunSteps }).map((_, j) => (
         <mesh
           key={`s2-${j}`}
-          position={[
-            firstRunSteps * run,
-            firstRunSteps * rise + j * rise,
-            -(j + 1) * run,
-          ]}
+          position={[firstRunSteps * run, firstRunSteps * rise + j * rise, -(j + 1) * run]}
           castShadow
         >
-          <boxGeometry args={[treadWidth, treadHeight, treadDepth]} />
+          {/* X = width, Y = thickness, Z = run */}
+          <boxGeometry args={[treadWidth, treadThickness, treadDepth]} />
           <meshStandardMaterial color="#C8A165" />
         </mesh>
       ))}

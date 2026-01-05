@@ -3,8 +3,9 @@ import { useState, useCallback } from "react";
 import React from "react";
 import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useLoader } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
+import { TextureLoader, SRGBColorSpace, ClampToEdgeWrapping, LinearFilter } from "three";
 // 3D demo imports הוסרו
 
 // HERO IMAGE PATH - change this path to update the hero image
@@ -97,6 +98,21 @@ function StairsPreview() {
   // לאחר בקשה: לבטל את המדרגה החמישית אחרי הפודסט (כלומר 4 מדרגות מוצגות)
   const secondRunTotalSteps = 5; // לשמירת עיגון/offset של הקבוצה
   const secondRunSteps = 4;      // כמות מדרגות בפועל אחרי הפודסט
+  // טקסטורת מתכת (נלקח מנכס קיים בפרויקט)
+  const metalTextureUrl = "/images/gianluigi-marin-fobNVvDUI2A-unsplash.jpg";
+  const metalMap = useLoader(TextureLoader, metalTextureUrl);
+  React.useEffect(() => {
+    try {
+      if (metalMap) {
+        // @ts-ignore
+        metalMap.colorSpace = SRGBColorSpace;
+        metalMap.wrapS = metalMap.wrapT = ClampToEdgeWrapping;
+        metalMap.generateMipmaps = false;
+        metalMap.minFilter = LinearFilter;
+        metalMap.needsUpdate = true;
+      }
+    } catch {}
+  }, [metalMap]);
   const treadWidth = 0.90;       // רוחב מדרגה (Z)
   const treadThickness = 0.11;   // עובי תיבה "עבה"
   const treadDepth = 0.30;       // עומק/שליבה אופקית (X או Z)
@@ -114,7 +130,7 @@ function StairsPreview() {
         <mesh key={`s1-${i}`} position={[i * run, i * rise, 0]} castShadow>
           {/* X = run, Y = thickness, Z = width */}
           <boxGeometry args={[treadDepth, treadThickness, treadWidth]} />
-          <meshStandardMaterial color="#C8A165" />
+          <meshStandardMaterial map={metalMap} color="#ffffff" metalness={0.85} roughness={0.45} />
         </mesh>
       ))}
 
@@ -130,7 +146,7 @@ function StairsPreview() {
       >
         {/* X = width, Y = thickness, Z = width */}
         <boxGeometry args={[treadWidth, treadThickness, treadWidth]} />
-        <meshStandardMaterial color="#b08d57" />
+        <meshStandardMaterial map={metalMap} color="#ffffff" metalness={0.85} roughness={0.45} />
       </mesh>
 
       {/* Second straight segment, turned right (along -Z) */}
@@ -149,7 +165,7 @@ function StairsPreview() {
         >
           {/* X = width, Y = thickness, Z = run */}
           <boxGeometry args={[treadWidth, treadThickness, treadDepth]} />
-          <meshStandardMaterial color="#C8A165" />
+          <meshStandardMaterial map={metalMap} color="#ffffff" metalness={0.85} roughness={0.45} />
         </mesh>
       ))}
     </group>

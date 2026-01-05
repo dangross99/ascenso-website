@@ -766,6 +766,24 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 5.5. Wide banner – short height */}
+      <section className="w-full bg-white py-2 md:py-3" dir="rtl">
+        {/* Full-bleed container */}
+        <div
+          className="relative w-screen"
+          style={{ marginLeft: "calc(50% - 50vw)", width: "100vw" }}
+        >
+          <div className="relative h-[120px] sm:h-[140px] md:h-[180px] lg:h-[220px] overflow-hidden">
+            <img
+              src="/images/products/nero-marquina.jpg"
+              alt="ASCENSO banner"
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </section>
+
       {/* 6. תלת‑ממד – סקירה קצרה (במיקום ובצבע הרקע הקודמים) */}
       <section className="w-full bg-gray-200 py-4 md:py-6" dir="rtl">
         <div className="w-full px-8 md:px-16 lg:px-24">

@@ -970,7 +970,7 @@ export default function Home() {
               
                   <a
                 href="/live"
-                className="inline-block px-12 py-3 bg-[#1a1a2e] text-white text-sm font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90"
+                className="inline-block px-12 py-3 bg-[#1a1a2e] text-white text-sm font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90 mx-auto md:mx-0"
                   >
                 התחל הזמנה
                   </a>
@@ -996,7 +996,7 @@ export default function Home() {
             href={`https://api.whatsapp.com/send?phone=972539994995&text=${encodeURIComponent('*ASCENSO*\nהיי! ראיתי את האתר ואני מעוניינ/ת להתקדם.\nאשמח לשיחת ייעוץ קצרה ולקבל פרטים נוספים. תודה!')}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block bg-[#25D366] text-[#0b1a13] font-bold text-sm px-6 py-3 rounded-full shadow-lg hover:brightness-95 transition-all duration-300 hover:shadow-xl"
+            className="inline-block px-12 py-3 bg-[#25D366] text-[#0b1a13] text-sm font-bold tracking-widest rounded-md transition-colors duration-300 hover:brightness-95 shadow-sm"
             aria-label="צ'אט WhatsApp עם ASCENSO"
           >
             דברו איתנו ב‑WhatsApp

@@ -140,8 +140,8 @@ function StairsPreview() {
             firstRunSteps * run - run / 2 + treadWidth / 2 + eps,
             // מתחילים גובה אחד מעל הפודסט, ואז ממשיכים בעלייה
             firstRunSteps * rise + (j + 1) * rise,
-            // התחלה אחרי קצה הפודסט בציר Z + רווח זעיר, ואז כל מדרגה בריצה קבועה
-            -(treadWidth / 2 + run / 2 + eps) - j * run,
+            // פנייה לצד ההפוך: התחלה אחרי קצה הפודסט בציר Z החיובי + רווח זעיר
+            (treadWidth / 2 + run / 2 + eps) + j * run,
           ]}
           castShadow
         >

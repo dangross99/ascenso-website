@@ -755,7 +755,7 @@ export default function Home() {
               <img
                 src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 12_39_36 PM.png")}
                 alt="אבן טבעית"
-                className="w-full h-[414px] md:h-[820px] lg:h-[960px] object-contain bg-transparent"
+                className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.3] md:origin-center"
               />
             </a>
             {/* Wood */}
@@ -763,7 +763,7 @@ export default function Home() {
               <img
                 src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 05_21_43 PM.png")}
                 alt="עץ טבעי"
-                className="w-full h-[414px] md:h-[820px] lg:h-[960px] object-contain bg-transparent"
+                className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.3] md:origin-center"
               />
             </a>
             {/* Metal */}
@@ -771,7 +771,7 @@ export default function Home() {
               <img
                 src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 05_44_10 PM.png")}
                 alt="מתכת"
-                className="w-full h-[414px] md:h-[820px] lg:h-[960px] object-contain bg-transparent"
+                className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.3] md:origin-center"
               />
             </a>
           </div>

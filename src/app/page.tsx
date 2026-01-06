@@ -769,7 +769,7 @@ export default function Home() {
             {/* Metal */}
             <a href="/materials?cat=metal" className="block">
               <img
-                src="/images/products/nero-marquina.jpg"
+                src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 12_10_00 PM.png")}
                 alt="מתכת"
                 className="w-full h-[360px] md:h-[520px] object-cover"
               />

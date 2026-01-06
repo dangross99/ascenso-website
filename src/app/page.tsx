@@ -674,16 +674,16 @@ export default function Home() {
           {/* Right side: Text (RTL) */}
           <div className="text-center md:text-right w-full md:w-[60%] max-w-none lg:whitespace-nowrap">
             <h1
-              className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white mb-2 md:mb-4 leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]"
+              className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white mb-2 md:mb-4 leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]"
               style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
             >
               ASCENSO
             </h1>
             <p
-              className="text-gray-100 text-sm md:text-xl lg:text-2xl max-w-2xl"
+              className="text-gray-100 text-base md:text-2xl lg:text-3xl max-w-2xl"
               style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
             >
-              בחרו צורה, טקסטורה ומעקה – וראו הכל בהדמייה LIVE עם חישוב מחיר משוער.
+              בחרו צורה, טקסטורה ומעקה – וראו הכל בהדמייה LIVE עם חישוב מחיר משוער
             </p>
           </div>
 

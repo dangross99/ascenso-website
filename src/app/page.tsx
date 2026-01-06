@@ -56,7 +56,7 @@ const images = [
     ],
   },
   {
-    src: "/images/products/white-onyx.jpg",
+    src: "/images/gianluigi-marin-fobNVvDUI2A-unsplash.jpg",
     alt: "White Onyx Backlit Wall",
     price: "2,100.00",
     colors: [
@@ -138,7 +138,7 @@ function StairsPreview() {
           {/* X = run, Y = thickness, Z = width */}
           <boxGeometry args={[treadDepth, treadThickness, treadWidth]} />
           <meshStandardMaterial map={woodMap} color="#ffffff" metalness={0.05} roughness={0.85} />
-        </mesh>
+      </mesh>
       ))}
       {/* כבלי נירוסטה למקטע הראשון (על ציר X) – 3 כבלים לכל מדרגה בצד החיצוני (+Z) */}
       {Array.from({ length: firstRunSteps }).map((_, i) => {
@@ -152,7 +152,7 @@ function StairsPreview() {
           <mesh key={`s1-cable-${i}-${k}`} position={[xCenter + off, yCenter, z]} castShadow receiveShadow>
             <cylinderGeometry args={[cableRadius, cableRadius, spanH, cableSegments]} />
             <meshStandardMaterial color={cableColor} metalness={1.0} roughness={0.35} envMapIntensity={0.6} />
-          </mesh>
+      </mesh>
         ));
       })}
 
@@ -188,7 +188,7 @@ function StairsPreview() {
           {/* X = width, Y = thickness, Z = run */}
           <boxGeometry args={[treadWidth, treadThickness, treadDepth]} />
           <meshStandardMaterial map={woodMap} color="#ffffff" metalness={0.05} roughness={0.85} />
-        </mesh>
+      </mesh>
       ))}
       {/* כבלי נירוסטה למקטע השני (על ציר Z) – 3 כבלים לכל מדרגה בצד החיצוני (+X) */}
       {Array.from({ length: secondRunSteps }).map((_, j) => {
@@ -203,7 +203,7 @@ function StairsPreview() {
           <mesh key={`s2-cable-${j}-${k}`} position={[xBase, yCenter, zCenter + off]} castShadow receiveShadow>
             <cylinderGeometry args={[cableRadius, cableRadius, spanH, cableSegments]} />
             <meshStandardMaterial color={cableColor} metalness={1.0} roughness={0.35} envMapIntensity={0.6} />
-          </mesh>
+      </mesh>
         ));
       })}
     </group>
@@ -645,7 +645,7 @@ export default function Home() {
           }
         `}</style>
       </section>
-      
+
 
       {/* High-end Materials Section */}
       {/* moved below to the former “הבטחת ASCENSO” position */}
@@ -662,7 +662,7 @@ export default function Home() {
                     <a href="/materials" className="block group">
                     <div className="relative overflow-hidden aspect-[3/4] rounded-lg md:rounded-xl mb-3 md:mb-5 shadow-sm transition-transform duration-300 group-hover:scale-[1.03]">
                         <Image
-                          src={mat.images?.[0] || "/images/products/white-onyx.jpg"}
+                          src={mat.images?.[0] || "/images/gianluigi-marin-fobNVvDUI2A-unsplash.jpg"}
                           alt={mat.name}
                           fill
                         className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
@@ -754,7 +754,7 @@ export default function Home() {
             <a href="/materials?cat=stone" className="group block focus:outline-none focus:ring-2 focus:ring-[#C5A059] rounded-3xl">
               <div className="relative rounded-3xl overflow-hidden shadow-xl ring-1 ring-black/5 bg-[#EFEFEF]">
                 <img
-                  src="/images/products/white-onyx.jpg"
+                  src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 02_12_18 AM.png")}
                   alt="אבן טבעית"
                   className="h-[360px] md:h-[520px] w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                 />
@@ -766,15 +766,15 @@ export default function Home() {
                   </p>
                   <span className="mt-1 inline-flex w-max items-center gap-2 border border-white/70 text-white/95 px-3 py-2 rounded-md text-[11px] md:text-xs font-bold tracking-widest uppercase transition-colors hover:bg-white/10">
                     גלו את האבן
-                  </span>
-                </div>
-              </div>
+                    </span>
+                  </div>
+                  </div>
             </a>
             {/* Wood */}
             <a href="/materials?cat=wood" className="group block focus:outline-none focus:ring-2 focus:ring-[#C5A059] rounded-3xl">
               <div className="relative rounded-3xl overflow-hidden shadow-xl ring-1 ring-black/5 bg-[#EFEFEF]">
                 <img
-                  src="/images/products/travertine-wall.jpg"
+                  src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 02_12_03 AM.png")}
                   alt="עץ טבעי"
                   className="h-[360px] md:h-[520px] w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                 />
@@ -787,8 +787,8 @@ export default function Home() {
                   <span className="mt-1 inline-flex w-max items-center gap-2 border border-white/70 text-white/95 px-3 py-2 rounded-md text-[11px] md:text-xs font-bold tracking-widest uppercase transition-colors hover:bg-white/10">
                     גלו את העץ
                   </span>
-                </div>
-              </div>
+                      </div>
+                    </div>
             </a>
             {/* Metal */}
             <a href="/materials?cat=metal" className="group block focus:outline-none focus:ring-2 focus:ring-[#C5A059] rounded-3xl">
@@ -807,7 +807,7 @@ export default function Home() {
                   <span className="mt-1 inline-flex w-max items-center gap-2 border border-white/70 text-white/95 px-3 py-2 rounded-md text-[11px] md:text-xs font-bold tracking-widest uppercase transition-colors hover:bg-white/10">
                     גלו את המתכת
                   </span>
-                </div>
+          </div>
               </div>
             </a>
           </div>
@@ -832,23 +832,23 @@ export default function Home() {
                   <div className="bg-white rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <span className="text-4xl md:text-5xl font-bold text-[#1a1a2e]">1</span>
-                    </div>
+              </div>
                     <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">בחירת דגם וטקסטורה</h3>
                     <p className="text-gray-700 leading-relaxed text-base">נכנסים להדמייה LIVE, בוחרים צורה, חומר ומעקה.</p>
                     
-                  </div>
-                </div>
+              </div>
+            </div>
                 {/* Slide 2 */}
                 <div className="step-card snap-start flex-[0_0_100%] sm:flex-[0_0_100%] md:flex-[0_0_100%] lg:flex-[0_0_100%]">
                   <div className="bg-white rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <span className="text-4xl md:text-5xl font-bold text-[#1a1a2e]">2</span>
-                    </div>
+              </div>
                     <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">מחיר מיידי</h3>
                     <p className="text-gray-700 leading-relaxed text-base">רואים את המחיר מתעדכן בזמן אמת לפי הבחירות שלכם.</p>
                     
-                  </div>
-                </div>
+              </div>
+            </div>
                 {/* Slide 3 */}
                 <div className="step-card snap-start flex-[0_0_100%] sm:flex-[0_0_100%] md:flex-[0_0_100%] lg:flex-[0_0_100%]">
                   <div className="bg-white rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
@@ -858,52 +858,52 @@ export default function Home() {
                     <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">תיאום מדידה בשטח</h3>
                     <p className="text-gray-700 leading-relaxed text-base">קובעים ביקור למדידה, התאמות וסגירת מפרט.</p>
                     
-                  </div>
-                </div>
+              </div>
+            </div>
                 {/* Slide 4 */}
                 <div className="step-card snap-start flex-[0_0_100%] sm:flex-[0_0_100%] md:flex-[0_0_100%] lg:flex-[0_0_100%]">
                   <div className="bg-white rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <span className="text-4xl md:text-5xl font-bold text-[#1a1a2e]">4</span>
-                    </div>
+          </div>
                     <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">תכנון וייצור</h3>
                     <p className="text-gray-700 leading-relaxed text-base">מהנדס מלווה, תכנון מוקפד וייצור קפדני.</p>
                     
-                  </div>
-                </div>
+          </div>
+        </div>
                 {/* Slide 5 */}
                 <div className="step-card snap-start flex-[0_0_100%] sm:flex-[0_0_100%] md:flex-[0_0_100%] lg:flex-[0_0_100%]">
                   <div className="bg-white rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <span className="text-4xl md:text-5xl font-bold text-[#1a1a2e]">5</span>
-                    </div>
+            </div>
                     <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">התקנה נקייה ומהירה</h3>
                     <p className="text-gray-700 leading-relaxed text-base">צוות התקנה מקצועי, עמידה בזמנים ותוצאה מושלמת.</p>
                     
+              </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
 
             {/* Dots pagination */}
             <div className="flex items-center justify-center gap-3 mt-6">
               {Array.from({ length: 5 }).map((_, i) => (
-                <button
+                      <button
                   key={i}
                   onClick={() => scrollToStep(i)}
                   className={`w-2.5 h-2.5 rounded-full border border-[#1a1a2e] ${i === stepsIndex ? 'bg-[#1a1a2e]' : 'bg-transparent'} transition-colors`}
                   aria-label={`Go to slide ${i + 1}`}
                 />
               ))}
-            </div>
+                </div>
 
             <div className="text-center mt-10">
-              <a
+                  <a
                 href="/live"
                 className="inline-block px-12 py-3 bg-[#1a1a2e] text-white text-sm font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90"
-              >
+                  >
                 התחל הזמנה
-              </a>
+                  </a>
             </div>
           </div>
         </div>
@@ -922,9 +922,9 @@ export default function Home() {
               alt="ASCENSO banner"
               className="w-full h-full object-cover"
               loading="lazy"
-            />
-          </div>
-        </div>
+                        />
+                      </div>
+                        </div>
       </section>
 
       {/* 6. תלת‑ממד – סקירה קצרה (במיקום ובצבע הרקע הקודמים) */}
@@ -950,7 +950,7 @@ export default function Home() {
                 </Canvas>
                 {show3DHint && (
                   <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
-                    <button
+            <button
                       type="button"
                       onClick={() => setShow3DHint(false)}
                       className="pointer-events-auto w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#1a1a2e]/85 text-white shadow-lg hover:bg-[#1a1a2e] transition-colors flex items-center justify-center"
@@ -958,9 +958,9 @@ export default function Home() {
                     >
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <path d="M12 6v3l4-4-4-4v3C6.48 4 2 8.48 2 14c0 2.08.64 4 1.73 5.59l1.46-1.46A7.94 7.94 0 0 1 4 14c0-4.42 3.58-8 8-8Zm8.27-1.59L18.81 5.87A7.94 7.94 0 0 1 20 14c0 4.42-3.58 8-8 8v-3l-4 4 4 4v-3c5.52 0 10-4.48 10-10 0-2.08-.64-4-1.73-5.59Z" fill="currentColor"/>
-                      </svg>
-                    </button>
-                  </div>
+              </svg>
+            </button>
+          </div>
                 )}
               </div>
                 </div>

@@ -830,7 +830,7 @@ export default function Home() {
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-left md:object-left"
                 />
               </a>
-              <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-40 lg:top-40 z-10 px-1 text-center" dir="rtl">
+              <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-32 lg:top-32 z-10 px-1 text-center" dir="rtl">
                 <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">אבן טבעית (Natural Stone)</h3>
                 <p className="text-sm md:text-base text-gray-700">
                   אנו בוחרים ידנית כל לוח ממחצבות העילית של איטליה, ברזיל וקולומביה. כל גיד וטקסטורה הם עדות לתהליך של מיליוני שנים, המעניקים לכל פריט זהות ייחודית שאין לה עותק. יצירה של{"\u00A0"}הטבע.
@@ -860,7 +860,7 @@ export default function Home() {
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-center"
                 />
               </a>
-              <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-40 lg:top-40 z-10 px-1 text-center">
+              <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-32 lg:top-32 z-10 px-1 text-center">
                 <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">עץ (WOOD)</h3>
                 <p className="text-sm md:text-base text-gray-700">המפגש שבין החמימות הגולמית של העץ לבין איכות בלתי מתפשרת. אנו משתמשים בטקסטורות עץ שנבחרו בקפידה ליצירת הרמוניה יומיומית, המשלבת בין המגע הטבעי לבין עיצוב על זמני.</p>
                 <div className="mt-1 flex items-center justify-center gap-3 text-[#1a1a2e] text-xs md:text-sm w-max mx-auto">
@@ -890,7 +890,7 @@ export default function Home() {
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-right md:object-right"
                 />
               </a>
-              <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-40 lg:top-40 z-10 px-1 text-center" dir="rtl">
+              <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-32 lg:top-32 z-10 px-1 text-center" dir="rtl">
                 <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">מתכת (METAL)</h3>
                 <p className="text-sm md:text-base text-gray-700">מתכות אצילות שעוברות תהליכי עיבוד וחימצון ייחודיים ליצירת עומק ויזואלי מהפנט. הטקסטורות המטאליות שלנו הן תוצאה של דיוק ומגע יד אנושית, המעניקים לכל משטח אופי תעשייתי מתוחכם וגימור מרהיב שמשתנה עם האור.</p>
                 <div className="mt-1 flex items-center justify-center gap-6 md:gap-8 text-[#1a1a2e] text-xs md:text-sm w-max mx-auto">
@@ -990,9 +990,9 @@ export default function Home() {
                   </div>
                 </div>
 
-            {/* Desktop: straight row left-to-right */}
+            {/* Desktop: straight row right-to-left */}
             <div className="hidden lg:block">
-              <div className="grid grid-cols-5 gap-6 xl:gap-8 w-full" dir="ltr">
+              <div className="grid grid-cols-5 gap-6 xl:gap-8 w-full" dir="rtl">
                 {/* 1 */}
                 <div className="bg-white rounded-lg p-8 text-center min-h-[260px] flex flex-col justify-start" dir="rtl">
                   <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">

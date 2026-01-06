@@ -853,7 +853,7 @@ export default function Home() {
             <div className="relative flex flex-col gap-1">
               <a href="/materials?cat=metal" className="block">
                 <img
-                  src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 05_44_10 PM.png")}
+                  src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 12_39_36 PM.png")}
                   alt="אבן טבעית"
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-right md:object-right"
                 />

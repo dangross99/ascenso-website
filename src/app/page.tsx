@@ -293,15 +293,15 @@ function WhatsAppBackground() {
     }
   }, [src]);
   return (
-    <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
+    <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
       <img
         src={src}
         alt=""
-        className="w-full h-full object-cover opacity-40"
+        className="w-full h-full object-cover object-center scale-[1.18] md:scale-[1.28] transition-transform duration-500"
         onError={handleError}
         loading="lazy"
       />
-      <div className="absolute inset-0 bg-[#1a1a2e]/35" />
+      <div className="absolute inset-0 bg-[#1a1a2e]/20" />
     </div>
   );
 }

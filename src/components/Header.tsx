@@ -1371,7 +1371,7 @@ const Header: React.FC = () => {
             <a
               key={cat.label}
               href={cat.href}
-              className={`whitespace-nowrap text-[13px] md:text-sm font-semibold tracking-tight md:tracking-wide relative group rounded-md px-1 md:px-3 py-1 transition-all duration-150 active:scale-95 select-none touch-manipulation ${
+              className={`whitespace-nowrap text-[13px] md:text-sm font-semibold tracking-tight md:tracking-wide relative group rounded-md px-1 md:px-3 py-1 transition-all duration-150 active:scale-95 select-none touch-manipulation font-prosto ${
                 isActive(cat.href) ? 'text-white bg-white/10' : 'text-white hover:bg-white/10'
               }`}
               onClick={() => vibrate(20)}

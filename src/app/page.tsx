@@ -831,11 +831,11 @@ export default function Home() {
                 />
               </a>
               <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-32 lg:top-32 z-10 px-1 text-center" dir="rtl">
-                <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">אבן טבעית (Natural Stone)</h3>
-                <p className="text-sm md:text-base text-gray-700">
+                <h3 className="text-lg md:text-2xl font-semibold text-[#1a1a2e] tracking-tight">אבן טבעית (Natural Stone)</h3>
+                <p className="text-base md:text-lg text-gray-700">
                   אנו בוחרים ידנית כל לוח ממחצבות העילית של איטליה, ברזיל וקולומביה. כל גיד וטקסטורה הם עדות לתהליך של מיליוני שנים, המעניקים לכל פריט זהות ייחודית שאין לה עותק. יצירה של{"\u00A0"}הטבע.
                 </p>
-                <div className="mt-1 flex items-center justify-center gap-3 text-[#1a1a2e] text-xs md:text-sm w-max mx-auto">
+                <div className="mt-1 flex items-center justify-center gap-3 text-[#1a1a2e] text-sm md:text-base w-max mx-auto">
                   <span className="inline-flex items-center gap-1">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 22s7-6.29 7-12a7 7 0 1 0-14 0c0 5.71 7 12 7 12Z" stroke="currentColor" strokeWidth="1.8"/><circle cx="12" cy="10" r="2.8" stroke="currentColor" strokeWidth="1.6"/></svg>
                     איטליה
@@ -861,9 +861,9 @@ export default function Home() {
                 />
               </a>
               <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-32 lg:top-32 z-10 px-1 text-center">
-                <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">עץ (WOOD)</h3>
-                <p className="text-sm md:text-base text-gray-700">המפגש שבין החמימות הגולמית של העץ לבין איכות בלתי מתפשרת. אנו משתמשים בטקסטורות עץ שנבחרו בקפידה ליצירת הרמוניה יומיומית, המשלבת בין המגע הטבעי לבין עיצוב על זמני.</p>
-                <div className="mt-1 flex items-center justify-center gap-3 text-[#1a1a2e] text-xs md:text-sm w-max mx-auto">
+                <h3 className="text-lg md:text-2xl font-semibold text-[#1a1a2e] tracking-tight">עץ (WOOD)</h3>
+                <p className="text-base md:text-lg text-gray-700">המפגש שבין החמימות הגולמית של העץ לבין איכות בלתי מתפשרת. אנו משתמשים בטקסטורות עץ שנבחרו בקפידה ליצירת הרמוניה יומיומית, המשלבת בין המגע הטבעי לבין עיצוב על זמני.</p>
+                <div className="mt-1 flex items-center justify-center gap-3 text-[#1a1a2e] text-sm md:text-base w-max mx-auto">
                   <span className="inline-flex items-center gap-1">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                       <path d="M5 12c0-5 7-7 14-7-1 7-3 14-12 14-2 0-4-1.5-4-3 0-2 1-4 2-4Z" stroke="currentColor" strokeWidth="1.8"/>
@@ -891,9 +891,9 @@ export default function Home() {
                 />
               </a>
               <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-32 lg:top-32 z-10 px-1 text-center" dir="rtl">
-                <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">מתכת (METAL)</h3>
-                <p className="text-sm md:text-base text-gray-700">מתכות אצילות שעוברות תהליכי עיבוד וחימצון ייחודיים ליצירת עומק ויזואלי מהפנט. הטקסטורות המטאליות שלנו הן תוצאה של דיוק ומגע יד אנושית, המעניקים לכל משטח אופי תעשייתי מתוחכם וגימור מרהיב שמשתנה עם האור.</p>
-                <div className="mt-1 flex items-center justify-center gap-6 md:gap-8 text-[#1a1a2e] text-xs md:text-sm w-max mx-auto">
+                <h3 className="text-lg md:text-2xl font-semibold text-[#1a1a2e] tracking-tight">מתכת (METAL)</h3>
+                <p className="text-base md:text-lg text-gray-700">מתכות אצילות שעוברות תהליכי עיבוד וחימצון ייחודיים ליצירת עומק ויזואלי מהפנט. הטקסטורות המטאליות שלנו הן תוצאה של דיוק ומגע יד אנושית, המעניקים לכל משטח אופי תעשייתי מתוחכם וגימור מרהיב שמשתנה עם האור.</p>
+                <div className="mt-1 flex items-center justify-center gap-6 md:gap-8 text-[#1a1a2e] text-sm md:text-base w-max mx-auto">
                   {/* Industrial */}
                   <span className="inline-flex items-center gap-1">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none">

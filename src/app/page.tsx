@@ -830,7 +830,7 @@ export default function Home() {
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-left md:object-left"
                 />
               </a>
-              <div className="absolute inset-x-0 bottom-72 md:bottom-96 lg:bottom-[28rem] z-10 px-1 text-center" dir="rtl">
+              <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-40 lg:top-40 z-10 px-1 text-center" dir="rtl">
                 <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">אבן טבעית (Natural Stone)</h3>
                 <p className="text-sm md:text-base text-gray-700">
                   אנו בוחרים ידנית כל לוח ממחצבות העילית של איטליה, ברזיל וקולומביה. כל גיד וטקסטורה הם עדות לתהליך של מיליוני שנים, המעניקים לכל פריט זהות ייחודית שאין לה עותק. יצירה של{"\u00A0"}הטבע.
@@ -860,7 +860,7 @@ export default function Home() {
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-center"
                 />
               </a>
-              <div className="absolute inset-x-0 bottom-72 md:bottom-96 lg:bottom-[28rem] z-10 px-1 text-center">
+              <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-40 lg:top-40 z-10 px-1 text-center">
                 <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">עץ (WOOD)</h3>
                 <p className="text-sm md:text-base text-gray-700">המפגש שבין החמימות הגולמית של העץ לבין איכות בלתי מתפשרת. אנו משתמשים בטקסטורות עץ שנבחרו בקפידה ליצירת הרמוניה יומיומית, המשלבת בין המגע הטבעי לבין עיצוב על זמני.</p>
                 <div className="mt-1 flex items-center justify-center gap-3 text-[#1a1a2e] text-xs md:text-sm w-max mx-auto">
@@ -890,7 +890,7 @@ export default function Home() {
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-right md:object-right"
                 />
               </a>
-              <div className="absolute inset-x-0 bottom-72 md:bottom-96 lg:bottom-[28rem] z-10 px-1 text-center" dir="rtl">
+              <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-40 lg:top-40 z-10 px-1 text-center" dir="rtl">
                 <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">מתכת (METAL)</h3>
                 <p className="text-sm md:text-base text-gray-700">מתכות אצילות שעוברות תהליכי עיבוד וחימצון ייחודיים ליצירת עומק ויזואלי מהפנט. הטקסטורות המטאליות שלנו הן תוצאה של דיוק ומגע יד אנושית, המעניקים לכל משטח אופי תעשייתי מתוחכם וגימור מרהיב שמשתנה עם האור.</p>
                 <div className="mt-1 flex items-center justify-center gap-6 md:gap-8 text-[#1a1a2e] text-xs md:text-sm w-max mx-auto">
@@ -924,8 +924,9 @@ export default function Home() {
       <section className="bg-white py-4 md:py-6" dir="rtl">
         <div className="w-full px-8 md:px-16 lg:px-24">
           <div className="relative">
+            {/* Mobile/Tablet: Slider */}
             <div
-              className="overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar"
+              className="overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar lg:hidden"
               ref={stepsScrollRef}
               id="steps-viewport"
               dir="rtl"
@@ -989,8 +990,62 @@ export default function Home() {
                   </div>
                 </div>
 
+            {/* Desktop: U-shaped layout */}
+            <div className="hidden lg:block relative w-full h-[520px]">
+              {/* Step 1 - top left */}
+              <div className="absolute left-10 top-6 w-[300px]">
+                <div className="bg-white rounded-lg p-8 text-center min-h-[260px] flex flex-col justify-start">
+                  <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
+                    <span className="text-5xl font-bold text-[#1a1a2e]">1</span>
+                  </div>
+                  <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">בחירת דגם וטקסטורה</h3>
+                  <p className="text-gray-700 leading-relaxed text-base">נכנסים להדמייה LIVE, בוחרים צורה, חומר ומעקה.</p>
+                </div>
+              </div>
+              {/* Step 2 - top center */}
+              <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[300px]">
+                <div className="bg-white rounded-lg p-8 text-center min-h-[260px] flex flex-col justify-start">
+                  <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
+                    <span className="text-5xl font-bold text-[#1a1a2e]">2</span>
+                  </div>
+                  <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">מחיר מיידי</h3>
+                  <p className="text-gray-700 leading-relaxed text-base">רואים את המחיר מתעדכן בזמן אמת לפי הבחירות שלכם.</p>
+                </div>
+              </div>
+              {/* Step 3 - top right */}
+              <div className="absolute right-10 top-6 w-[300px]">
+                <div className="bg-white rounded-lg p-8 text-center min-h-[260px] flex flex-col justify-start">
+                  <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
+                    <span className="text-5xl font-bold text-[#1a1a2e]">3</span>
+                  </div>
+                  <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">תיאום מדידה בשטח</h3>
+                  <p className="text-gray-700 leading-relaxed text-base">קובעים ביקור למדידה, התאמות וסגירת מפרט.</p>
+                </div>
+              </div>
+              {/* Step 4 - bottom right */}
+              <div className="absolute right-24 bottom-0 w-[300px]">
+                <div className="bg-white rounded-lg p-8 text-center min-h-[260px] flex flex-col justify-start">
+                  <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
+                    <span className="text-5xl font-bold text-[#1a1a2e]">4</span>
+                  </div>
+                  <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">תכנון וייצור</h3>
+                  <p className="text-gray-700 leading-relaxed text-base">מהנדס מלווה, תכנון מוקפד וייצור קפדני.</p>
+                </div>
+              </div>
+              {/* Step 5 - bottom left */}
+              <div className="absolute left-24 bottom-0 w-[300px]">
+                <div className="bg-white rounded-lg p-8 text-center min-h-[260px] flex flex-col justify-start">
+                  <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
+                    <span className="text-5xl font-bold text-[#1a1a2e]">5</span>
+                  </div>
+                  <h3 className="text-2ל font-semibold text-[#1a1a2e] mb-2">התקנה נקייה ומהירה</h3>
+                  <p className="text-gray-700 leading-relaxed text-base">צוות התקנה מקצועי, עמידה בזמנים ותוצאה מושלמת.</p>
+                </div>
+              </div>
+            </div>
+
             {/* Dots pagination */}
-            <div className="flex items-center justify-center gap-3 mt-6">
+            <div className="flex items-center justify-center gap-3 mt-6 lg:hidden">
               {Array.from({ length: 5 }).map((_, i) => (
                       <button
                   key={i}

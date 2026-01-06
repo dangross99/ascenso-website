@@ -761,7 +761,7 @@ export default function Home() {
             {/* Wood */}
             <a href="/materials?cat=wood" className="block">
               <img
-                src={encodeURI("/images/Gemini_Generated_Image_lwn8gqlwn8gqlwn8.png")}
+                src={encodeURI("/images/Gemini_Generated_Image_tjzzbttjzzbttjzz.png")}
                 alt="עץ טבעי"
                 className="w-full h-[360px] md:h-[520px] object-contain bg-transparent"
               />

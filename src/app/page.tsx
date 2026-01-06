@@ -835,7 +835,7 @@ export default function Home() {
                 <p className="text-sm md:text-base text-gray-700">
                   אנחנו בוחרים ידנית כל לוח מאתרי המחצבה הנחשבים ביותר בעולם – מלב איטליה ועד מרבצי האבן הפראיים של ברזיל וקולומביה. כל גיד וכל טקסטורה הם עדות לתהליך של מיליוני שנים, המעניקים לכל פריט זהות ייחודית שאין לה עותק. יצירת מופת של הטבע, אצלכם בחלל.
                 </p>
-                <div className="mt-1 flex items-center justify-center md:justify-end gap-3 text-[#1a1a2e] text-xs md:text-sm">
+                <div className="mt-1 flex items-center justify-center gap-3 text-[#1a1a2e] text-xs md:text-sm w-max mx-auto">
                   <span className="inline-flex items-center gap-1">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 22s7-6.29 7-12a7 7 0 1 0-14 0c0 5.71 7 12 7 12Z" stroke="currentColor" strokeWidth="1.8"/><circle cx="12" cy="10" r="2.8" stroke="currentColor" strokeWidth="1.6"/></svg>
                     איטליה

@@ -1146,9 +1146,22 @@ export default function Home() {
         dir="rtl"
       >
         <div className="relative max-w-5xl mx-auto px-4 py-12 md:py-16 lg:py-20 text-center flex flex-col items-center gap-4">
-          <h2 className="text-3xl md:text-6xl lg:text-7xl font-prosto tracking-[0.08em] md:tracking-[0.12em]">
-            מהחזון ועד לפרטים הקטנים
-          </h2>
+          <div className="flex items-center justify-center mb-1" aria-hidden="true">
+            {/* Personal Guidance (Headset) icon */}
+            <svg
+              className="w-16 h-16 md:w-24 md:h-24 lg:w-28 lg:h-28 text-white"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+            >
+              <path d="M4 12a8 8 0 0116 0v4" />
+              <rect x="3" y="12" width="4" height="7" rx="2" />
+              <rect x="17" y="12" width="4" height="7" rx="2" />
+              <path d="M9.5 19.5h5a3 3 0 003-3" />
+            </svg>
+          </div>
+          <span className="sr-only">ליווי אישי</span>
           <p className="text-base md:text-2xl text-gray-200 max-w-3xl leading-relaxed">
             ליווי אישי בבחירת דגמים, התאמת טקסטורות ודיוק המעקה — מענה מהיר ב‑WhatsApp.
           </p>

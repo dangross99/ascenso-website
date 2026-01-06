@@ -1060,22 +1060,39 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5.5. Wide banner – short height */}
-      <section className="w-full bg-white py-2 md:py-3" dir="rtl">
-        {/* Full-bleed container */}
+      {/* 5.5. שלוש תמונות רוחב מלא */}
+      <section className="w-full bg-white py-2 md:py-4" dir="rtl">
         <div
           className="relative w-screen"
           style={{ marginLeft: "calc(50% - 50vw)", width: "100vw" }}
         >
-          <div className="relative h-[120px] sm:h-[140px] md:h-[180px] lg:h-[220px] overflow-hidden">
-            <img
-              src="/images/products/nero-marquina.jpg"
-              alt="ASCENSO banner"
-              className="w-full h-full object-cover"
-              loading="lazy"
-                        />
-                      </div>
-                        </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4 lg:gap-6 px-0">
+            <div className="relative h-[160px] sm:h-[200px] md:h-[240px] lg:h-[280px] overflow-hidden">
+              <img
+                src="/images/products/nero-marquina.jpg"
+                alt="Nero Marquina"
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <div className="relative h-[160px] sm:h-[200px] md:h-[240px] lg:h-[280px] overflow-hidden">
+              <img
+                src="/images/products/travertine-wall.jpg"
+                alt="Travertine Wall"
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <div className="relative h-[160px] sm:h-[200px] md:h-[240px] lg:h-[280px] overflow-hidden">
+              <img
+                src="/images/gianluigi-marin-fobNVvDUI2A-unsplash.jpg"
+                alt="Stone detail"
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* 6. תלת‑ממד – סקירה קצרה (במיקום ובצבע הרקע הקודמים) */}

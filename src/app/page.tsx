@@ -830,7 +830,7 @@ export default function Home() {
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-left md:object-left"
                 />
               </a>
-              <div className="absolute inset-x-0 bottom-64 md:bottom-96 lg:bottom-[28rem] z-10 px-1 text-center md:text-right">
+              <div className="absolute inset-x-0 bottom-72 md:bottom-96 lg:bottom-[28rem] z-10 px-1 text-center md:text-right">
                 <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">ברונזה — עוצמה עתיקה</h3>
                 <p className="text-sm md:text-base text-gray-700">גימור חמים ועמוק, נוכחות מדויקת בחלל.</p>
               </div>
@@ -838,13 +838,13 @@ export default function Home() {
             {/* Wood */}
             <div className="relative flex flex-col gap-1">
               <a href="/materials?cat=wood" className="block">
-                <MagnifyImage
-                  src={"/images/ChatGPT Image Jan 6, 2026, 05_21_43 PM.png"}
+                <img
+                  src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 05_21_43 PM.png")}
                   alt="עץ טבעי"
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-center"
                 />
               </a>
-              <div className="absolute inset-x-0 bottom-64 md:bottom-96 lg:bottom-[28rem] z-10 px-1 text-center md:text-right">
+              <div className="absolute inset-x-0 bottom-72 md:bottom-96 lg:bottom-[28rem] z-10 px-1 text-center md:text-right">
                 <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">עץ וקומפוזיט — הרמוניה טבעית</h3>
                 <p className="text-sm md:text-base text-gray-700">מרקמי עץ חיים, קל משקל ועמיד לשימוש יומיומי.</p>
               </div>
@@ -858,7 +858,7 @@ export default function Home() {
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-right md:object-right"
                 />
               </a>
-              <div className="absolute inset-x-0 bottom-64 md:bottom-96 lg:bottom-[28rem] z-10 px-1 text-center md:text-right">
+              <div className="absolute inset-x-0 bottom-72 md:bottom-96 lg:bottom-[28rem] z-10 px-1 text-center md:text-right">
                 <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">שיש — צורה טהורה, יופי על־זמני</h3>
                 <p className="text-sm md:text-base text-gray-700">קררה איטליה; גימור מדויק ומראה נקי.</p>
               </div>

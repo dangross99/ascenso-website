@@ -751,64 +751,28 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             {/* Stone */}
-            <a href="/materials?cat=stone" className="group block focus:outline-none focus:ring-2 focus:ring-[#C5A059] rounded-3xl">
-              <div className="relative rounded-3xl overflow-hidden">
-                <img
-                  src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 02_12_18 AM.png")}
-                  alt="אבן טבעית"
-                  className="h-[360px] md:h-[520px] w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/45 via-black/15 to-transparent pointer-events-none" />
-                <div className="absolute inset-y-0 left-0 p-5 md:p-7 flex flex-col justify-center text-white max-w-[65%] gap-3">
-                  <div className="text-2xl md:text-3xl font-extrabold leading-tight tracking-tight">אלגנטיות טבעית</div>
-                  <p className="text-xs md:text-sm text-white/85 leading-relaxed">
-                    המקור לצורה. מגולף בטבע. מרקמים אותנטיים בגימור על־זמני.
-                  </p>
-                  <span className="mt-1 inline-flex w-max items-center gap-2 border border-white/70 text-white/95 px-3 py-2 rounded-md text-[11px] md:text-xs font-bold tracking-widest uppercase transition-colors hover:bg-white/10">
-                    גלו את האבן
-                    </span>
-                  </div>
-                  </div>
+            <a href="/materials?cat=stone" className="block">
+              <img
+                src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 02_12_18 AM.png")}
+                alt="אבן טבעית"
+                className="w-full h-[360px] md:h-[520px] object-cover"
+              />
             </a>
             {/* Wood */}
-            <a href="/materials?cat=wood" className="group block focus:outline-none focus:ring-2 focus:ring-[#C5A059] rounded-3xl">
-              <div className="relative rounded-3xl overflow-hidden">
-                <img
-                  src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 02_12_03 AM.png")}
-                  alt="עץ טבעי"
-                  className="h-[360px] md:h-[520px] w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/45 via-black/15 to-transparent pointer-events-none" />
-                <div className="absolute inset-y-0 left-0 p-5 md:p-7 flex flex-col justify-center text-white max-w-[65%] gap-3">
-                  <div className="text-2xl md:text-3xl font-extrabold leading-tight tracking-tight">חום טבעי</div>
-                  <p className="text-xs md:text-sm text-white/85 leading-relaxed">
-                    טקסטורות עץ חיות ועמוקות — איזון בין דיוק וגולמיות.
-                  </p>
-                  <span className="mt-1 inline-flex w-max items-center gap-2 border border-white/70 text-white/95 px-3 py-2 rounded-md text-[11px] md:text-xs font-bold tracking-widest uppercase transition-colors hover:bg-white/10">
-                    גלו את העץ
-                  </span>
-                      </div>
-                    </div>
+            <a href="/materials?cat=wood" className="block">
+              <img
+                src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 02_12_03 AM.png")}
+                alt="עץ טבעי"
+                className="w-full h-[360px] md:h-[520px] object-cover"
+              />
             </a>
             {/* Metal */}
-            <a href="/materials?cat=metal" className="group block focus:outline-none focus:ring-2 focus:ring-[#C5A059] rounded-3xl">
-              <div className="relative rounded-3xl overflow-hidden">
-                <img
-                  src="/images/products/nero-marquina.jpg"
-                  alt="מתכת"
-                  className="h-[360px] md:h-[520px] w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/45 via-black/15 to-transparent pointer-events-none" />
-                <div className="absolute inset-y-0 left-0 p-5 md:p-7 flex flex-col justify-center text-white max-w-[65%] gap-3">
-                  <div className="text-2xl md:text-3xl font-extrabold leading-tight tracking-tight">דיוק מתכתי</div>
-                  <p className="text-xs md:text-sm text-white/85 leading-relaxed">
-                    פלדה, אלומיניום ונירוסטה במרקמים נקיים ועמידים.
-                  </p>
-                  <span className="mt-1 inline-flex w-max items-center gap-2 border border-white/70 text-white/95 px-3 py-2 rounded-md text-[11px] md:text-xs font-bold tracking-widest uppercase transition-colors hover:bg-white/10">
-                    גלו את המתכת
-                  </span>
-          </div>
-              </div>
+            <a href="/materials?cat=metal" className="block">
+              <img
+                src="/images/products/nero-marquina.jpg"
+                alt="מתכת"
+                className="w-full h-[360px] md:h-[520px] object-cover"
+              />
             </a>
           </div>
         </div>

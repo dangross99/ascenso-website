@@ -849,18 +849,32 @@ export default function Home() {
                 <p className="text-sm md:text-base text-gray-700">מרקמי עץ חיים, קל משקל ועמיד לשימוש יומיומי.</p>
               </div>
             </div>
-            {/* Metal */}
+            {/* Marble / Natural Stone */}
             <div className="relative flex flex-col gap-1">
               <a href="/materials?cat=metal" className="block">
                 <img
                   src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 05_44_10 PM.png")}
-                  alt="מתכת"
+                  alt="אבן טבעית"
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-right md:object-right"
                 />
               </a>
-              <div className="absolute inset-x-0 bottom-72 md:bottom-96 lg:bottom-[28rem] z-10 px-1 text-center md:text-right">
-                <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">שיש — צורה טהורה, יופי על־זמני</h3>
-                <p className="text-sm md:text-base text-gray-700">קררה איטליה; גימור מדויק ומראה נקי.</p>
+              <div className="absolute inset-x-0 bottom-72 md:bottom-96 lg:bottom-[28rem] z-10 px-1 text-center md:text-right" dir="rtl">
+                <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">100% אבן טבעית</h3>
+                <p className="text-sm md:text-base text-gray-700">השיש שלנו מיובא בעיקר מאיטליה, ברזיל וקולומביה — איכות פרימיום עם בחירה קפדנית.</p>
+                <div className="mt-1 flex items-center justify-center md:justify-end gap-3 text-[#1a1a2e] text-xs md:text-sm">
+                  <span className="inline-flex items-center gap-1">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 22s7-6.29 7-12a7 7 0 1 0-14 0c0 5.71 7 12 7 12Z" stroke="currentColor" strokeWidth="1.8"/><circle cx="12" cy="10" r="2.8" stroke="currentColor" strokeWidth="1.6"/></svg>
+                    איטליה
+                  </span>
+                  <span className="inline-flex items-center gap-1">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 22s7-6.29 7-12a7 7 0 1 0-14 0c0 5.71 7 12 7 12Z" stroke="currentColor" strokeWidth="1.8"/><circle cx="12" cy="10" r="2.8" stroke="currentColor" strokeWidth="1.6"/></svg>
+                    ברזיל
+                  </span>
+                  <span className="inline-flex items-center gap-1">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 22s7-6.29 7-12a7 7 0 1 0-14 0c0 5.71 7 12 7 12Z" stroke="currentColor" strokeWidth="1.8"/><circle cx="12" cy="10" r="2.8" stroke="currentColor" strokeWidth="1.6"/></svg>
+                    קולומביה
+                  </span>
+                </div>
               </div>
             </div>
           </div>

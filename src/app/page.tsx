@@ -891,8 +891,8 @@ export default function Home() {
                 />
               </a>
               <div className="absolute inset-x-0 bottom-72 md:bottom-96 lg:bottom-[28rem] z-10 px-1 text-center" dir="rtl">
-                <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">מתכת</h3>
-                <p className="text-sm md:text-base text-gray-700">מתכות בעיבוד מיוחד</p>
+                <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">מתכת (METAL)</h3>
+                <p className="text-sm md:text-base text-gray-700">מתכות אצילות שעוברות תהליכי עיבוד וחימצון ייחודיים ליצירת עומק ויזואלי מהפנט. הטקסטורות המטאליות שלנו הן תוצאה של דיוק ומגע יד אנושית, המעניקים לכל משטח אופי תעשייתי מתוחכם וגימור מרהיב שמשתנה עם האור.</p>
               </div>
             </div>
           </div>

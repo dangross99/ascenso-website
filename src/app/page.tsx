@@ -752,7 +752,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             {/* Stone */}
             <a href="/materials?cat=stone" className="group block focus:outline-none focus:ring-2 focus:ring-[#C5A059] rounded-3xl">
-              <div className="relative rounded-3xl overflow-hidden shadow-xl ring-1 ring-black/5 bg-[#EFEFEF]">
+              <div className="relative rounded-3xl overflow-hidden">
                 <img
                   src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 02_12_18 AM.png")}
                   alt="אבן טבעית"
@@ -772,7 +772,7 @@ export default function Home() {
             </a>
             {/* Wood */}
             <a href="/materials?cat=wood" className="group block focus:outline-none focus:ring-2 focus:ring-[#C5A059] rounded-3xl">
-              <div className="relative rounded-3xl overflow-hidden shadow-xl ring-1 ring-black/5 bg-[#EFEFEF]">
+              <div className="relative rounded-3xl overflow-hidden">
                 <img
                   src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 02_12_03 AM.png")}
                   alt="עץ טבעי"
@@ -792,7 +792,7 @@ export default function Home() {
             </a>
             {/* Metal */}
             <a href="/materials?cat=metal" className="group block focus:outline-none focus:ring-2 focus:ring-[#C5A059] rounded-3xl">
-              <div className="relative rounded-3xl overflow-hidden shadow-xl ring-1 ring-black/5 bg-[#EFEFEF]">
+              <div className="relative rounded-3xl overflow-hidden">
                 <img
                   src="/images/products/nero-marquina.jpg"
                   alt="מתכת"

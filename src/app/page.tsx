@@ -830,7 +830,7 @@ export default function Home() {
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-left md:object-left"
                 />
               </a>
-              <div className="absolute inset-x-0 bottom-72 md:bottom-96 lg:bottom-[28rem] z-10 px-1 text-center md:text-right" dir="rtl">
+              <div className="absolute inset-x-0 bottom-72 md:bottom-96 lg:bottom-[28rem] z-10 px-1 text-center" dir="rtl">
                 <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">אבן טבעית (Natural Stone)</h3>
                 <p className="text-sm md:text-base text-gray-700">
                   אנחנו בוחרים ידנית כל לוח מאתרי המחצבה הנחשבים ביותר בעולם – מלב איטליה ועד מרבצי האבן הפראיים של ברזיל וקולומביה. כל גיד וכל טקסטורה הם עדות לתהליך של מיליוני שנים, המעניקים לכל פריט זהות ייחודית שאין לה עותק. יצירת מופת של הטבע, אצלכם בחלל.

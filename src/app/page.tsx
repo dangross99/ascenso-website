@@ -833,7 +833,7 @@ export default function Home() {
               <div className="absolute inset-x-0 bottom-72 md:bottom-96 lg:bottom-[28rem] z-10 px-1 text-center" dir="rtl">
                 <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">אבן טבעית (Natural Stone)</h3>
                 <p className="text-sm md:text-base text-gray-700">
-                  אנחנו בוחרים ידנית כל לוח מאתרי המחצבה הנחשבים ביותר בעולם – מלב איטליה ועד מרבצי האבן הפראיים של ברזיל וקולומביה. כל גיד וכל טקסטורה הם עדות לתהליך של מיליוני שנים, המעניקים לכל פריט זהות ייחודית שאין לה עותק. יצירת מופת של הטבע, אצלכם בחלל.
+                  אנחנו בוחרים ידנית כל לוח מאתרי המחצבה הנחשבים ביותר בעולם – מלב איטליה ועד מרבצי האבן הפראיים של ברזיל וקולומביה. כל גיד וכל טקסטורה הם עדות לתהליך של מיליוני שנים, המעניקים לכל פריט זהות ייחודית שאין לה עותק. יצירת מופת של הטבע.
                 </p>
                 <div className="mt-1 flex items-center justify-center gap-3 text-[#1a1a2e] text-xs md:text-sm w-max mx-auto">
                   <span className="inline-flex items-center gap-1">
@@ -860,9 +860,25 @@ export default function Home() {
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-center"
                 />
               </a>
-              <div className="absolute inset-x-0 bottom-72 md:bottom-96 lg:bottom-[28rem] z-10 px-1 text-center md:text-right">
-                <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">עץ וקומפוזיט — הרמוניה טבעית</h3>
-                <p className="text-sm md:text-base text-gray-700">מרקמי עץ חיים, קל משקל ועמיד לשימוש יומיומי.</p>
+              <div className="absolute inset-x-0 bottom-72 md:bottom-96 lg:bottom-[28rem] z-10 px-1 text-center">
+                <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">עץ (WOOD)</h3>
+                <p className="text-sm md:text-base text-gray-700">המפגש שבין החמימות הגולמית של העץ לבין איכות בלתי מתפשרת. אנו משתמשים בטקסטורות עץ שנבחרו בקפידה ליצירת הרמוניה יומיומית, המשלבת בין המגע הטבעי לבין עיצוב על זמני.</p>
+                <div className="mt-1 flex items-center justify-center gap-3 text-[#1a1a2e] text-xs md:text-sm w-max mx-auto">
+                  <span className="inline-flex items-center gap-1">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                      <path d="M5 12c0-5 7-7 14-7-1 7-3 14-12 14-2 0-4-1.5-4-3 0-2 1-4 2-4Z" stroke="currentColor" strokeWidth="1.8"/>
+                      <path d="M7 17C10 14 13 11 19 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+                    </svg>
+                    טבע
+                  </span>
+                  <span className="inline-flex items-center gap-1">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 3l7 4v5c0 5-3.5 9-7 9s-7-4-7-9V7l7-4Z" stroke="currentColor" strokeWidth="1.8" />
+                      <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    לכה בעמידות גבוהה
+                  </span>
+                </div>
               </div>
             </div>
             {/* Marble / Natural Stone */}
@@ -874,7 +890,7 @@ export default function Home() {
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-right md:object-right"
                 />
               </a>
-              <div className="absolute inset-x-0 bottom-72 md:bottom-96 lg:bottom-[28rem] z-10 px-1 text-center md:text-right" dir="rtl">
+              <div className="absolute inset-x-0 bottom-72 md:bottom-96 lg:bottom-[28rem] z-10 px-1 text-center" dir="rtl">
                 <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">מתכת</h3>
                 <p className="text-sm md:text-base text-gray-700">מתכות בעיבוד מיוחד</p>
               </div>

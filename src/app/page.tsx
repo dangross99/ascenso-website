@@ -210,6 +210,77 @@ function StairsPreview() {
   );
 }
 
+// Magnifier for desktop: circular lens that follows cursor over an image
+function MagnifyImage(props: { src: string; alt: string; className?: string }) {
+  const { src, alt, className } = props;
+  const containerRef = React.useRef<HTMLDivElement | null>(null);
+  const imgRef = React.useRef<HTMLImageElement | null>(null);
+  const [show, setShow] = React.useState(false);
+  const [lensPos, setLensPos] = React.useState<{ left: number; top: number }>({ left: 0, top: 0 });
+  const [bgPos, setBgPos] = React.useState<{ x: number; y: number; sizeX: number; sizeY: number }>({
+    x: 0,
+    y: 0,
+    sizeX: 0,
+    sizeY: 0,
+  });
+  const lensSize = 160; // px
+  const zoom = 2.0; // desktop zoom
+
+  const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const container = containerRef.current;
+    const img = imgRef.current;
+    if (!container || !img) return;
+    const cRect = container.getBoundingClientRect();
+    const iRect = img.getBoundingClientRect();
+    // position relative to image content (object-contain may add margins)
+    const relX = Math.max(0, Math.min(iRect.width, e.clientX - iRect.left));
+    const relY = Math.max(0, Math.min(iRect.height, e.clientY - iRect.top));
+    // lens position relative to container
+    const left = (iRect.left - cRect.left) + relX - lensSize / 2;
+    const top = (iRect.top - cRect.top) + relY - lensSize / 2;
+    setLensPos({ left, top });
+    setBgPos({
+      x: -(relX * zoom - lensSize / 2),
+      y: -(relY * zoom - lensSize / 2),
+      sizeX: iRect.width * zoom,
+      sizeY: iRect.height * zoom,
+    });
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative"
+      onMouseEnter={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
+      onMouseMove={handleMove}
+    >
+      <img
+        ref={imgRef}
+        src={encodeURI(src)}
+        alt={alt}
+        className={className || ""}
+      />
+      {/* Lens is desktop-only */}
+      {show && (
+        <div
+          className="hidden md:block pointer-events-none absolute z-20 rounded-full ring-2 ring-white/70 shadow-xl"
+          style={{
+            left: lensPos.left,
+            top: lensPos.top,
+            width: lensSize,
+            height: lensSize,
+            backgroundImage: `url(${encodeURI(src)})`,
+            backgroundRepeat: "no-repeat",
+            backgroundSize: `${bgPos.sizeX}px ${bgPos.sizeY}px`,
+            backgroundPosition: `${bgPos.x}px ${bgPos.y}px`,
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
 export default function Home() {
   // טקסטורות אמיתיות מתוך materials.json לשימוש ב"פס מוצרים" בדף הבית
   const [topMaterials, setTopMaterials] = useState<MaterialRecord[]>([]);
@@ -760,8 +831,8 @@ export default function Home() {
             </a>
             {/* Wood */}
             <a href="/materials?cat=wood" className="block">
-              <img
-                src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 05_21_43 PM.png")}
+              <MagnifyImage
+                src={"/images/ChatGPT Image Jan 6, 2026, 05_21_43 PM.png"}
                 alt="עץ טבעי"
                 className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-center"
               />

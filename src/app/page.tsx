@@ -1084,7 +1084,7 @@ export default function Home() {
           <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* תלת‑ממד קליל (בלי קובץ) */}
             <div className="order-1 lg:order-2">
-              <div className="relative h-[220px] md:h-[260px] bg-transparent overflow-hidden rounded" onPointerDown={() => setShow3DHint(false)}>
+              <div className="relative h-[220px] md:h-[520px] bg-transparent overflow-hidden rounded" onPointerDown={() => setShow3DHint(false)}>
                 <Canvas camera={{ position: [3, 7, 1.7], fov: 23 }} dpr={[1, 2]} gl={{ alpha: true, toneMappingExposure: 1.2 }} style={{ background: 'transparent' }}>
                   <hemisphereLight args={['#ffffff', '#d4d4d4', 0.95]} />
                   <ambientLight intensity={0.8} />

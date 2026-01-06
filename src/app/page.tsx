@@ -822,7 +822,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-2 md:gap-x-20 md:gap-y-12 lg:gap-x-24 lg:gap-y-16 xl:gap-x-28 xl:gap-y-20">
             {/* Stone */}
-            <div className="flex flex-col gap-1">
+            <div className="relative flex flex-col gap-1">
               <a href="/materials?cat=stone" className="block">
                 <img
                   src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 12_39_36 PM.png")}
@@ -830,13 +830,13 @@ export default function Home() {
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-left md:object-left"
                 />
               </a>
-              <div className="-mt-36 md:-mt-[30rem] lg:-mt-[36rem] px-1 text-center md:text-right">
+              <div className="absolute inset-x-0 bottom-6 md:bottom-10 lg:bottom-14 z-10 px-1 text-center md:text-right">
                 <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">ברונזה — עוצמה עתיקה</h3>
                 <p className="text-sm md:text-base text-gray-700">גימור חמים ועמוק, נוכחות מדויקת בחלל.</p>
               </div>
             </div>
             {/* Wood */}
-            <div className="flex flex-col gap-1">
+            <div className="relative flex flex-col gap-1">
               <a href="/materials?cat=wood" className="block">
                 <MagnifyImage
                   src={"/images/ChatGPT Image Jan 6, 2026, 05_21_43 PM.png"}
@@ -844,13 +844,13 @@ export default function Home() {
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-center"
                 />
               </a>
-              <div className="-mt-36 md:-mt-[30rem] lg:-mt-[36rem] px-1 text-center md:text-right">
+              <div className="absolute inset-x-0 bottom-6 md:bottom-10 lg:bottom-14 z-10 px-1 text-center md:text-right">
                 <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">עץ וקומפוזיט — הרמוניה טבעית</h3>
                 <p className="text-sm md:text-base text-gray-700">מרקמי עץ חיים, קל משקל ועמיד לשימוש יומיומי.</p>
               </div>
             </div>
             {/* Metal */}
-            <div className="flex flex-col gap-1">
+            <div className="relative flex flex-col gap-1">
               <a href="/materials?cat=metal" className="block">
                 <img
                   src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 05_44_10 PM.png")}
@@ -858,7 +858,7 @@ export default function Home() {
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-right md:object-right"
                 />
               </a>
-              <div className="-mt-36 md:-mt-[30rem] lg:-mt-[36rem] px-1 text-center md:text-right">
+              <div className="absolute inset-x-0 bottom-6 md:bottom-10 lg:bottom-14 z-10 px-1 text-center md:text-right">
                 <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">שיש — צורה טהורה, יופי על־זמני</h3>
                 <p className="text-sm md:text-base text-gray-700">קררה איטליה; גימור מדויק ומראה נקי.</p>
               </div>

@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "process:materials": "node scripts/process-materials.mjs assets/materials_src public/images/materials",
-    "process:materials:clean": "node scripts/main-does-not-exist || node scripts/process-materials.mjs assets/materials_src public/images/materials --clean"
+    "process:materials:clean": "node scripts/main-does-not-exist || node scripts/process-materials.mjs assets/materials_src public/images/materials --clean",
+    "remove-bg": "node scripts/remove-bg.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",

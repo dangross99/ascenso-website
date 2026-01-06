@@ -1139,24 +1139,29 @@ export default function Home() {
 
       {/* 7. Luxury Collections Section (removed per request) */}
 
-      {/* 8. פנייה מהירה – WhatsApp */}
-      <section className="relative bg-[#1a1a2e] text-white py-4 md:py-6" dir="rtl">
-        <div className="relative max-w-2xl mx-auto text-center px-4">
-          <div className="flex items-center justify-center mb-3">
-            <h2 className="text-2xl md:text-3xl font-semibold">
-              מהחזון ועד לפרטים הקטנים
-            </h2>
-          </div>
-          <p className="text-sm md:text-base text-gray-300 max-w-xl mx-auto mb-5 leading-relaxed">
-            ליווי אישי בבחירת דגמים, התאמת טקסטורות ודיוק המעקה שלכם. אנחנו כאן כדי להפוך את הבחירה לפשוטה ומדויקת יותר.
+      {/* 8. פנייה מהירה – WhatsApp (באנר בסגנון אופנה) */}
+      <section
+        className="relative w-screen bg-[#1a1a2e] text-white overflow-hidden"
+        style={{ marginLeft: "calc(50% - 50vw)", width: "100vw" }}
+        dir="rtl"
+      >
+        <div className="relative max-w-5xl mx-auto px-4 py-12 md:py-16 lg:py-20 text-center flex flex-col items-center gap-4">
+          <h2 className="text-3xl md:text-6xl lg:text-7xl font-prosto tracking-[0.08em] md:tracking-[0.12em]">
+            מהחזון ועד לפרטים הקטנים
+          </h2>
+          <p className="text-base md:text-2xl text-gray-200 max-w-3xl leading-relaxed">
+            ליווי אישי בבחירת דגמים, התאמת טקסטורות ודיוק המעקה — מענה מהיר ב‑WhatsApp.
           </p>
           <a
-            href={`https://api.whatsapp.com/send?phone=972539994995&text=${encodeURIComponent('*ASCENSO*\nהיי! ראיתי את האתר ואני מעוניינ/ת להתקדם.\nאשמח לשיחת ייעוץ קצרה ולקבל פרטים נוספים. תודה!')}`}
+            href={`https://api.whatsapp.com/send?phone=972539994995&text=${encodeURIComponent('*ASCENSO*\\nהיי! ראיתי את האתר ואני מעוניינ/ת להתקדם.\\nאשמח לשיחת ייעוץ קצרה ולקבל פרטים נוספים. תודה!')}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block px-12 py-3 bg-[#25D366] text-[#0b1a13] text-sm font-bold tracking-widest rounded-md transition-colors duration-300 hover:brightness-95 shadow-sm"
+            className="inline-flex items-center gap-2 px-8 md:px-10 py-3 md:py-3.5 rounded-full bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-wider transition-colors duration-300 hover:bg-white/95 shadow-sm"
             aria-label="צ'אט WhatsApp עם ASCENSO"
           >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#25D366" aria-hidden="true">
+              <path d="M20.52 3.48A11.86 11.86 0 0012.07 0C5.7 0 .57 5.13.57 11.5c0 2.03.54 4 .1 5.38L0 24l7.3-1.9a12.02 12.02 0 004.77.97h.01c6.37 0 11.5-5.13 11.5-11.5 0-3.07-1.2-5.96-3.06-8.09zM12.08 21.5h-.01a9.96 9.96 0 01-5.08-1.4l-.36-.21-4.34 1.13 1.16-4.22-.23-.43a9.97 9.97 0 01-1.45-5.14C1.77 6.24 6.01 2 11.06 2c2.67 0 5.17 1.04 7.06 2.93a9.94 9.94 0 012.93 7.06c0 5.05-4.24 9.51-9.97 9.51zm5.75-7.2c-.32-.16-1.9-.94-2.19-1.05-.29-.11-.5-.16-.72.16-.21.32-.83 1.05-1.02 1.27-.19.21-.37.24-.7.08-.32-.16-1.35-.5-2.57-1.6-.95-.85-1.59-1.9-1.78-2.22-.19-.32-.02-.49.14-.65.15-.15.32-.37.48-.56.16-.19.21-.32.32-.53.11-.21.05-.4-.03-.56-.08-.16-.72-1.74-.99-2.39-.26-.63-.53-.54-.72-.55h-.62c-.21 0-.55.08-.84.4-.29.32-1.1 1.08-1.1 2.63 0 1.55 1.13 3.05 1.29 3.27.16.21 2.22 3.38 5.38 4.73.75.32 1.34.51 1.79.65.75.24 1.44.21 1.98.13.6-.09 1.9-.78 2.17-1.53.27-.75.27-1.39.19-1.53-.08-.13-.29-.21-.61-.37z"/>
+            </svg>
             התחילו שיחה ב‑WhatsApp
           </a>
         </div>

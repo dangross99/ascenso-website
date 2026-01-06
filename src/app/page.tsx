@@ -833,7 +833,7 @@ export default function Home() {
               <div className="absolute inset-x-0 bottom-72 md:bottom-96 lg:bottom-[28rem] z-10 px-1 text-center" dir="rtl">
                 <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">אבן טבעית (Natural Stone)</h3>
                 <p className="text-sm md:text-base text-gray-700">
-                  אנו בוחרים ידנית כל לוח ממחצבות העילית של איטליה, ברזיל וקולומביה. כל גיד וטקסטורה הם עדות לתהליך של מיליוני שנים, המעניקים לכל פריט זהות ייחודית שאין לה עותק. יצירת מופת של הטבע.
+                  אנו בוחרים ידנית כל לוח ממחצבות העילית של איטליה, ברזיל וקולומביה. כל גיד וטקסטורה הם עדות לתהליך של מיליוני שנים, המעניקים לכל פריט זהות ייחודית שאין לה עותק. יצירה של הטבע.
                 </p>
                 <div className="mt-1 flex items-center justify-center gap-3 text-[#1a1a2e] text-xs md:text-sm w-max mx-auto">
                   <span className="inline-flex items-center gap-1">

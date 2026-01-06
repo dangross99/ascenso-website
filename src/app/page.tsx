@@ -831,8 +831,10 @@ export default function Home() {
                 />
               </a>
               <div className="absolute inset-x-0 bottom-72 md:bottom-96 lg:bottom-[28rem] z-10 px-1 text-center md:text-right" dir="rtl">
-                <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">100% אבן טבעית</h3>
-                <p className="text-sm md:text-base text-gray-700">השיש שלנו מיובא בעיקר מאיטליה, ברזיל וקולומביה — איכות פרימיום עם בחירה קפדנית.</p>
+                <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">אבן טבעית (Natural Stone)</h3>
+                <p className="text-sm md:text-base text-gray-700">
+                  אנחנו בוחרים ידנית כל לוח מאתרי המחצבה הנחשבים ביותר בעולם – מלב איטליה ועד מרבצי האבן הפראיים של ברזיל וקולומביה. כל גיד וכל טקסטורה הם עדות לתהליך של מיליוני שנים, המעניקים לכל פריט זהות ייחודית שאין לה עותק. יצירת מופת של הטבע, אצלכם בחלל.
+                </p>
                 <div className="mt-1 flex items-center justify-center md:justify-end gap-3 text-[#1a1a2e] text-xs md:text-sm">
                   <span className="inline-flex items-center gap-1">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 22s7-6.29 7-12a7 7 0 1 0-14 0c0 5.71 7 12 7 12Z" stroke="currentColor" strokeWidth="1.8"/><circle cx="12" cy="10" r="2.8" stroke="currentColor" strokeWidth="1.6"/></svg>

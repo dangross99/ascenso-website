@@ -283,9 +283,14 @@ function MagnifyImage(props: { src: string; alt: string; className?: string }) {
 
 // Background image for WhatsApp section with simple jpg→png fallback
 function WhatsAppBackground() {
-  const [src, setSrc] = React.useState("/images/788.jpg");
+  // Prefer .jpeg per uploaded file; fallbacks: .jpg → .png
+  const [src, setSrc] = React.useState("/images/788.jpeg");
   const handleError = React.useCallback(() => {
-    if (src.endsWith(".jpg")) setSrc("/images/788.png");
+    if (src.endsWith(".jpeg")) {
+      setSrc("/images/788.jpg");
+    } else if (src.endsWith(".jpg")) {
+      setSrc("/images/788.png");
+    }
   }, [src]);
   return (
     <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">

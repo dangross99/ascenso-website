@@ -281,28 +281,6 @@ function MagnifyImage(props: { src: string; alt: string; className?: string }) {
   );
 }
 
-// Background image for WhatsApp section with simple jpg→png fallback
-function WhatsAppBackground() {
-  // Prefer .png per the latest uploaded file; fallbacks: .jpeg → .jpg
-  const [src, setSrc] = React.useState("/images/789.png");
-  const handleError = React.useCallback(() => {
-    if (src.endsWith(".png")) setSrc("/images/789.jpeg");
-    else if (src.endsWith(".jpeg")) setSrc("/images/789.jpg");
-  }, [src]);
-  return (
-    <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
-      <img
-        src={src}
-        alt=""
-        className="w-full h-full object-cover object-center"
-        onError={handleError}
-        loading="lazy"
-      />
-      <div className="absolute inset-0 bg-[#1a1a2e]/20" />
-    </div>
-  );
-}
-
 export default function Home() {
   // טקסטורות אמיתיות מתוך materials.json לשימוש ב"פס מוצרים" בדף הבית
   const [topMaterials, setTopMaterials] = useState<MaterialRecord[]>([]);
@@ -1163,8 +1141,6 @@ export default function Home() {
 
       {/* 8. פנייה מהירה – WhatsApp */}
       <section className="relative bg-[#1a1a2e] text-white py-4 md:py-6" dir="rtl">
-        {/* Background image (788) + overlay */}
-        <WhatsAppBackground />
         <div className="relative max-w-2xl mx-auto text-center px-4">
           <div className="flex items-center justify-center mb-3">
             <h2 className="text-2xl md:text-3xl font-semibold">

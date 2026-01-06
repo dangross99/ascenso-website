@@ -830,7 +830,7 @@ export default function Home() {
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-left md:object-left"
                 />
               </a>
-              <div className="-mt-12 md:-mt-24 lg:-mt-28 px-1 text-center md:text-right">
+              <div className="-mt-24 md:-mt-44 lg:-mt-56 px-1 text-center md:text-right">
                 <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">ברונזה — עוצמה עתיקה</h3>
                 <p className="text-sm md:text-base text-gray-700">גימור חמים ועמוק, נוכחות מדויקת בחלל.</p>
               </div>
@@ -844,7 +844,7 @@ export default function Home() {
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-center"
                 />
               </a>
-              <div className="-mt-12 md:-mt-24 lg:-mt-28 px-1 text-center md:text-right">
+              <div className="-mt-24 md:-mt-44 lg:-mt-56 px-1 text-center md:text-right">
                 <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">עץ וקומפוזיט — הרמוניה טבעית</h3>
                 <p className="text-sm md:text-base text-gray-700">מרקמי עץ חיים, קל משקל ועמיד לשימוש יומיומי.</p>
               </div>
@@ -858,7 +858,7 @@ export default function Home() {
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-right md:object-right"
                 />
               </a>
-              <div className="-mt-12 md:-mt-24 lg:-mt-28 px-1 text-center md:text-right">
+              <div className="-mt-24 md:-mt-44 lg:-mt-56 px-1 text-center md:text-right">
                 <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">שיש — צורה טהורה, יופי על־זמני</h3>
                 <p className="text-sm md:text-base text-gray-700">קררה איטליה; גימור מדויק ומראה נקי.</p>
               </div>

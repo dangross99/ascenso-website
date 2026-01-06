@@ -1117,18 +1117,18 @@ export default function Home() {
                 </div>
             {/* טקסט */}
             <div className="order-2 lg:order-1 text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-5">
                 <span className="hidden md:inline">תלת‑ממד LIVE — רואים לפני שמחליטים</span>
                 <span className="block md:hidden">תלת‑ממד LIVE —</span>
                 <span className="block md:hidden">רואים לפני שמחליטים</span>
               </h2>
-              <p className="text-gray-700 leading-relaxed mb-4">
+              <p className="text-gray-700 leading-relaxed mb-5 text-base md:text-lg">
                 בהדמייה שלנו אתם בונים את המדרגות בזמן אמת: בוחרים צורה ,טקסטורות, חומרים, וסוג מעקה — זכוכית, מתכת או כבלי נירוסטה. תראו איך המדרגות זורמות בחלל, איך הפודסטים והפניות מתחברים ואיך המעקה משלים את הקו — והמחיר מתעדכן בכל שינוי. אפשר לשמור הדמיות ולשתף ב‑WhatsApp — הכל במקום אחד.
               </p>
               
                   <a
                 href="/live"
-                className="inline-block px-12 py-3 bg-[#1a1a2e] text-white text-sm font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90 mx-auto"
+                className="inline-block px-14 py-3.5 bg-[#1a1a2e] text-white text-sm md:text-base font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90 mx-auto"
                   >
                 התחל הזמנה
                   </a>

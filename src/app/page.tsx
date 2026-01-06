@@ -893,7 +893,7 @@ export default function Home() {
               <div className="absolute inset-x-0 bottom-72 md:bottom-96 lg:bottom-[28rem] z-10 px-1 text-center" dir="rtl">
                 <h3 className="text-base md:text-lg font-semibold text-[#1a1a2e] tracking-tight">מתכת (METAL)</h3>
                 <p className="text-sm md:text-base text-gray-700">מתכות אצילות שעוברות תהליכי עיבוד וחימצון ייחודיים ליצירת עומק ויזואלי מהפנט. הטקסטורות המטאליות שלנו הן תוצאה של דיוק ומגע יד אנושית, המעניקים לכל משטח אופי תעשייתי מתוחכם וגימור מרהיב שמשתנה עם האור.</p>
-                <div className="mt-1 flex items-center justify-center gap-3 text-[#1a1a2e] text-xs md:text-sm w-max mx-auto">
+                <div className="mt-1 flex items-center justify-center gap-6 md:gap-8 text-[#1a1a2e] text-xs md:text-sm w-max mx-auto">
                   {/* Industrial */}
                   <span className="inline-flex items-center gap-1">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
@@ -902,14 +902,6 @@ export default function Home() {
                       <path d="M12 11v8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
                     </svg>
                     תעשייתי
-                  </span>
-                  {/* Precision */}
-                  <span className="inline-flex items-center gap-1">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                      <rect x="3" y="6" width="18" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.8"/>
-                      <path d="M7 6v6M10 6v6M13 6v6M16 6v6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-                    </svg>
-                    דיוק
                   </span>
                   {/* Easy maintenance */}
                   <span className="inline-flex items-center gap-1">

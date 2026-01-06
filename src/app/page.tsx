@@ -749,7 +749,7 @@ export default function Home() {
       {/* High-end Materials Section – “swatch” cards with overlay text */}
       <section className="w-full py-4 md:py-8" dir="rtl">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-2 md:gap-x-10 md:gap-y-10 lg:gap-x-12 lg:gap-y-12">
             {/* Stone */}
             <a href="/materials?cat=stone" className="block">
               <img

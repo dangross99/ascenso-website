@@ -809,7 +809,7 @@ export default function Home() {
           <div className="text-center mt-6 md:mt-8" dir="rtl">
             <a
               href="/materials"
-              className="inline-block px-12 py-3 bg-[#1a1a2e] text-white text-sm font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90"
+              className="inline-block px-14 py-3.5 bg-[#1a1a2e] text-white text-sm md:text-base font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90"
             >
               לכל הטקסטורות
             </a>
@@ -1051,7 +1051,7 @@ export default function Home() {
             <div className="text-center mt-10">
                   <a
                 href="/live"
-                className="inline-block px-12 py-3 bg-[#1a1a2e] text-white text-sm font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90"
+                className="inline-block px-14 py-3.5 bg-[#1a1a2e] text-white text-sm md:text-base font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90"
                   >
                 התחל הזמנה
                   </a>

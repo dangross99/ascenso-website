@@ -1144,11 +1144,11 @@ export default function Home() {
         <div className="relative max-w-2xl mx-auto text-center px-4">
           <div className="flex items-center justify-center mb-3">
             <h2 className="text-2xl md:text-3xl font-semibold">
-              שאלות? דברו איתנו ב‑WhatsApp
+              מהחזון ועד לפרטים הקטנים
             </h2>
           </div>
           <p className="text-sm md:text-base text-gray-300 max-w-xl mx-auto mb-5 leading-relaxed">
-            צריכים הכוונה מהירה בבחירת דגם, טקסטורה או מעקה? אנחנו זמינים ב‑WhatsApp ונשמח לעזור.
+            ליווי אישי בבחירת דגמים, התאמת טקסטורות ודיוק המעקה שלכם. אנחנו כאן כדי להפוך את הבחירה לפשוטה ומדויקת יותר.
           </p>
           <a
             href={`https://api.whatsapp.com/send?phone=972539994995&text=${encodeURIComponent('*ASCENSO*\nהיי! ראיתי את האתר ואני מעוניינ/ת להתקדם.\nאשמח לשיחת ייעוץ קצרה ולקבל פרטים נוספים. תודה!')}`}
@@ -1157,7 +1157,7 @@ export default function Home() {
             className="inline-block px-12 py-3 bg-[#25D366] text-[#0b1a13] text-sm font-bold tracking-widest rounded-md transition-colors duration-300 hover:brightness-95 shadow-sm"
             aria-label="צ'אט WhatsApp עם ASCENSO"
           >
-            דברו איתנו ב‑WhatsApp
+            התחילו שיחה ב‑WhatsApp
           </a>
         </div>
       </section>

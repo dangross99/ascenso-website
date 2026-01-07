@@ -144,17 +144,6 @@ export default function MaterialsPage() {
 	const [woodColorById, setWoodColorById] = React.useState<Record<string, string>>({});
 
 
-	// הדגמות עיצוב לפס הגלילה
-	const [featureFade] = React.useState(false);
-	const [featureSnap] = React.useState(false);
-	const [featureHover] = React.useState(true);
-	const [featureArrows] = React.useState(false);
-	const [featureSelect] = React.useState(false);
-	const [featureAuto] = React.useState(false);
-
-	const stripRef = React.useRef<HTMLDivElement>(null);
-	const [isHoveringStrip, setIsHoveringStrip] = React.useState(false);
-	const [selectedIdx, setSelectedIdx] = React.useState<number | null>(null);
 	// מעקב אחרי תמונות שלא נטענו (fallback)
 	const [brokenStripById, setBrokenStripById] = React.useState<Record<string, boolean>>({});
 	const [brokenGridById, setBrokenGridById] = React.useState<Record<string, boolean>>({});
@@ -213,141 +202,11 @@ export default function MaterialsPage() {
 		setVisibleCount(9);
 	}, [materialFilter, priceFilter, allItems]);
 
-	// גלילה אוטומטית עדינה
-	React.useEffect(() => {
-		if (!featureAuto) return;
-		let raf = 0;
-		let lastTs = 0;
-		const step = (ts: number) => {
-			if (!stripRef.current || isHoveringStrip) {
-				raf = requestAnimationFrame(step);
-				lastTs = ts;
-				return;
-			}
-			const dt = lastTs ? Math.min(32, ts - lastTs) : 16;
-			stripRef.current.scrollLeft += 0.15 * dt; // תנועה איטית
-			lastTs = ts;
-			raf = requestAnimationFrame(step);
-		};
-		raf = requestAnimationFrame(step);
-		return () => cancelAnimationFrame(raf);
-	}, [featureAuto, isHoveringStrip]);
-
-	// גרירת עכבר לגלילה
-	React.useEffect(() => {
-		const el = stripRef.current;
-		if (!el) return;
-		let isDown = false;
-		let startX = 0;
-		let scrollLeft = 0;
-		const onDown = (e: MouseEvent) => {
-			isDown = true;
-			startX = e.pageX - el.offsetLeft;
-			scrollLeft = el.scrollLeft;
-			el.style.cursor = 'grabbing';
-			e.preventDefault();
-		};
-		const onMove = (e: MouseEvent) => {
-			if (!isDown) return;
-			const x = e.pageX - el.offsetLeft;
-			const walk = (x - startX) * 1; // מהירות גרירה
-			el.scrollLeft = scrollLeft - walk;
-		};
-		const onUp = () => {
-			isDown = false;
-			el.style.cursor = '';
-		};
-		el.addEventListener('mousedown', onDown);
-		window.addEventListener('mousemove', onMove);
-		window.addEventListener('mouseup', onUp);
-		return () => {
-			el.removeEventListener('mousedown', onDown);
-			window.removeEventListener('mousemove', onMove);
-			window.removeEventListener('mouseup', onUp);
-		};
-	}, []);
-
-	const scrollByTiles = (dir: 1 | -1) => {
-		const el = stripRef.current;
-		if (!el) return;
-		// חישוב רוחב כרטיס (כולל המרווחים)
-		const tileWidth = el.clientWidth / 7;
-		el.scrollBy({ left: dir * tileWidth, behavior: 'smooth' });
-	};
+	// הוסר פס הגלילה העליון
 
 	return (
 		<main className="max-w-7xl mx-auto px-4 py-6" dir="rtl">
-			{/* גלריית פס עליון נגלל אופקית - מלא רוחב מסך */}
-			<div
-				className="mb-6 overflow-x-auto w-screen relative left-1/2 right-1/2 -mx-[50vw] px-4 scrollbar-classic"
-				onMouseEnter={() => setIsHoveringStrip(true)}
-				onMouseLeave={() => setIsHoveringStrip(false)}
-			>
-				{/* חיצי ניווט */}
-				{featureArrows && (
-					<>
-						<button
-							className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full items-center justify-center bg-white/80 shadow cursor-pointer hover:bg-white"
-							onClick={() => scrollByTiles(1)}
-							aria-label="גלול ימינה"
-						>
-							<span className="text-xl select-none">›</span>
-						</button>
-						<button
-							className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full items-center justify-center bg-white/80 shadow cursor-pointer hover:bg-white"
-							onClick={() => scrollByTiles(-1)}
-							aria-label="גלול שמאלה"
-						>
-							<span className="text-xl select-none">‹</span>
-						</button>
-					</>
-				)}
-
-				{/* קצוות עם פייד */}
-				{featureFade && (
-					<>
-						<div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-white to-transparent z-10" />
-						<div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-white to-transparent z-10" />
-					</>
-				)}
-
-				{/* מקור התמונות לפס */}
-				<div
-					ref={stripRef}
-					className={`flex gap-1 min-w-full ${featureSnap ? 'snap-x snap-mandatory' : ''}`}
-					style={{ scrollBehavior: 'smooth' }}
-				>
-					{(allItems.length ? allItems : MATERIAL_ITEMS)
-						.slice(0, 14)
-						.map((item, i) => (
-						<div
-							key={i}
-							className={`relative shrink-0 border bg-white overflow-hidden h-96 group ${featureSnap ? 'snap-start' : ''} ${featureHover ? 'transition-transform duration-300 hover:scale-[1.03]' : ''} ${featureSelect && selectedIdx === i ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-							style={{ width: 'calc((100% - (0.25rem * 6)) / 7)' }} // 7 פריטים רוחב מלא עם gap-1
-							onClick={() => featureSelect && setSelectedIdx(prev => (prev === i ? null : i))}
-						>
-							{/* תמונה עם fallback */}
-							<Image
-								src={brokenStripById[item.id] ? FALLBACK_SRC : (item.image || FALLBACK_SRC)}
-								alt={item.name}
-								fill
-								className="object-cover select-none pointer-events-none"
-								onError={() => setBrokenStripById(prev => ({ ...prev, [item.id]: true }))}
-							/>
-							{/* שכבת שם חומר */}
-							{featureHover && (
-								<div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/50 to-transparent text-white text-sm p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-									{item.name}
-								</div>
-							)}
-							{/* דוט בחירה */}
-							{featureSelect && selectedIdx === i && (
-								<span className="absolute bottom-2 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-[#1a1a2e]" />
-							)}
-						</div>
-					))}
-				</div>
-			</div>
+			{/* פס גלילה עליון הוסר לפי בקשה */}
 
 			{/* אזור תוכן: סינון + תוצאות */}
 			<div className="grid grid-cols-1 lg:grid-cols-12 gap-8" dir="ltr">
@@ -496,7 +355,7 @@ export default function MaterialsPage() {
 										<div className="mt-3 flex justify-center">
 											<a
 												href={`/live?material=${encodeURIComponent(it.materialId)}&color=${encodeURIComponent(selectedColorId)}&price=${it.price}`}
-												className="inline-block px-14 py-3.5 bg-[#1a1a2e] text-white text-sm md:text-base font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90 cursor-pointer"
+												className="inline-block px-14 py-3.5 bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-widest rounded-md transition-colors duration-300 hover:bg-white/95 cursor-pointer border"
 											>
 												פתח הדמייה LIVE
 											</a>

@@ -3,13 +3,6 @@
 import Image from 'next/image';
 import React from 'react';
 
-type Material = {
-	id: string;
-	name: string;
-	image: string;
-	specs: { label: string; value: string }[];
-};
-
 type MaterialRecord = {
 	id: string;
 	name: string;
@@ -43,69 +36,7 @@ const WOOD_SWATCHES: { id: string; label: string; hex: string }[] = [
 	{ id: 'oak', label: 'אלון', hex: '#C8A165' },
 ];
 
-const MATERIALS: Material[] = [
-	{
-		id: 'wood',
-		name: 'עץ',
-		image: '/images/products/travertine-wall.jpg',
-		specs: [
-			{ label: 'סוגים נפוצים', value: 'אלון, אגוז, בוק' },
-			{ label: 'גימור', value: 'לכה מט/משי, שמן' },
-			{ label: 'תחזוקה', value: 'ניקוי עדין, חידוש גימור לפי צורך' },
-			{ label: 'תאימות מערכת כבלים', value: '✓' },
-			{ label: 'תאימות מעקה זכוכית', value: '✓' },
-			{ label: 'תאימות מעקה ברזל', value: '✓' },
-		],
-	},
-	{
-		id: 'metal',
-		name: 'מתכת',
-		image: '/images/products/nero-marquina.jpg',
-		specs: [
-			{ label: 'סגסוגות', value: 'פלדה, נירוסטה 304/316, אלומיניום' },
-			{ label: 'גימור', value: 'צבע אבקה RAL, מוברש' },
-			{ label: 'עמידות', value: 'גבוהה, מתאים גם לחוץ (לפי גימור)' },
-			{ label: 'תאימות מערכת כבלים', value: '✓' },
-			{ label: 'תאימות מעקה זכוכית', value: '✓' },
-			{ label: 'תאימות מעקה ברזל', value: '✓' },
-		],
-	},
-	{
-		id: 'stone',
-		name: 'אבן טבעית',
-		image: '/images/products/white-onyx.jpg',
-		specs: [
-			{ label: 'סוגים נפוצים', value: 'שיש, גרניט, טרוורטין' },
-			{ label: 'גימור', value: 'מוברש, מט, מלוטש' },
-			{ label: 'תחזוקה', value: 'איטום תקופתי, ניקוי ייעודי' },
-			{ label: 'תאימות מערכת כבלים', value: '✓' },
-			{ label: 'תאימות מעקה זכוכית', value: '✓' },
-			{ label: 'תאימות מעקה ברזל', value: '✓' },
-		],
-	},
-];
-
-// יצירת פריטי הדגמה עם צבע/מחיר
-const MATERIAL_ITEMS: MaterialItem[] = (() => {
-	const base: Array<Omit<MaterialItem, 'id'>> = [
-		{ materialId: 'wood', name: 'עץ – דוגמה', image: MATERIALS[0].image, color: 'brown', price: 3200 },
-		{ materialId: 'wood', name: 'עץ בהיר', image: MATERIALS[0].image, color: 'beige', price: 2400 },
-		{ materialId: 'wood', name: 'עץ כהה', image: MATERIALS[0].image, color: 'black', price: 4800 },
-		{ materialId: 'metal', name: 'מתכת מושחרת', image: MATERIALS[1].image, color: 'black', price: 2900 },
-		{ materialId: 'metal', name: 'מתכת מוברשת', image: MATERIALS[1].image, color: 'gray', price: 2300 },
-		{ materialId: 'metal', name: 'מתכת ירקרקה', image: MATERIALS[1].image, color: 'green', price: 4100 },
-		{ materialId: 'stone', name: 'אבן בהירה', image: MATERIALS[2].image, color: 'white', price: 3600 },
-		{ materialId: 'stone', name: 'אבן בז', image: MATERIALS[2].image, color: 'beige', price: 2500 },
-		{ materialId: 'stone', name: 'אבן אפורה', image: MATERIALS[2].image, color: 'gray', price: 5000 },
-	];
-	// שכפול לגלילה יפה
-	return base.flatMap((b, idx) => {
-		return Array.from({ length: 3 }).map((_, k) => ({
-			id: `itm-${idx}-${k}`,
-			...b,
-		}));
-	});
-})();
+// הוסרו נתוני דמה – הטעינה כולה מגיעה מ-materials.json
 
 function SpecTable({ specs }: { specs: { label: string; value: string }[] }) {
 	return (
@@ -170,15 +101,15 @@ export default function MaterialsPage() {
 					id: rec.id || `json-${idx}`,
 					materialId: rec.category,
 					name: rec.name,
-					image: rec.images?.[0] || '/images/materials/placeholder.jpg',
+					image: rec.images?.[0] || FALLBACK_SRC,
 					color: (rec.colors && rec.colors[0]) || 'gray',
 					price: rec.price ?? 3000,
 					variantImages: rec.variants,
 				}));
 				setAllItems(items);
 			} catch (e) {
-				console.warn('Failed to load materials.json, using demo data', e);
-				setAllItems(MATERIAL_ITEMS);
+				console.warn('Failed to load materials.json', e);
+				setAllItems([]);
 			}
 		}
 		load();
@@ -189,7 +120,7 @@ export default function MaterialsPage() {
 
 	// נתונים מסוננים
 	const filteredItems = React.useMemo(() => {
-		const source = allItems.length ? allItems : MATERIAL_ITEMS;
+		const source = allItems;
 		return source.filter(it => {
 			if (materialFilter && it.materialId !== materialFilter) return false;
 			if (priceFilter !== null && it.price > priceFilter) return false;
@@ -281,7 +212,7 @@ export default function MaterialsPage() {
 				{/* תוצאות */}
 				<section className="lg:col-span-9" dir="rtl">
 					<div className="flex items-center justify-between mb-3 text-sm text-gray-600">
-						<span>{(filteredItems.length || MATERIAL_ITEMS.length)} תוצאות</span>
+						<span>{filteredItems.length} תוצאות</span>
 						<div className="flex items-center gap-2">
 							<span>מיין לפי:</span>
 							<select className="border px-2 py-1 text-sm cursor-pointer">
@@ -292,7 +223,7 @@ export default function MaterialsPage() {
 						</div>
 					</div>
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-						{(filteredItems.length ? filteredItems : MATERIAL_ITEMS).slice(0, visibleCount).map((it, i) => {
+						{filteredItems.slice(0, visibleCount).map((it, i) => {
 							// צבע נבחר: מה-UI, אחרת צבע ראשון זמין מתוך השישה, אחרת 'oak'
 							const availableWoodColors = WOOD_SWATCHES.map(s => s.id).filter(id => !it.variantImages || it.variantImages[id]);
 							const selectedColorId =
@@ -303,7 +234,7 @@ export default function MaterialsPage() {
 								it.materialId === 'wood' && it.variantImages
 									? it.variantImages[selectedColorId]?.[0] || it.image
 									: it.image;
-							const displaySrc = selectedVariantSrc || '/images/products/white-onyx.jpg';
+							const displaySrc = selectedVariantSrc || FALLBACK_SRC;
 							const safeSrc = brokenGridById[it.id] ? FALLBACK_SRC : (displaySrc || FALLBACK_SRC);
 							return (
 								<article key={i} className="border bg-white group">
@@ -319,7 +250,7 @@ export default function MaterialsPage() {
 										<div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
 											<button
 												type="button"
-												className="pointer-events-auto inline-block px-14 py-3.5 rounded-md bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-widest shadow-sm hover:bg-white/95 cursor-pointer"
+												className="pointer-events-auto inline-block px-14 py-3.5 rounded-md bg-[#1a1a2e] text-white text-sm md:text-base font-bold tracking-widest shadow-sm hover:opacity-90 cursor-pointer"
 												onClick={(e) => {
 													e.preventDefault();
 													setLightboxSrc(safeSrc);
@@ -365,12 +296,12 @@ export default function MaterialsPage() {
 							);
 						})}
 					</div>
-					{visibleCount < (filteredItems.length || MATERIAL_ITEMS.length) && (
+					{visibleCount < filteredItems.length && (
 						<div className="mt-6 flex justify-center">
 							<button
 								className="px-14 py-3.5 bg-[#1a1a2e] text-white text-sm md:text-base font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90 cursor-pointer"
 								onClick={() =>
-									setVisibleCount(c => Math.min(c + 9, (filteredItems.length || MATERIAL_ITEMS.length)))
+									setVisibleCount(c => Math.min(c + 9, filteredItems.length))
 								}
 							>
 								טען עוד

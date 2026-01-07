@@ -437,13 +437,13 @@ export default function MaterialsPage() {
 							const displaySrc = selectedVariantSrc || '/images/products/white-onyx.jpg';
 							const safeSrc = brokenGridById[it.id] ? FALLBACK_SRC : (displaySrc || FALLBACK_SRC);
 							return (
-								<article key={i} className="border bg-white">
+								<article key={i} className="border bg-white group">
 									<div className="relative aspect-[4/3] overflow-hidden">
 										<Image
 											src={safeSrc}
 											alt={it.name}
 											fill
-											className="object-cover"
+											className="object-cover transition-transform duration-500 group-hover:scale-110"
 											onError={() => setBrokenGridById(prev => ({ ...prev, [it.id]: true }))}
 										/>
 									</div>

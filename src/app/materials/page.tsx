@@ -205,13 +205,13 @@ export default function MaterialsPage() {
 	// הוסר פס הגלילה העליון
 
 	return (
-		<main className="max-w-7xl mx-auto px-4 py-6" dir="rtl">
+		<main className="max-w-7xl mx-auto px-4 pt-10 md:pt-14 pb-6 bg-[#EFEFEF]" dir="rtl">
 			{/* פס גלילה עליון הוסר לפי בקשה */}
 
 			{/* אזור תוכן: סינון + תוצאות */}
 			<div className="grid grid-cols-1 lg:grid-cols-12 gap-8" dir="ltr">
 				{/* סינון צדדי - משמאל בדסקטופ */}
-				<aside className="lg:col-span-3 lg:-ml-8" dir="rtl">
+				<aside className="lg:col-span-3 lg:-ml-8 lg:sticky lg:top-24 self-start" dir="rtl">
 					<div className="border p-4 bg-white rounded-xl shadow-sm">
 						<h3 className="text-base font-semibold mb-4">סינון</h3>
 
@@ -319,7 +319,7 @@ export default function MaterialsPage() {
 										<div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
 											<button
 												type="button"
-												className="pointer-events-auto inline-block px-14 py-3.5 rounded-md bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-widest shadow-sm hover:bg-white/95"
+												className="pointer-events-auto inline-block px-14 py-3.5 rounded-md bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-widest shadow-sm hover:bg-white/95 cursor-pointer"
 												onClick={(e) => {
 													e.preventDefault();
 													setLightboxSrc(safeSrc);

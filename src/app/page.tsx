@@ -1003,16 +1003,24 @@ export default function Home() {
               className="w-full h-full object-cover"
               loading="lazy"
             />
-            {/* Eye-catching promo on the right */}
-            <div className="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 z-10">
-              <div className="backdrop-blur-[2px] bg-white/90 text-[#1a1a2e] rounded-xl md:rounded-2xl shadow-[0_6px_18px_rgba(0,0,0,0.18)] px-4 py-2 md:px-6 md:py-3 flex flex-col items-center select-none">
-                <div className="text-xl md:text-4xl lg:text-5xl font-prosto tracking-[0.08em] md:tracking-[0.12em]">
-                  10% OFF
-                </div>
-                <div className="mt-0.5 md:mt-1 text-[11px] md:text-sm font-semibold tracking-wide">
-                  למערכות כבלים
-                </div>
+            {/* Central fashion-style banner overlay */}
+            <div className="absolute inset-0 bg-black/35 z-10" aria-hidden="true"></div>
+            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4 select-none">
+              <div className="text-white/90 text-sm md:text-lg mb-1">
+                מערכות כבלים מנירוסטה
               </div>
+              <div className="text-white font-prosto tracking-[0.1em] leading-none text-4xl md:text-7xl lg:text-8xl">
+                10% OFF
+              </div>
+              <div className="text-white/85 text-xs md:text-sm mt-1">
+                על מערכות כבלים נבחרות
+              </div>
+              <a
+                href="/live"
+                className="mt-3 md:mt-5 inline-block px-8 md:px-10 py-2.5 md:py-3 rounded-full bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-wider transition-colors duration-200 hover:bg-white/95"
+              >
+                לפרטים
+              </a>
             </div>
           </div>
         </div>

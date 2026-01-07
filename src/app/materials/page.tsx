@@ -496,7 +496,7 @@ export default function MaterialsPage() {
 										<div className="mt-3 flex justify-center">
 											<a
 												href={`/live?material=${encodeURIComponent(it.materialId)}&color=${encodeURIComponent(selectedColorId)}&price=${it.price}`}
-												className="inline-block px-3 py-2 border text-sm bg-white hover:bg-gray-100 cursor-pointer transition-colors"
+												className="inline-block px-14 py-3.5 bg-[#1a1a2e] text-white text-sm md:text-base font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90 cursor-pointer"
 											>
 												פתח הדמייה LIVE
 											</a>
@@ -509,7 +509,7 @@ export default function MaterialsPage() {
 					{visibleCount < (filteredItems.length || MATERIAL_ITEMS.length) && (
 						<div className="mt-6 flex justify-center">
 							<button
-								className="px-4 py-2 border text-sm bg-white hover:bg-gray-100 cursor-pointer"
+								className="px-14 py-3.5 bg-[#1a1a2e] text-white text-sm md:text-base font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90 cursor-pointer"
 								onClick={() =>
 									setVisibleCount(c => Math.min(c + 9, (filteredItems.length || MATERIAL_ITEMS.length)))
 								}

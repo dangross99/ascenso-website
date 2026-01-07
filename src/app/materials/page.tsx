@@ -79,15 +79,15 @@ export default function MaterialsPage() {
 	const [brokenStripById, setBrokenStripById] = React.useState<Record<string, boolean>>({});
 	const [brokenGridById, setBrokenGridById] = React.useState<Record<string, boolean>>({});
 	// תצוגת הגדלה (Lightbox) לתמונות הגריד
-	const [lightboxSrc, setLightboxSrc] = React.useState<string | null>(null);
+	const [lightbox, setLightbox] = React.useState<{ src: string; href?: string } | null>(null);
 	React.useEffect(() => {
-		if (!lightboxSrc) return;
+        if (!lightbox) return;
 		const onKey = (e: KeyboardEvent) => {
-			if (e.key === 'Escape') setLightboxSrc(null);
+			if (e.key === 'Escape') setLightbox(null);
 		};
 		window.addEventListener('keydown', onKey);
 		return () => window.removeEventListener('keydown', onKey);
-	}, [lightboxSrc]);
+	}, [lightbox]);
 
 	// טען נתונים מ-JSON ציבורי
 	React.useEffect(() => {
@@ -253,7 +253,8 @@ export default function MaterialsPage() {
 												className="pointer-events-auto inline-block px-14 py-3.5 rounded-md bg-[#1a1a2e] text-white text-sm md:text-base font-bold tracking-widest shadow-sm hover:opacity-90 cursor-pointer"
 												onClick={(e) => {
 													e.preventDefault();
-													setLightboxSrc(safeSrc);
+													const href = `/live?material=${encodeURIComponent(it.materialId)}&color=${encodeURIComponent(selectedColorId)}&price=${it.price}`;
+													setLightbox({ src: safeSrc, href });
 												}}
 											>
 												הגדל
@@ -312,27 +313,27 @@ export default function MaterialsPage() {
 			</div>
 
 			{/* Lightbox modal */}
-			{lightboxSrc && (
+			{lightbox && (
 				<div
-					className="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center p-4"
-					onClick={() => setLightboxSrc(null)}
+					className="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center p-4 cursor-pointer"
+					onClick={() => setLightbox(null)}
 					aria-modal="true"
 					role="dialog"
 				>
-					<div className="relative max-w-6xl max-h-[92vh] w-full h-full flex items-center justify-center" onClick={e => e.stopPropagation()}>
-						<button
-							type="button"
-							className="absolute top-3 left-3 text-white/80 hover:text-white bg-black/40 rounded-full w-8 h-8 flex items-center justify-center"
-							aria-label="סגור"
-							onClick={() => setLightboxSrc(null)}
-						>
-							×
-						</button>
+					<div className="relative max-w-6xl max-h-[92vh] w-full h-full flex flex-col items-center justify-center gap-4" onClick={e => e.stopPropagation()}>
 						<img
-							src={lightboxSrc}
+							src={lightbox.src}
 							alt="תצוגה מוגדלת"
-							className="max-w-[95vw] max-h-[92vh] object-contain"
+							className="max-w-[95vw] max-h-[82vh] object-contain"
 						/>
+						{lightbox.href && (
+							<a
+								href={lightbox.href}
+								className="inline-block px-14 py-3.5 rounded-md bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-widest shadow-sm hover:bg-white/95 cursor-pointer"
+							>
+								פתח הדמייה LIVE
+							</a>
+						)}
 					</div>
 				</div>
 			)}

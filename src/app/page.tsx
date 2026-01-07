@@ -621,10 +621,10 @@ export default function Home() {
           </div>
 
           {/* Left side: CTA */}
-          <div className="flex flex-col w-full md:w-auto md:mr-auto">
+          <div className="flex flex-col w-full md:w-auto">
             <a
               href="/live"
-              className="mx-auto md:mx-0 px-14 py-3.5 bg-white/70 text-[#1a1a2e]/80 text-base md:text-xl font-semibold shadow-sm hover:bg-white/60 transition-all duration-300 active:scale-[0.98] rounded-md border border-white/60"
+              className="mx-auto px-14 py-3.5 bg-white/70 text-[#1a1a2e]/80 text-base md:text-xl font-semibold shadow-sm hover:bg-white/60 transition-all duration-300 active:scale-[0.98] rounded-md border border-white/60"
             >
               התחל הזמנה
             </a>

@@ -1017,9 +1017,9 @@ export default function Home() {
               </div>
               <a
                 href="/live"
-                className="mt-3 md:mt-5 inline-block px-8 md:px-10 py-2.5 md:py-3 rounded-full bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-wider transition-colors duration-200 hover:bg-white/95"
+                className="mt-3 md:mt-5 inline-block px-14 py-3.5 rounded-md bg-[#1a1a2e] text-white text-sm md:text-base font-bold tracking-widest transition-colors duration-300 hover:opacity-90"
               >
-                התחלה הזמנה
+                התחל הזמנה
               </a>
             </div>
           </div>

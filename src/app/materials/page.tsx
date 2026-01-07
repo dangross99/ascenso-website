@@ -361,25 +361,25 @@ export default function MaterialsPage() {
 							<div className="text-sm font-medium mb-2">קטגוריות</div>
 							<div className="flex flex-wrap gap-2">
 								<button
-									className={`px-3 py-1 text-sm rounded-full border cursor-pointer ${materialFilter === null ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
+									className={`px-3 py-1 text-sm rounded-full border cursor-pointer bg-white text-[#1a1a2e] ${materialFilter === null ? 'border-[#1a1a2e] font-semibold' : 'border-gray-300 hover:border-gray-400'}`}
 									onClick={() => setMaterialFilter(null)}
 								>
 									הכל
 								</button>
 								<button
-									className={`px-3 py-1 text-sm rounded-full border cursor-pointer ${materialFilter === 'wood' ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
+									className={`px-3 py-1 text-sm rounded-full border cursor-pointer bg-white text-[#1a1a2e] ${materialFilter === 'wood' ? 'border-[#1a1a2e] font-semibold' : 'border-gray-300 hover:border-gray-400'}`}
 									onClick={() => setMaterialFilter('wood')}
 								>
 									עץ
 								</button>
 								<button
-									className={`px-3 py-1 text-sm rounded-full border cursor-pointer ${materialFilter === 'metal' ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
+									className={`px-3 py-1 text-sm rounded-full border cursor-pointer bg-white text-[#1a1a2e] ${materialFilter === 'metal' ? 'border-[#1a1a2e] font-semibold' : 'border-gray-300 hover:border-gray-400'}`}
 									onClick={() => setMaterialFilter('metal')}
 								>
 									מתכת
 								</button>
 								<button
-									className={`px-3 py-1 text-sm rounded-full border cursor-pointer ${materialFilter === 'stone' ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
+									className={`px-3 py-1 text-sm rounded-full border cursor-pointer bg-white text-[#1a1a2e] ${materialFilter === 'stone' ? 'border-[#1a1a2e] font-semibold' : 'border-gray-300 hover:border-gray-400'}`}
 									onClick={() => setMaterialFilter('stone')}
 								>
 									אבן טבעית
@@ -460,7 +460,7 @@ export default function MaterialsPage() {
 										<div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
 											<button
 												type="button"
-												className="pointer-events-auto px-5 py-2 rounded-full bg-white text-[#1a1a2e] text-sm font-bold tracking-wider shadow-sm hover:bg-white/95"
+												className="pointer-events-auto inline-block px-14 py-3.5 rounded-md bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-widest shadow-sm hover:bg-white/95"
 												onClick={(e) => {
 													e.preventDefault();
 													setLightboxSrc(safeSrc);

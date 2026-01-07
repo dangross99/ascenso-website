@@ -158,6 +158,16 @@ export default function MaterialsPage() {
 	// מעקב אחרי תמונות שלא נטענו (fallback)
 	const [brokenStripById, setBrokenStripById] = React.useState<Record<string, boolean>>({});
 	const [brokenGridById, setBrokenGridById] = React.useState<Record<string, boolean>>({});
+	// תצוגת הגדלה (Lightbox) לתמונות הגריד
+	const [lightboxSrc, setLightboxSrc] = React.useState<string | null>(null);
+	React.useEffect(() => {
+		if (!lightboxSrc) return;
+		const onKey = (e: KeyboardEvent) => {
+			if (e.key === 'Escape') setLightboxSrc(null);
+		};
+		window.addEventListener('keydown', onKey);
+		return () => window.removeEventListener('keydown', onKey);
+	}, [lightboxSrc]);
 
 	// טען נתונים מ-JSON ציבורי
 	React.useEffect(() => {
@@ -443,9 +453,22 @@ export default function MaterialsPage() {
 											src={safeSrc}
 											alt={it.name}
 											fill
-											className="object-cover transition-transform duration-500 group-hover:scale-110"
+											className="object-cover transition-opacity duration-300 group-hover:opacity-70"
 											onError={() => setBrokenGridById(prev => ({ ...prev, [it.id]: true }))}
 										/>
+										{/* Overlay + control on hover */}
+										<div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+											<button
+												type="button"
+												className="pointer-events-auto px-5 py-2 rounded-full bg-white text-[#1a1a2e] text-sm font-bold tracking-wider shadow-sm hover:bg-white/95"
+												onClick={(e) => {
+													e.preventDefault();
+													setLightboxSrc(safeSrc);
+												}}
+											>
+												הגדל
+											</button>
+										</div>
 									</div>
 									<div className="p-3">
 										<div className="flex items-center justify-center">
@@ -498,6 +521,31 @@ export default function MaterialsPage() {
 				</section>
 			</div>
 
+			{/* Lightbox modal */}
+			{lightboxSrc && (
+				<div
+					className="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center p-4"
+					onClick={() => setLightboxSrc(null)}
+					aria-modal="true"
+					role="dialog"
+				>
+					<div className="relative max-w-6xl max-h-[92vh] w-full h-full flex items-center justify-center" onClick={e => e.stopPropagation()}>
+						<button
+							type="button"
+							className="absolute top-3 left-3 text-white/80 hover:text-white bg-black/40 rounded-full w-8 h-8 flex items-center justify-center"
+							aria-label="סגור"
+							onClick={() => setLightboxSrc(null)}
+						>
+							×
+						</button>
+						<img
+							src={lightboxSrc}
+							alt="תצוגה מוגדלת"
+							className="max-w-[95vw] max-h-[92vh] object-contain"
+						/>
+					</div>
+				</div>
+			)}
 		</main>
 	);
 }

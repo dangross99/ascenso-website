@@ -990,37 +990,19 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5.5. שלוש תמונות רוחב מלא */}
+      {/* 5.5. תמונה אחת רוחב מלא */}
       <section className="w-full bg-white py-2 md:py-4" dir="rtl">
         <div
           className="relative w-screen"
           style={{ marginLeft: "calc(50% - 50vw)", width: "100vw" }}
         >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4 lg:gap-6 px-0">
-            <div className="relative h-[160px] sm:h-[200px] md:h-[240px] lg:h-[280px] overflow-hidden">
-              <img
-                src="/images/products/nero-marquina.jpg"
-                alt="Nero Marquina"
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-            </div>
-            <div className="relative h-[160px] sm:h-[200px] md:h-[240px] lg:h-[280px] overflow-hidden">
-              <img
-                src="/images/products/travertine-wall.jpg"
-                alt="Travertine Wall"
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-            </div>
-            <div className="relative h-[160px] sm:h-[200px] md:h-[240px] lg:h-[280px] overflow-hidden">
-              <img
-                src="/images/gianluigi-marin-fobNVvDUI2A-unsplash.jpg"
-                alt="Stone detail"
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-            </div>
+          <div className="relative h-[180px] sm:h-[220px] md:h-[300px] lg:h-[380px] overflow-hidden">
+            <img
+              src={encodeURI("/images/צילום מסך 2026-01-07 233213.png")}
+              alt="ASCENSO showcase"
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
           </div>
         </div>
       </section>

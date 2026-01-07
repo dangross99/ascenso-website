@@ -11,74 +11,7 @@ import { TextureLoader, SRGBColorSpace, ClampToEdgeWrapping, LinearFilter } from
 // HERO IMAGE PATH - change this path to update the hero image
 const HERO_IMAGE = "/images/hero1.png?v=1"; // Local optimized hero image
 
-// נתוני דמו ישנים (נשארים לגיבוי אם אין materials.json)
-const images = [
-  {
-    src: "/images/products/calacatta-sink.jpg",
-    alt: "Calacatta Marble Sink",
-    price: "1,250.00",
-    colors: [
-      { name: "Calacatta Gold", class: "bg-gray-100" },
-      { name: "Statuario", class: "bg-white" },
-      { name: "Carrara", class: "bg-gray-200" },
-      { name: "Arabescato", class: "bg-gray-300" },
-      { name: "Paonazzo", class: "bg-yellow-50" },
-    ],
-  },
-  {
-    src: "/images/products/nero-marquina.jpg",
-    alt: "Nero Marquina Countertop",
-    price: "980.00",
-    colors: [
-      { name: "Nero Marquina", class: "bg-gray-900" },
-      { name: "Portoro", class: "bg-black" },
-      { name: "Blackwood", class: "bg-gray-800" },
-    ],
-  },
-  {
-    src: "/images/products/travertine-wall.jpg",
-    alt: "Travertine Wall Panels",
-    price: "760.00",
-    colors: [
-      { name: "Classic Travertine", class: "bg-yellow-100" },
-      { name: "Silver Travertine", class: "bg-gray-400" },
-      { name: "Noce Travertine", class: "bg-yellow-800" },
-      { name: "Scabas", class: "bg-orange-200" },
-    ],
-  },
-  {
-    src: "/images/products/emperador-dark.jpg",
-    alt: "Emperador Dark Table",
-    price: "1,400.00",
-    colors: [
-      { name: "Emperador Dark", class: "bg-yellow-900" },
-      { name: "Light Emperador", class: "bg-yellow-700" },
-    ],
-  },
-  {
-    src: "/images/gianluigi-marin-fobNVvDUI2A-unsplash.jpg",
-    alt: "White Onyx Backlit Wall",
-    price: "2,100.00",
-    colors: [
-      { name: "White Onyx", class: "bg-orange-50" },
-      { name: "Honey Onyx", class: "bg-yellow-300" },
-      { name: "Green Onyx", class: "bg-green-200" },
-      { name: "Pink Onyx", class: "bg-pink-200" },
-      { name: "Red Onyx", class: "bg-red-300" },
-      { name: "Blue Onyx", class: "bg-blue-200" },
-    ],
-  },
-  {
-    src: "/images/products/stone-product-6.jpg",
-    alt: "Luxury Stone Product",
-    price: "1,850.00",
-    colors: [
-      { name: "Sodalite Blue", class: "bg-blue-700" },
-      { name: "Lapis Lazuli", class: "bg-blue-900" },
-      { name: "Malachite", class: "bg-green-600" },
-    ],
-  },
-];
+// הוסרו נתוני דמו – נטען רק חומרים אמיתיים מ-materials.json
 
 // טיפוס מינימלי לחומרים מה-JSON
 type MaterialRecord = {
@@ -728,37 +661,34 @@ export default function Home() {
           <div className="relative">
             <div className="overflow-hidden" ref={emblaRef}>
               <div className="flex -ml-4 md:-ml-8">
-                {(topMaterials.length ? topMaterials : []).map((mat, index) => (
+                {topMaterials.map((mat, index) => (
                 <div className="flex-[0_0_45%] sm:flex-[0_0_28%] md:flex-[0_0_22%] lg:flex-[0_0_18%] pl-4 md:pl-8" key={mat.id ?? index}>
                     <a href="/materials" className="block group">
                     <div className="relative overflow-hidden aspect-[3/4] rounded-lg md:rounded-xl mb-3 md:mb-5 shadow-sm transition-transform duration-300 group-hover:scale-[1.03]">
-                        <Image
-                          src={mat.images?.[0] || "/images/gianluigi-marin-fobNVvDUI2A-unsplash.jpg"}
-                          alt={mat.name}
-                          fill
-                        className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
-                        />
+                        {mat.images?.[0] ? (
+                          <Image
+                            src={mat.images[0]}
+                            alt={mat.name}
+                            fill
+                            className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-[#dcdcdc] animate-pulse" />
+                        )}
                       </div>
                       
                     </a>
                   </div>
                 ))}
                 {!topMaterials.length &&
-                  images.map((img, index) => (
-                  <div className="flex-[0_0_45%] sm:flex-[0_0_28%] md:flex-[0_0_22%] lg:flex-[0_0_18%] pl-4 md:pl-8" key={`fallback-${index}`}>
-                    <div className="block group">
-                      <div className="relative overflow-hidden aspect-[3/4] rounded-lg md:rounded-xl mb-3 md:mb-5 shadow-sm transition-transform duration-300 group-hover:scale-[1.03]">
-                        <Image
-                          src={img.src}
-                          alt={img.alt}
-                          fill
-                          className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
-                        />
+                  Array.from({ length: 6 }).map((_, index) => (
+                    <div className="flex-[0_0_45%] sm:flex-[0_0_28%] md:flex-[0_0_22%] lg:flex-[0_0_18%] pl-4 md:pl-8" key={`skeleton-${index}`}>
+                      <div className="relative overflow-hidden aspect-[3/4] rounded-lg md:rounded-xl mb-3 md:mb-5 shadow-sm">
+                        <div className="w-full h-full bg-[#dcdcdc] animate-pulse" />
                       </div>
-                      
                     </div>
-                  </div>
-                ))}
+                  ))
+                }
               </div>
             </div>
             {mounted && (

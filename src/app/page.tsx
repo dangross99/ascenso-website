@@ -1006,20 +1006,17 @@ export default function Home() {
             {/* Central fashion-style banner overlay */}
             <div className="absolute inset-0 bg-black/35 z-10" aria-hidden="true"></div>
             <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4 select-none">
-              <div className="text-white/90 text-sm md:text-lg mb-1">
-                מערכות כבלים מנירוסטה
-              </div>
               <div className="text-white font-prosto tracking-[0.1em] leading-none text-4xl md:text-7xl lg:text-8xl">
-                10% OFF
+                OFF 10%
               </div>
               <div className="text-white/85 text-xs md:text-sm mt-1">
-                על מערכות כבלים נבחרות
+                מערכות כבלים 8 מ"מ בציפוי PVD
               </div>
               <a
                 href="/live"
                 className="mt-3 md:mt-5 inline-block px-8 md:px-10 py-2.5 md:py-3 rounded-full bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-wider transition-colors duration-200 hover:bg-white/95"
               >
-                לפרטים
+                התחלה הזמנה
               </a>
             </div>
           </div>

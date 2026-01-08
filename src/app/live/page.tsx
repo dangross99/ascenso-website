@@ -1502,6 +1502,9 @@ function LivePageInner() {
 	const [cableSpanMode, setCableSpanMode] = React.useState<'floor' | 'tread'>('tread');
 	const [stepCableSpanMode, setStepCableSpanMode] = React.useState<Array<'floor' | 'tread'>>([]);
 	const [landingCableSpanMode, setLandingCableSpanMode] = React.useState<Array<'floor' | 'tread'>>([]);
+	// זיכרון בחירה אחרונה לכל קטגוריה כדי לשחזר בעת חזרה
+	const lastWoodRef = React.useRef<{ modelId: string | null; color: string | null }>({ modelId: null, color: null });
+	const lastTexRef = React.useRef<{ metal: string | null; stone: string | null }>({ metal: null, stone: null });
 	// מאסטר: מצבים מחזוריים להפעלה/ביטול ולצד
 	const [masterApply, setMasterApply] = React.useState<'none' | 'add' | 'remove'>('none');
 	const [masterSide, setMasterSide] = React.useState<'none' | 'right' | 'left'>('none');
@@ -1944,19 +1947,50 @@ function LivePageInner() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [railingMetalId]);
 
+	// שמירת הבחירה האחרונה עבור עץ/צבע
+	React.useEffect(() => {
+		if (activeMaterial === 'wood') {
+			if (activeModelId) lastWoodRef.current.modelId = activeModelId;
+			if (activeColor) lastWoodRef.current.color = activeColor;
+		}
+	}, [activeMaterial, activeModelId, activeColor]);
+	// שמירת הבחירה האחרונה עבור מתכת/אבן
+	React.useEffect(() => {
+		if (activeMaterial === 'metal') lastTexRef.current.metal = activeTexId ?? lastTexRef.current.metal;
+		if (activeMaterial === 'stone') lastTexRef.current.stone = activeTexId ?? lastTexRef.current.stone;
+	}, [activeMaterial, activeTexId]);
+
+	// שחזור בחירת עץ בעת מעבר חזרה לעץ (שומר את הבחירה הקודמת אם קיימת)
 	React.useEffect(() => {
 		if (activeMaterial !== 'wood') return;
-		if (activeModelId && woodModels.find(m => m.id === activeModelId)) return;
-		// אם לא הוגדר model, בחר ראשון
-		if (woodModels.length) setActiveModelId(woodModels[0].id);
-	}, [activeMaterial, activeModelId, woodModels]);
+		const desiredModel = (lastWoodRef.current.modelId && woodModels.find(m => m.id === lastWoodRef.current.modelId))
+			? lastWoodRef.current.modelId
+			: (activeModelId && woodModels.find(m => m.id === activeModelId) ? activeModelId : (woodModels[0]?.id ?? null));
+		if (!desiredModel) return;
+		if (activeModelId !== desiredModel) setActiveModelId(desiredModel);
+		// ודא שהצבע תקף לדגם, אחרת בחר צבע ראשון זמין
+		const modelObj = woodModels.find(m => m.id === desiredModel);
+		if (modelObj) {
+			const colorValid = !!modelObj.variants?.[activeColor];
+			let nextColor = activeColor;
+			if (!colorValid) {
+				const saved = lastWoodRef.current.color;
+				if (saved && modelObj.variants?.[saved]) nextColor = saved;
+				else nextColor = Object.keys(modelObj.variants ?? {})[0] ?? activeColor;
+			}
+			if (nextColor && nextColor !== activeColor) setActiveColor(nextColor);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [activeMaterial, woodModels]);
 
-	// ברירת מחדל לדגמי מתכת/אבן
+	// שחזור בחירת מתכת/אבן בעת מעבר חזרה (שומר את הבחירה הקודמת אם קיימת)
 	React.useEffect(() => {
 		if (activeMaterial === 'wood') return;
-		if (activeTexId && nonWoodModels.find(m => m.id === activeTexId)) return;
-		if (nonWoodModels.length) setActiveTexId(nonWoodModels[0].id);
-	}, [activeMaterial, activeTexId, nonWoodModels]);
+		const saved = activeMaterial === 'metal' ? lastTexRef.current.metal : lastTexRef.current.stone;
+		const candidate = saved && nonWoodModels.find(m => m.id === saved) ? saved : (activeTexId && nonWoodModels.find(m => m.id === activeTexId) ? activeTexId : (nonWoodModels[0]?.id ?? null));
+		if (candidate && candidate !== activeTexId) setActiveTexId(candidate);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [activeMaterial, nonWoodModels]);
 
 	// ברירת מחדל לבחירת כבל כשנכנסים למצב "כבלי נירוסטה"
 	React.useEffect(() => {

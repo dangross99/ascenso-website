@@ -24,7 +24,7 @@ import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, Lin
 Cache.enabled = true;
 
 // לוגוטייפ טקסטואלי תואם להדר ("ASCEN" עם S ו‑O דקים יותר)
-function BrandWordmark({ size = 'md' as 'sm' | 'md' | 'lg' }) {
+function BrandWordmark({ size = 'md' as 'sm' | 'md' | 'lg', color = '#1a1a2e' }) {
 	const sizeClass =
 		size === 'lg'
 			? 'text-[34px] md:text-[44px]'
@@ -32,7 +32,7 @@ function BrandWordmark({ size = 'md' as 'sm' | 'md' | 'lg' }) {
 			? 'text-[18px] md:text-[22px]'
 			: 'text-[24px] md:text-[32px]';
 	return (
-		<span className={`${sizeClass} font-serif font-prosto font-semibold tracking-widest text-[#1a1a2e] uppercase select-none`}>
+		<span className={`${sizeClass} font-serif font-prosto font-semibold tracking-widest uppercase select-none`} style={{ color }}>
 			ASCEN
 			<span style={{ fontWeight: 170 }}>S</span>
 			<span style={{ fontWeight: 170 }}>O</span>
@@ -3649,7 +3649,7 @@ function LivePageInner() {
 				>
 					<div className="px-5 py-4 bg-[#1a1a2e] text-white relative border-b border-[#C5A059]/30">
 						<div className="text-center" aria-label="ASCENSO logo">
-							<BrandWordmark size="md" />
+							<BrandWordmark size="md" color="#ffffff" />
 						</div>
 						<button
 							className="text-white/70 hover:text-white text-2xl leading-none absolute left-4 top-1/2 -translate-y-1/2"

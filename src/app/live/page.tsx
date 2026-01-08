@@ -1640,6 +1640,47 @@ function LivePageInner() {
 			? ['box', 'material', 'woodTexture', 'woodColor', 'path', 'railing']
 			: ['box', 'material', 'nonWoodTexture', 'path', 'railing'];
 	}, [activeMaterial]);
+	// עזרת מובייל: באנר פתיחה והסבר קצר
+	const [mobileHelpDismissed, setMobileHelpDismissed] = React.useState(false);
+	const [mobileHelpOpen, setMobileHelpOpen] = React.useState(true);
+	React.useEffect(() => {
+		try {
+			const v = localStorage.getItem('ascenso:live:mobileHelpDismissed');
+			if (v === '1') setMobileHelpDismissed(true);
+		} catch {}
+	}, []);
+	const dismissMobileHelp = React.useCallback(() => {
+		try { localStorage.setItem('ascenso:live:mobileHelpDismissed', '1'); } catch {}
+		setMobileHelpDismissed(true);
+	}, []);
+	const getMobileHint = React.useCallback((
+		cat: 'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing'
+	): string => {
+		switch (cat) {
+			case 'box': return 'בחרו את עובי הדופן של המדרך – עבה או דקה. אפשר לשנות בכל שלב.';
+			case 'material': return 'בחרו חומר בסיסי לעיבוד המדרך: עץ, מתכת או אבן טבעית.';
+			case 'woodTexture': return 'בחרו דגם עץ (טקסטורה) שמתאים לקו העיצובי שלכם.';
+			case 'woodColor': return 'בחרו גוון לעץ (טבעי/ווריאציות כהות/בהירות) לפי התמונות.';
+			case 'nonWoodTexture': return 'בחרו טקסטורה למתכת/אבן. מומלץ לבחון את ההשתקפויות במודל.';
+			case 'path': return 'בנו את מסלול המדרגות: הוסיפו ישרים/פודסטים והתאימו מספר מדרגות לפי הצורך.';
+			case 'railing': return 'בחרו סוג מעקה: זכוכית/מתכת/כבלי נירוסטה והתאימו גוון/צד לפי ההעדפה.';
+			default: return '';
+		}
+	}, []);
+	const getCatTitle = React.useCallback((
+		cat: 'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing'
+	): string => {
+		switch (cat) {
+			case 'box': return 'דגם תיבה';
+			case 'material': return 'חומר';
+			case 'woodTexture': return 'טקסטורה (עץ)';
+			case 'woodColor': return 'צבע (עץ)';
+			case 'nonWoodTexture': return 'טקסטורה';
+			case 'path': return 'מסלול';
+			case 'railing': return 'מעקה';
+			default: return '';
+		}
+	}, []);
 	const nextCatFrom = React.useCallback((cat: 'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing' | null) => {
 		if (!cat) return null;
 		const idx = mobileSteps.indexOf(cat);
@@ -2808,6 +2849,47 @@ function LivePageInner() {
 				<aside className="lg:col-span-4">
 					{/* מובייל: אקורדיון קטגוריות בחירה */}
 					<div className="lg:hidden flex flex-col gap-3">
+						{/* באנר עזרה למובייל – נפתח/נסגר, ניתן לסגירה קבועה */}
+						{!mobileHelpDismissed && (
+							<div className="bg-[#1a1a2e]/5 border border-[#1a1a2e]/15 rounded-md">
+								<div className="flex items-center justify-between px-3 py-2">
+									<button
+										type="button"
+										className="text-sm font-semibold text-[#1a1a2e]"
+										onClick={() => setMobileHelpOpen(prev => !prev)}
+										aria-expanded={mobileHelpOpen}
+									>
+										איך זה עובד?
+									</button>
+									<div className="flex items-center gap-2">
+										{mobileOpenCat && (
+											<span className="text-[11px] text-gray-700 bg-white border border-gray-200 rounded px-2 py-0.5">
+												שלב: {getCatTitle(mobileOpenCat)}
+											</span>
+										)}
+										<button
+											type="button"
+											className="text-gray-500 hover:text-gray-700 text-lg leading-none px-2"
+											aria-label="סגור עזרה"
+											onClick={dismissMobileHelp}
+										>
+											×
+										</button>
+									</div>
+								</div>
+								{mobileHelpOpen && (
+									<div className="px-3 pb-3 text-xs text-gray-700">
+										<div className="mb-1">
+											בחרו שלב‑שלב. כל בחירה פותחת את השלב הבא. ניתן לחזור לשלב קודם בכל רגע.
+										</div>
+										<div className="text-gray-800">
+											{mobileOpenCat ? getMobileHint(mobileOpenCat) : 'התחילו בבחירת קטגוריה מהרשימה מטה.'}
+										</div>
+									</div>
+								)}
+							</div>
+						)}
+
 						{(() => {
 							type Cat = 'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing';
 							const nodes: Array<{ key: Cat; el: React.ReactElement }> = [];

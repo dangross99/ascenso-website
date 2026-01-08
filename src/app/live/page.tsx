@@ -4,7 +4,7 @@ import Image from 'next/image';
 import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Canvas, useLoader } from '@react-three/fiber';
-import { OrbitControls, Environment, useTexture, useProgress } from '@react-three/drei';
+import { OrbitControls, useTexture, useProgress } from '@react-three/drei';
 // Overlay טעינה לקנבס – מוצג בזמן טעינת טקסטורות/נכסים
 function CanvasLoadingOverlay() {
 	const { active, progress } = useProgress();
@@ -541,7 +541,7 @@ function Staircase3D({
 								roughnessMap={ft.rough}
 								metalness={0.0}
 								roughness={0.92}
-								envMapIntensity={0.08}
+								envMapIntensity={0}
 							/>
 								);
 							})()
@@ -556,7 +556,7 @@ function Staircase3D({
 										roughnessMap={ft.rough}
 										metalness={0.9}
 										roughness={0.6}
-										envMapIntensity={0.25}
+										envMapIntensity={0}
 									/>
 								);
 							})()
@@ -571,7 +571,7 @@ function Staircase3D({
 										roughnessMap={ft.rough}
 										metalness={0.0}
 										roughness={0.9}
-										envMapIntensity={0.2}
+										envMapIntensity={0}
 									/>
 								);
 							})()
@@ -591,7 +591,7 @@ function Staircase3D({
 									roughnessMap={ft.rough}
 									metalness={materialKind === 'metal' ? 0.9 : 0.0}
 									roughness={materialKind === 'metal' ? 0.6 : 0.9}
-									envMapIntensity={materialKind === 'wood' ? 0.08 : 0.25}
+									envMapIntensity={0}
 								/>
 							);
 						})()}
@@ -610,7 +610,7 @@ function Staircase3D({
 									roughnessMap={ft.rough}
 									metalness={materialKind === 'metal' ? 0.9 : 0.0}
 									roughness={materialKind === 'metal' ? 0.6 : 0.9}
-									envMapIntensity={materialKind === 'wood' ? 0.08 : 0.25}
+									envMapIntensity={0}
 								/>
 							);
 						})()}
@@ -629,7 +629,7 @@ function Staircase3D({
 									roughnessMap={ft.rough}
 									metalness={materialKind === 'metal' ? 0.9 : 0.0}
 									roughness={materialKind === 'metal' ? 0.6 : 0.9}
-									envMapIntensity={materialKind === 'wood' ? 0.08 : 0.25}
+									envMapIntensity={0}
 								/>
 							);
 						})()}
@@ -667,7 +667,7 @@ function Staircase3D({
 									roughnessMap={ft.rough}
 									metalness={materialKind === 'metal' ? 0.6 : 0.0}
 									roughness={materialKind === 'metal' ? 0.45 : 0.92}
-									envMapIntensity={materialKind === 'wood' ? 0.08 : 0.5}
+									envMapIntensity={0}
 								/>
 							);
 						})()}
@@ -869,7 +869,7 @@ function Staircase3D({
 								<mesh castShadow={false} receiveShadow={false}>
 									<primitive object={geom} attach="geometry" />
 									<meshPhysicalMaterial color={color} transparent opacity={opacity} roughness={0.08} metalness={0}
-										transmission={1} thickness={0.03} ior={1.5} envMapIntensity={0.35} side={2} depthWrite={false}
+										transmission={1} thickness={0.03} ior={1.5} envMapIntensity={0} side={2} depthWrite={false}
 										polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
 								</mesh>
 							</group>
@@ -893,7 +893,7 @@ function Staircase3D({
 								<mesh castShadow={false} receiveShadow={false}>
 									<primitive object={zGeom} attach="geometry" />
 									<meshPhysicalMaterial color={color} transparent opacity={opacity} roughness={0.08} metalness={0}
-										transmission={1} thickness={0.03} ior={1.5} envMapIntensity={0.35} side={2} depthWrite={false}
+										transmission={1} thickness={0.03} ior={1.5} envMapIntensity={0} side={2} depthWrite={false}
 										polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
 								</mesh>
 							</group>
@@ -939,7 +939,7 @@ function Staircase3D({
 								items.push(
 									<mesh key={`cable-x-${i}-${k}`} position={[x, yCenter, z]} castShadow receiveShadow>
 										<cylinderGeometry args={[0.005, 0.005, spanH, 12]} />
-										<meshStandardMaterial color={cableColor || '#c7ccd1'} metalness={1.0} roughness={0.35} envMapIntensity={0.6} />
+										<meshStandardMaterial color={cableColor || '#c7ccd1'} metalness={1.0} roughness={0.35} envMapIntensity={0} />
 									</mesh>
 								);
 							});
@@ -958,7 +958,7 @@ function Staircase3D({
 								items.push(
 									<mesh key={`cable-z-${i}-${k}`} position={[x, yCenter, z]} castShadow receiveShadow>
 										<cylinderGeometry args={[0.005, 0.005, spanH, 12]} />
-										<meshStandardMaterial color={cableColor || '#c7ccd1'} metalness={1.0} roughness={0.35} envMapIntensity={0.6} />
+										<meshStandardMaterial color={cableColor || '#c7ccd1'} metalness={1.0} roughness={0.35} envMapIntensity={0} />
 									</mesh>
 								);
 							});
@@ -987,7 +987,7 @@ function Staircase3D({
 								items.push(
 									<mesh key={`lcable-x-${i}-${k}`} position={[x, yCenter, z]} castShadow receiveShadow>
 										<cylinderGeometry args={[0.005, 0.005, spanH, 12]} />
-										<meshStandardMaterial color={cableColor || '#c7ccd1'} metalness={1.0} roughness={0.35} envMapIntensity={0.6} />
+										<meshStandardMaterial color={cableColor || '#c7ccd1'} metalness={1.0} roughness={0.35} envMapIntensity={0} />
 									</mesh>
 								);
 							}
@@ -1007,7 +1007,7 @@ function Staircase3D({
 								items.push(
 									<mesh key={`lcable-z-${i}-${k}`} position={[x, yCenter, z]} castShadow receiveShadow>
 										<cylinderGeometry args={[0.005, 0.005, spanH, 12]} />
-										<meshStandardMaterial color={cableColor || '#c7ccd1'} metalness={1.0} roughness={0.35} envMapIntensity={0.6} />
+										<meshStandardMaterial color={cableColor || '#c7ccd1'} metalness={1.0} roughness={0.35} envMapIntensity={0} />
 									</mesh>
 								);
 							}
@@ -1256,7 +1256,7 @@ function Staircase3D({
 											color={railingSolidColor}
 											metalness={0.85}
 											roughness={0.45}
-											envMapIntensity={0.4}
+											envMapIntensity={0}
 											side={2}
 										/>
 									) : (
@@ -1268,7 +1268,7 @@ function Staircase3D({
 											roughnessMap={roughTex}
 											metalness={0.85}
 											roughness={0.45}
-											envMapIntensity={0.4}
+											envMapIntensity={0}
 											side={2}
 										/>
 									)}
@@ -1351,7 +1351,7 @@ function Staircase3D({
 											color={railingSolidColor}
 											metalness={0.85}
 											roughness={0.45}
-											envMapIntensity={0.4}
+											envMapIntensity={0}
 											side={2}
 										/>
 									) : (
@@ -1363,7 +1363,7 @@ function Staircase3D({
 											roughnessMap={roughTex}
 											metalness={0.85}
 											roughness={0.45}
-											envMapIntensity={0.4}
+											envMapIntensity={0}
 											side={2}
 										/>
 									)}
@@ -2497,19 +2497,11 @@ function LivePageInner() {
 							shadows
 							camera={{ position: [4, 3, 6], fov: 45 }}
 							dpr={[1, 1.5]}
-							gl={{ toneMappingExposure: 0.85, preserveDrawingBuffer: false, antialias: true, powerPreference: 'high-performance' }}
+							gl={{ toneMappingExposure: 1.0, preserveDrawingBuffer: false, antialias: true, powerPreference: 'high-performance' }}
 						>
 							<React.Suspense fallback={null}>
-								{/* תאורה רכה ונייטרלית */}
-								<hemisphereLight args={['#ffffff', '#bfbfbf', 0.55]} />
-								<ambientLight intensity={0.5} />
-								<directionalLight
-									position={[6, 10, 4]}
-									intensity={0.18}
-									castShadow
-									shadow-normalBias={0.02}
-									shadow-bias={-0.0002}
-								/>
+								{/* תאורה ניטרלית – רק אור סביבה לביטול החמצון/השחרה */}
+								<ambientLight color={'#ffffff'} intensity={1.0} />
 								<Staircase3D
 									shape={shape}
 									steps={steps}
@@ -2591,8 +2583,6 @@ function LivePageInner() {
 										return cfg.bump;
 									})()}
 								/>
-								{/* סביבת תאורה רכה */}
-								<Environment preset="apartment" />
 								<OrbitControls ref={orbitRef} enableDamping makeDefault zoomToCursor />
 							</React.Suspense>
 						</Canvas>

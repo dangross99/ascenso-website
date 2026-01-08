@@ -4,7 +4,7 @@ import Image from 'next/image';
 import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Canvas, useLoader } from '@react-three/fiber';
-import { OrbitControls, Environment } from '@react-three/drei';
+import { OrbitControls, Environment, useTexture } from '@react-three/drei';
 import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, BufferGeometry, Float32BufferAttribute, Cache } from 'three';
 
 // הפעלת קאש של three עבור טעינות חלקות
@@ -383,8 +383,19 @@ function Staircase3D({
 		}
 	}, [railingMap, railingBumpMap, railingRoughMap]);
 
-	// מחשב חזרת UV בשיטת "cover" לפי יחס ממדים של הפאה לעומת יחס תמונה
+	// Cache פנימי להפחתת clone() חוזרים על אותם פרמטרים במהלך רינדור
+	const faceTexCacheRef = React.useRef<Map<string, { color: any; bump?: any; rough?: any }>>(new Map());
+	React.useEffect(() => {
+		// נקה קאש כאשר מקור המפה/סקייל משתנים
+		faceTexCacheRef.current.clear();
+	}, [map?.image, bumpMap?.image, roughMap?.image, tileScale, bumpScaleOverride]);
+
+	// מחשב חזרת UV בשיטת "cover" לפי יחס ממדים של הפאה לעומת יחס תמונה, עם קאשינג
 	function buildFaceTextures(dimU: number, dimV: number) {
+		const key = `${dimU.toFixed(4)}|${dimV.toFixed(4)}|${textureUrl || 'na'}|${bumpUrl || 'na'}|${roughnessUrl || 'na'}|${tileScale}|${bumpScaleOverride ?? 'na'}`;
+		const cached = faceTexCacheRef.current.get(key);
+		if (cached) return cached;
+
 		const imgW = (map.image && (map.image as any).width) || 1024;
 		const imgH = (map.image && (map.image as any).height) || 1024;
 		const texAspect = imgW / imgH;
@@ -417,11 +428,13 @@ function Staircase3D({
 			return t;
 		};
 
-		return {
+		const out = {
 			color: mk(map),
 			bump: bumpUrl ? mk(bumpMap) : undefined,
 			rough: roughnessUrl ? mk(roughMap) : undefined,
 		};
+		faceTexCacheRef.current.set(key, out);
+		return out;
 	}
 	React.useEffect(() => {
 		if (map) {
@@ -496,7 +509,6 @@ function Staircase3D({
 					</mesh>
 					{/* שכבת פני השטח עם תבליט אמיתי לעץ; למתכת/אבן – כיסוי מרקם */}
 					<mesh
-						key={materialKind === 'wood' ? 'top-wood' : `top-${materialKind}-${textureUrl || 'na'}`}
 						rotation={[-Math.PI / 2, 0, 0]}
 						position={[0, treadThickness / 2 + 0.002, 0]}
 						castShadow={materialKind !== 'metal'}
@@ -1832,6 +1844,41 @@ function LivePageInner() {
 		() => records.filter(r => r.category === 'metal'),
 		[records]
 	);
+	// Preload טקסטורות רלוונטיות להפחתת הבהובים בעת מעבר בחירה
+	React.useEffect(() => {
+		try {
+			const urls = new Set<string>();
+			// חומר עיקרי
+			if (activeMaterial === 'wood') {
+				const selWood = woodModels.find(m => m.id === activeModelId) || woodModels[0];
+				const img = selWood?.variants?.[activeColor]?.[0] || selWood?.images?.[0];
+				if (img) urls.add(img);
+				const b = selWood?.pbrVariants?.[activeColor]?.bump?.[0];
+				const r = selWood?.pbrVariants?.[activeColor]?.roughness?.[0];
+				if (b) urls.add(b);
+				if (r) urls.add(r);
+			} else {
+				const sel = nonWoodModels.find(m => m.id === activeTexId) || nonWoodModels[0];
+				if (sel?.images?.[0]) urls.add(sel.images[0]);
+				if (sel?.pbr?.bump?.[0]) urls.add(sel.pbr.bump[0]);
+				if (sel?.pbr?.roughness?.[0]) urls.add(sel.pbr.roughness[0]);
+			}
+			// מעקה מתכת
+			if (railing === 'metal') {
+				const rec = metalRailingOptions.find(r => r.id === railingMetalId) || metalRailingOptions[0];
+				if (rec?.images?.[0]) urls.add(rec.images[0]);
+				if (rec?.pbr?.bump?.[0]) urls.add(rec.pbr.bump[0]);
+				if (rec?.pbr?.roughness?.[0]) urls.add(rec.pbr.roughness[0]);
+			}
+			// הפעלה
+			(urls.size ? Array.from(urls) : []).forEach(u => {
+				try {
+					// @ts-ignore - preload is static on useTexture
+					useTexture.preload(u);
+				} catch {}
+			});
+		} catch {}
+	}, [activeMaterial, activeModelId, woodModels, activeColor, nonWoodModels, activeTexId, railing, metalRailingOptions, railingMetalId]);
 	React.useEffect(() => {
 		// ברירת מחדל לבחירת גוון מתכת למעקה
 		if (railing === 'metal' && !railingMetalId && metalRailingOptions.length) {
@@ -1942,26 +1989,32 @@ function LivePageInner() {
 
 	// סנכרון URL לשיתוף
 	React.useEffect(() => {
-		const params = new URLSearchParams();
-		params.set('material', activeMaterial);
-		if (activeMaterial === 'wood') {
-			if (activeModel?.id) params.set('model', activeModel.id);
-			if (activeColor) params.set('color', activeColor);
-		} else {
-			if (activeTexId) params.set('tex', activeTexId);
-		}
-		params.set('shape', shape);
-		params.set('steps', String(steps));
-		params.set('path', encodePath(pathSegments));
-		params.set('box', box);
-		// עדכון ה‑URL ללא ניווט/ריענון (מונע קפיצת מסך)
-		if (typeof window !== 'undefined') {
-			const newUrl = `/live?${params.toString()}`;
-			window.history.replaceState(window.history.state, '', newUrl);
-		} else {
-			// Fallback בסביבה ללא window
-			router.replace(`/live?${params.toString()}`);
-		}
+		let t: any;
+		const run = () => {
+			const params = new URLSearchParams();
+			params.set('material', activeMaterial);
+			if (activeMaterial === 'wood') {
+				if (activeModel?.id) params.set('model', activeModel.id);
+				if (activeColor) params.set('color', activeColor);
+			} else {
+				if (activeTexId) params.set('tex', activeTexId);
+			}
+			params.set('shape', shape);
+			params.set('steps', String(steps));
+			params.set('path', encodePath(pathSegments));
+			params.set('box', box);
+			// עדכון ה‑URL ללא ניווט/ריענון (מונע קפיצת מסך)
+			if (typeof window !== 'undefined') {
+				const newUrl = `/live?${params.toString()}`;
+				window.history.replaceState(window.history.state, '', newUrl);
+			} else {
+				// Fallback בסביבה ללא window
+				router.replace(`/live?${params.toString()}`);
+			}
+		};
+		// debounce קצר כדי למנוע שרשור עדכונים מהיר
+		t = setTimeout(run, 120);
+		return () => clearTimeout(t);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [activeMaterial, activeColor, activeModel?.id, activeTexId, shape, steps, box, pathSegments]);
 
@@ -2276,8 +2329,8 @@ function LivePageInner() {
 						<Canvas
 							shadows
 							camera={{ position: [4, 3, 6], fov: 45 }}
-							dpr={[1, 2]}
-							gl={{ toneMappingExposure: 0.85, preserveDrawingBuffer: true, antialias: true, powerPreference: 'high-performance' }}
+							dpr={[1, 1.5]}
+							gl={{ toneMappingExposure: 0.85, preserveDrawingBuffer: false, antialias: true, powerPreference: 'high-performance' }}
 						>
 							{/* תאורה רכה ונייטרלית */}
 							<hemisphereLight args={['#ffffff', '#bfbfbf', 0.55]} />

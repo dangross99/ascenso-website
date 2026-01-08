@@ -28,16 +28,18 @@ function BrandAvatar({ size = 'lg' as 'sm' | 'lg' }) {
 	const [logoOk, setLogoOk] = React.useState(true);
 	const isLg = size === 'lg';
 	return (
-		<div className={`${isLg ? 'w-10 h-10 md:w-12 md:h-12' : 'w-7 h-7'} rounded-full bg-[#1a1a2e] text-white flex items-center justify-center ${isLg ? 'text-[12px] md:text-sm' : 'text-[10px]'} font-semibold overflow-hidden`}>
+		<div
+			className={`${isLg ? 'w-12 h-12 md:w-14 md:h-14' : 'w-8 h-8'} rounded-full bg-[#1a1a2e] text-white flex items-center justify-center ${isLg ? 'text-sm md:text-base' : 'text-xs'} font-semibold overflow-hidden`}
+		>
 			{logoOk ? (
 				<img
 					src="/images/logo-mark.svg"
 					alt="ASCENSO"
-					className={`${isLg ? 'w-7 h-7 md:w-8 md:h-8' : 'w-5 h-5'} object-contain`}
+					className={`${isLg ? 'w-8 h-8 md:w-10 md:h-10' : 'w-6 h-6'} object-contain`}
 					onError={() => setLogoOk(false)}
 				/>
 			) : (
-				<span className="select-none whitespace-nowrap leading-none">אסנסו</span>
+				<span className="select-none whitespace-nowrap leading-none px-1">אסנסו</span>
 			)}
 		</div>
 	);

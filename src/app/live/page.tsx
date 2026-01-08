@@ -3647,8 +3647,11 @@ function LivePageInner() {
 								מלאו את הפרטים וניצור קשר
 							</div>
 							<div className="grid grid-cols-1 gap-4">
+								<div className="flex items-start gap-2 mt-1">
+									<div className="w-7 h-7 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center text-[10px]">VA</div>
+									<div className="bg-[#1a1a2e] text-white rounded-2xl px-3 py-1.5 text-xs">איך לקרוא לך?</div>
+								</div>
 								<label className="block" htmlFor="fullName">
-									<span className="inline-block rounded-2xl bg-[#1a1a2e] text-white px-3 py-1.5 text-sm mb-1">שם מלא</span>
 									<input
 										id="fullName"
 										type="text"
@@ -3662,8 +3665,11 @@ function LivePageInner() {
 								</label>
 								{/* שדה טלפון הוסר – המספר מגיע אוטומטית מ‑WhatsApp */}
 								<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-									<label className="block" htmlFor="city">
-										<span className="inline-block rounded-2xl bg-[#1a1a2e] text-white px-3 py-1.5 text-sm mb-1">עיר</span>
+									<div className="sm:col-span-1 flex items-start gap-2">
+										<div className="w-7 h-7 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center text-[10px]">VA</div>
+										<div className="bg-[#1a1a2e] text-white rounded-2xl px-3 py-1.5 text-xs">באיזה עיר?</div>
+									</div>
+									<label className="block sm:col-span-2" htmlFor="city">
 										<input
 											id="city"
 											type="text"
@@ -3680,8 +3686,11 @@ function LivePageInner() {
 											))}
 										</datalist>
 									</label>
-									<label className="block" htmlFor="street">
-										<span className="inline-block rounded-2xl bg-[#1a1a2e] text-white px-3 py-1.5 text-sm mb-1">רחוב</span>
+									<div className="sm:col-span-1 flex items-start gap-2">
+										<div className="w-7 h-7 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center text-[10px]">VA</div>
+										<div className="bg-[#1a1a2e] text-white rounded-2xl px-3 py-1.5 text-xs">שם הרחוב?</div>
+									</div>
+									<label className="block sm:col-span-2" htmlFor="street">
 										<input
 											id="street"
 											type="text"
@@ -3698,8 +3707,11 @@ function LivePageInner() {
 											))}
 										</datalist>
 									</label>
-									<label className="block" htmlFor="houseNumber">
-										<span className="inline-block rounded-2xl bg-[#1a1a2e] text-white px-3 py-1.5 text-sm mb-1">מספר</span>
+									<div className="sm:col-span-1 flex items-start gap-2">
+										<div className="w-7 h-7 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center text-[10px]">VA</div>
+										<div className="bg-[#1a1a2e] text-white rounded-2xl px-3 py-1.5 text-xs">מס׳ בית?</div>
+									</div>
+									<label className="block sm:col-span-2" htmlFor="houseNumber">
 										<input
 											id="houseNumber"
 											type="text"
@@ -3717,7 +3729,10 @@ function LivePageInner() {
 
 								<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 									<div className="block">
-										<span className="inline-block rounded-2xl bg-[#1a1a2e] text-white px-3 py-1.5 text-sm mb-1">בחירת תאריך מועדף</span>
+										<div className="flex items-start gap-2 mb-1">
+											<div className="w-7 h-7 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center text-[10px]">VA</div>
+											<div className="bg-[#1a1a2e] text-white rounded-2xl px-3 py-1.5 text-xs">מתי נוח לך שנגיע?</div>
+										</div>
 										<div className="mt-1 rounded-2xl border border-[#C5A059]/40 bg-white text-[#0f1424]">
 											<div className="max-h-48 overflow-y-auto divide-y rounded-2xl">
 												{twoWeeksDates.map(d => {
@@ -3739,7 +3754,10 @@ function LivePageInner() {
 										</div>
 									</div>
 									<div className="block">
-										<span className="inline-block rounded-2xl bg-[#1a1a2e] text-white px-3 py-1.5 text-sm mb-1">חלון זמן מועדף</span>
+										<div className="flex items-start gap-2 mb-1">
+											<div className="w-7 h-7 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center text-[10px]">VA</div>
+											<div className="bg-[#1a1a2e] text-white rounded-2xl px-3 py-1.5 text-xs">איזה חלון זמן עדיף?</div>
+										</div>
 										<div className="mt-1 rounded-2xl border border-[#C5A059]/40 bg-white text-[#0f1424]">
 											<div className="max-h-48 overflow-y-auto divide-y rounded-2xl">
 												{[8, 11, 14].map((start) => {

@@ -3560,11 +3560,8 @@ function LivePageInner() {
 								<div className="absolute inset-0 opacity-[0.12]" aria-hidden="true" />
 								<div className="relative px-4 py-4 md:px-6 md:py-5 flex items-center justify-between gap-4">
 									<div className="flex-1 min-w-0">
-										<div className="text-sm md:text-base font-semibold tracking-tight" style={{ fontFamily: 'Prosto One, system-ui, sans-serif' }}>
-											ייעוץ מקצועי בשטח — ללא התחייבות
-										</div>
-										<div className="text-xs md:text-sm text-white/80 mt-0.5">
-											מדידות במקום, התאמת חומרים ופרט טכני; הצעת מחיר שקופה באותו היום.
+										<div className="text-xs md:text-sm text-white/80">
+											ליווי אישי מהחזון ועד הפרטים – קובעים עכשיו, הצעד הראשון במדרגות.”
 										</div>
 									</div>
 									<div className="shrink-0 flex items-center gap-2">

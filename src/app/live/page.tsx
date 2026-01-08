@@ -1728,9 +1728,12 @@ function LivePageInner() {
 	// מובייל: באנר שחזור מצב בריענון (לאחר שיש pathSegments)
 	const [mobileRestorePrompt, setMobileRestorePrompt] = React.useState(false);
 	const lastStateRef = React.useRef<any>(null);
+	const hasCheckedRestoreRef = React.useRef(false);
 	React.useEffect(() => {
 		// שמירת מצב אחרון כל שינוי משמעותי
 		try {
+			// הימנע משמירה לפני שבדקנו אם לשחזר (כדי לא למחוק מצב קודם ברענון)
+			if (!hasCheckedRestoreRef.current) return;
 			const state = buildSimulationState();
 			localStorage.setItem('ascenso:live:last', JSON.stringify({ t: Date.now(), state }));
 		} catch {}
@@ -1745,21 +1748,30 @@ function LivePageInner() {
 		try {
 			if (typeof window === 'undefined') return;
 			if (window.innerWidth >= 1024) return;
+			// זיהוי רענון
+			let isReload = false;
+			try {
+				const nav = (performance.getEntriesByType && (performance.getEntriesByType('navigation') as any)[0]) as any;
+				isReload = !!nav && nav.type === 'reload';
+			} catch {}
+			// fallback ישן
+			try {
+				// @ts-ignore
+				if (performance && performance.navigation && performance.navigation.type === 1) isReload = true;
+			} catch {}
 			const simId = search.get('sim');
 			if (simId) return;
 			const raw = localStorage.getItem('ascenso:live:last');
-			if (!raw) return;
+			if (!raw) { hasCheckedRestoreRef.current = true; return; }
 			const parsed = JSON.parse(raw || 'null');
-			if (!parsed?.state) return;
+			if (!parsed?.state) { hasCheckedRestoreRef.current = true; return; }
 			lastStateRef.current = parsed.state;
-			// אם יש הבדל כלשהו – הצג באנר שחזור
-			const cur = buildSimulationState();
-			const a = JSON.stringify(cur);
-			const b = JSON.stringify(parsed.state);
-			if (a !== b) {
+			// אם מדובר ברענון ויש מצב קודם – הצג באנר שחזור
+			if (isReload) {
 				setMobileRestorePrompt(true);
 			}
 		} catch {}
+		hasCheckedRestoreRef.current = true;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	const applyLastState = React.useCallback(() => {

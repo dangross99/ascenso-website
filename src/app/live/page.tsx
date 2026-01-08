@@ -3558,13 +3558,8 @@ function LivePageInner() {
 						<div ref={shareRef} className="pt-2 border-t mt-auto">
 							<div className="relative overflow-hidden rounded-xl border bg-[#0f1424] text-white">
 								<div className="absolute inset-0 opacity-[0.12]" aria-hidden="true" />
-								<div className="relative px-4 py-4 md:px-6 md:py-5 flex items-center justify-between gap-4">
-									<div className="flex-1 min-w-0">
-										<div className="text-xs md:text-sm text-white/80">
-											ליווי אישי מהחזון ועד הפרטים – קובעים עכשיו, הצעד הראשון במדרגות.”
-										</div>
-									</div>
-									<div className="shrink-0 flex items-center gap-2">
+								<div className="relative px-4 py-4 md:px-6 md:py-5 flex items-center justify-center">
+									<div className="flex items-center gap-2">
 										<button
 											onClick={openBooking}
 											aria-label="פתח טופס תיאום פגישה"

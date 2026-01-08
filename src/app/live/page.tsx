@@ -529,12 +529,12 @@ function Staircase3D({
 						) : materialKind === 'metal' ? (
 							(() => {
 								const ft = buildFaceTextures(t.run, treadWidth);
-							return (<meshBasicMaterial map={ft.color} side={2} />);
+							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
 							})()
 						) : (
 							(() => {
 								const ft = buildFaceTextures(t.run, treadWidth);
-							return (<meshBasicMaterial map={ft.color} side={2} />);
+							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
 							})()
 						)}
 					</mesh>
@@ -544,7 +544,7 @@ function Staircase3D({
 						<planeGeometry args={[t.run, treadWidth, 8, 8]} />
 						{(() => {
 							const ft = buildFaceTextures(t.run, treadWidth);
-							return (<meshBasicMaterial map={ft.color} />);
+							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
 						})()}
 					</mesh>
 
@@ -553,7 +553,7 @@ function Staircase3D({
 						<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
 						{(() => {
 							const ft = buildFaceTextures(treadWidth, treadThickness);
-							return (<meshBasicMaterial map={ft.color} />);
+							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
 						})()}
 					</mesh>
 
@@ -562,7 +562,7 @@ function Staircase3D({
 						<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
 						{(() => {
 							const ft = buildFaceTextures(treadWidth, treadThickness);
-							return (<meshBasicMaterial map={ft.color} />);
+							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
 						})()}
 					</mesh>
 

@@ -3645,10 +3645,10 @@ function LivePageInner() {
 
 					{!bookingSubmitted ? (
 						<form onSubmit={handleBookingSubmit} className="bg-[#f6f7fb] text-[#0f1424] p-6">
-							<div className="leading-relaxed mb-1 text-center text-base md:text-lg">
+							<div className="leading-relaxed mb-1 text-center text-2xl md:text-3xl">
 								<span className="font-semibold">תיאום פגישה בשטח</span>
 							</div>
-							<div className="text-[#0f1424]/80 leading-relaxed mb-2 text-center text-sm md:text-base">
+							<div className="text-[#0f1424]/80 leading-relaxed mb-2 text-center text-lg md:text-xl">
 								מלאו את הפרטים וניצור קשר
 							</div>
 							<div className="grid grid-cols-1 gap-4">

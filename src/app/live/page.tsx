@@ -524,17 +524,17 @@ function Staircase3D({
 						{materialKind === 'wood' ? (
 							(() => {
 								const ft = buildFaceTextures(t.run, treadWidth);
-							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
+							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
 							})()
 						) : materialKind === 'metal' ? (
 							(() => {
 								const ft = buildFaceTextures(t.run, treadWidth);
-							return (<meshBasicMaterial map={ft.color} />);
+							return (<meshBasicMaterial map={ft.color} side={2} />);
 							})()
 						) : (
 							(() => {
 								const ft = buildFaceTextures(t.run, treadWidth);
-							return (<meshBasicMaterial map={ft.color} />);
+							return (<meshBasicMaterial map={ft.color} side={2} />);
 							})()
 						)}
 					</mesh>

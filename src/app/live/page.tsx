@@ -1278,6 +1278,8 @@ function LivePageInner() {
 	const [projectAddress, setProjectAddress] = React.useState('');
 	const [preferredDate, setPreferredDate] = React.useState('');
 	const [preferredTime, setPreferredTime] = React.useState<string>('');
+	// אשף צ'אט: שאלה אחת בכל פעם
+	const [bookingStep, setBookingStep] = React.useState<'name' | 'city' | 'street' | 'house' | 'date' | 'time'>('name');
 	const BOOKING_EMAIL = process.env.NEXT_PUBLIC_BOOKING_EMAIL || '';
 	const firstInputRef = React.useRef<HTMLInputElement | null>(null);
 	const dialogRef = React.useRef<HTMLDivElement | null>(null);
@@ -1452,6 +1454,7 @@ function LivePageInner() {
 		setProjectAddress('');
 		setPreferredDate('');
 		setPreferredTime('');
+		setBookingStep('name');
 		setBookingSubmitted(false);
 		setBookingOpen(true);
 		// פוקוס לשדה הראשון לנגישות
@@ -3649,146 +3652,122 @@ function LivePageInner() {
 							<div className="grid grid-cols-1 gap-4">
 								<div className="flex items-start gap-2 mt-1">
 									<div className="w-7 h-7 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center text-[10px]">VA</div>
-									<div className="bg-[#1a1a2e] text-white rounded-2xl px-3 py-1.5 text-xs">איך לקרוא לך?</div>
-								</div>
-								<label className="block" htmlFor="fullName">
-									<input
-										id="fullName"
-										type="text"
-										required
-										value={fullName}
-										onChange={(e) => setFullName(e.target.value)}
-										ref={firstInputRef}
-										className="mt-1 w-full rounded-2xl bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
-										placeholder="שם ושם משפחה"
-									/>
-								</label>
-								{/* שדה טלפון הוסר – המספר מגיע אוטומטית מ‑WhatsApp */}
-								<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-									<div className="sm:col-span-1 flex items-start gap-2">
-										<div className="w-7 h-7 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center text-[10px]">VA</div>
-										<div className="bg-[#1a1a2e] text-white rounded-2xl px-3 py-1.5 text-xs">באיזה עיר?</div>
+									<div className="bg-[#1a1a2e] text-white rounded-2xl px-3 py-1.5 text-xs">
+										{bookingStep === 'name' ? 'איך לקרוא לך?' :
+										 bookingStep === 'city' ? 'באיזה עיר?' :
+										 bookingStep === 'street' ? 'שם הרחוב?' :
+										 bookingStep === 'house' ? 'מס׳ בית?' :
+										 bookingStep === 'date' ? 'מתי נוח לך שנגיע?' :
+										 'איזה חלון זמן עדיף?'}
 									</div>
-									<label className="block sm:col-span-2" htmlFor="city">
-										<input
-											id="city"
-											type="text"
-											value={city}
-											onChange={(e) => setCity(e.target.value)}
-											ref={cityInputRef}
-											list="city-list"
+								</div>
+
+								{bookingStep === 'name' && (
+									<label className="block" htmlFor="fullName">
+										<input id="fullName" type="text" required value={fullName} onChange={(e) => setFullName(e.target.value)} ref={firstInputRef}
 											className="mt-1 w-full rounded-2xl bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
-											placeholder="לדוגמה: תל אביב"
-										/>
+											placeholder="שם ושם משפחה" />
+									</label>
+								)}
+
+								{bookingStep === 'city' && (
+									<label className="block" htmlFor="city">
+										<input id="city" type="text" value={city} onChange={(e) => setCity(e.target.value)} ref={cityInputRef} list="city-list"
+											className="mt-1 w-full rounded-2xl bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
+											placeholder="לדוגמה: תל אביב" />
 										<datalist id="city-list">
-											{cityOptions.map((opt) => (
-												<option value={opt} key={opt} />
-											))}
+											{cityOptions.map((opt) => (<option value={opt} key={opt} />))}
 										</datalist>
 									</label>
-									<div className="sm:col-span-1 flex items-start gap-2">
-										<div className="w-7 h-7 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center text-[10px]">VA</div>
-										<div className="bg-[#1a1a2e] text-white rounded-2xl px-3 py-1.5 text-xs">שם הרחוב?</div>
-									</div>
-									<label className="block sm:col-span-2" htmlFor="street">
-										<input
-											id="street"
-											type="text"
-											value={street}
-											onChange={(e) => setStreet(e.target.value)}
-											ref={streetInputRef}
-											list="street-list"
+								)}
+
+								{bookingStep === 'street' && (
+									<label className="block" htmlFor="street">
+										<input id="street" type="text" value={street} onChange={(e) => setStreet(e.target.value)} ref={streetInputRef} list="street-list"
 											className="mt-1 w-full rounded-2xl bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
-											placeholder="לדוגמה: דרך מנחם בגין"
-										/>
+											placeholder="לדוגמה: דרך מנחם בגין" />
 										<datalist id="street-list">
-											{streetOptions.map((opt) => (
-												<option value={opt} key={opt} />
-											))}
+											{streetOptions.map((opt) => (<option value={opt} key={opt} />))}
 										</datalist>
 									</label>
-									<div className="sm:col-span-1 flex items-start gap-2">
-										<div className="w-7 h-7 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center text-[10px]">VA</div>
-										<div className="bg-[#1a1a2e] text-white rounded-2xl px-3 py-1.5 text-xs">מס׳ בית?</div>
-									</div>
-									<label className="block sm:col-span-2" htmlFor="houseNumber">
-										<input
-											id="houseNumber"
-											type="text"
-											inputMode="numeric"
-											pattern="[0-9]{1,4}"
-											value={houseNumber}
-											onChange={(e) => setHouseNumber(e.target.value)}
+								)}
+
+								{bookingStep === 'house' && (
+									<label className="block" htmlFor="houseNumber">
+										<input id="houseNumber" type="text" inputMode="numeric" pattern="[0-9]{1,4}" value={houseNumber} onChange={(e) => setHouseNumber(e.target.value)}
 											className="mt-1 w-full rounded-2xl bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
-											placeholder="לדוגמה: 12"
-										/>
+											placeholder="לדוגמה: 12" />
 									</label>
-								</div>
+								)}
 
-								{/* סטטוס הפרויקט – הוסר לפי בקשתך */}
-
-								<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-									<div className="block">
-										<div className="flex items-start gap-2 mb-1">
-											<div className="w-7 h-7 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center text-[10px]">VA</div>
-											<div className="bg-[#1a1a2e] text-white rounded-2xl px-3 py-1.5 text-xs">מתי נוח לך שנגיע?</div>
-										</div>
-										<div className="mt-1 rounded-2xl border border-[#C5A059]/40 bg-white text-[#0f1424]">
-											<div className="max-h-48 overflow-y-auto divide-y rounded-2xl">
-												{twoWeeksDates.map(d => {
-													return (
-														<label key={d.value} className={`flex items-center justify-between px-3 py-2 rounded-2xl ${d.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50'}`}>
-															<span className="text-sm">{d.weekday} — {d.label}</span>
-															<input
-																type="radio"
-																name="preferredDate"
-																value={d.value}
-																checked={preferredDate === d.value}
-																onChange={() => !d.disabled && setPreferredDate(d.value)}
-																disabled={d.disabled}
-															/>
-														</label>
-													);
-												})}
-											</div>
+								{bookingStep === 'date' && (
+									<div className="mt-1 rounded-2xl border border-[#C5A059]/40 bg-white text-[#0f1424]">
+										<div className="max-h-48 overflow-y-auto divide-y rounded-2xl">
+											{twoWeeksDates.map(d => (
+												<label key={d.value} className={`flex items-center justify-between px-3 py-2 rounded-2xl ${d.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50'}`}>
+													<span className="text-sm">{d.weekday} — {d.label}</span>
+													<input type="radio" name="preferredDate" value={d.value} checked={preferredDate === d.value} onChange={() => !d.disabled && setPreferredDate(d.value)} disabled={d.disabled} />
+												</label>
+											))}
 										</div>
 									</div>
-									<div className="block">
-										<div className="flex items-start gap-2 mb-1">
-											<div className="w-7 h-7 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center text-[10px]">VA</div>
-											<div className="bg-[#1a1a2e] text-white rounded-2xl px-3 py-1.5 text-xs">איזה חלון זמן עדיף?</div>
-										</div>
-										<div className="mt-1 rounded-2xl border border-[#C5A059]/40 bg-white text-[#0f1424]">
-											<div className="max-h-48 overflow-y-auto divide-y rounded-2xl">
-												{[8, 11, 14].map((start) => {
-													const end = start + 3;
-													const to2 = (n: number) => n.toString().padStart(2, '0');
-													const label = `${to2(start)}:00–${to2(end)}:00`;
-													return (
-														<label key={label} className="flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-gray-50 rounded-2xl">
-															<span className="text-sm">{label}</span>
-															<input
-																type="radio"
-																name="preferredTime"
-																value={label}
-																checked={preferredTime === label}
-																onChange={() => setPreferredTime(label)}
-															/>
-														</label>
-													);
-												})}
-											</div>
+								)}
+
+								{bookingStep === 'time' && (
+									<div className="mt-1 rounded-2xl border border-[#C5A059]/40 bg-white text-[#0f1424]">
+										<div className="max-h-48 overflow-y-auto divide-y rounded-2xl">
+											{[8, 11, 14].map((start) => {
+												const end = start + 3;
+												const to2 = (n: number) => n.toString().padStart(2, '0');
+												const label = `${to2(start)}:00–${to2(end)}:00`;
+												return (
+													<label key={label} className="flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-gray-50 rounded-2xl">
+														<span className="text-sm">{label}</span>
+														<input type="radio" name="preferredTime" value={label} checked={preferredTime === label} onChange={() => setPreferredTime(label)} />
+													</label>
+												);
+											})}
 										</div>
 									</div>
-								</div>
+								)}
 							</div>
+
 							<div className="mt-6 flex flex-col sm:flex-row gap-2">
-								<button
-									type="submit"
-									className="inline-flex justify-center items-center px-5 py-3 rounded-md font-semibold text-white bg-[#25D366] hover:bg-[#20c15b] shadow-sm transition-colors w-full cursor-pointer"
-								>
-									שליחה
-								</button>
+								<div className="flex w-full gap-2">
+									<button
+										type="button"
+										onClick={() => { const steps = ['name','city','street','house','date','time']; const i = steps.indexOf(bookingStep as any); if (i > 0) setBookingStep(steps[i-1] as any); }}
+										disabled={bookingStep === 'name'}
+										className="flex-1 px-5 py-3 rounded-md font-semibold border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-50"
+									>
+										חזרה
+									</button>
+
+									{bookingStep !== 'time' ? (
+										<button
+											type="button"
+											onClick={() => { const steps = ['name','city','street','house','date','time']; const i = steps.indexOf(bookingStep as any); if (i < steps.length - 1) setBookingStep(steps[i+1] as any); }}
+											disabled={
+												(bookingStep === 'name' && !(fullName && fullName.trim().length > 1)) ||
+												(bookingStep === 'city' && !city) ||
+												(bookingStep === 'street' && !street) ||
+												(bookingStep === 'house' && !houseNumber) ||
+												(bookingStep === 'date' && !preferredDate)
+											}
+											className="flex-1 px-5 py-3 rounded-md font-semibold text-white bg-[#1a1a2e] hover:opacity-95 disabled:opacity-50"
+										>
+											המשך
+										</button>
+									) : (
+										<button
+											type="submit"
+											disabled={!preferredTime || !preferredDate || !(fullName && fullName.trim().length > 1) || !city || !street || !houseNumber}
+											className="flex-1 px-5 py-3 rounded-md font-semibold text-white bg-[#25D366] hover:bg-[#20c15b] disabled:opacity-50"
+										>
+											שליחה
+										</button>
+									)}
+								</div>
 							</div>
 						</form>
 					) : (

@@ -1486,7 +1486,10 @@ function LivePageInner() {
 	const [activeMaterial, setActiveMaterial] = React.useState<'wood' | 'metal' | 'stone'>(qMaterial);
 	const [activeColor, setActiveColor] = React.useState<string>(qColor);
 	const [activeModelId, setActiveModelId] = React.useState<string | null>(qModel || null);
-	const [activeTexId, setActiveTexId] = React.useState<string | null>(qTex || null); // למתכת/אבן
+	const [activeTexId, setActiveTexId] = React.useState<string | null>(qTex || null); // למתכת/אבן (סנכרון תצוגה)
+	// מזהים ייעודיים לכל קטגוריה כדי לשמר בחירה בין מעברים
+	const [activeMetalTexId, setActiveMetalTexId] = React.useState<string | null>(activeMaterial === 'metal' ? (qTex || null) : null);
+	const [activeStoneTexId, setActiveStoneTexId] = React.useState<string | null>(activeMaterial === 'stone' ? (qTex || null) : null);
 	const [box, setBox] = React.useState<'thick' | 'thin'>(qBox);
 	const [railing, setRailing] = React.useState<'none' | 'glass' | 'metal' | 'cable'>('none');
 	const [glassTone, setGlassTone] = React.useState<'extra' | 'smoked' | 'bronze'>('extra');
@@ -1983,12 +1986,24 @@ function LivePageInner() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [activeMaterial, woodModels]);
 
-	// שחזור בחירת מתכת/אבן בעת מעבר חזרה (שומר את הבחירה הקודמת אם קיימת)
+	// ברירת מחדל ובחירה דביקה למתכת/אבן – מזהה לכל קטגוריה ושיקוף ל-activeTexId לתצוגה
 	React.useEffect(() => {
-		if (activeMaterial === 'wood') return;
-		const saved = activeMaterial === 'metal' ? lastTexRef.current.metal : lastTexRef.current.stone;
-		const candidate = saved && nonWoodModels.find(m => m.id === saved) ? saved : (activeTexId && nonWoodModels.find(m => m.id === activeTexId) ? activeTexId : (nonWoodModels[0]?.id ?? null));
-		if (candidate && candidate !== activeTexId) setActiveTexId(candidate);
+		if (activeMaterial === 'metal') {
+			// ודא שיש בחירה דביקה למתכת
+			let next = activeMetalTexId;
+			if (!next || !nonWoodModels.find(m => m.id === next)) {
+				next = nonWoodModels[0]?.id ?? null;
+				if (next !== activeMetalTexId) setActiveMetalTexId(next);
+			}
+			if (next !== activeTexId) setActiveTexId(next);
+		} else if (activeMaterial === 'stone') {
+			let next = activeStoneTexId;
+			if (!next || !nonWoodModels.find(m => m.id === next)) {
+				next = nonWoodModels[0]?.id ?? null;
+				if (next !== activeStoneTexId) setActiveStoneTexId(next);
+			}
+			if (next !== activeTexId) setActiveTexId(next);
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [activeMaterial, nonWoodModels]);
 
@@ -2404,13 +2419,13 @@ function LivePageInner() {
 					<div ref={canvasWrapRef} className="relative w-full aspect-[16/9] bg-white border overflow-hidden rounded">
 						<Canvas
 							shadows={false}
+							flat
 							camera={{ position: [4, 3, 6], fov: 45 }}
 							dpr={[1, 1.5]}
 							gl={{ toneMapping: NoToneMapping, toneMappingExposure: 1.0, preserveDrawingBuffer: false, antialias: true, powerPreference: 'high-performance' }}
 						>
 							<React.Suspense fallback={null}>
-								{/* תאורה ניטרלית – רק אור סביבה לביטול החמצון/השחרה */}
-								<ambientLight color={'#ffffff'} intensity={1.0} />
+								{/* ללא תאורה – חומרים Unlit מציגים טקסטורות AS-IS */}
 								<Staircase3D
 									shape={shape}
 									steps={steps}
@@ -3075,9 +3090,11 @@ function LivePageInner() {
 																key={m.id}
 																aria-label={m.name || m.id}
 																title={m.name || m.id}
-																onClick={() => startTransition(() => {
-																	setActiveTexId(m.id);
-																})}
+												onClick={() => startTransition(() => {
+													setActiveTexId(m.id);
+													if (activeMaterial === 'metal') setActiveMetalTexId(m.id);
+													if (activeMaterial === 'stone') setActiveStoneTexId(m.id);
+												})}
 																className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
 															/>
@@ -3383,7 +3400,10 @@ function LivePageInner() {
 											key={m.id}
 											aria-label={m.name || m.id}
 											title={m.name || m.id}
-											onClick={() => startTransition(() => setActiveTexId(m.id))}
+											onClick={() => startTransition(() => {
+												setActiveTexId(m.id);
+												setActiveMetalTexId(m.id);
+											})}
 											className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 											style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
 										/>

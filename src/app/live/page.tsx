@@ -514,7 +514,7 @@ function Staircase3D({
 						<meshStandardMaterial
 							color={materialKind === 'metal' ? '#8f8f8f' : '#b3a59a'}
 							roughness={0.95}
-							metalness={materialKind === 'metal' ? 0.5 : 0.0}
+							metalness={0.0}
 							polygonOffset
 							polygonOffsetFactor={1}
 							polygonOffsetUnits={1}
@@ -554,8 +554,8 @@ function Staircase3D({
 										bumpMap={ft.bump}
 										bumpScale={bumpScaleOverride ?? 0.15}
 										roughnessMap={ft.rough}
-										metalness={0.9}
-										roughness={0.6}
+										metalness={0.0}
+										roughness={0.9}
 										envMapIntensity={0}
 									/>
 								);
@@ -589,8 +589,8 @@ function Staircase3D({
 									bumpMap={ft.bump}
 									bumpScale={(bumpScaleOverride ?? 0.14)}
 									roughnessMap={ft.rough}
-									metalness={materialKind === 'metal' ? 0.9 : 0.0}
-									roughness={materialKind === 'metal' ? 0.6 : 0.9}
+									metalness={0.0}
+									roughness={0.9}
 									envMapIntensity={0}
 								/>
 							);
@@ -608,8 +608,8 @@ function Staircase3D({
 									bumpMap={ft.bump}
 									bumpScale={(bumpScaleOverride ?? 0.14)}
 									roughnessMap={ft.rough}
-									metalness={materialKind === 'metal' ? 0.9 : 0.0}
-									roughness={materialKind === 'metal' ? 0.6 : 0.9}
+									metalness={0.0}
+									roughness={0.9}
 									envMapIntensity={0}
 								/>
 							);
@@ -627,8 +627,8 @@ function Staircase3D({
 									bumpMap={ft.bump}
 									bumpScale={(bumpScaleOverride ?? 0.14)}
 									roughnessMap={ft.rough}
-									metalness={materialKind === 'metal' ? 0.9 : 0.0}
-									roughness={materialKind === 'metal' ? 0.6 : 0.9}
+									metalness={0.0}
+									roughness={0.9}
 									envMapIntensity={0}
 								/>
 							);
@@ -665,8 +665,8 @@ function Staircase3D({
 									bumpMap={ft.bump}
 									bumpScale={(bumpScaleOverride ?? 0.14)}
 									roughnessMap={ft.rough}
-									metalness={materialKind === 'metal' ? 0.6 : 0.0}
-									roughness={materialKind === 'metal' ? 0.45 : 0.92}
+									metalness={0.0}
+									roughness={0.92}
 									envMapIntensity={0}
 								/>
 							);
@@ -939,7 +939,7 @@ function Staircase3D({
 								items.push(
 									<mesh key={`cable-x-${i}-${k}`} position={[x, yCenter, z]} castShadow receiveShadow>
 										<cylinderGeometry args={[0.005, 0.005, spanH, 12]} />
-										<meshStandardMaterial color={cableColor || '#c7ccd1'} metalness={1.0} roughness={0.35} envMapIntensity={0} />
+										<meshStandardMaterial color={cableColor || '#c7ccd1'} metalness={0.0} roughness={0.35} envMapIntensity={0} />
 									</mesh>
 								);
 							});
@@ -958,7 +958,7 @@ function Staircase3D({
 								items.push(
 									<mesh key={`cable-z-${i}-${k}`} position={[x, yCenter, z]} castShadow receiveShadow>
 										<cylinderGeometry args={[0.005, 0.005, spanH, 12]} />
-										<meshStandardMaterial color={cableColor || '#c7ccd1'} metalness={1.0} roughness={0.35} envMapIntensity={0} />
+										<meshStandardMaterial color={cableColor || '#c7ccd1'} metalness={0.0} roughness={0.35} envMapIntensity={0} />
 									</mesh>
 								);
 							});
@@ -987,7 +987,7 @@ function Staircase3D({
 								items.push(
 									<mesh key={`lcable-x-${i}-${k}`} position={[x, yCenter, z]} castShadow receiveShadow>
 										<cylinderGeometry args={[0.005, 0.005, spanH, 12]} />
-										<meshStandardMaterial color={cableColor || '#c7ccd1'} metalness={1.0} roughness={0.35} envMapIntensity={0} />
+										<meshStandardMaterial color={cableColor || '#c7ccd1'} metalness={0.0} roughness={0.35} envMapIntensity={0} />
 									</mesh>
 								);
 							}
@@ -1007,7 +1007,7 @@ function Staircase3D({
 								items.push(
 									<mesh key={`lcable-z-${i}-${k}`} position={[x, yCenter, z]} castShadow receiveShadow>
 										<cylinderGeometry args={[0.005, 0.005, spanH, 12]} />
-										<meshStandardMaterial color={cableColor || '#c7ccd1'} metalness={1.0} roughness={0.35} envMapIntensity={0} />
+										<meshStandardMaterial color={cableColor || '#c7ccd1'} metalness={0.0} roughness={0.35} envMapIntensity={0} />
 									</mesh>
 								);
 							}
@@ -1254,7 +1254,7 @@ function Staircase3D({
 										<meshStandardMaterial
 											key={`msolid-${railingSolidColor}`}
 											color={railingSolidColor}
-											metalness={0.85}
+											metalness={0.0}
 											roughness={0.45}
 											envMapIntensity={0}
 											side={2}
@@ -1266,7 +1266,7 @@ function Staircase3D({
 											bumpMap={bumpTex}
 											bumpScale={0.25}
 											roughnessMap={roughTex}
-											metalness={0.85}
+											metalness={0.0}
 											roughness={0.45}
 											envMapIntensity={0}
 											side={2}
@@ -1349,7 +1349,7 @@ function Staircase3D({
 										<meshStandardMaterial
 											key={`msolid-${railingSolidColor}`}
 											color={railingSolidColor}
-											metalness={0.85}
+											metalness={0.0}
 											roughness={0.45}
 											envMapIntensity={0}
 											side={2}
@@ -1361,7 +1361,7 @@ function Staircase3D({
 											bumpMap={bumpTex}
 											bumpScale={0.25}
 											roughnessMap={roughTex}
-											metalness={0.85}
+											metalness={0.0}
 											roughness={0.45}
 											envMapIntensity={0}
 											side={2}

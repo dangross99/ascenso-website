@@ -3639,16 +3639,16 @@ function LivePageInner() {
 					</div>
 
 					{!bookingSubmitted ? (
-						<form onSubmit={handleBookingSubmit} className="bg-[#0f1424] text-white p-6">
-							<div className="text-white leading-relaxed mb-1">
+						<form onSubmit={handleBookingSubmit} className="bg-[#f6f7fb] text-[#0f1424] p-6">
+							<div className="leading-relaxed mb-1">
 								<span className="font-semibold">תיאום פגישה בשטח</span>
 							</div>
-							<div className="text-white/85 leading-relaxed mb-2">
+							<div className="text-[#0f1424]/80 leading-relaxed mb-2">
 								מלאו את הפרטים וניצור קשר
 							</div>
 							<div className="grid grid-cols-1 gap-4">
 								<label className="block" htmlFor="fullName">
-									<span className="text-sm text-white/80">שם מלא</span>
+									<span className="inline-block rounded-2xl bg-[#1a1a2e] text-white px-3 py-1.5 text-sm mb-1">שם מלא</span>
 									<input
 										id="fullName"
 										type="text"
@@ -3656,14 +3656,14 @@ function LivePageInner() {
 										value={fullName}
 										onChange={(e) => setFullName(e.target.value)}
 										ref={firstInputRef}
-										className="mt-1 w-full rounded-md bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
+										className="mt-1 w-full rounded-2xl bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
 										placeholder="שם ושם משפחה"
 									/>
 								</label>
 								{/* שדה טלפון הוסר – המספר מגיע אוטומטית מ‑WhatsApp */}
 								<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 									<label className="block" htmlFor="city">
-										<span className="text-sm text-white/80">עיר</span>
+										<span className="inline-block rounded-2xl bg-[#1a1a2e] text-white px-3 py-1.5 text-sm mb-1">עיר</span>
 										<input
 											id="city"
 											type="text"
@@ -3671,7 +3671,7 @@ function LivePageInner() {
 											onChange={(e) => setCity(e.target.value)}
 											ref={cityInputRef}
 											list="city-list"
-											className="mt-1 w-full rounded-md bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
+											className="mt-1 w-full rounded-2xl bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
 											placeholder="לדוגמה: תל אביב"
 										/>
 										<datalist id="city-list">
@@ -3681,7 +3681,7 @@ function LivePageInner() {
 										</datalist>
 									</label>
 									<label className="block" htmlFor="street">
-										<span className="text-sm text-white/80">רחוב</span>
+										<span className="inline-block rounded-2xl bg-[#1a1a2e] text-white px-3 py-1.5 text-sm mb-1">רחוב</span>
 										<input
 											id="street"
 											type="text"
@@ -3689,7 +3689,7 @@ function LivePageInner() {
 											onChange={(e) => setStreet(e.target.value)}
 											ref={streetInputRef}
 											list="street-list"
-											className="mt-1 w-full rounded-md bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
+											className="mt-1 w-full rounded-2xl bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
 											placeholder="לדוגמה: דרך מנחם בגין"
 										/>
 										<datalist id="street-list">
@@ -3699,7 +3699,7 @@ function LivePageInner() {
 										</datalist>
 									</label>
 									<label className="block" htmlFor="houseNumber">
-										<span className="text-sm text-white/80">מספר</span>
+										<span className="inline-block rounded-2xl bg-[#1a1a2e] text-white px-3 py-1.5 text-sm mb-1">מספר</span>
 										<input
 											id="houseNumber"
 											type="text"
@@ -3707,7 +3707,7 @@ function LivePageInner() {
 											pattern="[0-9]{1,4}"
 											value={houseNumber}
 											onChange={(e) => setHouseNumber(e.target.value)}
-											className="mt-1 w-full rounded-md bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
+											className="mt-1 w-full rounded-2xl bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
 											placeholder="לדוגמה: 12"
 										/>
 									</label>
@@ -3717,12 +3717,12 @@ function LivePageInner() {
 
 								<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 									<div className="block">
-										<span className="text-sm text-white/80">בחירת תאריך מועדף</span>
-										<div className="mt-1 rounded-md border border-[#C5A059]/40 bg-white text-[#0f1424]">
-											<div className="max-h-48 overflow-y-auto divide-y">
+										<span className="inline-block rounded-2xl bg-[#1a1a2e] text-white px-3 py-1.5 text-sm mb-1">בחירת תאריך מועדף</span>
+										<div className="mt-1 rounded-2xl border border-[#C5A059]/40 bg-white text-[#0f1424]">
+											<div className="max-h-48 overflow-y-auto divide-y rounded-2xl">
 												{twoWeeksDates.map(d => {
 													return (
-														<label key={d.value} className={`flex items-center justify-between px-3 py-2 ${d.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50'}`}>
+														<label key={d.value} className={`flex items-center justify-between px-3 py-2 rounded-2xl ${d.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50'}`}>
 															<span className="text-sm">{d.weekday} — {d.label}</span>
 															<input
 																type="radio"
@@ -3739,15 +3739,15 @@ function LivePageInner() {
 										</div>
 									</div>
 									<div className="block">
-										<span className="text-sm text-white/80">חלון זמן מועדף</span>
-										<div className="mt-1 rounded-md border border-[#C5A059]/40 bg-white text-[#0f1424]">
-											<div className="max-h-48 overflow-y-auto divide-y">
+										<span className="inline-block rounded-2xl bg-[#1a1a2e] text-white px-3 py-1.5 text-sm mb-1">חלון זמן מועדף</span>
+										<div className="mt-1 rounded-2xl border border-[#C5A059]/40 bg-white text-[#0f1424]">
+											<div className="max-h-48 overflow-y-auto divide-y rounded-2xl">
 												{[8, 11, 14].map((start) => {
 													const end = start + 3;
 													const to2 = (n: number) => n.toString().padStart(2, '0');
 													const label = `${to2(start)}:00–${to2(end)}:00`;
 													return (
-														<label key={label} className="flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-gray-50">
+														<label key={label} className="flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-gray-50 rounded-2xl">
 															<span className="text-sm">{label}</span>
 															<input
 																type="radio"

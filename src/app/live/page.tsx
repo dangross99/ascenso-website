@@ -4,7 +4,20 @@ import Image from 'next/image';
 import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Canvas, useLoader } from '@react-three/fiber';
-import { OrbitControls, Environment, useTexture } from '@react-three/drei';
+import { OrbitControls, Environment, useTexture, useProgress } from '@react-three/drei';
+// Overlay טעינה לקנבס – מוצג בזמן טעינת טקסטורות/נכסים
+function CanvasLoadingOverlay() {
+	const { active, progress } = useProgress();
+	if (!active) return null;
+	return (
+		<div className="absolute inset-0 z-30 flex items-center justify-center bg-white/55 backdrop-blur-sm">
+			<div className="flex flex-col items-center gap-3">
+				<div className="w-12 h-12 rounded-full border-2 border-[#1a1a2e]/25 border-t-[#1a1a2e] animate-spin" />
+				<div className="text-sm text-[#1a1a2e] font-medium">{Math.round(progress)}%</div>
+			</div>
+		</div>
+	);
+}
 import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, BufferGeometry, Float32BufferAttribute, Cache } from 'three';
 
 // הפעלת קאש של three עבור טעינות חלקות
@@ -2332,101 +2345,104 @@ function LivePageInner() {
 							dpr={[1, 1.5]}
 							gl={{ toneMappingExposure: 0.85, preserveDrawingBuffer: false, antialias: true, powerPreference: 'high-performance' }}
 						>
-							{/* תאורה רכה ונייטרלית */}
-							<hemisphereLight args={['#ffffff', '#bfbfbf', 0.55]} />
-							<ambientLight intensity={0.5} />
-							<directionalLight
-								position={[6, 10, 4]}
-								intensity={0.18}
-								castShadow
-								shadow-normalBias={0.02}
-								shadow-bias={-0.0002}
-							/>
-							<Staircase3D
-								shape={shape}
-								steps={steps}
-								color={COLOR_HEX[activeColor] || '#C8A165'}
-								materialKind={activeMaterial}
-								railingKind={railing}
-								railingSolidColor={railingMetalSolid}
-								cablePreviewHeight={5}
-								cableColor={cableColor}
-								cableSpanMode={cableSpanMode}
-								stepCableSpanModes={stepCableSpanMode}
-								landingCableSpanModes={landingCableSpanMode}
-								treadThicknessOverride={box === 'thick' ? 0.11 : 0.07}
-								pathSegments={pathSegments}
-								glassTone={glassTone}
-								stepRailingStates={stepRailing}
-								landingRailingStates={landingRailing}
-								stepRailingSides={stepRailingSide}
-								landingRailingSides={landingRailingSide}
-								railingTextureUrl={(() => {
-									if (railing === 'metal') {
-										const rec = metalRailingOptions.find(r => r.id === railingMetalId) || metalRailingOptions[0];
-										return rec?.images?.[0] || null;
+							<React.Suspense fallback={null}>
+								{/* תאורה רכה ונייטרלית */}
+								<hemisphereLight args={['#ffffff', '#bfbfbf', 0.55]} />
+								<ambientLight intensity={0.5} />
+								<directionalLight
+									position={[6, 10, 4]}
+									intensity={0.18}
+									castShadow
+									shadow-normalBias={0.02}
+									shadow-bias={-0.0002}
+								/>
+								<Staircase3D
+									shape={shape}
+									steps={steps}
+									color={COLOR_HEX[activeColor] || '#C8A165'}
+									materialKind={activeMaterial}
+									railingKind={railing}
+									railingSolidColor={railingMetalSolid}
+									cablePreviewHeight={5}
+									cableColor={cableColor}
+									cableSpanMode={cableSpanMode}
+									stepCableSpanModes={stepCableSpanMode}
+									landingCableSpanModes={landingCableSpanMode}
+									treadThicknessOverride={box === 'thick' ? 0.11 : 0.07}
+									pathSegments={pathSegments}
+									glassTone={glassTone}
+									stepRailingStates={stepRailing}
+									landingRailingStates={landingRailing}
+									stepRailingSides={stepRailingSide}
+									landingRailingSides={landingRailingSide}
+									railingTextureUrl={(() => {
+										if (railing === 'metal') {
+											const rec = metalRailingOptions.find(r => r.id === railingMetalId) || metalRailingOptions[0];
+											return rec?.images?.[0] || null;
+										}
+										return null;
+									})()}
+									railingBumpUrl={(() => {
+										if (railing === 'metal') {
+											const rec = metalRailingOptions.find(r => r.id === railingMetalId) || metalRailingOptions[0];
+											return rec?.pbr?.bump?.[0] || null;
+										}
+										return null;
+									})()}
+									railingRoughnessUrl={(() => {
+										if (railing === 'metal') {
+											const rec = metalRailingOptions.find(r => r.id === railingMetalId) || metalRailingOptions[0];
+											return rec?.pbr?.roughness?.[0] || null;
+										}
+										return null;
+									})()}
+									textureUrl={(() => {
+										if (activeMaterial === 'wood') {
+											return activeModel?.variants?.[activeColor]?.[0] || activeModel?.images?.[0] || null;
+										}
+										return (
+											nonWoodModels.find(r => r.id === activeTexId)?.images?.[0] ||
+											nonWoodModels[0]?.images?.[0] ||
+											null
+										);
+									})()}
+									bumpUrl={
+										activeMaterial === 'wood'
+											? activeModel?.pbrVariants?.[activeColor]?.bump?.[0] || null
+											: nonWoodModels.find(r => r.id === activeTexId)?.pbr?.bump?.[0] ||
+											  nonWoodModels[0]?.pbr?.bump?.[0] ||
+											  null
 									}
-									return null;
-								})()}
-								railingBumpUrl={(() => {
-									if (railing === 'metal') {
-										const rec = metalRailingOptions.find(r => r.id === railingMetalId) || metalRailingOptions[0];
-										return rec?.pbr?.bump?.[0] || null;
+									roughnessUrl={
+										activeMaterial === 'wood'
+											? activeModel?.pbrVariants?.[activeColor]?.roughness?.[0] || null
+											: nonWoodModels.find(r => r.id === activeTexId)?.pbr?.roughness?.[0] ||
+											  nonWoodModels[0]?.pbr?.roughness?.[0] ||
+											  null
 									}
-									return null;
-								})()}
-								railingRoughnessUrl={(() => {
-									if (railing === 'metal') {
-										const rec = metalRailingOptions.find(r => r.id === railingMetalId) || metalRailingOptions[0];
-										return rec?.pbr?.roughness?.[0] || null;
-									}
-									return null;
-								})()}
-								textureUrl={(() => {
-									if (activeMaterial === 'wood') {
-										return activeModel?.variants?.[activeColor]?.[0] || activeModel?.images?.[0] || null;
-									}
-									return (
-										nonWoodModels.find(r => r.id === activeTexId)?.images?.[0] ||
-										nonWoodModels[0]?.images?.[0] ||
-										null
-									);
-								})()}
-								bumpUrl={
-									activeMaterial === 'wood'
-										? activeModel?.pbrVariants?.[activeColor]?.bump?.[0] || null
-										: nonWoodModels.find(r => r.id === activeTexId)?.pbr?.bump?.[0] ||
-										  nonWoodModels[0]?.pbr?.bump?.[0] ||
-										  null
-								}
-								roughnessUrl={
-									activeMaterial === 'wood'
-										? activeModel?.pbrVariants?.[activeColor]?.roughness?.[0] || null
-										: nonWoodModels.find(r => r.id === activeTexId)?.pbr?.roughness?.[0] ||
-										  nonWoodModels[0]?.pbr?.roughness?.[0] ||
-										  null
-								}
-								tileScale={(() => {
-									if (activeMaterial === 'wood') {
-										const cfg = MODEL_CONFIG[activeModel?.id || ''] || DEFAULT_MODEL_CONFIG;
+									tileScale={(() => {
+										if (activeMaterial === 'wood') {
+											const cfg = MODEL_CONFIG[activeModel?.id || ''] || DEFAULT_MODEL_CONFIG;
+											return cfg.tile ?? DEFAULT_MODEL_CONFIG.tile!;
+										}
+										const cfg = MODEL_CONFIG[activeTexId || ''] || DEFAULT_MODEL_CONFIG;
 										return cfg.tile ?? DEFAULT_MODEL_CONFIG.tile!;
-									}
-									const cfg = MODEL_CONFIG[activeTexId || ''] || DEFAULT_MODEL_CONFIG;
-									return cfg.tile ?? DEFAULT_MODEL_CONFIG.tile!;
-								})()}
-								bumpScaleOverride={(() => {
-									if (activeMaterial === 'wood') {
-										const cfg = MODEL_CONFIG[activeModel?.id || ''] || DEFAULT_MODEL_CONFIG;
+									})()}
+									bumpScaleOverride={(() => {
+										if (activeMaterial === 'wood') {
+											const cfg = MODEL_CONFIG[activeModel?.id || ''] || DEFAULT_MODEL_CONFIG;
+											return cfg.bump;
+										}
+										const cfg = MODEL_CONFIG[activeTexId || ''] || DEFAULT_MODEL_CONFIG;
 										return cfg.bump;
-									}
-									const cfg = MODEL_CONFIG[activeTexId || ''] || DEFAULT_MODEL_CONFIG;
-									return cfg.bump;
-								})()}
-							/>
-							{/* סביבת תאורה רכה */}
-							<Environment preset="apartment" />
-							<OrbitControls ref={orbitRef} enableDamping makeDefault zoomToCursor />
+									})()}
+								/>
+								{/* סביבת תאורה רכה */}
+								<Environment preset="apartment" />
+								<OrbitControls ref={orbitRef} enableDamping makeDefault zoomToCursor />
+							</React.Suspense>
 						</Canvas>
+						<CanvasLoadingOverlay />
 						
 						{/* בלון מחיר בתוך הקונפיגטור – מוסתר במובייל, מוצג מדסקטופ */}
 						<div className="hidden lg:block pointer-events-none absolute top-3 left-3 z-20">

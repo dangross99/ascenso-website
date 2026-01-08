@@ -3650,9 +3650,9 @@ function LivePageInner() {
 								מלאו את הפרטים וניצור קשר
 							</div>
 							<div className="grid grid-cols-1 gap-4">
-								<div className="flex items-start gap-2 mt-1">
-									<div className="w-7 h-7 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center text-[10px]">VA</div>
-									<div className="bg-[#1a1a2e] text-white rounded-2xl px-3 py-1.5 text-xs">
+								<div className="flex items-start gap-3 mt-1 md:mt-2">
+									<div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center text-[12px] md:text-sm font-semibold">VA</div>
+									<div className="bg-[#1a1a2e] text-white rounded-2xl px-4 py-2 text-base md:text-lg leading-snug">
 										{bookingStep === 'name' ? 'איך לקרוא לך?' :
 										 bookingStep === 'city' ? 'באיזה עיר?' :
 										 bookingStep === 'street' ? 'שם הרחוב?' :

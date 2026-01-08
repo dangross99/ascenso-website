@@ -3556,14 +3556,13 @@ function LivePageInner() {
 						</div>
 
 						<div ref={shareRef} className="pt-2 border-t mt-auto">
-							<div className="relative overflow-hidden rounded-xl border bg-[#0f1424] text-white">
-								<div className="absolute inset-0 opacity-[0.12]" aria-hidden="true" />
+							<div className="relative">
 								<div className="relative px-4 py-4 md:px-6 md:py-5 flex items-center justify-center">
 									<div className="flex items-center gap-2">
 										<button
 											onClick={openBooking}
 											aria-label="פתח טופס תיאום פגישה"
-										className="inline-flex items-center gap-2 rounded-md bg-white text-[#1a1a2e] px-4 py-2 font-semibold shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white cursor-pointer transition-transform duration-200 ease-out hover:scale-105 active:scale-95 will-change-transform"
+											className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-4 py-2 font-semibold shadow-sm hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1a1a2e] cursor-pointer transition-transform duration-200 ease-out hover:scale-105 active:scale-95 will-change-transform"
 										>
 											<span>תיאום פגישה</span>
 											<svg className="w-4 h-4 text-[#1a1a2e]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

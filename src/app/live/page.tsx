@@ -23,6 +23,23 @@ import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, Lin
 // הפעלת קאש של three עבור טעינות חלקות
 Cache.enabled = true;
 
+// לוגוטייפ טקסטואלי תואם להדר ("ASCEN" עם S ו‑O דקים יותר)
+function BrandWordmark({ size = 'md' as 'sm' | 'md' | 'lg' }) {
+	const sizeClass =
+		size === 'lg'
+			? 'text-[34px] md:text-[44px]'
+			: size === 'sm'
+			? 'text-[18px] md:text-[22px]'
+			: 'text-[24px] md:text-[32px]';
+	return (
+		<span className={`${sizeClass} font-serif font-prosto font-semibold tracking-widest text-[#1a1a2e] uppercase select-none`}>
+			ASCEN
+			<span style={{ fontWeight: 170 }}>S</span>
+			<span style={{ fontWeight: 170 }}>O</span>
+		</span>
+	);
+}
+
 // (הוסר אווטאר מזכירה וירטואלית לפי בקשת המשתמש)
 
 type MaterialRecord = {
@@ -3631,8 +3648,8 @@ function LivePageInner() {
 					onClick={(e) => e.stopPropagation()}
 				>
 					<div className="px-5 py-4 bg-[#1a1a2e] text-white relative border-b border-[#C5A059]/30">
-						<div className="text-xl md:text-2xl font-extrabold tracking-wide text-center" aria-label="ASCENSO logo" style={{ fontFamily: 'Prosto One, system-ui, sans-serif' }}>
-							ASCENSO
+						<div className="text-center" aria-label="ASCENSO logo">
+							<BrandWordmark size="md" />
 						</div>
 						<button
 							className="text-white/70 hover:text-white text-2xl leading-none absolute left-4 top-1/2 -translate-y-1/2"

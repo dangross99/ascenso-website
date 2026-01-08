@@ -3651,21 +3651,14 @@ function LivePageInner() {
 						<div className="text-center" aria-label="ASCENSO logo">
 							<BrandWordmark size="md" color="#ffffff" />
 						</div>
-						<button
-							className="text-white/70 hover:text-white text-2xl leading-none absolute left-4 top-1/2 -translate-y-1/2"
-							aria-label="סגור"
-							onClick={() => setBookingOpen(false)}
-						>
-							×
-						</button>
 					</div>
 
 					{!bookingSubmitted ? (
 						<form onSubmit={handleBookingSubmit} className="bg-[#f6f7fb] text-[#0f1424] p-6">
-							<div className="leading-relaxed mb-1 text-center text-2xl md:text-3xl">
+							<div className="leading-relaxed mb-1 text-center text-[1.35rem] md:text-[1.6875rem]">
 								<span className="font-semibold">תיאום פגישה בשטח</span>
 							</div>
-							<div className="text-[#0f1424]/80 leading-relaxed mb-2 text-center text-lg md:text-xl">
+							<div className="text-[#0f1424]/80 leading-relaxed mb-2 text-center text-base md:text-lg">
 								מלאו את הפרטים וניצור קשר
 							</div>
 							<div className="grid grid-cols-1 gap-4">

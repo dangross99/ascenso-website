@@ -23,6 +23,26 @@ import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, Lin
 // הפעלת קאש של three עבור טעינות חלקות
 Cache.enabled = true;
 
+// אווטאר "מזכירה וירטואלית" – משתמש בלוגו אם קיים (public/images/logo-mark.svg), אחרת מציג ראשי תיבות
+function BrandAvatar({ size = 'lg' as 'sm' | 'lg' }) {
+	const [logoOk, setLogoOk] = React.useState(true);
+	const isLg = size === 'lg';
+	return (
+		<div className={`${isLg ? 'w-10 h-10 md:w-12 md:h-12' : 'w-7 h-7'} rounded-full bg-[#1a1a2e] text-white flex items-center justify-center ${isLg ? 'text-[12px] md:text-sm' : 'text-[10px]'} font-semibold overflow-hidden`}>
+			{logoOk ? (
+				<img
+					src="/images/logo-mark.svg"
+					alt="ASCENSO"
+					className={`${isLg ? 'w-7 h-7 md:w-8 md:h-8' : 'w-5 h-5'} object-contain`}
+					onError={() => setLogoOk(false)}
+				/>
+			) : (
+				<span className="select-none">VA</span>
+			)}
+		</div>
+	);
+}
+
 type MaterialRecord = {
 	id: string;
 	name: string;
@@ -3651,7 +3671,7 @@ function LivePageInner() {
 							</div>
 							<div className="grid grid-cols-1 gap-4">
 								<div className="flex items-start gap-3 mt-1 md:mt-2">
-									<div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center text-[12px] md:text-sm font-semibold">VA</div>
+									<BrandAvatar size="lg" />
 									<div className="bg-[#1a1a2e] text-white rounded-2xl px-4 py-2 text-base md:text-lg leading-snug">
 										{bookingStep === 'name' ? 'איך לקרוא לך?' :
 										 bookingStep === 'city' ? 'באיזה עיר?' :

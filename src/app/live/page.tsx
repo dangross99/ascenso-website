@@ -1634,12 +1634,6 @@ function LivePageInner() {
 	const [mobileOpenCat, setMobileOpenCat] = React.useState<
 		'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing' | null
 	>(null);
-	const [mobileStepIdx, setMobileStepIdx] = React.useState(0);
-	const mobileSteps = React.useMemo<('box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing')[]>(() => {
-		return activeMaterial === 'wood'
-			? ['box', 'material', 'woodTexture', 'woodColor', 'path', 'railing']
-			: ['box', 'material', 'nonWoodTexture', 'path', 'railing'];
-	}, [activeMaterial]);
 	// עזרת מובייל: באנר פתיחה והסבר קצר
 	const [mobileHelpDismissed, setMobileHelpDismissed] = React.useState(false);
 	const [mobileHelpOpen, setMobileHelpOpen] = React.useState(true);
@@ -1681,37 +1675,7 @@ function LivePageInner() {
 			default: return '';
 		}
 	}, []);
-	const nextCatFrom = React.useCallback((cat: 'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing' | null) => {
-		if (!cat) return null;
-		const idx = mobileSteps.indexOf(cat);
-		return idx >= 0 && idx < mobileSteps.length - 1 ? mobileSteps[idx + 1] : null;
-	}, [mobileSteps]);
-	const advanceFrom = React.useCallback((cat: 'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing') => {
-		const next = nextCatFrom(cat);
-		if (next) {
-			setMobileStepIdx(prev => Math.max(prev, mobileSteps.indexOf(next)));
-			setMobileOpenCat(next);
-		}
-	}, [nextCatFrom, mobileSteps]);
-	const isCatEnabled = React.useCallback((cat: 'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing') => {
-		return mobileSteps.indexOf(cat) <= mobileStepIdx;
-	}, [mobileSteps, mobileStepIdx]);
-	React.useEffect(() => {
-		// התאמת קטגוריה פתוחה והתקדמות בעת שינוי חומר – בלי לאפס להתחלה
-		setMobileOpenCat(prev => {
-			if (activeMaterial === 'wood') {
-				// מעבר לקטגוריית עץ: אם היינו בלא-עץ, המשך ל-woodTexture
-				if (prev === 'nonWoodTexture') return 'woodTexture';
-				return prev;
-			} else {
-				// מעבר ללא-עץ: אם היינו בקטגוריות עץ שאינן רלוונטיות, עבור ל-nonWoodTexture
-				if (prev === 'woodTexture' || prev === 'woodColor') return 'nonWoodTexture';
-				return prev;
-			}
-		});
-		// אל תגלוש מעבר לאורך רשימת השלבים החדשה
-		setMobileStepIdx(prev => Math.min(prev, mobileSteps.length - 1));
-	}, [activeMaterial, mobileSteps]);
+	// ללא זרימה כפויה – אין מעבר אוטומטי או אינדקס שלב
 
 	// קונפיגורטור מדרגות
 	const [shape, setShape] = React.useState<'straight' | 'L' | 'U'>(qShape);
@@ -1830,8 +1794,6 @@ function LivePageInner() {
 			setCableSpanMode('tread');
 			setStepCableSpanMode([]);
 			setLandingCableSpanMode([]);
-			// התחלת שלבים
-			setMobileStepIdx(0);
 			setMobileOpenCat('box');
 		} catch {}
 		setMobileRestorePrompt(false);
@@ -3039,8 +3001,8 @@ function LivePageInner() {
 								el: (
 									<div>
 										<button
-											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md ${isCatEnabled('box') ? '' : 'opacity-50 cursor-not-allowed'}`}
-											onClick={() => isCatEnabled('box') && setMobileOpenCat(prev => (prev === 'box' ? null : 'box'))}
+											className="w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md"
+											onClick={() => setMobileOpenCat(prev => (prev === 'box' ? null : 'box'))}
 											aria-expanded={mobileOpenCat === 'box'}
 										>
 											<span className="font-medium">דגם תיבה</span>
@@ -3058,7 +3020,6 @@ function LivePageInner() {
 															className={`px-3 py-1 text-sm rounded-full border ${box === opt.id ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
 															onClick={() => {
 																setBox(opt.id);
-																if (typeof window !== 'undefined' && window.innerWidth < 1024) advanceFrom('box');
 															}}
 														>
 															{opt.label}
@@ -3077,8 +3038,8 @@ function LivePageInner() {
 								el: (
 									<div>
 										<button
-											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md ${isCatEnabled('material') ? '' : 'opacity-50 cursor-not-allowed'}`}
-											onClick={() => isCatEnabled('material') && setMobileOpenCat(prev => (prev === 'material' ? null : 'material'))}
+											className="w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md"
+											onClick={() => setMobileOpenCat(prev => (prev === 'material' ? null : 'material'))}
 											aria-expanded={mobileOpenCat === 'material'}
 										>
 											<span className="font-medium">חומר</span>
@@ -3091,7 +3052,7 @@ function LivePageInner() {
 														<button
 															key={m}
 															className={`px-3 py-1 text-sm rounded-full border ${activeMaterial === m ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
-												onClick={() => startTransition(() => setActiveMaterial(m))}
+															onClick={() => startTransition(() => setActiveMaterial(m))}
 														>
 															{m === 'wood' ? 'עץ' : m === 'metal' ? 'מתכת' : 'אבן טבעית'}
 														</button>
@@ -3110,8 +3071,8 @@ function LivePageInner() {
 									el: (
 										<div>
 											<button
-												className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md ${isCatEnabled('woodTexture') ? '' : 'opacity-50 cursor-not-allowed'}`}
-												onClick={() => isCatEnabled('woodTexture') && setMobileOpenCat(prev => (prev === 'woodTexture' ? null : 'woodTexture'))}
+												className="w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md"
+												onClick={() => setMobileOpenCat(prev => (prev === 'woodTexture' ? null : 'woodTexture'))}
 												aria-expanded={mobileOpenCat === 'woodTexture'}
 											>
 												<span className="font-medium">טקסטורה</span>
@@ -3127,7 +3088,6 @@ function LivePageInner() {
 																title={m.name || m.id}
 																onClick={() => startTransition(() => {
 																	setActiveModelId(m.id);
-																	if (typeof window !== 'undefined' && window.innerWidth < 1024) advanceFrom('woodTexture');
 																})}
 																className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeModelId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
@@ -3144,8 +3104,8 @@ function LivePageInner() {
 									el: (
 										<div>
 											<button
-												className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md ${isCatEnabled('woodColor') ? '' : 'opacity-50 cursor-not-allowed'}`}
-												onClick={() => isCatEnabled('woodColor') && setMobileOpenCat(prev => (prev === 'woodColor' ? null : 'woodColor'))}
+												className="w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md"
+												onClick={() => setMobileOpenCat(prev => (prev === 'woodColor' ? null : 'woodColor'))}
 												aria-expanded={mobileOpenCat === 'woodColor'}
 											>
 												<span className="font-medium">צבע</span>
@@ -3169,7 +3129,6 @@ function LivePageInner() {
 																			title={sw.label}
 																			onClick={() => startTransition(() => {
 																				setActiveColor(sw.id);
-																				if (typeof window !== 'undefined' && window.innerWidth < 1024) advanceFrom('woodColor');
 																			})}
 																			className={`w-8 h-8 rounded-full border-2 ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																			style={{
@@ -3197,8 +3156,8 @@ function LivePageInner() {
 									el: (
 										<div>
 											<button
-												className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md ${isCatEnabled('nonWoodTexture') ? '' : 'opacity-50 cursor-not-allowed'}`}
-												onClick={() => isCatEnabled('nonWoodTexture') && setMobileOpenCat(prev => (prev === 'nonWoodTexture' ? null : 'nonWoodTexture'))}
+												className="w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md"
+												onClick={() => setMobileOpenCat(prev => (prev === 'nonWoodTexture' ? null : 'nonWoodTexture'))}
 												aria-expanded={mobileOpenCat === 'nonWoodTexture'}
 											>
 												<span className="font-medium">טקסטורה</span>
@@ -3219,7 +3178,6 @@ function LivePageInner() {
 																title={m.name || m.id}
 																onClick={() => startTransition(() => {
 																	setActiveTexId(m.id);
-																	if (typeof window !== 'undefined' && window.innerWidth < 1024) advanceFrom('nonWoodTexture');
 																})}
 																className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
@@ -3239,8 +3197,8 @@ function LivePageInner() {
 								el: (
 									<div>
 										<button
-											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md ${isCatEnabled('path') ? '' : 'opacity-50 cursor-not-allowed'}`}
-											onClick={() => isCatEnabled('path') && setMobileOpenCat(prev => (prev === 'path' ? null : 'path'))}
+											className="w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md"
+											onClick={() => setMobileOpenCat(prev => (prev === 'path' ? null : 'path'))}
 											aria-expanded={mobileOpenCat === 'path'}
 										>
 											<span className="font-medium">מסלול</span>
@@ -3253,7 +3211,6 @@ function LivePageInner() {
 														className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100"
 														onClick={() => {
 															setPathSegments(prev => [...prev, { kind: 'straight', steps: 5 }]);
-															if (typeof window !== 'undefined' && window.innerWidth < 1024) advanceFrom('path');
 														}}
 													>
 														הוסף ישר (5 מדר׳)
@@ -3266,7 +3223,6 @@ function LivePageInner() {
 																{ kind: 'landing', turn: 'right' },
 																{ kind: 'straight', steps: 1 },
 															]);
-															if (typeof window !== 'undefined' && window.innerWidth < 1024) advanceFrom('path');
 														}}
 													>
 														פודסט + ימינה
@@ -3279,7 +3235,6 @@ function LivePageInner() {
 																{ kind: 'landing', turn: 'left' },
 																{ kind: 'straight', steps: 1 },
 															]);
-															if (typeof window !== 'undefined' && window.innerWidth < 1024) advanceFrom('path');
 														}}
 													>
 														פודסט + שמאלה
@@ -3288,7 +3243,6 @@ function LivePageInner() {
 														className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100"
 														onClick={() => {
 															setPathSegments(prev => [...prev, { kind: 'landing' }]);
-															if (typeof window !== 'undefined' && window.innerWidth < 1024) advanceFrom('path');
 														}}
 													>
 														פודסט
@@ -3315,7 +3269,6 @@ function LivePageInner() {
 																								: seg2
 																						)
 																					);
-																					if (typeof window !== 'undefined' && window.innerWidth < 1024) advanceFrom('path');
 																				}}
 																			>
 																				-
@@ -3332,7 +3285,6 @@ function LivePageInner() {
 																								: seg2
 																						)
 																					);
-																					if (typeof window !== 'undefined' && window.innerWidth < 1024) advanceFrom('path');
 																				}}
 																			>
 																				+
@@ -3348,7 +3300,6 @@ function LivePageInner() {
 																				const out = prev.filter((_: any, i: number) => i !== idx);
 																				return out.length ? out : [{ kind: 'straight', steps: 5 }];
 																			});
-																			if (typeof window !== 'undefined' && window.innerWidth < 1024) advanceFrom('path');
 																		}}
 																	>
 																		הסר
@@ -3370,8 +3321,8 @@ function LivePageInner() {
 								el: (
 									<div>
 										<button
-											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md ${isCatEnabled('railing') ? '' : 'opacity-50 cursor-not-allowed'}`}
-											onClick={() => isCatEnabled('railing') && setMobileOpenCat(prev => (prev === 'railing' ? null : 'railing'))}
+											className="w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md"
+											onClick={() => setMobileOpenCat(prev => (prev === 'railing' ? null : 'railing'))}
 											aria-expanded={mobileOpenCat === 'railing'}
 										>
 											<span className="font-medium">מעקה</span>
@@ -3391,10 +3342,6 @@ function LivePageInner() {
 															className={`px-3 py-1 text-sm rounded-full border ${railing === opt.id ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
 															onClick={() => {
 																setRailing(opt.id);
-																if (typeof window !== 'undefined' && window.innerWidth < 1024) {
-																	setMobileOpenCat('railing');
-																	setMobileStepIdx(mobileSteps.length - 1);
-																}
 															}}
 														>
 															{opt.label}
@@ -3407,14 +3354,14 @@ function LivePageInner() {
 								),
 							});
 
-							// סדר: הקטגוריה הפתוחה ראשונה, השאר לפי mobileSteps
-							const orderKeys: Cat[] = mobileSteps as Cat[];
-							const openKey = (mobileOpenCat || null) as Cat | null;
-							const keyed = nodes.filter(n => orderKeys.includes(n.key));
-							const rest = keyed.filter(n => n.key !== openKey);
-							const first = openKey ? keyed.find(n => n.key === openKey) : undefined;
-							const finalOrder = first ? [first, ...rest] : rest;
-							return finalOrder.map(n => <div key={n.key}>{n.el}</div>);
+							// סדר קבוע: Box -> Material -> (WoodTexture, WoodColor | NonWoodTexture) -> Path -> Railing
+							const fixedOrder: Cat[] = activeMaterial === 'wood'
+								? ['box','material','woodTexture','woodColor','path','railing']
+								: ['box','material','nonWoodTexture','path','railing'];
+							const mapNodes = new Map(nodes.map(n => [n.key, n.el]));
+							return fixedOrder
+								.filter(k => mapNodes.has(k))
+								.map(k => <div key={k}>{mapNodes.get(k) as React.ReactElement}</div>);
 						})()}
 					</div>
 

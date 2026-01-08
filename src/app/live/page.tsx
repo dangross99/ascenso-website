@@ -37,7 +37,7 @@ function BrandAvatar({ size = 'lg' as 'sm' | 'lg' }) {
 					onError={() => setLogoOk(false)}
 				/>
 			) : (
-				<span className="select-none">VA</span>
+				<span className="select-none whitespace-nowrap leading-none">אסנסו</span>
 			)}
 		</div>
 	);

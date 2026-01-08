@@ -1656,10 +1656,21 @@ function LivePageInner() {
 		return mobileSteps.indexOf(cat) <= mobileStepIdx;
 	}, [mobileSteps, mobileStepIdx]);
 	React.useEffect(() => {
-		// איפוס זרימת שלבים בעת שינוי חומר בסיסי
-		setMobileStepIdx(0);
-		setMobileOpenCat('box');
-	}, [activeMaterial]);
+		// התאמת קטגוריה פתוחה והתקדמות בעת שינוי חומר – בלי לאפס להתחלה
+		setMobileOpenCat(prev => {
+			if (activeMaterial === 'wood') {
+				// מעבר לקטגוריית עץ: אם היינו בלא-עץ, המשך ל-woodTexture
+				if (prev === 'nonWoodTexture') return 'woodTexture';
+				return prev;
+			} else {
+				// מעבר ללא-עץ: אם היינו בקטגוריות עץ שאינן רלוונטיות, עבור ל-nonWoodTexture
+				if (prev === 'woodTexture' || prev === 'woodColor') return 'nonWoodTexture';
+				return prev;
+			}
+		});
+		// אל תגלוש מעבר לאורך רשימת השלבים החדשה
+		setMobileStepIdx(prev => Math.min(prev, mobileSteps.length - 1));
+	}, [activeMaterial, mobileSteps]);
 
 	// קונפיגורטור מדרגות
 	const [shape, setShape] = React.useState<'straight' | 'L' | 'U'>(qShape);
@@ -2859,10 +2870,7 @@ function LivePageInner() {
 														<button
 															key={m}
 															className={`px-3 py-1 text-sm rounded-full border ${activeMaterial === m ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
-															onClick={() => startTransition(() => {
-																setActiveMaterial(m);
-																if (typeof window !== 'undefined' && window.innerWidth < 1024) advanceFrom('material');
-															})}
+												onClick={() => startTransition(() => setActiveMaterial(m))}
 														>
 															{m === 'wood' ? 'עץ' : m === 'metal' ? 'מתכת' : 'אבן טבעית'}
 														</button>

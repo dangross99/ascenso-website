@@ -3317,7 +3317,28 @@ function LivePageInner() {
 					</div>
 				</aside>
 			</div>
+			{/* מרווח תחתון למובייל שלא יוסתר ע"י סרגל המחיר הקבוע */}
+			<div className="h-40 lg:hidden" />
 		</main>
+
+		{/* מובייל: מחיר קבוע בתחתית עם פירוט מלא */}
+		<div className="lg:hidden fixed inset-x-0 bottom-0 z-40 border-t bg-white">
+			<div className="max-w-7xl mx-auto px-4 py-3">
+				<div className="text-xs text-gray-700 mb-2">מחיר משוער (לפני מע״מ)</div>
+				<ul className="text-sm text-gray-800 space-y-1 max-h-40 overflow-y-auto">
+					{breakdown.map(b => (
+						<li key={b.label} className="flex justify-between">
+							<span>{b.label}</span>
+							<span>₪{b.value.toLocaleString('he-IL')}</span>
+						</li>
+					))}
+				</ul>
+				<div className="mt-2 pt-2 border-t flex justify-between font-bold">
+					<span>סה״כ</span>
+					<span>₪{total.toLocaleString('he-IL')}</span>
+				</div>
+			</div>
+		</div>
 
 		{/* Toasts */}
 		{saveToast && (

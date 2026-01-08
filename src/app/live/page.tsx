@@ -3563,7 +3563,7 @@ function LivePageInner() {
 										<button
 											onClick={openBooking}
 											aria-label="פתח טופס תיאום פגישה"
-											className="inline-flex items-center gap-2 rounded-md bg-white text-[#1a1a2e] px-4 py-2 font-semibold shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white"
+										className="inline-flex items-center gap-2 rounded-md bg-white text-[#1a1a2e] px-4 py-2 font-semibold shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white cursor-pointer transition-transform duration-200 ease-out hover:scale-105 active:scale-95 will-change-transform"
 										>
 											<span>תיאום פגישה</span>
 											<svg className="w-4 h-4 text-[#1a1a2e]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

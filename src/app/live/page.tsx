@@ -18,7 +18,7 @@ function CanvasLoadingOverlay() {
 		</div>
 	);
 }
-import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, BufferGeometry, Float32BufferAttribute, Cache } from 'three';
+import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, BufferGeometry, Float32BufferAttribute, Cache, NoToneMapping } from 'three';
 
 // הפעלת קאש של three עבור טעינות חלקות
 Cache.enabled = true;
@@ -511,14 +511,7 @@ function Staircase3D({
 					{/* גוף המדרך */}
 					<mesh castShadow receiveShadow>
 						<boxGeometry args={[t.run, treadThickness, treadWidth]} />
-						<meshStandardMaterial
-							color={materialKind === 'metal' ? '#8f8f8f' : '#b3a59a'}
-							roughness={0.95}
-							metalness={0.0}
-							polygonOffset
-							polygonOffsetFactor={1}
-							polygonOffsetUnits={1}
-						/>
+						<meshBasicMaterial color={materialKind === 'metal' ? '#8f8f8f' : '#b3a59a'} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
 					</mesh>
 					{/* שכבת פני השטח עם תבליט אמיתי לעץ; למתכת/אבן – כיסוי מרקם */}
 					<mesh
@@ -531,49 +524,17 @@ function Staircase3D({
 						{materialKind === 'wood' ? (
 							(() => {
 								const ft = buildFaceTextures(t.run, treadWidth);
-								return (
-							<meshStandardMaterial
-								/* לא צובעים את הטופ – משתמשים בצבע של המפה כדי להתאים לשאר הפאות */
-								color={'#ffffff'}
-								map={ft.color}
-								bumpMap={ft.bump}
-								bumpScale={bumpScaleOverride ?? 0.22}
-								roughnessMap={ft.rough}
-								metalness={0.0}
-								roughness={0.92}
-								envMapIntensity={0}
-							/>
-								);
+							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
 							})()
 						) : materialKind === 'metal' ? (
 							(() => {
 								const ft = buildFaceTextures(t.run, treadWidth);
-								return (
-									<meshStandardMaterial
-										map={ft.color}
-										bumpMap={ft.bump}
-										bumpScale={bumpScaleOverride ?? 0.15}
-										roughnessMap={ft.rough}
-										metalness={0.0}
-										roughness={0.9}
-										envMapIntensity={0}
-									/>
-								);
+							return (<meshBasicMaterial map={ft.color} />);
 							})()
 						) : (
 							(() => {
 								const ft = buildFaceTextures(t.run, treadWidth);
-								return (
-									<meshStandardMaterial
-										map={ft.color}
-										bumpMap={ft.bump}
-										bumpScale={bumpScaleOverride ?? 0.2}
-										roughnessMap={ft.rough}
-										metalness={0.0}
-										roughness={0.9}
-										envMapIntensity={0}
-									/>
-								);
+							return (<meshBasicMaterial map={ft.color} />);
 							})()
 						)}
 					</mesh>
@@ -583,17 +544,7 @@ function Staircase3D({
 						<planeGeometry args={[t.run, treadWidth, 8, 8]} />
 						{(() => {
 							const ft = buildFaceTextures(t.run, treadWidth);
-							return (
-								<meshStandardMaterial
-									map={ft.color}
-									bumpMap={ft.bump}
-									bumpScale={(bumpScaleOverride ?? 0.14)}
-									roughnessMap={ft.rough}
-									metalness={0.0}
-									roughness={0.9}
-									envMapIntensity={0}
-								/>
-							);
+							return (<meshBasicMaterial map={ft.color} />);
 						})()}
 					</mesh>
 
@@ -602,17 +553,7 @@ function Staircase3D({
 						<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
 						{(() => {
 							const ft = buildFaceTextures(treadWidth, treadThickness);
-							return (
-								<meshStandardMaterial
-									map={ft.color}
-									bumpMap={ft.bump}
-									bumpScale={(bumpScaleOverride ?? 0.14)}
-									roughnessMap={ft.rough}
-									metalness={0.0}
-									roughness={0.9}
-									envMapIntensity={0}
-								/>
-							);
+							return (<meshBasicMaterial map={ft.color} />);
 						})()}
 					</mesh>
 
@@ -621,17 +562,7 @@ function Staircase3D({
 						<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
 						{(() => {
 							const ft = buildFaceTextures(treadWidth, treadThickness);
-							return (
-								<meshStandardMaterial
-									map={ft.color}
-									bumpMap={ft.bump}
-									bumpScale={(bumpScaleOverride ?? 0.14)}
-									roughnessMap={ft.rough}
-									metalness={0.0}
-									roughness={0.9}
-									envMapIntensity={0}
-								/>
-							);
+							return (<meshBasicMaterial map={ft.color} />);
 						})()}
 					</mesh>
 
@@ -640,17 +571,7 @@ function Staircase3D({
 						<planeGeometry args={[t.run, treadThickness, 8, 8]} />
 						{(() => {
 							const ft = buildFaceTextures(t.run, treadThickness);
-							return (
-								<meshStandardMaterial
-									map={ft.color}
-									bumpMap={ft.bump}
-									bumpScale={(bumpScaleOverride ?? 0.14)}
-									roughnessMap={ft.rough}
-									metalness={materialKind === 'metal' ? 0.9 : 0.0}
-									roughness={materialKind === 'metal' ? 0.6 : 0.9}
-									envMapIntensity={materialKind === 'wood' ? 0.08 : 0.25}
-								/>
-							);
+							return (<meshBasicMaterial map={ft.color} />);
 						})()}
 					</mesh>
 
@@ -659,17 +580,7 @@ function Staircase3D({
 						<planeGeometry args={[t.run, treadThickness, 8, 8]} />
 						{(() => {
 							const ft = buildFaceTextures(t.run, treadThickness);
-							return (
-								<meshStandardMaterial
-									map={ft.color}
-									bumpMap={ft.bump}
-									bumpScale={(bumpScaleOverride ?? 0.14)}
-									roughnessMap={ft.rough}
-									metalness={0.0}
-									roughness={0.92}
-									envMapIntensity={0}
-								/>
-							);
+							return (<meshBasicMaterial map={ft.color} />);
 						})()}
 					</mesh>
 
@@ -868,8 +779,7 @@ function Staircase3D({
 							<group key={`gseg-x-${i}`}>
 								<mesh castShadow={false} receiveShadow={false}>
 									<primitive object={geom} attach="geometry" />
-									<meshPhysicalMaterial color={color} transparent opacity={opacity} roughness={0.08} metalness={0}
-										transmission={1} thickness={0.03} ior={1.5} envMapIntensity={0} side={2} depthWrite={false}
+									<meshBasicMaterial color={color} transparent opacity={opacity} side={2} depthWrite={false}
 										polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
 								</mesh>
 							</group>
@@ -892,8 +802,7 @@ function Staircase3D({
 							<group key={`gseg-z-${i}`}>
 								<mesh castShadow={false} receiveShadow={false}>
 									<primitive object={zGeom} attach="geometry" />
-									<meshPhysicalMaterial color={color} transparent opacity={opacity} roughness={0.08} metalness={0}
-										transmission={1} thickness={0.03} ior={1.5} envMapIntensity={0} side={2} depthWrite={false}
+									<meshBasicMaterial color={color} transparent opacity={opacity} side={2} depthWrite={false}
 										polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
 								</mesh>
 							</group>
@@ -1376,7 +1285,7 @@ function Staircase3D({
 			{/* רצפה – מותאמת אוטומטית לגבולות המהלך */}
 			<mesh rotation={[-Math.PI / 2, 0, 0]} position={[floorBounds.cx, floorBounds.y, floorBounds.cz]} receiveShadow>
 				<planeGeometry args={[floorBounds.w, floorBounds.h]} />
-				<meshStandardMaterial color="#e5e7eb" />
+				<meshBasicMaterial color="#e5e7eb" />
 			</mesh>
 		</group>
 	);
@@ -2494,10 +2403,10 @@ function LivePageInner() {
 				<section className="lg:col-span-8">
 					<div ref={canvasWrapRef} className="relative w-full aspect-[16/9] bg-white border overflow-hidden rounded">
 						<Canvas
-							shadows
+							shadows={false}
 							camera={{ position: [4, 3, 6], fov: 45 }}
 							dpr={[1, 1.5]}
-							gl={{ toneMappingExposure: 1.0, preserveDrawingBuffer: false, antialias: true, powerPreference: 'high-performance' }}
+							gl={{ toneMapping: NoToneMapping, toneMappingExposure: 1.0, preserveDrawingBuffer: false, antialias: true, powerPreference: 'high-performance' }}
 						>
 							<React.Suspense fallback={null}>
 								{/* תאורה ניטרלית – רק אור סביבה לביטול החמצון/השחרה */}

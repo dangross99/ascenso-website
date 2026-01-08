@@ -848,7 +848,7 @@ function Staircase3D({
 								items.push(
 									<mesh key={`cable-x-${i}-${k}`} position={[x, yCenter, z]} castShadow receiveShadow>
 										<cylinderGeometry args={[0.005, 0.005, spanH, 12]} />
-										<meshStandardMaterial color={cableColor || '#c7ccd1'} metalness={0.0} roughness={0.35} envMapIntensity={0} />
+										<meshBasicMaterial color={cableColor || '#c7ccd1'} />
 									</mesh>
 								);
 							});
@@ -867,7 +867,7 @@ function Staircase3D({
 								items.push(
 									<mesh key={`cable-z-${i}-${k}`} position={[x, yCenter, z]} castShadow receiveShadow>
 										<cylinderGeometry args={[0.005, 0.005, spanH, 12]} />
-										<meshStandardMaterial color={cableColor || '#c7ccd1'} metalness={0.0} roughness={0.35} envMapIntensity={0} />
+										<meshBasicMaterial color={cableColor || '#c7ccd1'} />
 									</mesh>
 								);
 							});
@@ -896,7 +896,7 @@ function Staircase3D({
 								items.push(
 									<mesh key={`lcable-x-${i}-${k}`} position={[x, yCenter, z]} castShadow receiveShadow>
 										<cylinderGeometry args={[0.005, 0.005, spanH, 12]} />
-										<meshStandardMaterial color={cableColor || '#c7ccd1'} metalness={0.0} roughness={0.35} envMapIntensity={0} />
+										<meshBasicMaterial color={cableColor || '#c7ccd1'} />
 									</mesh>
 								);
 							}
@@ -916,7 +916,7 @@ function Staircase3D({
 								items.push(
 									<mesh key={`lcable-z-${i}-${k}`} position={[x, yCenter, z]} castShadow receiveShadow>
 										<cylinderGeometry args={[0.005, 0.005, spanH, 12]} />
-										<meshStandardMaterial color={cableColor || '#c7ccd1'} metalness={0.0} roughness={0.35} envMapIntensity={0} />
+										<meshBasicMaterial color={cableColor || '#c7ccd1'} />
 									</mesh>
 								);
 							}
@@ -1160,26 +1160,9 @@ function Staircase3D({
 								<mesh castShadow receiveShadow>
 									<primitive object={geom} attach="geometry" />
 									{railingSolidColor ? (
-										<meshStandardMaterial
-											key={`msolid-${railingSolidColor}`}
-											color={railingSolidColor}
-											metalness={0.0}
-											roughness={0.45}
-											envMapIntensity={0}
-											side={2}
-										/>
+										<meshBasicMaterial key={`msolid-${railingSolidColor}`} color={railingSolidColor} side={2} />
 									) : (
-										<meshStandardMaterial
-											key={`mtex-${(mapTex as any)?.image?.src || 'na'}`}
-											map={mapTex}
-											bumpMap={bumpTex}
-											bumpScale={0.25}
-											roughnessMap={roughTex}
-											metalness={0.0}
-											roughness={0.45}
-											envMapIntensity={0}
-											side={2}
-										/>
+										<meshBasicMaterial key={`mtex-${(mapTex as any)?.image?.src || 'na'}`} map={mapTex} side={2} />
 									)}
 								</mesh>
 							</group>
@@ -1255,26 +1238,9 @@ function Staircase3D({
 								<mesh castShadow receiveShadow>
 									<primitive object={zGeom} attach="geometry" />
 									{railingSolidColor ? (
-										<meshStandardMaterial
-											key={`msolid-${railingSolidColor}`}
-											color={railingSolidColor}
-											metalness={0.0}
-											roughness={0.45}
-											envMapIntensity={0}
-											side={2}
-										/>
+										<meshBasicMaterial key={`msolid-${railingSolidColor}`} color={railingSolidColor} side={2} />
 									) : (
-										<meshStandardMaterial
-											key={`mtex-${(mapTex as any)?.image?.src || 'na'}`}
-											map={mapTex}
-											bumpMap={bumpTex}
-											bumpScale={0.25}
-											roughnessMap={roughTex}
-											metalness={0.0}
-											roughness={0.45}
-											envMapIntensity={0}
-											side={2}
-										/>
+										<meshBasicMaterial key={`mtex-${(mapTex as any)?.image?.src || 'na'}`} map={mapTex} side={2} />
 									)}
 								</mesh>
 							</group>

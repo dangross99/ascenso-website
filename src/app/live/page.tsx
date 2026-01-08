@@ -1629,6 +1629,25 @@ function LivePageInner() {
 	const [masterApply, setMasterApply] = React.useState<'none' | 'add' | 'remove'>('none');
 	const [masterSide, setMasterSide] = React.useState<'none' | 'right' | 'left'>('none');
 
+	// מובייל: מסך מלא לקנבס + בוטום-שיט הגדרות
+	const [mobileFS, setMobileFS] = React.useState(false);
+	const [controlsEnabled, setControlsEnabled] = React.useState(false);
+	const [sheetOpen, setSheetOpen] = React.useState(true);
+	const [sheetTab, setSheetTab] = React.useState<'shape' | 'material' | 'railing'>('shape');
+	React.useEffect(() => {
+		if (!mobileFS) return;
+		// דיליי קטן להפעלת OrbitControls כדי למנוע "קפיצה" במגע ראשון
+		const t = window.setTimeout(() => setControlsEnabled(true), 80);
+		// נועל גלילת גוף
+		const prev = document.body.style.overflow;
+		document.body.style.overflow = 'hidden';
+		return () => {
+			document.body.style.overflow = prev;
+			window.clearTimeout(t);
+			setControlsEnabled(false);
+		};
+	}, [mobileFS]);
+
 	// קונפיגורטור מדרגות
 	const [shape, setShape] = React.useState<'straight' | 'L' | 'U'>(qShape);
 	const [steps, setSteps] = React.useState<number>(Number.isFinite(qSteps) ? Math.min(25, Math.max(5, qSteps)) : 15);
@@ -2289,10 +2308,17 @@ function LivePageInner() {
 	return (
 		<>
 			<main className="max-w-7xl mx-auto px-4 py-6" dir="rtl">
-			<h1 className="text-2xl font-bold mb-4">הדמייה LIVE</h1>
 			<div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 				<section className="lg:col-span-8">
-					<div ref={canvasWrapRef} className="relative w-full aspect-[16/9] bg-white border overflow-hidden rounded">
+					<div
+						ref={canvasWrapRef}
+						className="relative w-full aspect-[16/9] bg-white border overflow-hidden rounded"
+						onPointerDown={() => {
+							if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+								setMobileFS(true);
+							}
+						}}
+					>
 						<Canvas
 							shadows
 							camera={{ position: [4, 3, 6], fov: 45 }}
@@ -3007,6 +3033,138 @@ function LivePageInner() {
 				</aside>
 			</div>
 		</main>
+
+		{/* מובייל: מסך מלא בזמן אינטראקציה */}
+		{mobileFS && (
+			<div className="fixed inset-0 z-[9998] bg-[#EFEFEF]" role="dialog" aria-modal="true">
+				<button
+					type="button"
+					className="absolute top-3 left-3 z-20 w-10 h-10 rounded-full bg-black/60 text-white text-xl leading-none flex items-center justify-center"
+					onClick={() => setMobileFS(false)}
+					aria-label="סגור"
+				>
+					×
+				</button>
+				<div className="absolute inset-0 bottom-36">
+					<Canvas
+						shadows={false}
+						camera={{ position: [4, 3, 6], fov: 45 }}
+						dpr={[1, 1]}
+						gl={{ antialias: false, powerPreference: 'low-power', preserveDrawingBuffer: false, toneMappingExposure: 0.9 }}
+					>
+						<ambientLight intensity={0.75} />
+						<Staircase3D
+							shape={shape}
+							steps={steps}
+							color={COLOR_HEX[activeColor] || '#C8A165'}
+							materialKind={activeMaterial}
+							railingKind={railing}
+							railingSolidColor={railingMetalSolid}
+							cablePreviewHeight={5}
+							cableColor={cableColor}
+							cableSpanMode={cableSpanMode}
+							stepCableSpanModes={stepCableSpanMode}
+							landingCableSpanModes={landingCableSpanMode}
+							treadThicknessOverride={box === 'thick' ? 0.11 : 0.07}
+							pathSegments={pathSegments}
+							glassTone={glassTone}
+							stepRailingStates={stepRailing}
+							landingRailingStates={landingRailing}
+							stepRailingSides={stepRailingSide}
+							landingRailingSides={landingRailingSide}
+							/* לייט מובייל: ללא PBR כבד */
+							railingTextureUrl={undefined}
+							railingBumpUrl={undefined}
+							railingRoughnessUrl={undefined}
+							textureUrl={undefined}
+							bumpUrl={undefined}
+							roughnessUrl={undefined}
+							tileScale={1.2}
+							bumpScaleOverride={0.12}
+						/>
+						<OrbitControls enabled={controlsEnabled} enablePan={false} enableDamping rotateSpeed={0.6} />
+					</Canvas>
+				</div>
+
+				{/* Bottom Sheet */}
+				<div className="absolute left-0 right-0 bottom-0 z-20">
+					<div className="mx-auto max-w-3xl rounded-t-2xl bg-white shadow-[0_-8px_24px_rgba(0,0,0,0.15)] border-t">
+						<div
+							className="w-10 h-1.5 bg-gray-300 rounded-full mx-auto mt-2 mb-3 cursor-pointer"
+							onClick={() => setSheetOpen(s => !s)}
+							aria-label="פתח/סגור הגדרות"
+						/>
+						{/* Tabs */}
+						<div className="px-4 pb-3 flex items-center justify-center gap-2">
+							<button
+								className={`px-3 py-1 text-xs rounded-full border ${sheetTab === 'shape' ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-[#1a1a2e] border-gray-300'}`}
+								onClick={() => setSheetTab('shape')}
+							>
+								צורה
+							</button>
+							<button
+								className={`px-3 py-1 text-xs rounded-full border ${sheetTab === 'material' ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-[#1a1a2e] border-gray-300'}`}
+								onClick={() => setSheetTab('material')}
+							>
+								חומר
+							</button>
+							<button
+								className={`px-3 py-1 text-xs rounded-full border ${sheetTab === 'railing' ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-[#1a1a2e] border-gray-300'}`}
+								onClick={() => setSheetTab('railing')}
+							>
+								מעקה
+							</button>
+						</div>
+						{sheetOpen && (
+							<div className="px-4 pb-4">
+								{sheetTab === 'shape' && (
+									<div className="flex items-center justify-center gap-2">
+										<button className="px-3 py-2 border rounded bg-white text-[#1a1a2e]" onClick={() => setShape('straight')}>
+											ישר
+										</button>
+										<button className="px-3 py-2 border rounded bg-white text-[#1a1a2e]" onClick={() => setShape('L')}>
+											L
+										</button>
+										<button className="px-3 py-2 border rounded bg-white text-[#1a1a2e]" onClick={() => setShape('U')}>
+											U
+										</button>
+									</div>
+								)}
+								{sheetTab === 'material' && (
+									<div className="flex items-center justify-center gap-2">
+										<button className="px-3 py-2 border rounded bg-white text-[#1a1a2e]" onClick={() => setActiveMaterial('wood')}>
+											עץ
+										</button>
+										<button className="px-3 py-2 border rounded bg-white text-[#1a1a2e]" onClick={() => setActiveMaterial('metal')}>
+											מתכת
+										</button>
+										<button className="px-3 py-2 border rounded bg-white text-[#1a1a2e]" onClick={() => setActiveMaterial('stone')}>
+											אבן
+										</button>
+									</div>
+								)}
+								{sheetTab === 'railing' && (
+									<div className="flex items-center justify-center gap-2">
+										<button className="px-3 py-2 border rounded bg-white text-[#1a1a2e]" onClick={() => setRailing('none')}>
+											ללא
+										</button>
+										<button className="px-3 py-2 border rounded bg-white text-[#1a1a2e]" onClick={() => setRailing('glass')}>
+											זכוכית
+										</button>
+										<button className="px-3 py-2 border rounded bg-white text-[#1a1a2e]" onClick={() => setRailing('metal')}>
+											מתכת
+										</button>
+										<button className="px-3 py-2 border rounded bg-white text-[#1a1a2e]" onClick={() => setRailing('cable')}>
+											כבלים
+										</button>
+									</div>
+								)}
+							</div>
+						)}
+					</div>
+				</div>
+			</div>
+		)}
 
 		{/* Toasts */}
 		{saveToast && (

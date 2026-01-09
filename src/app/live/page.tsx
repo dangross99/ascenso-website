@@ -3613,8 +3613,8 @@ function LivePageInner() {
 							</div>
 						)}
 
-						{/* עורך מסלול + מעקה כאקורדיון */}
-						<div className="pt-2 space-y-3">
+						{/* עורך מסלול + מעקה כאkorדיון */}
+						<div className="space-y-3">
 							{/* מסלול */}
 							<div>
 								<button

@@ -1299,6 +1299,11 @@ function LivePageInner() {
 	const [preferredTime, setPreferredTime] = React.useState<string>('');
 	// אשף צ'אט: שאלה אחת בכל פעם
 	const [bookingStep, setBookingStep] = React.useState<'name' | 'city' | 'street' | 'house' | 'date' | 'time'>('name');
+	// צעדי האשף והתקדמות
+	const BOOKING_STEPS: ReadonlyArray<'name' | 'city' | 'street' | 'house' | 'date' | 'time'> = ['name', 'city', 'street', 'house', 'date', 'time'];
+	const stepIndex = React.useMemo(() => Math.max(0, BOOKING_STEPS.indexOf(bookingStep)), [bookingStep]);
+	const stepTotal = BOOKING_STEPS.length;
+	const stepPercent = React.useMemo(() => Math.round(((stepIndex + 1) / stepTotal) * 100), [stepIndex, stepTotal]);
 	// רוחב תשובה: 5% קטן יותר מבועת השאלה
 	const questionRef = React.useRef<HTMLDivElement | null>(null);
 	const [answerWidthPx, setAnswerWidthPx] = React.useState<number | null>(null);
@@ -3670,6 +3675,16 @@ function LivePageInner() {
 
 					{!bookingSubmitted ? (
 						<form onSubmit={handleBookingSubmit} className="bg-[#f6f7fb] text-[#0f1424] p-6">
+							{/* התקדמות: שאלה X מתוך Y + פס התקדמות */}
+							<div className="mb-4">
+								<div className="flex items-center justify-between text-xs md:text-sm text-[#0f1424]/70" dir="rtl">
+									<span>שאלה {stepIndex + 1} מתוך {stepTotal}</span>
+									<span>{stepPercent}%</span>
+								</div>
+								<div className="h-1.5 bg-black/10 rounded-full overflow-hidden mt-1">
+									<div className="h-full bg-[#1a1a2e]" style={{ width: `${stepPercent}%` }} />
+								</div>
+							</div>
 							<div className="leading-relaxed mb-1 text-center text-[1.35rem] md:text-[1.6875rem]">
 								<span className="font-semibold">תיאום פגישה בשטח</span>
 							</div>

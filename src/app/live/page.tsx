@@ -3694,23 +3694,23 @@ function LivePageInner() {
 						</div>
 
 						{/* ספייסר תחתון בפאנל כדי שלא ייכנס מתחת לסרגל הקבוע בדסקטופ */}
-						<div className="hidden lg:block h-16" />
+						<div className="hidden lg:block h-2" />
 					</div>
 				</aside>
 			</div>
-			{/* מרווח תחתון במובייל עבור סרגל קבוע */}
-			<div className="h-14 lg:hidden" />
+			{/* מרווח תחתון במובייל עבור סרגל קבוע – מוקטן כמעט לאפס */}
+			<div className="h-2 lg:hidden" />
 			{/* מרווח תחתון בדסקטופ – לא נדרש כעת */}
 			<div className="hidden lg:block h-0" />
 		</main>
 
 		{/* מובייל: סיכום קבוע בתחתית — נשאר בזמן גלילה */}
 		<div className="lg:hidden fixed inset-x-0 bottom-0 z-40 border-t bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
-			<div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between gap-3">
+			<div className="max-w-7xl mx-auto px-3 py-1 flex items-center justify-between gap-2">
 				<button
 					onClick={openBooking}
 					aria-label="פתח טופס תיאום פגישה"
-					className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-4 py-2 font-semibold shadow-sm hover:opacity-95 cursor-pointer"
+					className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-3 py-1.5 font-semibold shadow-sm hover:opacity-95 cursor-pointer"
 				>
 					<span>תיאום פגישה</span>
 				</button>
@@ -3723,18 +3723,18 @@ function LivePageInner() {
 		{/* דסקטופ: סיכום קבוע מיושר בדיוק לפאנל הקטגוריות */}
 		{desktopBarPos && (
 			<div
-				className="hidden lg:block fixed bottom-0 z-40 border-t bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80"
-				style={{ left: desktopBarPos.left, width: desktopBarPos.width }}
+				className="hidden lg:block fixed bottom-0 z-40 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 border shadow rounded-t-md"
+				style={{ left: desktopBarPos.left - 8, width: desktopBarPos.width + 16 }}
 			>
 				<div className="px-4 py-2 flex items-center justify-between gap-3">
 					<button
 						onClick={openBooking}
 						aria-label="פתח טופס תיאום פגישה"
-						className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-4 py-2 font-semibold shadow-sm hover:opacity-95 cursor-pointer"
+						className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-4 py-2 text-base font-semibold shadow-sm hover:opacity-95 cursor-pointer"
 					>
 						<span>תיאום פגישה</span>
 					</button>
-					<div className="text-base font-semibold text-[#1a1a2e]">
+					<div className="text-lg font-bold text-[#1a1a2e]">
 						<span>{`סה\"כ `}₪{total.toLocaleString('he-IL')}</span>
 					</div>
 				</div>

@@ -3827,18 +3827,20 @@ function LivePageInner() {
 							</div>
 						</form>
 					) : (
-						<div className="bg-[#0f1424] text-white p-8 text-center">
-							<div className="mx-auto mb-4 w-12 h-12 rounded-full border-2 border-[#25D366] flex items-center justify-center">
-								<span className="text-[#25D366] text-2xl">✓</span>
+						<div className="bg-white text-[#0f1424] p-8 text-center">
+							<div className="mx-auto mb-4 w-14 h-14 rounded-full border-2 border-[#22c55e] bg-[#22c55e]/10 flex items-center justify-center">
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" aria-hidden="true">
+									<path d="M20 6L9 17l-5-5" />
+								</svg>
 							</div>
-							<p className="text-lg font-semibold mb-2">פנייתך התקבלה</p>
-							<p className="text-white/80">
-								נציג מטעמנו יצור קשר לתיאום סופי.
+							<p className="text-xl font-semibold mb-1">פנייתך התקבלה</p>
+							<p className="text-gray-600">
+								נציג מטעמנו ייצור קשר לתיאום סופי.
 							</p>
 							<div className="mt-6">
 								<button
 									onClick={() => setBookingOpen(false)}
-									className="inline-flex justify-center items-center px-6 py-3 rounded-md font-semibold text-[#1a1a2e] bg-white hover:bg-gray-100"
+									className="inline-flex justify-center items-center px-6 py-3 rounded-md font-semibold text-white bg-[#1a1a2e] hover:opacity-95 cursor-pointer"
 								>
 									סגור
 								</button>

@@ -2556,29 +2556,32 @@ function LivePageInner() {
 						</Canvas>
 						<CanvasLoadingOverlay />
 						
-						{/* בלון מחיר בתוך הקונפיגטור – מוסתר במובייל, מוצג מדסקטופ */}
+						{/* אייקון מועדפים מעל הקנבס במקום בלון המחיר (דסקטופ בלבד) */}
 						<div className="hidden lg:block pointer-events-none absolute top-3 left-3 z-20">
 							<button
 								type="button"
-								onClick={() => {
-									// גלילה עדינה כך שסוף הפירוט/כפתור הווטסאפ יהיו קרובים לתחתית המסך
-									const el = shareRef.current || priceRef.current;
-									if (el && typeof window !== 'undefined') {
-										try {
-											const rect = el.getBoundingClientRect();
-											const target = window.scrollY + rect.bottom - window.innerHeight + 24; // מרווח קטן מלמטה
-											window.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
-										} catch {
-											el.scrollIntoView({ behavior: 'smooth', block: 'end' });
-										}
-									}
-									setPricePing(true);
-									window.setTimeout(() => setPricePing(false), 1200);
-								}}
-								className="pointer-events-auto bg-[#1a1a2e] text-white rounded-full px-4 py-2 shadow-lg border border-black/10 flex items-center gap-2 hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1a1a2e]"
+								onClick={saveCurrentSimulation}
+								aria-label="שמור הדמייה למועדפים"
+								title="שמור הדמייה למועדפים"
+								className="pointer-events-auto p-2 rounded-full border text-[#1a1a2e] bg-white/90 hover:bg-white cursor-pointer shadow"
 							>
-								<span className="text-xs text-gray-200">סה״כ</span>
-								<span className="font-semibold">₪{priceFormatted}</span>
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+									<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+								</svg>
+							</button>
+						</div>
+						{/* אייקון מועדפים מעל הקנבס – מובייל */}
+						<div className="lg:hidden pointer-events-none absolute top-2 left-2 z-20">
+							<button
+								type="button"
+								onClick={saveCurrentSimulation}
+								aria-label="שמור הדמייה למועדפים"
+								title="שמור הדמייה למועדפים"
+								className="pointer-events-auto p-2 rounded-full border text-[#1a1a2e] bg-white/90 hover:bg-white cursor-pointer shadow"
+							>
+								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+									<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+								</svg>
 							</button>
 						</div>
 						{/* טוסט שיתוף */}
@@ -3327,16 +3330,6 @@ function LivePageInner() {
 
 					{/* דסקטופ: הפאנל המקורי */}
 					<div className="hidden lg:block relative border p-4 bg-white rounded-xl shadow-sm space-y-5 flex flex-col min-h-[70vh]">
-						<button
-							className="absolute top-3 left-3 p-2 rounded-full border text-[#1a1a2e] hover:bg-gray-50 cursor-pointer"
-							onClick={saveCurrentSimulation}
-							aria-label="שמור הדמייה למועדפים"
-							title="שמור הדמייה למועדפים"
-						>
-							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-								<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-							</svg>
-						</button>
 						<div>
 							<button
 								className="w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50"
@@ -3891,5 +3884,4 @@ class LiveErrorBoundary extends React.Component<{ children: React.ReactNode }, {
 		return this.props.children as any;
 	}
 }
-
 

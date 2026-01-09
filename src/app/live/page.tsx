@@ -1355,13 +1355,7 @@ function LivePageInner() {
 			if (firstAvailable) setPreferredDate(firstAvailable.value);
 		}
 	}, [preferredDate, twoWeeksDates]);
-	// ברירת מחדל: חלון הזמן הראשון (08:00–11:00) אם לא נבחר
-	React.useEffect(() => {
-		if (!preferredTime) {
-			const to2 = (n: number) => n.toString().padStart(2, '0');
-			setPreferredTime(`${to2(8)}:00–${to2(11)}:00`);
-		}
-	}, [preferredTime]);
+	// אין ברירת מחדל לחלון זמן – המשתמש יבחר מפורשות בשלב 4
 	// Google Places (אוטו‑קומפליט לכתובת) – אופציונלי עם מפתח
 	const GOOGLE_PLACES_KEY = process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY || '';
 	// פירוק כתובת ל־3 שדות נפרדים

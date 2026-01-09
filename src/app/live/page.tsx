@@ -3757,16 +3757,16 @@ function LivePageInner() {
 								)}
 
 								{bookingStep === 'time' && (
-									<div className="mt-1 rounded-2xl border border-[#C5A059]/40 bg-white text-[#0f1424]" style={answerWidthPx ? { width: answerWidthPx } : undefined}>
-										<div className="max-h-48 overflow-y-auto divide-y rounded-2xl">
+									<div className="mt-1 rounded-2xl border border-[#C5A059]/40 bg-white text-[#0f1424] w-full">
+										<div className="grid grid-cols-3 gap-2 p-2 rounded-2xl">
 											{[8, 11, 14].map((start) => {
 												const end = start + 3;
 												const to2 = (n: number) => n.toString().padStart(2, '0');
 												const label = `${to2(start)}:00–${to2(end)}:00`;
 												return (
-													<label key={label} className="flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-gray-50 rounded-2xl">
-														<span className="text-sm">{label}</span>
+													<label key={label} className="flex items-center justify-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-50 rounded-2xl border border-gray-200">
 														<input type="radio" name="preferredTime" value={label} checked={preferredTime === label} onChange={() => setPreferredTime(label)} />
+														<span className="text-sm">{label}</span>
 													</label>
 												);
 											})}

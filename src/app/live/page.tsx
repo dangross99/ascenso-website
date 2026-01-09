@@ -3328,6 +3328,24 @@ function LivePageInner() {
 								.filter(k => mapNodes.has(k))
 								.map(k => <div key={k}>{mapNodes.get(k) as React.ReactElement}</div>);
 						})()}
+
+						{/* פירוט חשבון – מוצג בסוף המובייל מתחת לקטגוריות */}
+						<div className="mt-3 bg-white rounded-md p-3">
+							<div className="font-semibold mb-1">פירוט חשבון</div>
+							<ul className="text-sm text-gray-700 space-y-1">
+								{breakdown.map(b => (
+									<li key={b.label} className="flex justify-between">
+										<span>{b.label}</span>
+										<span>₪{b.value.toLocaleString('he-IL')}</span>
+									</li>
+								))}
+							</ul>
+							<div className="mt-2 pt-2 border-t flex justify-between font-bold">
+								<span>סה״כ</span>
+								<span>₪{total.toLocaleString('he-IL')}</span>
+							</div>
+							<div className="text-[11px] text-gray-500 mt-1">הערכה משוערת להמחשה בלבד.</div>
+						</div>
 					</div>
 
 					{/* דסקטופ: הפאנל המקורי */}
@@ -3615,10 +3633,7 @@ function LivePageInner() {
 		{/* מובייל: סיכום קבוע בתחתית — רק סה״כ + לחצן תיאום */}
 		<div className="lg:hidden fixed inset-x-0 bottom-0 z-40 border-t bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
 			<div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between gap-3">
-				<div className="text-base font-semibold text-[#1a1a2e]">
-					<span className="mr-2">סה״כ</span>
-					<span>₪{total.toLocaleString('he-IL')}</span>
-				</div>
+				{/* כפתור מימין, סיכום משמאל (RTL) */}
 				<button
 					onClick={openBooking}
 					aria-label="פתח טופס תיאום פגישה"
@@ -3626,6 +3641,9 @@ function LivePageInner() {
 				>
 					<span>תיאום פגישה</span>
 				</button>
+				<div className="text-base font-semibold text-[#1a1a2e]">
+					<span>{`סה\"כ `}₪{total.toLocaleString('he-IL')}</span>
+				</div>
 			</div>
 		</div>
 

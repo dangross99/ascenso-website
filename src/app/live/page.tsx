@@ -3745,7 +3745,7 @@ function LivePageInner() {
 											const rows = Math.max(1, Math.ceil(twoWeeksDates.length / 2));
 											return (
 												<div
-													className="grid grid-cols-2 gap-1 p-2 rounded-2xl"
+													className="grid grid-cols-2 grid-flow-col gap-1 p-2 rounded-2xl"
 													style={{ gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`, height: '12rem' }}
 												>
 													{twoWeeksDates.map(d => (

@@ -2475,8 +2475,8 @@ function LivePageInner() {
 	return (
 		<>
 			<div className="min-h-screen w-full bg-[#EFEFEF]">
-			<main className="max-w-7xl mx-auto px-4 lg:px-2 py-6" dir="rtl">
-			<div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-4">
+			<main className="max-w-7xl mx-auto px-4 lg:px-1 py-6" dir="rtl">
+			<div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10">
 				<section className="lg:col-span-8">
 					<div ref={canvasWrapRef} className="relative w-full aspect-[5/4] lg:aspect-[16/9] bg-white border overflow-hidden rounded">
 						<Canvas

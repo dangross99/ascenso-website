@@ -2337,6 +2337,10 @@ function LivePageInner() {
 	// שליחת טופס מודאל: הודעת וואטסאפ מאוחדת (פרטי הדמייה + פרטי לקוח)
 	function handleBookingSubmit(e: React.FormEvent) {
 		e.preventDefault();
+		// הגנה: לא שולחים לפני שלב הזמן
+		if (bookingStep !== 'time' || !preferredTime) {
+			return;
+		}
 		const materialLabel = activeMaterial === 'wood' ? 'עץ' : activeMaterial === 'metal' ? 'מתכת' : 'אבן טבעית';
 		const textureName = activeMaterial === 'wood'
 			? (activeModel?.name || activeModel?.id || 'דגם עץ')
@@ -3676,6 +3680,7 @@ function LivePageInner() {
 					{!bookingSubmitted ? (
 						<form onSubmit={handleBookingSubmit} className="bg-[#f6f7fb] text-[#0f1424] p-6" onKeyDown={(e) => {
 							if (e.key === 'Enter') {
+								if (bookingStep === 'time') return; // אפשר להגיש בשלב האחרון
 								e.preventDefault();
 								const steps = ['name','city','date','time'] as const;
 								const i = steps.indexOf(bookingStep as any);
@@ -3709,7 +3714,7 @@ function LivePageInner() {
 									<div ref={questionRef} className="bg-[#1a1a2e] text-white rounded-2xl px-4 py-2 text-base md:text-lg leading-snug inline-block">
 										{bookingStep === 'name' ? 'שם מלא?' :
 										 bookingStep === 'city' ? 'עיר הפרויקט?' :
-										 bookingStep === 'date' ? 'מתי נוח לך שנגיע?' :
+										 bookingStep === 'date' ? 'מתי נוח לך שניפגש?' :
 										 'איזה חלון זמן עדיף?'}
 									</div>
 								</div>
@@ -3728,7 +3733,8 @@ function LivePageInner() {
 									<div className="block" style={answerWidthPx ? { width: answerWidthPx } : undefined}>
 										<label className="block" htmlFor="city">
 											<input id="city" type="text" value={city} onChange={(e) => setCity(e.target.value)} ref={cityInputRef} list="city-list"
-												className="mt-1 w-full rounded-2xl bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
+												className="mt-1 w-full rounded-2xl bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059] appearance-none"
+												style={{ backgroundImage: 'none' }}
 												placeholder="לדוגמה: תל אביב" />
 											<datalist id="city-list">
 												{cityOptions.map((opt) => (<option value={opt} key={opt} />))}

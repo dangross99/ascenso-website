@@ -3740,7 +3740,7 @@ function LivePageInner() {
 								{/* הוסרו שלבי רחוב ומספר בית לפי בקשה */}
 
 								{bookingStep === 'date' && (
-									<div className="mt-1 rounded-2xl border border-[#C5A059]/40 bg-white text-[#0f1424]" style={answerWidthPx ? { width: answerWidthPx } : undefined}>
+									<div className="mt-1 rounded-2xl border border-[#C5A059]/40 bg-white text-[#0f1424] w-full">
 										{(() => {
 											const rows = Math.max(1, Math.ceil(twoWeeksDates.length / 2));
 											return (

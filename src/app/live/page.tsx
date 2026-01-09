@@ -1509,6 +1509,22 @@ function LivePageInner() {
 	// שליטה במצלמה/אורביט
 	const orbitRef = React.useRef<any>(null);
 	// dumpCam הוסר לפי בקשה
+	// מצב מסך מלא לקנבס + מאזין לשינוי
+	const [isFullscreen, setIsFullscreen] = React.useState(false);
+	React.useEffect(() => {
+		const onFsChange = () => setIsFullscreen(!!document.fullscreenElement);
+		document.addEventListener('fullscreenchange', onFsChange);
+		return () => document.removeEventListener('fullscreenchange', onFsChange);
+	}, []);
+	const toggleFullscreen = React.useCallback(() => {
+		const el = canvasWrapRef.current as any;
+		if (!el) return;
+		if (document.fullscreenElement) {
+			document.exitFullscreen?.();
+		} else {
+			el.requestFullscreen?.();
+		}
+	}, []);
 
 	const qMaterial = (search.get('material') as 'wood' | 'metal' | 'stone') || 'wood';
 	const qColor = search.get('color') || 'oak';
@@ -2560,31 +2576,77 @@ function LivePageInner() {
 						
 						{/* אייקון מועדפים מעל הקנבס במקום בלון המחיר (דסקטופ בלבד) */}
 						<div className="hidden lg:block pointer-events-none absolute top-3 left-3 z-20">
-							<button
-								type="button"
-								onClick={saveCurrentSimulation}
-								aria-label="שמור הדמייה למועדפים"
-								title="שמור הדמייה למועדפים"
-								className="pointer-events-auto p-2 rounded-full border text-[#1a1a2e] bg-white/90 hover:bg-white cursor-pointer shadow"
-							>
-								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-									<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-								</svg>
-							</button>
+							<div className="flex gap-2">
+								<button
+									type="button"
+									onClick={saveCurrentSimulation}
+									aria-label="שמור הדמייה למועדפים"
+									title="שמור הדמייה למועדפים"
+									className="pointer-events-auto p-2 rounded-full border text-[#1a1a2e] bg-white/90 hover:bg-white cursor-pointer shadow"
+								>
+									<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+										<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+									</svg>
+								</button>
+								<button
+									type="button"
+									onClick={toggleFullscreen}
+									aria-label={isFullscreen ? "צא ממסך מלא" : "פתח מסך מלא"}
+									title={isFullscreen ? "צא ממסך מלא" : "מסך מלא"}
+									className="pointer-events-auto p-2 rounded-full border text-[#1a1a2e] bg-white/90 hover:bg-white cursor-pointer shadow"
+								>
+									{isFullscreen ? (
+										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+											<polyline points="15 9 9 9 9 15"></polyline>
+											<polyline points="9 9 15 15"></polyline>
+										</svg>
+									) : (
+										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+											<path d="M4 9V4h5"></path>
+											<path d="M4 4l6 6"></path>
+											<path d="M20 15v5h-5"></path>
+											<path d="M20 20l-6-6"></path>
+										</svg>
+									)}
+								</button>
+							</div>
 						</div>
 						{/* אייקון מועדפים מעל הקנבס – מובייל */}
 						<div className="lg:hidden pointer-events-none absolute top-2 left-2 z-20">
-							<button
-								type="button"
-								onClick={saveCurrentSimulation}
-								aria-label="שמור הדמייה למועדפים"
-								title="שמור הדמייה למועדפים"
-								className="pointer-events-auto p-2 rounded-full border text-[#1a1a2e] bg-white/90 hover:bg-white cursor-pointer shadow"
-							>
-								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-									<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-								</svg>
-							</button>
+							<div className="flex gap-2">
+								<button
+									type="button"
+									onClick={saveCurrentSimulation}
+									aria-label="שמור הדמייה למועדפים"
+									title="שמור הדמייה למועדפים"
+									className="pointer-events-auto p-2 rounded-full border text-[#1a1a2e] bg-white/90 hover:bg-white cursor-pointer shadow"
+								>
+									<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+										<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+									</svg>
+								</button>
+								<button
+									type="button"
+									onClick={toggleFullscreen}
+									aria-label={isFullscreen ? "צא ממסך מלא" : "פתח מסך מלא"}
+									title={isFullscreen ? "צא ממסך מלא" : "מסך מלא"}
+									className="pointer-events-auto p-2 rounded-full border text-[#1a1a2e] bg-white/90 hover:bg-white cursor-pointer shadow"
+								>
+									{isFullscreen ? (
+										<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+											<polyline points="15 9 9 9 9 15"></polyline>
+											<polyline points="9 9 15 15"></polyline>
+										</svg>
+									) : (
+										<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+											<path d="M4 9V4h5"></path>
+											<path d="M4 4l6 6"></path>
+											<path d="M20 15v5h-5"></path>
+											<path d="M20 20l-6-6"></path>
+										</svg>
+									)}
+								</button>
+							</div>
 						</div>
 						{/* טוסט שיתוף */}
 						{shareToast && (
@@ -3626,23 +3688,24 @@ function LivePageInner() {
 					</div>
 				</aside>
 			</div>
-			{/* מרווח תחתון למובייל שלא יוסתר ע"י סרגל המחיר הקבוע */}
-			<div className="h-[1.2rem] lg:hidden" />
+			{/* מרווח תחתון במובייל – צומצם ומבוטל במקרה שאין סרגל קבוע */}
+			<div className="hidden lg:hidden" />
 		</main>
 
-		{/* מובייל: סיכום קבוע בתחתית — רק סה״כ + לחצן תיאום */}
-		<div className="lg:hidden fixed inset-x-0 bottom-0 z-40 border-t bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
-			<div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between gap-3">
-				{/* כפתור מימין, סיכום משמאל (RTL) */}
-				<button
-					onClick={openBooking}
-					aria-label="פתח טופס תיאום פגישה"
-					className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-4 py-2 font-semibold shadow-sm hover:opacity-95 cursor-pointer"
-				>
-					<span>תיאום פגישה</span>
-				</button>
-				<div className="text-base font-semibold text-[#1a1a2e]">
-					<span>{`סה\"כ `}₪{total.toLocaleString('he-IL')}</span>
+		{/* מובייל: סיכום בתוך התוכן (לא קבוע) */}
+		<div className="lg:hidden">
+			<div className="max-w-7xl mx-auto px-4 py-3">
+				<div className="flex items-center justify-between gap-3 bg-white border rounded-md px-3 py-2">
+					<div className="text-base font-semibold text-[#1a1a2e]">
+						<span>{`סה\"כ `}₪{total.toLocaleString('he-IL')}</span>
+					</div>
+					<button
+						onClick={openBooking}
+						aria-label="פתח טופס תיאום פגישה"
+						className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-4 py-2 font-semibold shadow-sm hover:opacity-95 cursor-pointer"
+					>
+						<span>תיאום פגישה</span>
+					</button>
 				</div>
 			</div>
 		</div>

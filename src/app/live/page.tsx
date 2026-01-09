@@ -3338,249 +3338,241 @@ function LivePageInner() {
 							</svg>
 						</button>
 						<div>
-							<div className="text-sm font-medium mb-2">דגם תיבה</div>
-							<div className="flex flex-wrap gap-2">
-								{([
-									{ id: 'thick', label: 'תיבה עבה‑דופן' },
-									{ id: 'thin', label: 'תיבה דקה‑דופן' },
-								] as const).map(opt => (
-									<button
-										key={opt.id}
-										className={`px-3 py-1 text-sm rounded-full border ${box === opt.id ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
-										onClick={() => setBox(opt.id)}
-									>
-										{opt.label}
-									</button>
-								))}
-							</div>
+							<button
+								className="w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50"
+								onClick={() => setDesktopOpenCat(prev => (prev === 'box' ? null : 'box'))}
+								aria-expanded={desktopOpenCat === 'box'}
+							>
+								<span className="text-sm font-medium">דגם תיבה</span>
+								<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : 'תיבה דקה‑דופן'}</span>
+							</button>
+							{desktopOpenCat === 'box' && (
+								<div className="p-3 bg-white border border-t-0 rounded-b-md">
+									<div className="flex flex-wrap gap-2">
+										{([
+											{ id: 'thick', label: 'תיבה עבה‑דופן' },
+											{ id: 'thin', label: 'תיבה דקה‑דופן' },
+										] as const).map(opt => (
+											<button
+												key={opt.id}
+												className={`px-3 py-1 text-sm rounded-full border ${box === opt.id ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
+												onClick={() => setBox(opt.id)}
+											>
+												{opt.label}
+											</button>
+										))}
+									</div>
+								</div>
+							)}
 						</div>
 						<div>
-							<div className="text-sm font-medium mb-2">חומר</div>
-							<div className="flex flex-wrap gap-2">
-								{(['wood', 'metal', 'stone'] as const).map(m => (
-									<button
-										key={m}
-										className={`px-3 py-1 text-sm rounded-full border ${activeMaterial === m ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
-										onClick={() => startTransition(() => setActiveMaterial(m))}
-									>
-										{m === 'wood' ? 'עץ' : m === 'metal' ? 'מתכת' : 'אבן טבעית'}
-									</button>
-								))}
-							</div>
+							<button
+								className="w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50"
+								onClick={() => setDesktopOpenCat(prev => (prev === 'material' ? null : 'material'))}
+								aria-expanded={desktopOpenCat === 'material'}
+							>
+								<span className="text-sm font-medium">חומר</span>
+								<span className="text-sm text-gray-600">{activeMaterial === 'wood' ? 'עץ' : activeMaterial === 'metal' ? 'מתכת' : 'אבן טבעית'}</span>
+							</button>
+							{desktopOpenCat === 'material' && (
+								<div className="p-3 bg-white border border-t-0 rounded-b-md">
+									<div className="flex flex-wrap gap-2">
+										{(['wood', 'metal', 'stone'] as const).map(m => (
+											<button
+												key={m}
+												className={`px-3 py-1 text-sm rounded-full border ${activeMaterial === m ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
+												onClick={() => startTransition(() => setActiveMaterial(m))}
+											>
+												{m === 'wood' ? 'עץ' : m === 'metal' ? 'מתכת' : 'אבן טבעית'}
+											</button>
+										))}
+									</div>
+								</div>
+							)}
 						</div>
 
 						{activeMaterial === 'wood' && (
 							<>
 								<div>
-									<div className="text-sm font-medium mb-2 flex items-center justify-between">
-										<span>טקסטורה</span>
+									<button
+										className="w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50"
+										onClick={() => setDesktopOpenCat(prev => (prev === 'woodTexture' ? null : 'woodTexture'))}
+										aria-expanded={desktopOpenCat === 'woodTexture'}
+									>
+										<span className="text-sm font-medium">טקסטורה</span>
 										<span className="text-xs font-normal text-gray-600">
 											{activeModel?.name || activeModel?.id || ''}
 										</span>
-									</div>
-									<div className="flex flex-wrap gap-3">
-										{woodModels.map(m => (
-											<button
-												key={m.id}
-												aria-label={m.name || m.id}
-												title={m.name || m.id}
-												onClick={() => startTransition(() => setActiveModelId(m.id))}
-												className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeModelId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-												style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
-											/>
-										))}
-									</div>
+									</button>
+									{desktopOpenCat === 'woodTexture' && (
+										<div className="p-3 bg-white border border-t-0 rounded-b-md">
+											<div className="flex flex-wrap gap-3">
+												{woodModels.map(m => (
+													<button
+														key={m.id}
+														aria-label={m.name || m.id}
+														title={m.name || m.id}
+														onClick={() => startTransition(() => setActiveModelId(m.id))}
+														className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeModelId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+														style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
+													/>
+												))}
+											</div>
+										</div>
+									)}
 								</div>
 								<div>
-									<div className="text-sm font-medium mb-2">צבע</div>
-									{(() => {
-										const items = WOOD_SWATCHES.filter(sw => !!activeModel?.variants?.[sw.id]);
-										return (
-											<div className="flex items-center gap-3 flex-wrap">
-												{items.map(sw => {
-													const img = activeModel?.variants?.[sw.id]?.[0];
-													const solid = COLOR_HEX[sw.id];
-													return (
-														<button
-															key={sw.id}
-															aria-label={sw.label}
-															title={sw.label}
-															onClick={() => startTransition(() => setActiveColor(sw.id))}
-															className={`w-8 h-8 rounded-full border-2 ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-															style={{
-																backgroundImage: img ? `url("${encodeURI(img)}")` : undefined,
-																backgroundColor: img ? undefined : solid,
-																backgroundSize: 'cover',
-																backgroundPosition: 'center',
-																borderColor: '#ddd',
-															}}
-														/>
-													);
-												})}
-												<span className="text-xs text-gray-600">
-													{items.find(x => x.id === activeColor)?.label || ''}
-												</span>
-											</div>
-										);
-									})()}
+									<button
+										className="w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50"
+										onClick={() => setDesktopOpenCat(prev => (prev === 'woodColor' ? null : 'woodColor'))}
+										aria-expanded={desktopOpenCat === 'woodColor'}
+									>
+										<span className="text-sm font-medium">צבע</span>
+										<span className="text-xs font-normal text-gray-600">
+											{WOOD_SWATCHES.find(sw => sw.id === activeColor)?.label || activeColor}
+										</span>
+									</button>
+									{desktopOpenCat === 'woodColor' && (
+										<div className="p-3 bg-white border border-t-0 rounded-b-md">
+											{(() => {
+												const items = WOOD_SWATCHES.filter(sw => !!activeModel?.variants?.[sw.id]);
+												return (
+													<div className="flex items-center gap-3 flex-wrap">
+														{items.map(sw => {
+															const img = activeModel?.variants?.[sw.id]?.[0];
+															const solid = COLOR_HEX[sw.id];
+															return (
+																<button
+																	key={sw.id}
+																	aria-label={sw.label}
+																	title={sw.label}
+																	onClick={() => startTransition(() => setActiveColor(sw.id))}
+																	className={`w-8 h-8 rounded-full border-2 ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+																	style={{
+																		backgroundImage: img ? `url("${encodeURI(img)}")` : undefined,
+																		backgroundColor: img ? undefined : solid,
+																		backgroundSize: 'cover',
+																		backgroundPosition: 'center',
+																		borderColor: '#ddd',
+																	}}
+																/>
+															);
+														})}
+													</div>
+												);
+											})()}
+										</div>
+									)}
 								</div>
 							</>
 						)}
 
 						{activeMaterial !== 'wood' && (
 							<div className="mt-3">
-								<div className="text-sm font-medium mb-2 flex items-center justify-between">
-									<span>טקסטורה</span>
+								<button
+									className="w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50"
+									onClick={() => setDesktopOpenCat(prev => (prev === 'nonWoodTexture' ? null : 'nonWoodTexture'))}
+									aria-expanded={desktopOpenCat === 'nonWoodTexture'}
+								>
+									<span className="text-sm font-medium">טקסטורה</span>
 									<span className="text-xs font-normal text-gray-600">
 										{(() => {
 											const sel = nonWoodModels.find(x => x.id === activeTexId);
 											return sel?.name || sel?.id || '';
 										})()}
 									</span>
-								</div>
-								<div className="flex flex-wrap gap-3">
-									{nonWoodModels.map(m => (
-										<button
-											key={m.id}
-											aria-label={m.name || m.id}
-											title={m.name || m.id}
-											onClick={() => startTransition(() => {
-												setActiveTexId(m.id);
-												setActiveMetalTexId(m.id);
-											})}
-											className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-											style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
-										/>
-									))}
-								</div>
+								</button>
+								{desktopOpenCat === 'nonWoodTexture' && (
+									<div className="p-3 bg-white border border-t-0 rounded-b-md">
+										<div className="flex flex-wrap gap-3">
+											{nonWoodModels.map(m => (
+												<button
+													key={m.id}
+													aria-label={m.name || m.id}
+													title={m.name || m.id}
+													onClick={() => startTransition(() => {
+														setActiveTexId(m.id);
+														setActiveMetalTexId(m.id);
+													})}
+													className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+													style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
+												/>
+											))}
+										</div>
+									</div>
+								)}
 							</div>
 						)}
 
-						{/* עורך מסלול המהלך */}
+						{/* עורך מסלול + מעקה כאקורדיון */}
 						<div className="pt-2 border-t space-y-3">
-							<div className="flex flex-wrap gap-2">
-								<button
-									className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100"
-									onClick={() => setPathSegments(prev => [...prev, { kind: 'straight', steps: 5 }])}
-								>
-									הוסף ישר (5 מדר׳)
-								</button>
-								<button
-									className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100"
-									onClick={() =>
-										setPathSegments(prev => [
-											...prev,
-											{ kind: 'landing', turn: 'right' },
-											{ kind: 'straight', steps: 1 },
-										])
-									}
-								>
-									פודסט + ימינה
-								</button>
-								<button
-									className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100"
-									onClick={() =>
-										setPathSegments(prev => [
-											...prev,
-											{ kind: 'landing', turn: 'left' },
-											{ kind: 'straight', steps: 1 },
-										])
-									}
-								>
-									פודסט + שמאלה
-								</button>
-								<button
-									className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100"
-									onClick={() => setPathSegments(prev => [...prev, { kind: 'landing' }])}
-								>
-									פודסט
-								</button>
-
-							</div>
-							<div className="space-y-2">
-								<div className="text-sm font-medium">מסלול</div>
-								<ul className="space-y-2">
-									{pathSegments.map((seg, idx) => (
-										<li key={idx} className="flex items-center gap-3 justify-between border rounded-md px-2 py-1 bg-white">
-											<div className="flex items-center gap-3">
-												<span className="text-sm text-gray-700">
-													{seg.kind === 'straight' ? 'ישר' : seg.turn ? `פודסט + ${seg.turn === 'right' ? 'ימינה' : 'שמאלה'}` : 'פודסט'}
-												</span>
-												{seg.kind === 'straight' && (
-													<div className="flex items-center gap-2">
-														<button
-															className="px-2 py-1 rounded border"
-															aria-label="פחות מדרגות"
-															onClick={() =>
-																setPathSegments(prev =>
-																	prev.map((seg2, i) =>
-																		i === idx && seg2.kind === 'straight'
-																			? { kind: 'straight', steps: Math.max(1, (seg2 as any).steps - 1) }
-																			: seg2
-																	)
-																)
-															}
-														>
-															-
-														</button>
-														<span className="text-sm">מדרגות: {(seg as any).steps}</span>
-														<button
-															className="px-2 py-1 rounded border"
-															aria-label="יותר מדרגות"
-															onClick={() =>
-																setPathSegments(prev =>
-																	prev.map((seg2, i) =>
-																		i === idx && seg2.kind === 'straight'
-																			? { kind: 'straight', steps: Math.min(25, (seg2 as any).steps + 1) }
-																			: seg2
-																	)
-																)
-															}
-														>
-															+
-														</button>
-													</div>
-												)}
-											</div>
-											<div>
-												<button
-													className="text-xs text-red-600 hover:underline"
-													onClick={() =>
-														setPathSegments(prev => {
-															const out = prev.filter((_: any, i: number) => i !== idx);
-															return out.length ? out : [{ kind: 'straight', steps: 5 }];
-														})
-													}
-												>
-													הסר
-												</button>
-											</div>
-										</li>
-									))}
-								</ul>
-							</div>
-							{/* מפריד וקטגוריית מעקה */}
-							<div className="my-3 border-t border-gray-200" />
+							{/* מסלול */}
 							<div>
-								<div className="text-sm font-medium mb-2">מעקה</div>
-								<div className="flex flex-wrap gap-2">
-									{([
-										{ id: 'none', label: 'ללא' },
-										{ id: 'glass', label: 'זכוכית' },
-									{ id: 'metal', label: 'מתכת' },
-										{ id: 'cable', label: 'כבלי נירוסטה' },
-									] as const).map(opt => (
-										<button
-											key={opt.id}
-											className={`px-3 py-1 text-sm rounded-full border ${railing === opt.id ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
-											onClick={() => setRailing(opt.id)}
-										>
-											{opt.label}
-										</button>
-									))}
-								</div>
+								<button
+									className="w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50"
+									onClick={() => setDesktopOpenCat(prev => (prev === 'path' ? null : 'path'))}
+									aria-expanded={desktopOpenCat === 'path'}
+								>
+									<span className="text-sm font-medium">מסלול</span>
+									<span className="text-sm text-gray-600">{encodePath(pathSegments)}</span>
+								</button>
+								{desktopOpenCat === 'path' && (
+									<div className="p-3 bg-white border border-t-0 rounded-b-md space-y-3">
+										<div className="flex flex-wrap gap-2">
+											<button className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100" onClick={() => setPathSegments(prev => [...prev, { kind: 'straight', steps: 5 }])}>הוסף ישר (5 מדר׳)</button>
+											<button className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100" onClick={() => setPathSegments(prev => [...prev, { kind: 'landing', turn: 'right' }, { kind: 'straight', steps: 1 }])}>פודסט + ימינה</button>
+											<button className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100" onClick={() => setPathSegments(prev => [...prev, { kind: 'landing', turn: 'left' }, { kind: 'straight', steps: 1 }])}>פודסט + שמאלה</button>
+											<button className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100" onClick={() => setPathSegments(prev => [...prev, { kind: 'landing' }])}>פודסט</button>
+										</div>
+										<ul className="space-y-2">
+											{pathSegments.map((seg, idx) => (
+												<li key={idx} className="flex items-center gap-3 justify-between border rounded-md px-2 py-1 bg-white">
+													<div className="flex items-center gap-3">
+														<span className="text-sm text-gray-700">{seg.kind === 'straight' ? 'ישר' : seg.turn ? `פודסט + ${seg.turn === 'right' ? 'ימינה' : 'שמאלה'}` : 'פודסט'}</span>
+														{seg.kind === 'straight' && (
+															<div className="flex items-center gap-2">
+																<button className="px-2 py-1 rounded border" aria-label="פחות מדרגות" onClick={() => setPathSegments(prev => prev.map((seg2, i) => i === idx && seg2.kind === 'straight' ? { kind: 'straight', steps: Math.max(1, (seg2 as any).steps - 1) } : seg2))}>-</button>
+																<span className="text-sm">מדרגות: {(seg as any).steps}</span>
+																<button className="px-2 py-1 rounded border" aria-label="יותר מדרגות" onClick={() => setPathSegments(prev => prev.map((seg2, i) => i === idx && seg2.kind === 'straight' ? { kind: 'straight', steps: Math.min(25, (seg2 as any).steps + 1) } : seg2))}>+</button>
+															</div>
+														)}
+													</div>
+													<div>
+														<button className="text-xs text-red-600 hover:underline" onClick={() => setPathSegments(prev => { const out = prev.filter((_: any, i: number) => i !== idx); return out.length ? out : [{ kind: 'straight', steps: 5 }]; })}>הסר</button>
+													</div>
+												</li>
+											))}
+										</ul>
+									</div>
+								)}
 							</div>
-							<div className="my-3 border-t border-gray-200" />
+							{/* מעקה */}
+							<div>
+								<button
+									className="w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50"
+									onClick={() => setDesktopOpenCat(prev => (prev === 'railing' ? null : 'railing'))}
+									aria-expanded={desktopOpenCat === 'railing'}
+								>
+									<span className="text-sm font-medium">מעקה</span>
+									<span className="text-sm text-gray-600">{formatRailing()}</span>
+								</button>
+								{desktopOpenCat === 'railing' && (
+									<div className="p-3 bg-white border border-t-0 rounded-b-md">
+										<div className="flex flex-wrap gap-2">
+											{([
+												{ id: 'none', label: 'ללא' },
+												{ id: 'glass', label: 'זכוכית' },
+												{ id: 'metal', label: 'מתכת' },
+												{ id: 'cable', label: 'כבלי נירוסטה' },
+											] as const).map(opt => (
+												<button key={opt.id} className={`px-3 py-1 text-sm rounded-full border ${railing === opt.id ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`} onClick={() => setRailing(opt.id)}>
+													{opt.label}
+												</button>
+											))}
+										</div>
+									</div>
+								)}
+							</div>
 							<div ref={priceRef} className={`bg-gray-50 rounded-md p-3 ${pricePing ? 'ring-2 ring-[#1a1a2e]' : ''}`}>
 								<div className="font-semibold mb-1">מחיר משוער (לפני מע״מ)</div>
 								<ul className="text-sm text-gray-700 space-y-1">

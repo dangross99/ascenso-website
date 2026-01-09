@@ -2485,7 +2485,7 @@ function LivePageInner() {
 						<Canvas
 							shadows={false}
 							flat
-							camera={{ position: [4, 3, 6], fov: 45 }}
+							camera={{ position: [-2.494, 1.897, 3.259], fov: 45 }}
 							dpr={[1, 1.5]}
 							gl={{ toneMapping: NoToneMapping, toneMappingExposure: 1.0, preserveDrawingBuffer: false, antialias: true, powerPreference: 'high-performance' }}
 						>
@@ -2572,7 +2572,7 @@ function LivePageInner() {
 										return cfg.bump;
 									})()}
 								/>
-								<OrbitControls ref={orbitRef} enableDamping makeDefault zoomToCursor />
+								<OrbitControls ref={orbitRef} enableDamping makeDefault zoomToCursor target={[0.304, 0.930, -0.053]} />
 							</React.Suspense>
 						</Canvas>
 						<CanvasLoadingOverlay />

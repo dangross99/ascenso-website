@@ -3723,18 +3723,18 @@ function LivePageInner() {
 		{/* דסקטופ: סיכום קבוע מיושר בדיוק לפאנל הקטגוריות */}
 		{desktopBarPos && (
 			<div
-				className="hidden lg:block fixed bottom-0 z-40 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 border shadow rounded-t-md"
-				style={{ left: desktopBarPos.left - 8, width: desktopBarPos.width + 16 }}
+				className="hidden lg:block fixed bottom-0 z-40 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 border shadow-lg rounded-t-lg"
+				style={{ left: desktopBarPos.left - 16, width: desktopBarPos.width + 32 }}
 			>
-				<div className="px-4 py-2 flex items-center justify-between gap-3">
+				<div className="px-5 py-3 flex items-center justify-between gap-4">
 					<button
 						onClick={openBooking}
 						aria-label="פתח טופס תיאום פגישה"
-						className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-4 py-2 text-base font-semibold shadow-sm hover:opacity-95 cursor-pointer"
+						className="inline-flex items-center gap-3 rounded-md bg-[#1a1a2e] text-white px-5 py-2.5 text-lg font-semibold shadow-sm hover:opacity-95 cursor-pointer"
 					>
 						<span>תיאום פגישה</span>
 					</button>
-					<div className="text-lg font-bold text-[#1a1a2e]">
+					<div className="text-xl font-bold text-[#1a1a2e]">
 						<span>{`סה\"כ `}₪{total.toLocaleString('he-IL')}</span>
 					</div>
 				</div>

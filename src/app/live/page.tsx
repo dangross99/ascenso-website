@@ -1551,6 +1551,10 @@ function LivePageInner() {
 	const [mobileOpenCat, setMobileOpenCat] = React.useState<
 		'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing' | null
 	>(null);
+	// דסקטופ: אקורדיון קטגוריות – סגורות כברירת מחדל, נפתח בלחיצה
+	const [desktopOpenCat, setDesktopOpenCat] = React.useState<
+		'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing' | null
+	>(null);
 	// עזרת מובייל: באנר פתיחה והסבר קצר
 	const [mobileHelpDismissed, setMobileHelpDismissed] = React.useState(false);
 	const [mobileHelpOpen, setMobileHelpOpen] = React.useState(true);

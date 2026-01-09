@@ -1508,26 +1508,7 @@ function LivePageInner() {
 	const canvasWrapRef = React.useRef<HTMLDivElement | null>(null);
 	// שליטה במצלמה/אורביט
 	const orbitRef = React.useRef<any>(null);
-	// כלי עזר: dumpCam() בקונסול ידפיס/יעתיק מיקום מצלמה ו-target לסט הזווית הרצוי
-	React.useEffect(() => {
-		const w = window as any;
-		w.dumpCam = () => {
-			if (!orbitRef.current) return;
-			const oc = orbitRef.current;
-			const cam = oc.object;
-			const tgt = oc.target;
-			const pos = [cam.position.x, cam.position.y, cam.position.z];
-			const tar = [tgt.x, tgt.y, tgt.z];
-			const s = `camera: [${pos.map((n: number) => n.toFixed(3)).join(', ')}], target: [${tar.map((n: number) => n.toFixed(3)).join(', ')}]`;
-			// הדפסה לקונסול והעתקה ללוח
-			// eslint-disable-next-line no-console
-			console.log(s);
-			try { navigator.clipboard.writeText(s); } catch {}
-			return s;
-		};
-		// eslint-disable-next-line no-console
-		console.log('ממקמים את ההדמיה לזווית הרצויה ואז מריצים dumpCam() בקונסול.');
-	}, []);
+	// dumpCam הוסר לפי בקשה
 
 	const qMaterial = (search.get('material') as 'wood' | 'metal' | 'stone') || 'wood';
 	const qColor = search.get('color') || 'oak';
@@ -3631,22 +3612,20 @@ function LivePageInner() {
 			<div className="h-40 lg:hidden" />
 		</main>
 
-		{/* מובייל: מחיר קבוע בתחתית עם פירוט מלא */}
-		<div className="lg:hidden fixed inset-x-0 bottom-0 z-40 border-t bg-white">
-			<div className="max-w-7xl mx-auto px-4 py-3">
-				<div className="text-xs text-gray-700 mb-2">מחיר משוער (לפני מע״מ)</div>
-				<ul className="text-sm text-gray-800 space-y-1 max-h-40 overflow-y-auto">
-					{breakdown.map(b => (
-						<li key={b.label} className="flex justify-between">
-							<span>{b.label}</span>
-							<span>₪{b.value.toLocaleString('he-IL')}</span>
-						</li>
-					))}
-				</ul>
-				<div className="mt-2 pt-2 border-t flex justify-between font-bold">
-					<span>סה״כ</span>
+		{/* מובייל: סיכום קבוע בתחתית — רק סה״כ + לחצן תיאום */}
+		<div className="lg:hidden fixed inset-x-0 bottom-0 z-40 border-t bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
+			<div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between gap-3">
+				<div className="text-base font-semibold text-[#1a1a2e]">
+					<span className="mr-2">סה״כ</span>
 					<span>₪{total.toLocaleString('he-IL')}</span>
 				</div>
+				<button
+					onClick={openBooking}
+					aria-label="פתח טופס תיאום פגישה"
+					className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-4 py-2 font-semibold shadow-sm hover:opacity-95 cursor-pointer"
+				>
+					<span>תיאום פגישה</span>
+				</button>
 			</div>
 		</div>
 

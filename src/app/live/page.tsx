@@ -2477,8 +2477,8 @@ function LivePageInner() {
 			<div className="min-h-screen w-full bg-[#EFEFEF]">
 			<main className="max-w-7xl mx-auto px-4 py-6" dir="rtl">
 			<div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-				<section className="lg:col-span-8">
-					<div ref={canvasWrapRef} className="relative w-full aspect-[5/4] bg-white border overflow-hidden rounded">
+				<section className="lg:col-span-9">
+					<div ref={canvasWrapRef} className="relative w-full aspect-[5/4] lg:aspect-[16/9] bg-white border overflow-hidden rounded">
 						<Canvas
 							shadows={false}
 							flat
@@ -2611,6 +2611,14 @@ function LivePageInner() {
 								</button>
 							</div>
 						</div>
+						{/* לוגו קבוע במסך מלא */}
+						{isFullscreen && (
+							<div className="pointer-events-none absolute top-2 right-2 z-30">
+								<div className="px-2 py-1 rounded-md bg-black/50 text-white text-xs font-bold tracking-wide">
+									ASCENSO
+								</div>
+							</div>
+						)}
 						{/* אייקון מועדפים מעל הקנבס – מובייל */}
 						<div className="lg:hidden pointer-events-none absolute top-2 left-2 z-20">
 							<div className="flex gap-2">
@@ -2947,7 +2955,7 @@ function LivePageInner() {
 					)}
 				</section>
 
-				<aside className="lg:col-span-4">
+				<aside className="lg:col-span-3">
 					{/* מובייל: אקורדיון קטגוריות בחירה */}
 					<div className="lg:hidden flex flex-col gap-3">
 						{/* באנר שחזור מצב (מובייל, בריענון) */}
@@ -3688,24 +3696,40 @@ function LivePageInner() {
 					</div>
 				</aside>
 			</div>
-			{/* מרווח תחתון במובייל – צומצם ומבוטל במקרה שאין סרגל קבוע */}
-			<div className="hidden lg:hidden" />
+			{/* מרווח תחתון במובייל עבור סרגל קבוע */}
+			<div className="h-14 lg:hidden" />
+			{/* מרווח תחתון בדסקטופ עבור סרגל קבוע */}
+			<div className="hidden lg:block h-16" />
 		</main>
 
-		{/* מובייל: סיכום בתוך התוכן (לא קבוע) */}
-		<div className="lg:hidden">
-			<div className="max-w-7xl mx-auto px-4 py-3">
-				<div className="flex items-center justify-between gap-3 bg-white border rounded-md px-3 py-2">
-					<div className="text-base font-semibold text-[#1a1a2e]">
-						<span>{`סה\"כ `}₪{total.toLocaleString('he-IL')}</span>
-					</div>
-					<button
-						onClick={openBooking}
-						aria-label="פתח טופס תיאום פגישה"
-						className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-4 py-2 font-semibold shadow-sm hover:opacity-95 cursor-pointer"
-					>
-						<span>תיאום פגישה</span>
-					</button>
+		{/* מובייל: סיכום קבוע בתחתית — נשאר בזמן גלילה */}
+		<div className="lg:hidden fixed inset-x-0 bottom-0 z-40 border-t bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
+			<div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between gap-3">
+				<button
+					onClick={openBooking}
+					aria-label="פתח טופס תיאום פגישה"
+					className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-4 py-2 font-semibold shadow-sm hover:opacity-95 cursor-pointer"
+				>
+					<span>תיאום פגישה</span>
+				</button>
+				<div className="text-base font-semibold text-[#1a1a2e]">
+					<span>{`סה\"כ `}₪{total.toLocaleString('he-IL')}</span>
+				</div>
+			</div>
+		</div>
+
+		{/* דסקטופ: סיכום קבוע בתחתית — נשאר בזמן גלילה */}
+		<div className="hidden lg:block fixed inset-x-0 bottom-0 z-40 border-t bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
+			<div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
+				<button
+					onClick={openBooking}
+					aria-label="פתח טופס תיאום פגישה"
+					className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-5 py-2.5 font-semibold shadow-sm hover:opacity-95 cursor-pointer"
+				>
+					<span>תיאום פגישה</span>
+				</button>
+				<div className="text-lg font-semibold text-[#1a1a2e]">
+					<span>{`סה\"כ `}₪{total.toLocaleString('he-IL')}</span>
 				</div>
 			</div>
 		</div>

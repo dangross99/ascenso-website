@@ -3675,21 +3675,22 @@ function LivePageInner() {
 						</div>
 
 						<div ref={shareRef} className="pt-2 border-t mt-auto">
-							<div className="relative">
-								<div className="relative px-4 py-4 md:px-6 md:py-5 flex items-center justify-center">
-									<div className="flex items-center gap-2">
-										<button
-											onClick={openBooking}
-											aria-label="פתח טופס תיאום פגישה"
-											className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-4 py-2 font-semibold shadow-sm hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1a1a2e] cursor-pointer transition-transform duration-200 ease-out hover:scale-105 active:scale-95 will-change-transform"
-										>
-											<span>תיאום פגישה</span>
-											<svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-												<path d="M20.52 3.48A11.77 11.77 0 0 0 12.02 0C5.4 0 .02 5.37.02 12c0 2.11.55 4.17 1.6 6L0 24l6.14-1.6a11.98 11.98 0 0 0 5.88 1.52h.01c6.62 0 12-5.37 12-12 0-3.2-1.25-6.21-3.51-8.39zM12.02 22a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.64.95.97-3.55-.24-.37A9.95 9.95 0 0 1 2.02 12C2.02 6.51 6.53 2 12.02 2c2.66 0 5.16 1.04 7.04 2.92A9.9 9.9 0 0 1 22.02 12c0 5.49-4.51 10-10 10z"/>
-												<path d="M17.48 14.11c-.3-.15-1.77-.87-2.05-.97-.27-.1-.47-.15-.67.15-.19.3-.76.98-.93 1.17-.17.2-.35.22-.65.08-.3-.14-1.27-.47-2.41-1.5-.89-.79-1.49-1.77-1.66-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.37.45-.56.15-.18.2-.31.3-.51.1-.2.05-.37-.02-.52-.07-.14-.67-1.63-.92-2.23-.24-.6-.49-.52-.66-.53l-.57-.01c-.19 0-.5.07-.77.36s-1.01 1.02-1.01 2.49 1.04 2.88 1.19 3.08c.14.2 2.04 3.18 4.96 4.47.7.3 1.24.49 1.66.62.7.22 1.33.2 1.84.13.56-.08 1.75-.71 2-1.41.24-.7.24-1.29.17-1.41-.07-.12-.27-.2-.56-.34z"/>
-											</svg>
-										</button>
+							<div className="px-2">
+								<div className="flex items-center justify-between gap-3">
+									<div className="text-sm font-semibold text-[#1a1a2e]">
+										<span>סה״כ ₪{total.toLocaleString('he-IL')}</span>
 									</div>
+									<button
+										onClick={openBooking}
+										aria-label="פתח טופס תיאום פגישה"
+										className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-4 py-2 font-semibold shadow-sm hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1a1a2e] cursor-pointer transition-transform duration-200 ease-out hover:scale-105 active:scale-95 will-change-transform"
+									>
+										<span>תיאום פגישה</span>
+										<svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+											<path d="M20.52 3.48A11.77 11.77 0 0 0 12.02 0C5.4 0 .02 5.37.02 12c0 2.11.55 4.17 1.6 6L0 24l6.14-1.6a11.98 11.98 0 0 0 5.88 1.52h.01c6.62 0 12-5.37 12-12 0-3.2-1.25-6.21-3.51-8.39zM12.02 22a9.96 9.96 0 0 1-5.08-1.39l-.36-.21-3.64.95.97-3.55-.24-.37A9.95 9.95 0 0 1 2.02 12C2.02 6.51 6.53 2 12.02 2c2.66 0 5.16 1.04 7.04 2.92A9.9 9.9 0 0 1 22.02 12c0 5.49-4.51 10-10 10z"/>
+											<path d="M17.48 14.11c-.3-.15-1.77-.87-2.05-.97-.27-.1-.47-.15-.67.15-.19.3-.76.98-.93 1.17-.17.2-.35.22-.65.08-.3-.14-1.27-.47-2.41-1.5-.89-.79-1.49-1.77-1.66-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.37.45-.56.15-.18.2-.31.3-.51.1-.2.05-.37-.02-.52-.07-.14-.67-1.63-.92-2.23-.24-.6-.49-.52-.66-.53l-.57-.01c-.19 0-.5.07-.77.36s-1.01 1.02-1.01 2.49 1.04 2.88 1.19 3.08c.14.2 2.04 3.18 4.96 4.47.7.3 1.24.49 1.66.62.7.22 1.33.2 1.84.13.56-.08 1.75-.71 2-1.41.24-.7.24-1.29.17-1.41-.07-.12-.27-.2-.56-.34z"/>
+										</svg>
+									</button>
 								</div>
 							</div>
 						</div>
@@ -3698,8 +3699,8 @@ function LivePageInner() {
 			</div>
 			{/* מרווח תחתון במובייל עבור סרגל קבוע */}
 			<div className="h-14 lg:hidden" />
-			{/* מרווח תחתון בדסקטופ עבור סרגל קבוע */}
-			<div className="hidden lg:block h-16" />
+			{/* מרווח תחתון בדסקטופ – לא נדרש כעת */}
+			<div className="hidden lg:block h-0" />
 		</main>
 
 		{/* מובייל: סיכום קבוע בתחתית — נשאר בזמן גלילה */}
@@ -3718,21 +3719,7 @@ function LivePageInner() {
 			</div>
 		</div>
 
-		{/* דסקטופ: סיכום קבוע בתחתית — נשאר בזמן גלילה */}
-		<div className="hidden lg:block fixed inset-x-0 bottom-0 z-40 border-t bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
-			<div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
-				<button
-					onClick={openBooking}
-					aria-label="פתח טופס תיאום פגישה"
-					className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-5 py-2.5 font-semibold shadow-sm hover:opacity-95 cursor-pointer"
-				>
-					<span>תיאום פגישה</span>
-				</button>
-				<div className="text-lg font-semibold text-[#1a1a2e]">
-					<span>{`סה\"כ `}₪{total.toLocaleString('he-IL')}</span>
-				</div>
-			</div>
-		</div>
+		{/* דסקטופ: אין סיכום קבוע – הסיכום מופיע בתחתית פאנל הקטגוריות */}
 
 		{/* Toasts */}
 		{saveToast && (

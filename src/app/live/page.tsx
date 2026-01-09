@@ -1510,6 +1510,13 @@ function LivePageInner() {
 	const orbitRef = React.useRef<any>(null);
 	// עוגן לפאנל הקטגוריות (דסקטופ) כדי ליישר אליו את סרגל הסיכום הקבוע
 	const asideRef = React.useRef<HTMLDivElement | null>(null);
+	const assignAsideRef = React.useCallback((el: HTMLDivElement | null) => {
+		asideRef.current = el;
+		if (el) {
+			const rect = el.getBoundingClientRect();
+			setDesktopBarPos({ left: rect.left, width: rect.width });
+		}
+	}, []);
 	// dumpCam הוסר לפי בקשה
 	// מצב מסך מלא לקנבס + מאזין לשינוי
 	const [isFullscreen, setIsFullscreen] = React.useState(false);
@@ -1529,7 +1536,7 @@ function LivePageInner() {
 	}, []);
 	// מיקום ורוחב לסרגל הסיכום הקבוע בדסקטופ (מיושר לפאנל הקטגוריות)
 	const [desktopBarPos, setDesktopBarPos] = React.useState<{ left: number; width: number } | null>(null);
-	React.useEffect(() => {
+	React.useLayoutEffect(() => {
 		const recalc = () => {
 			const el = asideRef.current;
 			if (!el) return;
@@ -2974,7 +2981,7 @@ function LivePageInner() {
 					)}
 				</section>
 
-				<aside ref={asideRef} className="lg:col-span-4">
+				<aside ref={assignAsideRef} className="lg:col-span-4">
 					{/* מובייל: אקורדיון קטגוריות בחירה */}
 					<div className="lg:hidden flex flex-col gap-3">
 						{/* באנר שחזור מצב (מובייל, בריענון) */}

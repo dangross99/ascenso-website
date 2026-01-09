@@ -1299,6 +1299,21 @@ function LivePageInner() {
 	const [preferredTime, setPreferredTime] = React.useState<string>('');
 	// אשף צ'אט: שאלה אחת בכל פעם
 	const [bookingStep, setBookingStep] = React.useState<'name' | 'city' | 'street' | 'house' | 'date' | 'time'>('name');
+	// רוחב תשובה: 5% קטן יותר מבועת השאלה
+	const questionRef = React.useRef<HTMLDivElement | null>(null);
+	const [answerWidthPx, setAnswerWidthPx] = React.useState<number | null>(null);
+	React.useLayoutEffect(() => {
+		const update = () => {
+			if (questionRef.current) {
+				const w = questionRef.current.getBoundingClientRect().width;
+				const target = Math.max(Math.round(w * 0.95), 220);
+				setAnswerWidthPx(target);
+			}
+		};
+		update();
+		window.addEventListener('resize', update);
+		return () => window.removeEventListener('resize', update);
+	}, [bookingStep]);
 	const BOOKING_EMAIL = process.env.NEXT_PUBLIC_BOOKING_EMAIL || '';
 	const firstInputRef = React.useRef<HTMLInputElement | null>(null);
 	const dialogRef = React.useRef<HTMLDivElement | null>(null);
@@ -3663,7 +3678,7 @@ function LivePageInner() {
 							</div>
 							<div className="grid grid-cols-1 gap-4">
 								<div className="flex items-start mt-1 md:mt-2">
-									<div className="bg-[#1a1a2e] text-white rounded-2xl px-4 py-2 text-base md:text-lg leading-snug">
+									<div ref={questionRef} className="bg-[#1a1a2e] text-white rounded-2xl px-4 py-2 text-base md:text-lg leading-snug inline-block">
 										{bookingStep === 'name' ? 'איך לקרוא לך?' :
 										 bookingStep === 'city' ? 'באיזה עיר?' :
 										 bookingStep === 'street' ? 'שם הרחוב?' :
@@ -3674,45 +3689,53 @@ function LivePageInner() {
 								</div>
 
 								{bookingStep === 'name' && (
-									<label className="block" htmlFor="fullName">
-										<input id="fullName" type="text" required value={fullName} onChange={(e) => setFullName(e.target.value)} ref={firstInputRef}
-											className="mt-1 w-full rounded-2xl bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
-											placeholder="שם ושם משפחה" />
-									</label>
+									<div className="block" style={answerWidthPx ? { width: answerWidthPx } : undefined}>
+										<label className="block" htmlFor="fullName">
+											<input id="fullName" type="text" required value={fullName} onChange={(e) => setFullName(e.target.value)} ref={firstInputRef}
+												className="mt-1 w-full rounded-2xl bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
+												placeholder="שם ושם משפחה" />
+										</label>
+									</div>
 								)}
 
 								{bookingStep === 'city' && (
-									<label className="block" htmlFor="city">
-										<input id="city" type="text" value={city} onChange={(e) => setCity(e.target.value)} ref={cityInputRef} list="city-list"
-											className="mt-1 w-full rounded-2xl bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
-											placeholder="לדוגמה: תל אביב" />
-										<datalist id="city-list">
-											{cityOptions.map((opt) => (<option value={opt} key={opt} />))}
-										</datalist>
-									</label>
+									<div className="block" style={answerWidthPx ? { width: answerWidthPx } : undefined}>
+										<label className="block" htmlFor="city">
+											<input id="city" type="text" value={city} onChange={(e) => setCity(e.target.value)} ref={cityInputRef} list="city-list"
+												className="mt-1 w-full rounded-2xl bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
+												placeholder="לדוגמה: תל אביב" />
+											<datalist id="city-list">
+												{cityOptions.map((opt) => (<option value={opt} key={opt} />))}
+											</datalist>
+										</label>
+									</div>
 								)}
 
 								{bookingStep === 'street' && (
-									<label className="block" htmlFor="street">
-										<input id="street" type="text" value={street} onChange={(e) => setStreet(e.target.value)} ref={streetInputRef} list="street-list"
-											className="mt-1 w-full rounded-2xl bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
-											placeholder="לדוגמה: דרך מנחם בגין" />
-										<datalist id="street-list">
-											{streetOptions.map((opt) => (<option value={opt} key={opt} />))}
-										</datalist>
-									</label>
+									<div className="block" style={answerWidthPx ? { width: answerWidthPx } : undefined}>
+										<label className="block" htmlFor="street">
+											<input id="street" type="text" value={street} onChange={(e) => setStreet(e.target.value)} ref={streetInputRef} list="street-list"
+												className="mt-1 w-full rounded-2xl bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
+												placeholder="לדוגמה: דרך מנחם בגין" />
+											<datalist id="street-list">
+												{streetOptions.map((opt) => (<option value={opt} key={opt} />))}
+											</datalist>
+										</label>
+									</div>
 								)}
 
 								{bookingStep === 'house' && (
-									<label className="block" htmlFor="houseNumber">
-										<input id="houseNumber" type="text" inputMode="numeric" pattern="[0-9]{1,4}" value={houseNumber} onChange={(e) => setHouseNumber(e.target.value)}
-											className="mt-1 w-full rounded-2xl bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
-											placeholder="לדוגמה: 12" />
-									</label>
+									<div className="block" style={answerWidthPx ? { width: answerWidthPx } : undefined}>
+										<label className="block" htmlFor="houseNumber">
+											<input id="houseNumber" type="text" inputMode="numeric" pattern="[0-9]{1,4}" value={houseNumber} onChange={(e) => setHouseNumber(e.target.value)}
+												className="mt-1 w-full rounded-2xl bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
+												placeholder="לדוגמה: 12" />
+										</label>
+									</div>
 								)}
 
 								{bookingStep === 'date' && (
-									<div className="mt-1 rounded-2xl border border-[#C5A059]/40 bg-white text-[#0f1424]">
+									<div className="mt-1 rounded-2xl border border-[#C5A059]/40 bg-white text-[#0f1424]" style={answerWidthPx ? { width: answerWidthPx } : undefined}>
 										<div className="max-h-48 overflow-y-auto divide-y rounded-2xl">
 											{twoWeeksDates.map(d => (
 												<label key={d.value} className={`flex items-center justify-between px-3 py-2 rounded-2xl ${d.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50'}`}>
@@ -3725,7 +3748,7 @@ function LivePageInner() {
 								)}
 
 								{bookingStep === 'time' && (
-									<div className="mt-1 rounded-2xl border border-[#C5A059]/40 bg-white text-[#0f1424]">
+									<div className="mt-1 rounded-2xl border border-[#C5A059]/40 bg-white text-[#0f1424]" style={answerWidthPx ? { width: answerWidthPx } : undefined}>
 										<div className="max-h-48 overflow-y-auto divide-y rounded-2xl">
 											{[8, 11, 14].map((start) => {
 												const end = start + 3;

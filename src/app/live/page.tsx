@@ -2462,7 +2462,7 @@ function LivePageInner() {
 			<main className="max-w-7xl mx-auto px-4 py-6" dir="rtl">
 			<div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 				<section className="lg:col-span-8">
-					<div ref={canvasWrapRef} className="relative w-full aspect-[16/9] bg-white border overflow-hidden rounded">
+					<div ref={canvasWrapRef} className="relative w-full aspect-[5/4] bg-white border overflow-hidden rounded">
 						<Canvas
 							shadows={false}
 							flat
@@ -3627,7 +3627,7 @@ function LivePageInner() {
 				</aside>
 			</div>
 			{/* מרווח תחתון למובייל שלא יוסתר ע"י סרגל המחיר הקבוע */}
-			<div className="h-16 lg:hidden" />
+			<div className="h-[1.2rem] lg:hidden" />
 		</main>
 
 		{/* מובייל: סיכום קבוע בתחתית — רק סה״כ + לחצן תיאום */}

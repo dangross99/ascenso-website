@@ -1508,6 +1508,26 @@ function LivePageInner() {
 	const canvasWrapRef = React.useRef<HTMLDivElement | null>(null);
 	// שליטה במצלמה/אורביט
 	const orbitRef = React.useRef<any>(null);
+	// כלי עזר: dumpCam() בקונסול ידפיס/יעתיק מיקום מצלמה ו-target לסט הזווית הרצוי
+	React.useEffect(() => {
+		const w = window as any;
+		w.dumpCam = () => {
+			if (!orbitRef.current) return;
+			const oc = orbitRef.current;
+			const cam = oc.object;
+			const tgt = oc.target;
+			const pos = [cam.position.x, cam.position.y, cam.position.z];
+			const tar = [tgt.x, tgt.y, tgt.z];
+			const s = `camera: [${pos.map((n: number) => n.toFixed(3)).join(', ')}], target: [${tar.map((n: number) => n.toFixed(3)).join(', ')}]`;
+			// הדפסה לקונסול והעתקה ללוח
+			// eslint-disable-next-line no-console
+			console.log(s);
+			try { navigator.clipboard.writeText(s); } catch {}
+			return s;
+		};
+		// eslint-disable-next-line no-console
+		console.log('ממקמים את ההדמיה לזווית הרצויה ואז מריצים dumpCam() בקונסול.');
+	}, []);
 
 	const qMaterial = (search.get('material') as 'wood' | 'metal' | 'stone') || 'wood';
 	const qColor = search.get('color') || 'oak';

@@ -3331,7 +3331,7 @@ function LivePageInner() {
 
 						{/* פירוט חשבון – מוצג בסוף המובייל מתחת לקטגוריות */}
 						<div className="mt-3 bg-white rounded-md p-3">
-							<div className="font-semibold mb-1">פירוט חשבון</div>
+							<div className="font-semibold mb-1">מחיר משוער (לפני מע״מ)</div>
 							<ul className="text-sm text-gray-700 space-y-1">
 								{breakdown.map(b => (
 									<li key={b.label} className="flex justify-between">
@@ -3627,7 +3627,7 @@ function LivePageInner() {
 				</aside>
 			</div>
 			{/* מרווח תחתון למובייל שלא יוסתר ע"י סרגל המחיר הקבוע */}
-			<div className="h-40 lg:hidden" />
+			<div className="h-16 lg:hidden" />
 		</main>
 
 		{/* מובייל: סיכום קבוע בתחתית — רק סה״כ + לחצן תיאום */}

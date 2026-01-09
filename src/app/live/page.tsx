@@ -3741,24 +3741,32 @@ function LivePageInner() {
 
 								{bookingStep === 'date' && (
 									<div className="mt-1 rounded-2xl border border-[#C5A059]/40 bg-white text-[#0f1424]" style={answerWidthPx ? { width: answerWidthPx } : undefined}>
-										<div className="grid grid-cols-2 gap-2 p-2 rounded-2xl">
-											{twoWeeksDates.map(d => (
-												<label
-													key={d.value}
-													className={`flex items-center justify-between px-3 py-2 rounded-xl border ${d.disabled ? 'opacity-50 cursor-not-allowed bg-gray-50 border-gray-200' : 'cursor-pointer hover:bg-gray-50 border-gray-200'}`}
+										{(() => {
+											const rows = Math.max(1, Math.ceil(twoWeeksDates.length / 2));
+											return (
+												<div
+													className="grid grid-cols-2 gap-1 p-2 rounded-2xl"
+													style={{ gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`, height: '12rem' }}
 												>
-													<span className="text-sm">{d.weekday} — {d.label}</span>
-													<input
-														type="radio"
-														name="preferredDate"
-														value={d.value}
-														checked={preferredDate === d.value}
-														onChange={() => !d.disabled && setPreferredDate(d.value)}
-														disabled={d.disabled}
-													/>
-												</label>
-											))}
-										</div>
+													{twoWeeksDates.map(d => (
+														<label
+															key={d.value}
+															className={`flex items-center justify-between px-2 py-1 rounded-lg border ${d.disabled ? 'opacity-50 cursor-not-allowed bg-gray-50 border-gray-200' : 'cursor-pointer hover:bg-gray-50 border-gray-200'}`}
+														>
+															<span className="text-xs md:text-sm">{d.weekday} — {d.label}</span>
+															<input
+																type="radio"
+																name="preferredDate"
+																value={d.value}
+																checked={preferredDate === d.value}
+																onChange={() => !d.disabled && setPreferredDate(d.value)}
+																disabled={d.disabled}
+															/>
+														</label>
+													))}
+												</div>
+											);
+										})()}
 									</div>
 								)}
 

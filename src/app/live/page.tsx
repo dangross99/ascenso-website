@@ -1298,9 +1298,9 @@ function LivePageInner() {
 	const [preferredDate, setPreferredDate] = React.useState('');
 	const [preferredTime, setPreferredTime] = React.useState<string>('');
 	// אשף צ'אט: שאלה אחת בכל פעם
-	const [bookingStep, setBookingStep] = React.useState<'name' | 'city' | 'street' | 'house' | 'date' | 'time'>('name');
+	const [bookingStep, setBookingStep] = React.useState<'name' | 'city' | 'date' | 'time'>('name');
 	// צעדי האשף והתקדמות
-	const BOOKING_STEPS: ReadonlyArray<'name' | 'city' | 'street' | 'house' | 'date' | 'time'> = ['name', 'city', 'street', 'house', 'date', 'time'];
+	const BOOKING_STEPS: ReadonlyArray<'name' | 'city' | 'date' | 'time'> = ['name', 'city', 'date', 'time'];
 	const stepIndex = React.useMemo(() => Math.max(0, BOOKING_STEPS.indexOf(bookingStep)), [bookingStep]);
 	const stepTotal = BOOKING_STEPS.length;
 	const stepPercent = React.useMemo(() => Math.round(((stepIndex + 1) / stepTotal) * 100), [stepIndex, stepTotal]);
@@ -3694,10 +3694,8 @@ function LivePageInner() {
 							<div className="grid grid-cols-1 gap-4">
 								<div className="flex items-start mt-1 md:mt-2">
 									<div ref={questionRef} className="bg-[#1a1a2e] text-white rounded-2xl px-4 py-2 text-base md:text-lg leading-snug inline-block">
-										{bookingStep === 'name' ? 'איך לקרוא לך?' :
-										 bookingStep === 'city' ? 'באיזה עיר?' :
-										 bookingStep === 'street' ? 'שם הרחוב?' :
-										 bookingStep === 'house' ? 'מס׳ בית?' :
+										{bookingStep === 'name' ? 'שם מלא?' :
+										 bookingStep === 'city' ? 'עיר הפרויקט?' :
 										 bookingStep === 'date' ? 'מתי נוח לך שנגיע?' :
 										 'איזה חלון זמן עדיף?'}
 									</div>
@@ -3726,28 +3724,7 @@ function LivePageInner() {
 									</div>
 								)}
 
-								{bookingStep === 'street' && (
-									<div className="block" style={answerWidthPx ? { width: answerWidthPx } : undefined}>
-										<label className="block" htmlFor="street">
-											<input id="street" type="text" value={street} onChange={(e) => setStreet(e.target.value)} ref={streetInputRef} list="street-list"
-												className="mt-1 w-full rounded-2xl bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
-												placeholder="לדוגמה: דרך מנחם בגין" />
-											<datalist id="street-list">
-												{streetOptions.map((opt) => (<option value={opt} key={opt} />))}
-											</datalist>
-										</label>
-									</div>
-								)}
-
-								{bookingStep === 'house' && (
-									<div className="block" style={answerWidthPx ? { width: answerWidthPx } : undefined}>
-										<label className="block" htmlFor="houseNumber">
-											<input id="houseNumber" type="text" inputMode="numeric" pattern="[0-9]{1,4}" value={houseNumber} onChange={(e) => setHouseNumber(e.target.value)}
-												className="mt-1 w-full rounded-2xl bg-white text-[#0f1424] border border-[#C5A059]/40 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C5A059] focus:border-[#C5A059]"
-												placeholder="לדוגמה: 12" />
-										</label>
-									</div>
-								)}
+								{/* הוסרו שלבי רחוב ומספר בית לפי בקשה */}
 
 								{bookingStep === 'date' && (
 									<div className="mt-1 rounded-2xl border border-[#C5A059]/40 bg-white text-[#0f1424]" style={answerWidthPx ? { width: answerWidthPx } : undefined}>
@@ -3785,7 +3762,7 @@ function LivePageInner() {
 								<div className="flex w-full gap-2">
 									<button
 										type="button"
-										onClick={() => { const steps = ['name','city','street','house','date','time']; const i = steps.indexOf(bookingStep as any); if (i > 0) setBookingStep(steps[i-1] as any); }}
+										onClick={() => { const steps = ['name','city','date','time']; const i = steps.indexOf(bookingStep as any); if (i > 0) setBookingStep(steps[i-1] as any); }}
 										disabled={bookingStep === 'name'}
 										className="flex-1 px-5 py-3 rounded-md font-semibold border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-50"
 									>
@@ -3795,12 +3772,10 @@ function LivePageInner() {
 									{bookingStep !== 'time' ? (
 										<button
 											type="button"
-											onClick={() => { const steps = ['name','city','street','house','date','time']; const i = steps.indexOf(bookingStep as any); if (i < steps.length - 1) setBookingStep(steps[i+1] as any); }}
+											onClick={() => { const steps = ['name','city','date','time']; const i = steps.indexOf(bookingStep as any); if (i < steps.length - 1) setBookingStep(steps[i+1] as any); }}
 											disabled={
 												(bookingStep === 'name' && !(fullName && fullName.trim().length > 1)) ||
 												(bookingStep === 'city' && !city) ||
-												(bookingStep === 'street' && !street) ||
-												(bookingStep === 'house' && !houseNumber) ||
 												(bookingStep === 'date' && !preferredDate)
 											}
 											className="flex-1 px-5 py-3 rounded-md font-semibold text-white bg-[#1a1a2e] hover:opacity-95 disabled:opacity-50"
@@ -3810,7 +3785,7 @@ function LivePageInner() {
 									) : (
 										<button
 											type="submit"
-											disabled={!preferredTime || !preferredDate || !(fullName && fullName.trim().length > 1) || !city || !street || !houseNumber}
+											disabled={!preferredTime || !preferredDate || !(fullName && fullName.trim().length > 1) || !city}
 											className="flex-1 px-5 py-3 rounded-md font-semibold text-white bg-[#25D366] hover:bg-[#20c15b] disabled:opacity-50"
 										>
 											שליחה

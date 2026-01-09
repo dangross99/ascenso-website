@@ -2457,6 +2457,7 @@ function LivePageInner() {
 
 	return (
 		<>
+			<div className="min-h-screen w-full bg-[#EFEFEF]">
 			<main className="max-w-7xl mx-auto px-4 py-6" dir="rtl">
 			<div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 				<section className="lg:col-span-8">
@@ -3839,6 +3840,7 @@ function LivePageInner() {
 				</div>
 			</div>
 		)}
+			</div>
 		</>
 	);
 }

@@ -3678,21 +3678,7 @@ function LivePageInner() {
 					</div>
 
 					{!bookingSubmitted ? (
-						<form onSubmit={handleBookingSubmit} className="bg-[#f6f7fb] text-[#0f1424] p-6" onKeyDown={(e) => {
-							if (e.key === 'Enter') {
-								if (bookingStep === 'time') return; // אפשר להגיש בשלב האחרון
-								e.preventDefault();
-								const steps = ['name','city','date','time'] as const;
-								const i = steps.indexOf(bookingStep as any);
-								const canNext =
-									(bookingStep === 'name' && !!(fullName && fullName.trim().length > 1)) ||
-									(bookingStep === 'city' && !!city) ||
-									(bookingStep === 'date' && !!preferredDate);
-								if (i >= 0 && i < steps.length - 1 && canNext) {
-									setBookingStep(steps[i + 1] as any);
-								}
-							}
-						}}>
+						<form onSubmit={handleBookingSubmit} className="bg-[#f6f7fb] text-[#0f1424] p-6">
 							{/* התקדמות: שאלה X מתוך Y + פס התקדמות */}
 							<div className="mb-4">
 								<div className="flex items-center justify-between text-xs md:text-sm text-[#0f1424]/70" dir="rtl">

@@ -3789,7 +3789,16 @@ function LivePageInner() {
 									{bookingStep !== 'time' ? (
 										<button
 											type="button"
-											onClick={() => { const steps = ['name','city','date','time']; const i = steps.indexOf(bookingStep as any); if (i < steps.length - 1) setBookingStep(steps[i+1] as any); }}
+											onClick={(e) => { 
+												e.preventDefault(); 
+												e.stopPropagation(); 
+												const steps = ['name','city','date','time'] as const; 
+												const i = steps.indexOf(bookingStep as any); 
+												if (i < steps.length - 1) {
+													// דחייה לטיק הבא כדי למנוע "המרת" הכפתור ל-submit באותו אירוע
+													setTimeout(() => setBookingStep(steps[i+1] as any), 0);
+												}
+											}}
 											disabled={
 												(bookingStep === 'name' && !(fullName && fullName.trim().length > 1)) ||
 												(bookingStep === 'city' && !city) ||

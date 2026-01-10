@@ -787,7 +787,7 @@ export default function Home() {
                 <img
                   src={encodeURI("/images/ChatGPT Image Jan 10, 2026, 11_01_37 PM.png")}
                   alt="עץ טבעי"
-                  className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-center"
+                  className="w-full h-[414px] md:h-[598px] object-contain bg-transparent translate-y-4 md:translate-y-0 md:scale-[1.4] md:origin-center"
                 />
               </a>
               <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-32 lg:top-32 z-10 px-1 text-center">

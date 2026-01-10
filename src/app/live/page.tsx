@@ -1525,6 +1525,24 @@ function LivePageInner() {
 		document.addEventListener('fullscreenchange', onFsChange);
 		return () => document.removeEventListener('fullscreenchange', onFsChange);
 	}, []);
+	// גובה קנבס במובייל (יחס 5/4) עבור פריסת fixed + ספייסר תואם
+	const [mobileCanvasH, setMobileCanvasH] = React.useState<number>(0);
+	React.useLayoutEffect(() => {
+		const update = () => {
+			if (typeof window === 'undefined') return;
+			const w = window.innerWidth;
+			// יחס 5/4 → גובה = רוחב * 4/5
+			const h = Math.round((w * 4) / 5);
+			setMobileCanvasH(h);
+		};
+		update();
+		window.addEventListener('resize', update);
+		window.addEventListener('orientationchange', update);
+		return () => {
+			window.removeEventListener('resize', update);
+			window.removeEventListener('orientationchange', update);
+		};
+	}, []);
 	const toggleFullscreen = React.useCallback(() => {
 		const el = canvasWrapRef.current as any;
 		if (!el) return;
@@ -2504,7 +2522,7 @@ function LivePageInner() {
 			<main className="max-w-7xl mx-auto px-4 lg:px-1 py-6" dir="rtl">
 			<div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10">
 				<section className="lg:col-span-8">
-					<div ref={canvasWrapRef} className="relative w-full aspect-[5/4] lg:aspect-[16/9] bg-white border overflow-hidden rounded fixed top-0 inset-x-0 z-30 lg:static">
+					<div ref={canvasWrapRef} className="relative w-full aspect-[5/4] lg:aspect-[16/9] bg-white border overflow-hidden rounded fixed top-0 inset-x-0 z-30 lg:static" style={{ height: mobileCanvasH || undefined }}>
 						<Canvas
 							shadows={false}
 							flat
@@ -2692,7 +2710,7 @@ function LivePageInner() {
 						)}
 					</div>
 					{/* ספייסר למובייל משמר גובה הקנבס הקבוע כדי שהתוכן יתחיל מתחתיו */}
-					<div className="block lg:hidden w-full aspect-[5/4]" />
+					<div className="block lg:hidden w-full" style={{ height: mobileCanvasH || undefined }} />
 					{/* פירוט צבעים ומסלול – מוצג רק אם נבחר מעקה */}
 					{railing !== 'none' && (
 						<div className="mt-3 border rounded bg-white">

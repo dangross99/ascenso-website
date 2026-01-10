@@ -613,16 +613,32 @@ export default function Home() {
                 <span className="font-[200]">O</span>
               </span>
             </h1>
+            {/* Mobile/Tablet: paragraph only */}
             <p
-              className="text-gray-100 text-base md:text-2xl lg:text-3xl max-w-2xl"
+              className="lg:hidden text-gray-100 text-base md:text-2xl max-w-2xl"
               style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
             >
               בחרו צורה, טקסטורה ומעקה – וראו הכל בהדמייה LIVE עם חישוב מחיר משוער
             </p>
+            {/* Desktop: paragraph + CTA on the same row */}
+            <div className="hidden lg:flex items-center gap-4">
+              <p
+                className="text-gray-100 text-3xl"
+                style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
+              >
+                בחרו צורה, טקסטורה ומעקה – וראו הכל בהדמייה LIVE עם חישוב מחיר משוער
+              </p>
+              <a
+                href="/live"
+                className="inline-block px-10 py-3 bg-white/80 text-[#1a1a2e]/90 text-base font-semibold shadow-sm hover:bg-white transition-all duration-300 active:scale-[0.98] rounded-md border border-white/60"
+              >
+                התחל הזמנה
+              </a>
+            </div>
           </div>
 
           {/* Left side: CTA */}
-          <div className="flex flex-col w-full md:w-auto">
+          <div className="flex flex-col w-full md:w-auto lg:hidden">
             <a
               href="/live"
               className="mx-auto px-14 py-3.5 bg-white/70 text-[#1a1a2e]/80 text-base md:text-xl font-semibold shadow-sm hover:bg-white/60 transition-all duration-300 active:scale-[0.98] rounded-md border border-white/60"

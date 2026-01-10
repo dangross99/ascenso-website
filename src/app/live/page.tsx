@@ -3309,7 +3309,7 @@ function LivePageInner() {
 											<span className="text-sm text-gray-600">{formatRailing()}</span>
 										</button>
 										{mobileOpenCat === 'railing' && (
-											<div className="p-3 bg-white border border-t-0 rounded-b-md">
+											<div className="p-3 bg-white border border-t-0 rounded-b-md space-y-3">
 												<div className="flex flex-wrap gap-2">
 													{([
 														{ id: 'none', label: 'ללא' },
@@ -3333,6 +3333,90 @@ function LivePageInner() {
 														</button>
 													))}
 												</div>
+
+												{/* פרטים לפי סוג מעקה – כמו בדסקטופ */}
+												{railing === 'glass' && (
+													<div className="pt-2 border-t">
+														<div className="text-xs font-medium mb-2">גוון זכוכית</div>
+														<div className="flex items-center gap-3">
+															{([
+																{ id: 'extra' as const, label: 'שקוף אקסטרה קליר', color: '#aee7ff', border: '#81b1cc' },
+																{ id: 'smoked' as const, label: 'מושחר', color: '#4a5568', border: '#2d3748' },
+																{ id: 'bronze' as const, label: 'ברונזה', color: '#b08d57', border: '#8a6a3a' },
+															]).map(sw => (
+																<button
+																	key={sw.id}
+																	title={sw.label}
+																	aria-label={sw.label}
+																	onClick={() => setGlassTone(sw.id)}
+																	className={`w-6 h-6 rounded-full border-2 ${glassTone === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+																	style={{ backgroundColor: sw.color, borderColor: sw.border }}
+																/>
+															))}
+															<span className="text-[11px] text-gray-600">{glassTone === 'extra' ? 'שקוף אקסטרה קליר' : glassTone === 'smoked' ? 'מושחר' : 'ברונזה'}</span>
+														</div>
+													</div>
+												)}
+
+												{railing === 'cable' && (
+													<div className="pt-2 border-t">
+														<div className="text-xs font-medium mb-2">בחירת דגם כבל</div>
+														<div className="flex items-center gap-3 flex-wrap">
+															{cableOptions.map(opt => (
+																<button
+																	key={opt.id}
+																	title={opt.name}
+																	aria-label={opt.name}
+																	onClick={() => setCableId(opt.id)}
+																	className={`w-8 h-8 rounded-full border-2 bg-center bg-cover ${cableId === opt.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+																	style={{ backgroundImage: opt.image ? `url("${encodeURI(opt.image)}")` : undefined, borderColor: '#ddd' }}
+																/>
+															))}
+															<span className="text-[11px] text-gray-600">
+																{cableOptions.find(c => c.id === cableId)?.name || (cableOptions[0]?.name ?? 'בחר דגם כבל')}
+															</span>
+														</div>
+													</div>
+												)}
+
+												{railing === 'metal' && (
+													<div className="pt-2 border-t">
+														<div className="text-xs font-medium mb-2">גוון/טקסטורה</div>
+														<div className="flex items-center gap-3 flex-wrap">
+															{/* צבעים אחידים */}
+															<button
+																title="שחור"
+																aria-label="שחור"
+																onClick={() => { setRailingMetalSolid('#111111'); setRailingMetalId(null); }}
+																className={`w-8 h-8 rounded-full border-2 ${railingMetalSolid === '#111111' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+																style={{ backgroundColor: '#111111', borderColor: '#2b2b2b' }}
+															/>
+															<button
+																title="לבן"
+																aria-label="לבן"
+																onClick={() => { setRailingMetalSolid('#F5F5F5'); setRailingMetalId(null); }}
+																className={`w-8 h-8 rounded-full border-2 ${railingMetalSolid === '#F5F5F5' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+																style={{ backgroundColor: '#F5F5F5', borderColor: '#e5e5e5' }}
+															/>
+															{/* טקסטורות מתכת */}
+															{metalRailingOptions.map(opt => (
+																<button
+																	key={opt.id}
+																	title={opt.name}
+																	aria-label={opt.name}
+																	onClick={() => { setRailingMetalId(opt.id); setRailingMetalSolid(null); }}
+																	className={`w-8 h-8 rounded-full border-2 bg-center bg-cover ${(railingMetalId === opt.id && !railingMetalSolid) ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+																	style={{ backgroundImage: opt.images?.[0] ? `url("${encodeURI(opt.images[0])}")` : undefined, borderColor: '#ddd' }}
+																/>
+															))}
+															<span className="text-[11px] text-gray-600">
+																{railingMetalSolid === '#111111' ? 'שחור' :
+																 railingMetalSolid === '#F5F5F5' ? 'לבן' :
+																 metalRailingOptions.find(m => m.id === railingMetalId)?.name || 'בחר גוון'}
+															</span>
+														</div>
+													</div>
+												)}
 											</div>
 										)}
 									</div>

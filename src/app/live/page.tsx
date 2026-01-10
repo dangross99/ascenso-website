@@ -3868,7 +3868,7 @@ function LivePageInner() {
 								{/* אייקון לוח שנה – מובייל נשאר בצד שמאל אך רחוק יותר מהטקסט; בדסקטופ מורחק מעט מהטקסט */}
 								<div className="absolute left-2 md:left-4 lg:left-20 top-1/2 -translate-y-1/2 pointer-events-none text-[#0f1424]">
 									<svg
-										className="w-[3.2rem] h-[3.2rem]"
+										className="w-[2.72rem] h-[2.72rem] md:w-[3.2rem] md:h-[3.2rem]"
 										viewBox="0 0 24 24"
 										fill="none"
 										stroke="currentColor"

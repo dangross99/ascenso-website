@@ -3311,26 +3311,44 @@ function LivePageInner() {
 								key: 'railing',
 								el: (
 									<div>
-										<div className="flex items-center gap-2">
-											<button
-												className={`flex-1 w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'railing' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
-												onClick={() => setMobileOpenCat(prev => (prev === 'railing' ? null : 'railing'))}
-												aria-expanded={mobileOpenCat === 'railing'}
-											>
-												<span className="font-medium">מעקה</span>
-												<span className="text-sm text-gray-600">{formatRailing()}</span>
-											</button>
-											{railing !== 'none' && (
-												<button
-													type="button"
-													className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100"
-													onClick={() => setMasterSide(prev => (prev === 'left' ? 'right' : 'left'))}
-													title="החלף צד"
-												>
-													החלף צד
-												</button>
-											)}
-										</div>
+										<button
+											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'railing' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
+											onClick={() => setMobileOpenCat(prev => (prev === 'railing' ? null : 'railing'))}
+											aria-expanded={mobileOpenCat === 'railing'}
+										>
+											<span className="font-medium inline-flex items-center gap-2">
+												<span>מעקה</span>
+												{railing !== 'none' && (
+													<span
+														role="button"
+														tabIndex={0}
+														aria-label="החלף צד"
+														title="החלף צד"
+														onClick={(e) => {
+															e.preventDefault();
+															e.stopPropagation();
+															setMasterSide(prev => (prev === 'left' ? 'right' : 'left'));
+														}}
+														onKeyDown={(e) => {
+															if (e.key === 'Enter' || e.key === ' ') {
+																e.preventDefault();
+																e.stopPropagation();
+																setMasterSide(prev => (prev === 'left' ? 'right' : 'left'));
+															}
+														}}
+														className="p-1 rounded-full border bg-white text-[#1a1a2e] hover:bg-gray-100"
+													>
+														<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+															<path d="M8 7l-5 5 5 5" />
+															<path d="M3 12h14" />
+															<path d="M16 17l5-5-5-5" />
+															<path d="M7 12h14" />
+														</svg>
+													</span>
+												)}
+											</span>
+											<span className="text-sm text-gray-600">{formatRailing()}</span>
+										</button>
 										{mobileOpenCat === 'railing' && (
 											<div className="p-3 bg-white border border-t-0 rounded-b-md space-y-3">
 												<div className="flex flex-wrap gap-2">

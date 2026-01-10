@@ -664,7 +664,7 @@ export default function Home() {
                 {topMaterials.map((mat, index) => (
                 <div className="flex-[0_0_45%] sm:flex-[0_0_28%] md:flex-[0_0_22%] lg:flex-[0_0_18%] pl-4 md:pl-8" key={mat.id ?? index}>
                     <a href="/materials" className="block group">
-                    <div className="relative overflow-hidden aspect-[3/4] rounded-lg md:rounded-xl mb-3 md:mb-5 shadow-sm transition-transform duration-300 group-hover:scale-[1.03]">
+                    <div className="relative overflow-hidden aspect-[3/4] rounded-full mb-3 md:mb-5 shadow-sm transition-transform duration-300 group-hover:scale-[1.03]">
                         {mat.images?.[0] ? (
                         <Image
                             src={mat.images[0]}
@@ -682,8 +682,8 @@ export default function Home() {
                 ))}
                 {!topMaterials.length &&
                   Array.from({ length: 6 }).map((_, index) => (
-                    <div className="flex-[0_0_45%] sm:flex-[0_0_28%] md:flex-[0_0_22%] lg:flex-[0_0_18%] pl-4 md:pl-8" key={`skeleton-${index}`}>
-                      <div className="relative overflow-hidden aspect-[3/4] rounded-lg md:rounded-xl mb-3 md:mb-5 shadow-sm">
+                  <div className="flex-[0_0_45%] sm:flex-[0_0_28%] md:flex-[0_0_22%] lg:flex-[0_0_18%] pl-4 md:pl-8" key={`skeleton-${index}`}>
+                      <div className="relative overflow-hidden aspect-[3/4] rounded-full mb-3 md:mb-5 shadow-sm">
                         <div className="w-full h-full bg-[#dcdcdc] animate-pulse" />
                         </div>
                       </div>

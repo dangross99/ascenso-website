@@ -623,14 +623,14 @@ export default function Home() {
             {/* Desktop: paragraph + CTA on the same row */}
             <div className="hidden lg:flex items-center gap-12">
               <p
-                className="text-gray-100 text-4xl"
+                className="text-gray-100 text-3xl"
                 style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
               >
                 בחרו צורה, טקסטורה ומעקה – וראו הכל בהדמייה LIVE עם חישוב מחיר משוער
               </p>
               <a
                 href="/live"
-                className="inline-block px-14 py-3.5 bg-white/80 text-[#1a1a2e]/90 text-lg font-semibold shadow-sm hover:bg-white transition-all duration-300 active:scale-[0.98] rounded-md border border-white/60"
+                className="inline-block px-14 py-3.5 bg-white/80 text-[#1a1a2e]/90 text-xl font-semibold shadow-sm hover:bg-white transition-all duration-300 active:scale-[0.98] rounded-md border border-white/60"
               >
                 התחל הזמנה
               </a>

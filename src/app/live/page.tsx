@@ -3060,7 +3060,7 @@ function LivePageInner() {
 								el: (
 									<div>
 										<button
-											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'box' ? 'border-[#1a1a2e] !bg-[#065F46] !text-white' : ''}`}
+											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'box' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
 											onClick={() => setMobileOpenCat(prev => (prev === 'box' ? null : 'box'))}
 											aria-expanded={mobileOpenCat === 'box'}
 										>
@@ -3097,7 +3097,7 @@ function LivePageInner() {
 								el: (
 									<div>
 										<button
-											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'material' ? 'border-[#1a1a2e] !bg-[#065F46] !text-white' : ''}`}
+											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'material' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
 											onClick={() => setMobileOpenCat(prev => (prev === 'material' ? null : 'material'))}
 											aria-expanded={mobileOpenCat === 'material'}
 										>
@@ -3130,7 +3130,7 @@ function LivePageInner() {
 									el: (
 										<div>
 											<button
-												className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'woodTexture' ? 'border-[#1a1a2e] !bg-[#065F46] !text-white' : ''}`}
+												className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'woodTexture' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
 												onClick={() => setMobileOpenCat(prev => (prev === 'woodTexture' ? null : 'woodTexture'))}
 												aria-expanded={mobileOpenCat === 'woodTexture'}
 											>
@@ -3163,7 +3163,7 @@ function LivePageInner() {
 									el: (
 										<div>
 											<button
-												className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'woodColor' ? 'border-[#1a1a2e] !bg-[#065F46] !text-white' : ''}`}
+												className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'woodColor' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
 												onClick={() => setMobileOpenCat(prev => (prev === 'woodColor' ? null : 'woodColor'))}
 												aria-expanded={mobileOpenCat === 'woodColor'}
 											>
@@ -3215,7 +3215,7 @@ function LivePageInner() {
 									el: (
 										<div>
 											<button
-												className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'nonWoodTexture' ? 'border-[#1a1a2e] !bg-[#065F46] !text-white' : ''}`}
+											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'nonWoodTexture' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
 												onClick={() => setMobileOpenCat(prev => (prev === 'nonWoodTexture' ? null : 'nonWoodTexture'))}
 												aria-expanded={mobileOpenCat === 'nonWoodTexture'}
 											>
@@ -3258,7 +3258,7 @@ function LivePageInner() {
 								el: (
 									<div>
 										<button
-											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'path' ? 'border-[#1a1a2e] !bg-[#065F46] !text-white' : ''}`}
+											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'path' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
 											onClick={() => setMobileOpenCat(prev => (prev === 'path' ? null : 'path'))}
 											aria-expanded={mobileOpenCat === 'path'}
 										>

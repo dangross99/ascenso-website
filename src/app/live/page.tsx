@@ -3865,8 +3865,8 @@ function LivePageInner() {
 								</div>
 							</div>
 							<div className="mb-2 relative flex justify-center">
-								{/* אייקון לוח שנה גדול בצד שמאל, ממורכז אנכית, ללא השפעה על פריסת הטקסט */}
-								<div className="absolute left-4 md:left-8 lg:left-14 top-1/2 -translate-y-1/2 pointer-events-none text-[#0f1424]">
+								{/* אייקון לוח שנה – מובייל בצד ימין, בדסקטופ קרוב יותר לטקסט משמאל */}
+								<div className="absolute right-6 md:right-10 lg:right-auto lg:left-24 top-1/2 -translate-y-1/2 pointer-events-none text-[#0f1424]">
 									<svg
 										className="w-[3.2rem] h-[3.2rem]"
 										viewBox="0 0 24 24"

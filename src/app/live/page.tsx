@@ -3022,7 +3022,7 @@ function LivePageInner() {
 					<div className="lg:hidden flex flex-col gap-3">
 						{/* באנר שחזור מצב (מובייל, בריענון) */}
 						{mobileRestorePrompt && (
-							<div className="bg-[#FFF8E1] border border-[#FDE68A] rounded-md px-3 py-2 flex items-center justify-between">
+							<div className="order-last bg-[#FFF8E1] border border-[#FDE68A] rounded-md px-3 py-2 flex items-center justify-between">
 								<div className="text-xs text-[#1a1a2e]">
 									לשחזר את הבחירות הקודמות או להתחיל מחדש?
 								</div>
@@ -3047,7 +3047,7 @@ function LivePageInner() {
 
 						{/* באנר עזרה למובייל – נפתח/נסגר, ניתן לסגירה קבועה */}
 						{!mobileHelpDismissed && (
-							<div className="bg-[#1a1a2e]/5 border border-[#1a1a2e]/15 rounded-md">
+							<div className="order-last bg-[#1a1a2e]/5 border border-[#1a1a2e]/15 rounded-md">
 								<div className="flex items-center justify-between px-3 py-2">
 									<button
 										type="button"

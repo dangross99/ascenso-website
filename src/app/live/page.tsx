@@ -1528,6 +1528,8 @@ function LivePageInner() {
 	// גובה קנבס במובייל (יחס 5/4) עבור פריסת fixed + ספייסר תואם
 	const [mobileCanvasH, setMobileCanvasH] = React.useState<number>(0);
 	const [mobileHeaderH, setMobileHeaderH] = React.useState<number>(0);
+	// זיהוי מקלדת מובייל (visualViewport) כדי להתאים יישור מודאל/סרגל תחתון
+	const [isKeyboardOpen, setIsKeyboardOpen] = React.useState(false);
 	React.useLayoutEffect(() => {
 		const update = () => {
 			if (typeof window === 'undefined') return;
@@ -1564,6 +1566,26 @@ function LivePageInner() {
 		update();
 		window.addEventListener('resize', update);
 		window.addEventListener('orientationchange', update);
+		// האזן ל-visualViewport כדי לזהות פתיחת מקלדת
+		try {
+			// @ts-ignore
+			const vv: VisualViewport | undefined = window.visualViewport;
+			if (vv) {
+				const onVV = () => {
+					const diff = Math.max(0, window.innerHeight - vv.height);
+					setIsKeyboardOpen(diff > 140); // סף אמפירי לזיהוי מקלדת
+				};
+				vv.addEventListener('resize', onVV);
+				vv.addEventListener('scroll', onVV);
+				onVV();
+				return () => {
+					vv.removeEventListener('resize', onVV);
+					vv.removeEventListener('scroll', onVV);
+					window.removeEventListener('resize', update);
+					window.removeEventListener('orientationchange', update);
+				};
+			}
+		} catch {}
 		return () => {
 			window.removeEventListener('resize', update);
 			window.removeEventListener('orientationchange', update);
@@ -3760,21 +3782,23 @@ function LivePageInner() {
 			<div className="hidden lg:block h-0" />
 		</main>
 
-		{/* מובייל: סיכום קבוע בתחתית — נשאר בזמן גלילה */}
-		<div className="lg:hidden fixed inset-x-0 bottom-0 z-40 border-t bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 shadow-lg">
-			<div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
-				<button
-					onClick={openBooking}
-					aria-label="פתח טופס תיאום פגישה"
-					className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-4 py-2 text-base font-semibold shadow-md hover:opacity-95 cursor-pointer"
-				>
-					<span>תיאום פגישה</span>
-				</button>
-				<div className="text-lg font-bold text-[#1a1a2e]">
-					<span>{`סה\"כ `}₪{total.toLocaleString('he-IL')}</span>
+		{/* מובייל: סיכום קבוע בתחתית — מוסתר בזמן תיאום/מקלדת כדי למנוע חפיפות */}
+		{!bookingOpen && !isKeyboardOpen && (
+			<div className="lg:hidden fixed inset-x-0 bottom-0 z-40 border-t bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 shadow-lg">
+				<div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
+					<button
+						onClick={openBooking}
+						aria-label="פתח טופס תיאום פגישה"
+						className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-4 py-2 text-base font-semibold shadow-md hover:opacity-95 cursor-pointer"
+					>
+						<span>תיאום פגישה</span>
+					</button>
+					<div className="text-lg font-bold text-[#1a1a2e]">
+						<span>{`סה\"כ `}₪{total.toLocaleString('he-IL')}</span>
+					</div>
 				</div>
 			</div>
-		</div>
+		)}
 
 		{/* דסקטופ: סיכום קבוע מיושר בדיוק לפאנל הקטגוריות */}
 		{desktopBarPos && (
@@ -3807,7 +3831,7 @@ function LivePageInner() {
 		{/* מודאל תיאום מדידה – מראה יוקרתי ותמציתי */}
 		{bookingOpen && (
 			<div
-				className="fixed inset-0 z-[70] bg-[#0b1020]/70 backdrop-blur-sm flex items-center justify-center p-4"
+				className={`fixed inset-0 z-[70] bg-[#0b1020]/70 backdrop-blur-sm flex ${isKeyboardOpen ? 'items-start pt-6' : 'items-center'} justify-center p-4 overscroll-contain`}
 				dir="rtl"
 				role="dialog"
 				aria-modal="true"
@@ -3819,7 +3843,7 @@ function LivePageInner() {
 			>
 				<div
 					ref={dialogRef}
-					className="w-full max-w-xl rounded-2xl overflow-hidden shadow-2xl border border-[#C5A059]/30"
+					className="w-full max-w-xl rounded-2xl overflow-hidden shadow-2xl border border-[#C5A059]/30 max-h-[90dvh]"
 					onClick={(e) => e.stopPropagation()}
 				>
 					<div className="px-5 py-4 bg-[#1a1a2e] text-white relative border-b border-[#C5A059]/30">

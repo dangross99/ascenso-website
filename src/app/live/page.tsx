@@ -2473,7 +2473,7 @@ function LivePageInner() {
 			<main className="max-w-7xl mx-auto px-4 lg:px-1 py-6" dir="rtl">
 			<div className="grid grid-cols-1 lg:grid-cols-12 gap-0 lg:gap-10">
 				<section className="lg:col-span-8">
-					<div ref={canvasWrapRef} className="w-full aspect-[16/9] lg:aspect-[16/9] bg-white border overflow-hidden rounded fixed inset-x-0 z-30 lg:static" style={{ height: mobileCanvasH || undefined, top: mobileHeaderH || 0 }}>
+					<div ref={canvasWrapRef} className="w-full aspect-[16/9] lg:aspect-[16/9] bg-white border overflow-hidden rounded fixed inset-x-0 z-30 lg:relative" style={{ height: mobileCanvasH || undefined, top: mobileHeaderH || 0 }}>
 						<Canvas
 							shadows={false}
 							flat

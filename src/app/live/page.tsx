@@ -1533,7 +1533,17 @@ function LivePageInner() {
 			if (typeof window === 'undefined') return;
 			const isMobile = window.innerWidth < 1024;
 			if (isMobile) {
-				const w = window.innerWidth;
+				// מדידה מדויקת לפי רוחב האלמנט בפועל (מונע סטיות/חפיפה)
+				const w = (() => {
+					try {
+						const el = canvasWrapRef.current;
+						if (el) {
+							const rect = el.getBoundingClientRect();
+							if (rect && rect.width) return Math.round(rect.width);
+						}
+					} catch {}
+					return window.innerWidth;
+				})();
 				// יחס 5/4 → גובה = רוחב * 4/5
 				const h = Math.round((w * 4) / 5);
 				setMobileCanvasH(h);

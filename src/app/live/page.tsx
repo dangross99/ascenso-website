@@ -2627,8 +2627,11 @@ function LivePageInner() {
 							</div>
 						)}
 					</div>
-					{/* ספייסר למובייל משמר גובה הקנבס הקבוע כדי שהתוכן יתחיל מתחתיו */}
-					<div className="block lg:hidden w-full" style={{ height: mobileCanvasH || undefined }} />
+					{/* ספייסר למובייל משמר גובה הקנבס הקבוע + גובה ההדר, כדי שהתוכן יתחיל מתחתיו */}
+					<div
+						className="block lg:hidden w-full"
+						style={{ height: ((mobileCanvasH || 0) + (mobileHeaderH || 0)) || undefined }}
+					/>
 					{/* רווח זהה ל-gap בין קטגוריות */}
 					<div className="block lg:hidden h-3" />
 					{/* פירוט צבעים ומסלול – מוצג רק אם נבחר מעקה (מובייל מוסתר לשמירת ריווח מול הקטגוריה הראשונה) */}

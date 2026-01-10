@@ -2727,6 +2727,8 @@ function LivePageInner() {
 					</div>
 					{/* ספייסר למובייל משמר גובה הקנבס הקבוע כדי שהתוכן יתחיל מתחתיו */}
 					<div className="block lg:hidden w-full" style={{ height: mobileCanvasH || undefined }} />
+					{/* מרווח קטן בין סוף הקנבס לתחילת הקטגוריות (מובייל) */}
+					<div className="block lg:hidden h-3" />
 					{/* פירוט צבעים ומסלול – מוצג רק אם נבחר מעקה */}
 					{railing !== 'none' && (
 						<div className="mt-3 border rounded bg-white">

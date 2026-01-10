@@ -606,11 +606,9 @@ export default function Home() {
         <div className="relative z-10 w-full flex flex-col gap-3 justify-center items-center px-4 md:px-14 lg:px-20 pb-8 md:pb-14 lg:pb-16 md:flex-row md:items-end md:justify-between" dir="rtl">
           {/* Right side: Text (RTL) */}
           <div className="text-center md:text-right w-full md:w-[60%] max-w-none lg:whitespace-nowrap">
-            <h1
-              className="text-4xl md:text-6xl lg:text-7xl text-white mb-2 md:mb-4 leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]"
-            >
-              <span className="font-prosto font-extrabold tracking-widest uppercase">
-                ASCEN
+            <h1 className="text-4xl md:text-6xl lg:text-7xl text-white mb-2 md:mb-4 leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]">
+              <span className="font-heebo tracking-widest uppercase">
+                <span className="font-extrabold">ASCEN</span>
                 <span className="font-[200]">S</span>
                 <span className="font-[200]">O</span>
               </span>

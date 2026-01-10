@@ -1624,10 +1624,10 @@ function LivePageInner() {
 	// מאסטר: מצבים מחזוריים להפעלה/ביטול ולצד
 	const [masterApply, setMasterApply] = React.useState<'none' | 'add' | 'remove'>('none');
 	const [masterSide, setMasterSide] = React.useState<'none' | 'right' | 'left'>('none');
-	// מובייל: אקורדיון קטגוריות בפאנל
+	// מובייל: אקורדיון קטגוריות בפאנל (ברירת מחדל: סגור כדי שלא ייווצר מרווח נוסף מתחת לקנבס)
 	const [mobileOpenCat, setMobileOpenCat] = React.useState<
 		'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing' | null
-	>('path');
+	>(null);
 	// דסקטופ: אקורדיון קטגוריות – סגורות כברירת מחדל, נפתח בלחיצה
 	const [desktopOpenCat, setDesktopOpenCat] = React.useState<
 		'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing' | null
@@ -1792,7 +1792,7 @@ function LivePageInner() {
 			setCableSpanMode('tread');
 			setStepCableSpanMode([]);
 			setLandingCableSpanMode([]);
-			setMobileOpenCat('path');
+			setMobileOpenCat(null);
 		} catch {}
 		setMobileRestorePrompt(false);
 	}, []);

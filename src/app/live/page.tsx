@@ -2504,7 +2504,7 @@ function LivePageInner() {
 			<main className="max-w-7xl mx-auto px-4 lg:px-1 py-6" dir="rtl">
 			<div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10">
 				<section className="lg:col-span-8">
-					<div ref={canvasWrapRef} className="relative w-full aspect-[5/4] lg:aspect-[16/9] bg-white border overflow-hidden rounded sticky top-0 z-20 lg:static">
+					<div ref={canvasWrapRef} className="relative w-full aspect-[5/4] lg:aspect-[16/9] bg-white border overflow-hidden rounded fixed top-0 inset-x-0 z-30 lg:static">
 						<Canvas
 							shadows={false}
 							flat
@@ -2691,6 +2691,8 @@ function LivePageInner() {
 							</div>
 						)}
 					</div>
+					{/* ספייסר למובייל משמר גובה הקנבס הקבוע כדי שהתוכן יתחיל מתחתיו */}
+					<div className="block lg:hidden w-full aspect-[5/4]" />
 					{/* פירוט צבעים ומסלול – מוצג רק אם נבחר מעקה */}
 					{railing !== 'none' && (
 						<div className="mt-3 border rounded bg-white">

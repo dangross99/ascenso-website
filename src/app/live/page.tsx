@@ -2536,7 +2536,7 @@ function LivePageInner() {
 		<>
 			<div className="min-h-screen w-full bg-[#EFEFEF]">
 			<main className="max-w-7xl mx-auto px-4 lg:px-1 py-6" dir="rtl">
-			<div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-10">
+			<div className="grid grid-cols-1 lg:grid-cols-12 gap-0 lg:gap-10">
 				<section className="lg:col-span-8">
 					<div ref={canvasWrapRef} className="w-full aspect-[5/4] lg:aspect-[16/9] bg-white border overflow-hidden rounded fixed inset-x-0 z-30 lg:static" style={{ height: mobileCanvasH || undefined, top: mobileHeaderH || 0 }}>
 						<Canvas
@@ -2727,6 +2727,8 @@ function LivePageInner() {
 					</div>
 					{/* ספייסר למובייל משמר גובה הקנבס הקבוע כדי שהתוכן יתחיל מתחתיו */}
 					<div className="block lg:hidden w-full" style={{ height: mobileCanvasH || undefined }} />
+					{/* רווח זהה ל-gap בין קטגוריות */}
+					<div className="block lg:hidden h-3" />
 					{/* פירוט צבעים ומסלול – מוצג רק אם נבחר מעקה (מובייל מוסתר לשמירת ריווח מול הקטגוריה הראשונה) */}
 					{railing !== 'none' && (
 						<div className="hidden lg:block mt-3 border rounded bg-white">

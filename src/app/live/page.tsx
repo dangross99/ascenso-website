@@ -3613,8 +3613,7 @@ function LivePageInner() {
 							</div>
 						)}
 
-						{/* עורך מסלול + מעקה כאkorדיון */}
-						<div className="space-y-3">
+						{/* מסלול ומעקה כאקורדיון – מופרדים כרכיבים עצמאיים לשמירת ריווח אחיד */}
 							{/* מסלול */}
 							<div>
 								<button
@@ -3698,7 +3697,6 @@ function LivePageInner() {
 								</div>
 								<div className="text-[11px] text-gray-500 mt-1">הערכה משוערת להמחשה בלבד.</div>
 							</div>
-						</div>
 
 						{/* ספייסר תחתון בפאנל כדי שלא ייכנס מתחת לסרגל הקבוע בדסקטופ */}
 						<div className="hidden lg:block h-2" />

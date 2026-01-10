@@ -1114,7 +1114,16 @@ export default function Home() {
             ליווי אישי בבחירת דגמים, התאמת טקסטורות ודיוק המעקה — מענה מהיר ב‑WhatsApp.
           </p>
           <a
-            href={`https://api.whatsapp.com/send?phone=972539994995&text=${encodeURIComponent('*ASCENSO*\\nהיי! ראיתי את האתר ואני מעוניינ/ת להתקדם.\\nאשמח לשיחת ייעוץ קצרה ולקבל פרטים נוספים. תודה!')}`}
+            href={`https://api.whatsapp.com/send?phone=972539994995&text=${
+              encodeURIComponent(
+                [
+                  '\u202B*ASCENSO*',
+                  'היי! ראיתי את האתר ואני מעוניינ/ת להתקדם.',
+                  'אשמח לשיחת ייעוץ קצרה ולקבל פרטים נוספים. תודה!',
+                  '\u202C',
+                ].join('\n')
+              )
+            }`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center px-8 md:px-10 py-3 md:py-3.5 rounded-full bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-wider transition-colors duration-300 hover:bg-white/95 shadow-sm"

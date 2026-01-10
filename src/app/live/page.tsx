@@ -1707,6 +1707,17 @@ function LivePageInner() {
 		return steps;
 	}, [pathSegments, steps]);
 
+	// צד נוכחי גלובלי (רוב) למעקה – מציג מה הצד הדומיננטי כדי לאפשר החלפה מהירה במובייל
+	const globalRailingSide = React.useMemo<'right' | 'left'>(() => {
+		let right = 0, left = 0;
+		for (let i = 0; i < stepRailingSide.length; i++) {
+			const has = (stepRailing[i] ?? (railing !== 'none')) === true;
+			if (!has) continue;
+			if (stepRailingSide[i] === 'left') left++; else right++;
+		}
+		return right >= left ? 'right' : 'left';
+	}, [stepRailingSide, stepRailing, railing]);
+
 	// מטא עבור פודסטים (פנייה/ללא)
 	const landingMeta = React.useMemo(() => {
 		const turns: Array<'left' | 'right' | undefined> = [];
@@ -3332,6 +3343,23 @@ function LivePageInner() {
 															{opt.label}
 														</button>
 													))}
+												</div>
+
+												{/* החלפת צד מהירה לכל המדרגות – מובייל */}
+												<div className="pt-2 border-t flex items-center justify-between">
+													<span className="text-sm">
+														צד נוכחי: {globalRailingSide === 'right' ? 'ימין' : 'שמאל'}
+													</span>
+													<button
+														className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100"
+														onClick={() => setMasterSide(prev => (prev === 'left' ? 'right' : 'left'))}
+														title="החלף צד לכל המדרגות"
+													>
+														החלף צד
+													</button>
+												</div>
+												<div className="text-[11px] text-gray-500 -mt-1">
+													ההחלפה חלה על כל המדרגות ופודסטים ישרים.
 												</div>
 
 												{/* פרטים לפי סוג מעקה – כמו בדסקטופ */}

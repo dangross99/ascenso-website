@@ -755,7 +755,7 @@ export default function Home() {
             <div className="relative flex flex-col gap-1">
               <a href="/materials?cat=stone" className="block">
                 <img
-                  src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 12_39_36 PM.png")}
+                  src={encodeURI("/images/ChatGPT Image Jan 10, 2026, 08_04_27 PM.png")}
                   alt="אבן טבעית"
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-left md:object-left"
                 />
@@ -785,7 +785,7 @@ export default function Home() {
             <div className="relative flex flex-col gap-1">
               <a href="/materials?cat=wood" className="block">
                 <img
-                  src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 05_21_43 PM.png")}
+                  src={encodeURI("/images/ChatGPT Image Jan 10, 2026, 10_26_18 PM.png")}
                   alt="עץ טבעי"
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-center"
                 />

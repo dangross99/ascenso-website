@@ -1593,7 +1593,7 @@ function LivePageInner() {
 	// מובייל: אקורדיון קטגוריות בפאנל
 	const [mobileOpenCat, setMobileOpenCat] = React.useState<
 		'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing' | null
-	>(null);
+	>('path');
 	// דסקטופ: אקורדיון קטגוריות – סגורות כברירת מחדל, נפתח בלחיצה
 	const [desktopOpenCat, setDesktopOpenCat] = React.useState<
 		'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing' | null
@@ -1758,7 +1758,7 @@ function LivePageInner() {
 			setCableSpanMode('tread');
 			setStepCableSpanMode([]);
 			setLandingCableSpanMode([]);
-			setMobileOpenCat('box');
+			setMobileOpenCat('path');
 		} catch {}
 		setMobileRestorePrompt(false);
 	}, []);

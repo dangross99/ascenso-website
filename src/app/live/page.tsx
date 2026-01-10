@@ -3402,7 +3402,12 @@ function LivePageInner() {
 															key={opt.id}
 															className={`px-3 py-1 text-sm rounded-full border ${railing === opt.id ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
 															onClick={() => {
-																setRailing(opt.id);
+																const next = opt.id;
+																setRailing(next);
+																// הפעלה מיידית של המעקה בהדמייה ללא המתנה ל-useEffect
+																const nextLen = stepsTotalForPath;
+																setStepRailing(new Array<boolean>(nextLen).fill(next !== 'none'));
+																setLandingRailing(landingMeta.map(turn => (turn ? false : (next !== 'none'))));
 															}}
 														>
 															{opt.label}
@@ -3673,7 +3678,18 @@ function LivePageInner() {
 												{ id: 'metal', label: 'מתכת' },
 												{ id: 'cable', label: 'כבלי נירוסטה' },
 											] as const).map(opt => (
-												<button key={opt.id} className={`px-3 py-1 text-sm rounded-full border ${railing === opt.id ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`} onClick={() => setRailing(opt.id)}>
+												<button
+													key={opt.id}
+													className={`px-3 py-1 text-sm rounded-full border ${railing === opt.id ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
+													onClick={() => {
+														const next = opt.id;
+														setRailing(next);
+														// הפעלה מיידית של המעקה בהדמייה ללא המתנה ל-useEffect
+														const nextLen = stepsTotalForPath;
+														setStepRailing(new Array<boolean>(nextLen).fill(next !== 'none'));
+														setLandingRailing(landingMeta.map(turn => (turn ? false : (next !== 'none'))));
+													}}
+												>
 													{opt.label}
 												</button>
 											))}

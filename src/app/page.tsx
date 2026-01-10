@@ -799,7 +799,7 @@ export default function Home() {
           </div>
         </div>
             {/* Wood */}
-            <div className="relative flex flex-col gap-1">
+            <div className="relative flex flex-col gap-1 lg:col-start-3">
               <a href="/materials?cat=wood" className="block">
                 <img
                   src={encodeURI("/images/ChatGPT Image Jan 10, 2026, 11_01_37 PM.png")}
@@ -829,7 +829,7 @@ export default function Home() {
                   </div>
                 </div>
             {/* Marble / Natural Stone */}
-            <div className="relative flex flex-col gap-1">
+            <div className="relative flex flex-col gap-1 lg:col-start-2">
               <a href="/materials?cat=metal" className="block">
                 <img
                   src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 05_44_10 PM.png")}

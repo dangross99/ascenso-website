@@ -967,7 +967,7 @@ export default function Home() {
                 </div>
 
             {/* Dots pagination */}
-            <div className="flex items-center justify-center gap-3 mt-6 lg:hidden">
+            <div className="flex items-center justify-center gap-3 mt-2 lg:hidden">
               {Array.from({ length: 5 }).map((_, i) => (
                       <button
                   key={i}
@@ -978,7 +978,7 @@ export default function Home() {
                     ))}
                 </div>
 
-            <div className="text-center mt-10">
+            <div className="text-center mt-6">
                   <a
                 href="/live"
                 className="inline-block px-14 py-3.5 bg-[#1a1a2e] text-white text-sm md:text-base font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90"

@@ -748,7 +748,7 @@ export default function Home() {
       </section>
 
       {/* High-end Materials Section – “swatch” cards with overlay text */}
-      <section className="w-full mt-8 md:mt-0 py-4 md:py-8" dir="rtl">
+      <section className="w-full mt-8 md:mt-0 pt-4 pb-2 md:py-8" dir="rtl">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-2 md:gap-x-20 md:gap-y-12 lg:gap-x-24 lg:gap-y-16 xl:gap-x-28 xl:gap-y-20">
             {/* Stone */}
@@ -851,7 +851,7 @@ export default function Home() {
       {/* 4.5. Premium Collections Section (removed per request) */}
 
       {/* 5. תהליך העבודה */}
-      <section className="bg-white py-4 md:py-6" dir="rtl">
+      <section className="bg-white pt-0 pb-4 md:py-6" dir="rtl">
         <div className="w-full px-8 md:px-16 lg:px-24">
           <div className="relative">
             {/* Mobile/Tablet: Slider */}

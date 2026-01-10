@@ -851,7 +851,7 @@ export default function Home() {
       {/* 4.5. Premium Collections Section (removed per request) */}
 
       {/* 5. תהליך העבודה */}
-      <section className="bg-white -mt-8 md:mt-0 pt-0 pb-4 md:py-6" dir="rtl">
+      <section className="bg-white -mt-16 md:mt-0 pt-0 pb-4 md:py-6" dir="rtl">
         <div className="w-full px-8 md:px-16 lg:px-24">
           <div className="relative">
             {/* Mobile/Tablet: Slider */}

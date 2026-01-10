@@ -748,7 +748,7 @@ export default function Home() {
       </section>
 
       {/* High-end Materials Section – “swatch” cards with overlay text */}
-      <section className="w-full mt-8 md:mt-0 pt-4 pb-2 md:py-8" dir="rtl">
+      <section className="w-full mt-8 md:mt-0 pt-4 pb-0 md:py-8" dir="rtl">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-2 md:gap-x-20 md:gap-y-12 lg:gap-x-24 lg:gap-y-16 xl:gap-x-28 xl:gap-y-20">
             {/* Stone */}
@@ -817,7 +817,7 @@ export default function Home() {
                 <img
                   src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 05_44_10 PM.png")}
                   alt="מתכת"
-                  className="w-full h-[414px] md:h-[598px] object-contain bg-transparent translate-y-2 md:translate-y-0 md:scale-[1.4] md:origin-right md:object-right"
+                  className="w-full h-[414px] md:h-[598px] object-contain bg-transparent translate-y-3 md:translate-y-0 md:scale-[1.4] md:origin-right md:object-right"
                 />
               </a>
               <div className="absolute inset-x-0 bottom-64 md:bottom-auto md:top-32 lg:top-32 z-10 px-1 text-center" dir="rtl">

@@ -659,7 +659,7 @@ export default function Home() {
         <div className="container mx-auto px-1">
           
           <div className="relative">
-            <div className="overflow-hidden" ref={emblaRef}>
+            <div className="overflow-hidden py-2 md:py-4" ref={emblaRef}>
               <div className="flex -ml-4 md:-ml-8">
                 {topMaterials.map((mat, index) => (
                 <div className="flex-[0_0_45%] sm:flex-[0_0_28%] md:flex-[0_0_22%] lg:flex-[0_0_18%] pl-4 md:pl-8" key={mat.id ?? index}>

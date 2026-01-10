@@ -607,10 +607,13 @@ export default function Home() {
           {/* Right side: Text (RTL) */}
           <div className="text-center md:text-right w-full md:w-[60%] max-w-none lg:whitespace-nowrap">
             <h1
-              className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white mb-2 md:mb-4 leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]"
-              style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
+              className="text-4xl md:text-6xl lg:text-7xl text-white mb-2 md:mb-4 leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]"
             >
-              ASCENSO
+              <span className="font-prosto font-extrabold tracking-widest uppercase">
+                ASCEN
+                <span className="font-[200]">S</span>
+                <span className="font-[200]">O</span>
+              </span>
             </h1>
             <p
               className="text-gray-100 text-base md:text-2xl lg:text-3xl max-w-2xl"

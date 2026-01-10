@@ -3060,7 +3060,7 @@ function LivePageInner() {
 								el: (
 									<div>
 										<button
-											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'box' ? 'border-[#1a1a2e] bg-[#1a1a2e]/5' : ''}`}
+											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'box' ? 'border-[#1a1a2e] bg-gray-100' : ''}`}
 											onClick={() => setMobileOpenCat(prev => (prev === 'box' ? null : 'box'))}
 											aria-expanded={mobileOpenCat === 'box'}
 										>
@@ -3097,7 +3097,7 @@ function LivePageInner() {
 								el: (
 									<div>
 										<button
-											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'material' ? 'border-[#1a1a2e] bg-[#1a1a2e]/5' : ''}`}
+											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'material' ? 'border-[#1a1a2e] bg-gray-100' : ''}`}
 											onClick={() => setMobileOpenCat(prev => (prev === 'material' ? null : 'material'))}
 											aria-expanded={mobileOpenCat === 'material'}
 										>
@@ -3130,7 +3130,7 @@ function LivePageInner() {
 									el: (
 										<div>
 											<button
-												className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'woodTexture' ? 'border-[#1a1a2e] bg-[#1a1a2e]/5' : ''}`}
+												className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'woodTexture' ? 'border-[#1a1a2e] bg-gray-100' : ''}`}
 												onClick={() => setMobileOpenCat(prev => (prev === 'woodTexture' ? null : 'woodTexture'))}
 												aria-expanded={mobileOpenCat === 'woodTexture'}
 											>
@@ -3163,7 +3163,7 @@ function LivePageInner() {
 									el: (
 										<div>
 											<button
-												className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'woodColor' ? 'border-[#1a1a2e] bg-[#1a1a2e]/5' : ''}`}
+												className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'woodColor' ? 'border-[#1a1a2e] bg-gray-100' : ''}`}
 												onClick={() => setMobileOpenCat(prev => (prev === 'woodColor' ? null : 'woodColor'))}
 												aria-expanded={mobileOpenCat === 'woodColor'}
 											>
@@ -3215,7 +3215,7 @@ function LivePageInner() {
 									el: (
 										<div>
 											<button
-												className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'nonWoodTexture' ? 'border-[#1a1a2e] bg-[#1a1a2e]/5' : ''}`}
+												className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'nonWoodTexture' ? 'border-[#1a1a2e] bg-gray-100' : ''}`}
 												onClick={() => setMobileOpenCat(prev => (prev === 'nonWoodTexture' ? null : 'nonWoodTexture'))}
 												aria-expanded={mobileOpenCat === 'nonWoodTexture'}
 											>
@@ -3258,7 +3258,7 @@ function LivePageInner() {
 								el: (
 									<div>
 										<button
-											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'path' ? 'border-[#1a1a2e] bg-[#1a1a2e]/5' : ''}`}
+											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'path' ? 'border-[#1a1a2e] bg-gray-100' : ''}`}
 											onClick={() => setMobileOpenCat(prev => (prev === 'path' ? null : 'path'))}
 											aria-expanded={mobileOpenCat === 'path'}
 										>
@@ -3382,7 +3382,7 @@ function LivePageInner() {
 								el: (
 									<div>
 										<button
-											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'railing' ? 'border-[#1a1a2e] bg-[#1a1a2e]/5' : ''}`}
+											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'railing' ? 'border-[#1a1a2e] bg-gray-100' : ''}`}
 											onClick={() => setMobileOpenCat(prev => (prev === 'railing' ? null : 'railing'))}
 											aria-expanded={mobileOpenCat === 'railing'}
 										>
@@ -3448,7 +3448,7 @@ function LivePageInner() {
 					<div className="hidden lg:block relative border p-4 bg-white rounded-xl shadow-sm space-y-5 flex flex-col min-h-[70vh]">
 						<div>
 							<button
-								className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50 transition-all duration-150 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${desktopOpenCat === 'box' ? 'border-[#1a1a2e] bg-[#1a1a2e]/5' : ''}`}
+								className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50 transition-all duration-150 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${desktopOpenCat === 'box' ? 'border-[#1a1a2e] bg-gray-100' : ''}`}
 								onClick={() => setDesktopOpenCat(prev => (prev === 'box' ? null : 'box'))}
 								aria-expanded={desktopOpenCat === 'box'}
 							>
@@ -3476,7 +3476,7 @@ function LivePageInner() {
 						</div>
 						<div>
 							<button
-								className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50 transition-all duration-150 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${desktopOpenCat === 'material' ? 'border-[#1a1a2e] bg-[#1a1a2e]/5' : ''}`}
+								className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50 transition-all duration-150 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${desktopOpenCat === 'material' ? 'border-[#1a1a2e] bg-gray-100' : ''}`}
 								onClick={() => setDesktopOpenCat(prev => (prev === 'material' ? null : 'material'))}
 								aria-expanded={desktopOpenCat === 'material'}
 							>
@@ -3504,7 +3504,7 @@ function LivePageInner() {
 							<>
 								<div>
 									<button
-										className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50 transition-all duration-150 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${desktopOpenCat === 'woodTexture' ? 'border-[#1a1a2e] bg-[#1a1a2e]/5' : ''}`}
+										className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50 transition-all duration-150 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${desktopOpenCat === 'woodTexture' ? 'border-[#1a1a2e] bg-gray-100' : ''}`}
 										onClick={() => setDesktopOpenCat(prev => (prev === 'woodTexture' ? null : 'woodTexture'))}
 										aria-expanded={desktopOpenCat === 'woodTexture'}
 									>
@@ -3532,7 +3532,7 @@ function LivePageInner() {
 								</div>
 								<div>
 									<button
-										className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50 transition-all duration-150 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${desktopOpenCat === 'woodColor' ? 'border-[#1a1a2e] bg-[#1a1a2e]/5' : ''}`}
+										className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50 transition-all duration-150 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${desktopOpenCat === 'woodColor' ? 'border-[#1a1a2e] bg-gray-100' : ''}`}
 										onClick={() => setDesktopOpenCat(prev => (prev === 'woodColor' ? null : 'woodColor'))}
 										aria-expanded={desktopOpenCat === 'woodColor'}
 									>
@@ -3579,7 +3579,7 @@ function LivePageInner() {
 						{activeMaterial !== 'wood' && (
 							<div className="mt-3">
 								<button
-									className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50 transition-all duration-150 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${desktopOpenCat === 'nonWoodTexture' ? 'border-[#1a1a2e] bg-[#1a1a2e]/5' : ''}`}
+									className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50 transition-all duration-150 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${desktopOpenCat === 'nonWoodTexture' ? 'border-[#1a1a2e] bg-gray-100' : ''}`}
 									onClick={() => setDesktopOpenCat(prev => (prev === 'nonWoodTexture' ? null : 'nonWoodTexture'))}
 									aria-expanded={desktopOpenCat === 'nonWoodTexture'}
 								>
@@ -3617,7 +3617,7 @@ function LivePageInner() {
 							{/* מסלול */}
 							<div>
 								<button
-									className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50 transition-all duration-150 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${desktopOpenCat === 'path' ? 'border-[#1a1a2e] bg-[#1a1a2e]/5' : ''}`}
+									className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50 transition-all duration-150 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${desktopOpenCat === 'path' ? 'border-[#1a1a2e] bg-gray-100' : ''}`}
 									onClick={() => setDesktopOpenCat(prev => (prev === 'path' ? null : 'path'))}
 									aria-expanded={desktopOpenCat === 'path'}
 								>
@@ -3657,7 +3657,7 @@ function LivePageInner() {
 							{/* מעקה */}
 							<div>
 								<button
-									className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50 transition-all duration-150 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${desktopOpenCat === 'railing' ? 'border-[#1a1a2e] bg-[#1a1a2e]/5' : ''}`}
+									className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50 transition-all duration-150 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${desktopOpenCat === 'railing' ? 'border-[#1a1a2e] bg-gray-100' : ''}`}
 									onClick={() => setDesktopOpenCat(prev => (prev === 'railing' ? null : 'railing'))}
 									aria-expanded={desktopOpenCat === 'railing'}
 								>

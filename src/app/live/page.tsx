@@ -3311,14 +3311,26 @@ function LivePageInner() {
 								key: 'railing',
 								el: (
 									<div>
-										<button
-											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'railing' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
-											onClick={() => setMobileOpenCat(prev => (prev === 'railing' ? null : 'railing'))}
-											aria-expanded={mobileOpenCat === 'railing'}
-										>
-											<span className="font-medium">מעקה</span>
-											<span className="text-sm text-gray-600">{formatRailing()}</span>
-										</button>
+										<div className="flex items-center gap-2">
+											<button
+												className={`flex-1 w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'railing' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
+												onClick={() => setMobileOpenCat(prev => (prev === 'railing' ? null : 'railing'))}
+												aria-expanded={mobileOpenCat === 'railing'}
+											>
+												<span className="font-medium">מעקה</span>
+												<span className="text-sm text-gray-600">{formatRailing()}</span>
+											</button>
+											{railing !== 'none' && (
+												<button
+													type="button"
+													className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100"
+													onClick={() => setMasterSide(prev => (prev === 'left' ? 'right' : 'left'))}
+													title="החלף צד"
+												>
+													החלף צד
+												</button>
+											)}
+										</div>
 										{mobileOpenCat === 'railing' && (
 											<div className="p-3 bg-white border border-t-0 rounded-b-md space-y-3">
 												<div className="flex flex-wrap gap-2">
@@ -3343,17 +3355,6 @@ function LivePageInner() {
 															{opt.label}
 														</button>
 													))}
-												</div>
-
-												{/* החלפת צד מהירה לכל המדרגות – מובייל */}
-												<div className="pt-2 border-t flex items-center justify-center">
-													<button
-														className="px-4 py-2 text-sm rounded-full border bg-white hover:bg-gray-100"
-														onClick={() => setMasterSide(prev => (prev === 'left' ? 'right' : 'left'))}
-														title="החלף צד לכל המדרגות"
-													>
-														החלף צד
-													</button>
 												</div>
 
 												{/* פרטים לפי סוג מעקה – כמו בדסקטופ */}

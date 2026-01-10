@@ -3865,7 +3865,24 @@ function LivePageInner() {
 								</div>
 							</div>
 							<div className="leading-relaxed mb-1 text-center text-[1.35rem] md:text-[1.6875rem]">
-								<span className="font-semibold">תיאום פגישה בשטח</span>
+								<span className="font-semibold inline-flex items-center gap-2">
+									<span>תיאום פגישה בשטח</span>
+									<svg
+										className="w-5 h-5"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										strokeWidth="2"
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										aria-hidden="true"
+									>
+										<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+										<line x1="16" y1="2" x2="16" y2="6"></line>
+										<line x1="8" y1="2" x2="8" y2="6"></line>
+										<line x1="3" y1="10" x2="21" y2="10"></line>
+									</svg>
+								</span>
 							</div>
 							<div className="text-[#0f1424]/80 leading-relaxed mb-2 text-center text-base md:text-lg">
 								מלאו את הפרטים וניצור קשר

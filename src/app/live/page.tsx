@@ -1537,7 +1537,7 @@ function LivePageInner() {
 			setMobileCanvasH(h);
 			// מדידת גובה כותרת ראשית (header) כדי להצמיד את הקנבס מתחתיה
 			try {
-				const hdr = document.querySelector('header');
+				const hdr = document.querySelector('.ascenso-sticky-header') || document.querySelector('header');
 				if (hdr) {
 					const rect = (hdr as HTMLElement).getBoundingClientRect();
 					setMobileHeaderH(Math.round(rect.height));

@@ -2727,9 +2727,9 @@ function LivePageInner() {
 					</div>
 					{/* ספייסר למובייל משמר גובה הקנבס הקבוע כדי שהתוכן יתחיל מתחתיו */}
 					<div className="block lg:hidden w-full" style={{ height: mobileCanvasH || undefined }} />
-					{/* פירוט צבעים ומסלול – מוצג רק אם נבחר מעקה */}
+					{/* פירוט צבעים ומסלול – מוצג רק אם נבחר מעקה (מובייל מוסתר לשמירת ריווח מול הקטגוריה הראשונה) */}
 					{railing !== 'none' && (
-						<div className="mt-3 border rounded bg-white">
+						<div className="hidden lg:block mt-3 border rounded bg-white">
 							{railing === 'glass' ? (
 								<div className="px-4 py-3 border-b">
 									<div className="text-sm font-semibold text-center">זכוכית 8+8</div>

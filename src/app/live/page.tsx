@@ -3762,16 +3762,16 @@ function LivePageInner() {
 		</main>
 
 		{/* מובייל: סיכום קבוע בתחתית — נשאר בזמן גלילה */}
-		<div className="lg:hidden fixed inset-x-0 bottom-0 z-40 border-t bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 shadow-xl">
-			<div className="max-w-7xl mx-auto px-5 py-3.5 flex items-center justify-between gap-4">
+		<div className="lg:hidden fixed inset-x-0 bottom-0 z-40 border-t bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 shadow-lg">
+			<div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
 				<button
 					onClick={openBooking}
 					aria-label="פתח טופס תיאום פגישה"
-					className="inline-flex items-center gap-3 rounded-md bg-[#1a1a2e] text-white px-5 py-3 text-lg font-semibold shadow-lg hover:opacity-95 cursor-pointer"
+					className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-4 py-2 text-base font-semibold shadow-md hover:opacity-95 cursor-pointer"
 				>
 					<span>תיאום פגישה</span>
 				</button>
-				<div className="text-2xl font-extrabold text-[#1a1a2e]">
+				<div className="text-lg font-bold text-[#1a1a2e]">
 					<span>{`סה\"כ `}₪{total.toLocaleString('he-IL')}</span>
 				</div>
 			</div>

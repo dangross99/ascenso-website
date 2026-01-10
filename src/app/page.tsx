@@ -736,7 +736,7 @@ export default function Home() {
               </>
             )}
           </div>
-          <div className="text-center mt-10 md:mt-8" dir="rtl">
+          <div className="text-center mt-8 md:mt-8" dir="rtl">
             <a
               href="/materials"
               className="inline-block px-14 py-3.5 bg-[#1a1a2e] text-white text-sm md:text-base font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90"
@@ -748,7 +748,7 @@ export default function Home() {
       </section>
 
       {/* High-end Materials Section – “swatch” cards with overlay text */}
-      <section className="w-full py-4 md:py-8" dir="rtl">
+      <section className="w-full mt-8 md:mt-0 py-4 md:py-8" dir="rtl">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-2 md:gap-x-20 md:gap-y-12 lg:gap-x-24 lg:gap-y-16 xl:gap-x-28 xl:gap-y-20">
             {/* Stone */}

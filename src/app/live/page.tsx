@@ -3417,8 +3417,8 @@ function LivePageInner() {
 
 							// סדר קבוע: Box -> Material -> (WoodTexture, WoodColor | NonWoodTexture) -> Path -> Railing
 							const fixedOrder: Cat[] = activeMaterial === 'wood'
-								? ['box','material','woodTexture','woodColor','path','railing']
-								: ['box','material','nonWoodTexture','path','railing'];
+								? ['path','box','material','woodTexture','woodColor','railing']
+								: ['path','box','material','nonWoodTexture','railing'];
 							const mapNodes = new Map(nodes.map(n => [n.key, n.el]));
 							return fixedOrder
 								.filter(k => mapNodes.has(k))
@@ -3615,7 +3615,7 @@ function LivePageInner() {
 
 						{/* מסלול ומעקה כאקורדיון – מופרדים כרכיבים עצמאיים לשמירת ריווח אחיד */}
 							{/* מסלול */}
-							<div>
+							<div className="order-first">
 								<button
 									className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50 transition-all duration-150 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${desktopOpenCat === 'path' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
 									onClick={() => setDesktopOpenCat(prev => (prev === 'path' ? null : 'path'))}

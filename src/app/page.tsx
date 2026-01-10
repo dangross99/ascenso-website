@@ -785,7 +785,7 @@ export default function Home() {
             <div className="relative flex flex-col gap-1">
               <a href="/materials?cat=wood" className="block">
                 <img
-                  src={encodeURI("/images/ChatGPT Image Jan 10, 2026, 10_26_18 PM.png")}
+                  src={encodeURI("/images/ChatGPT Image Jan 10, 2026, 10_43_42 PM.png")}
                   alt="עץ טבעי"
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent md:scale-[1.4] md:origin-center"
                 />

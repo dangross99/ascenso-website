@@ -1697,115 +1697,7 @@ function LivePageInner() {
 		return [{ kind: 'straight', steps }];
 	});
 
-	// מובייל: באנר שחזור מצב בריענון (לאחר שיש pathSegments)
-	const [mobileRestorePrompt, setMobileRestorePrompt] = React.useState(false);
-	const lastStateRef = React.useRef<any>(null);
-	const hasCheckedRestoreRef = React.useRef(false);
-	React.useEffect(() => {
-		// שמירת מצב אחרון כל שינוי משמעותי
-		try {
-			// הימנע משמירה לפני שבדקנו אם לשחזר (כדי לא למחוק מצב קודם ברענון)
-			if (!hasCheckedRestoreRef.current) return;
-			const state = buildSimulationState();
-			localStorage.setItem('ascenso:live:last', JSON.stringify({ t: Date.now(), state }));
-		} catch {}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [
-		box, activeMaterial, activeModelId, activeTexId, activeColor, shape, steps, pathSegments, railing, glassTone,
-		stepRailing, landingRailing, stepRailingSide, landingRailingSide, railingMetalId, railingMetalSolid,
-		cableId, cableColor, cableSpanMode, stepCableSpanMode, landingCableSpanMode
-	]);
-	React.useEffect(() => {
-		// במובייל בלבד וכשאין קישור sim: הצע לשחזר מצב קודם אם קיים
-		try {
-			if (typeof window === 'undefined') return;
-			if (window.innerWidth >= 1024) return;
-			// זיהוי רענון
-			let isReload = false;
-			try {
-				const nav = (performance.getEntriesByType && (performance.getEntriesByType('navigation') as any)[0]) as any;
-				isReload = !!nav && nav.type === 'reload';
-			} catch {}
-			// fallback ישן
-			try {
-				// @ts-ignore
-				if (performance && performance.navigation && performance.navigation.type === 1) isReload = true;
-			} catch {}
-			const simId = search.get('sim');
-			if (simId) return;
-			const raw = localStorage.getItem('ascenso:live:last');
-			if (!raw) { hasCheckedRestoreRef.current = true; return; }
-			const parsed = JSON.parse(raw || 'null');
-			if (!parsed?.state) { hasCheckedRestoreRef.current = true; return; }
-			lastStateRef.current = parsed.state;
-			// אם מדובר ברענון ויש מצב קודם – הצג באנר שחזור
-			if (isReload) {
-				setMobileRestorePrompt(true);
-			}
-		} catch {}
-		hasCheckedRestoreRef.current = true;
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-	const applyLastState = React.useCallback(() => {
-		const s = lastStateRef.current;
-		if (!s) { setMobileRestorePrompt(false); return; }
-		try {
-			if (s.box) setBox(s.box);
-			if (s.activeMaterial) setActiveMaterial(s.activeMaterial);
-			if (s.activeModelId) setActiveModelId(s.activeModelId);
-			if (s.activeTexId) setActiveTexId(s.activeTexId);
-			if (s.activeColor) setActiveColor(s.activeColor);
-			if (s.shape) setShape(s.shape);
-			if (Array.isArray(s.pathSegments)) setPathSegments(s.pathSegments);
-			if (typeof s.steps === 'number') setSteps(Math.min(25, Math.max(5, s.steps)));
-			if (s.railing) setRailing(s.railing);
-			if (s.glassTone) setGlassTone(s.glassTone);
-			if (Array.isArray(s.stepRailing)) setStepRailing(s.stepRailing);
-			if (Array.isArray(s.landingRailing)) setLandingRailing(s.landingRailing);
-			if (Array.isArray(s.stepRailingSide)) setStepRailingSide(s.stepRailingSide);
-			if (Array.isArray(s.landingRailingSide)) setLandingRailingSide(s.landingRailingSide);
-			setRailingMetalId(s.railingMetalId ?? null);
-			setRailingMetalSolid(s.railingMetalSolid ?? null);
-			setCableId(s.cableId ?? null);
-			setCableColor(s.cableColor ?? null);
-			setCableSpanMode(s.cableSpanMode ?? 'tread');
-			if (Array.isArray(s.stepCableSpanMode)) setStepCableSpanMode(s.stepCableSpanMode);
-			if (Array.isArray(s.landingCableSpanMode)) setLandingCableSpanMode(s.landingCableSpanMode);
-		} catch {}
-		setMobileRestorePrompt(false);
-	}, [
-		setBox, setActiveMaterial, setActiveModelId, setActiveTexId, setActiveColor, setShape, setPathSegments, setSteps, setRailing,
-		setGlassTone, setStepRailing, setLandingRailing, setStepRailingSide, setLandingRailingSide, setRailingMetalId, setRailingMetalSolid,
-		setCableId, setCableColor, setCableSpanMode, setStepCableSpanMode, setLandingCableSpanMode
-	]);
-	const resetToFresh = React.useCallback(() => {
-		try {
-			// איפוס לבסיס
-			setBox('thick');
-			setActiveMaterial('wood');
-			setActiveModelId(null);
-			setActiveTexId(null);
-			setActiveColor('oak');
-			setShape('straight');
-			setSteps(15);
-			setPathSegments([{ kind: 'straight', steps: 15 }]);
-			setRailing('none');
-			setGlassTone('extra');
-			setStepRailing([]);
-			setLandingRailing([]);
-			setStepRailingSide([]);
-			setLandingRailingSide([]);
-			setRailingMetalId(null);
-			setRailingMetalSolid(null);
-			setCableId(null);
-			setCableColor(null);
-			setCableSpanMode('tread');
-			setStepCableSpanMode([]);
-			setLandingCableSpanMode([]);
-			setMobileOpenCat(null);
-		} catch {}
-		setMobileRestorePrompt(false);
-	}, []);
+	// הוסר: מנגנון "שחזור מצב" למובייל כולל סטייט, שמירה, ושחזורים
 
 	// עדכון ברירת מחדל של מצב מעקה לכל מדרגה לפי המסלול והבחירה הגלובלית
 	const stepsTotalForPath = React.useMemo(() => {
@@ -3032,30 +2924,6 @@ function LivePageInner() {
 				<aside ref={assignAsideRef} className="lg:col-span-4">
 					{/* מובייל: אקורדיון קטגוריות בחירה */}
 					<div className="lg:hidden flex flex-col gap-3">
-						{/* באנר שחזור מצב (מובייל, בריענון) */}
-						{mobileRestorePrompt && (
-							<div className="order-first bg-[#FFF8E1] border border-[#FDE68A] rounded-md px-3 py-2 flex items-center justify-between">
-								<div className="text-xs text-[#1a1a2e]">
-									לשחזר את הבחירות הקודמות או להתחיל מחדש?
-								</div>
-								<div className="flex items-center gap-2">
-									<button
-										type="button"
-										onClick={applyLastState}
-										className="text-xs px-3 py-1 rounded-md bg-[#1a1a2e] text-white"
-									>
-										שחזר
-									</button>
-									<button
-										type="button"
-										onClick={resetToFresh}
-										className="text-xs px-3 py-1 rounded-md bg-white text-[#1a1a2e] border border-[#1a1a2e]/50"
-									>
-										התחל מחדש
-									</button>
-								</div>
-							</div>
-						)}
 
 						{/* באנר עזרה למובייל – נפתח/נסגר, ניתן לסגירה קבועה */}
 						{!mobileHelpDismissed && (

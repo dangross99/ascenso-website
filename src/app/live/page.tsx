@@ -1544,8 +1544,8 @@ function LivePageInner() {
 					} catch {}
 					return window.innerWidth;
 				})();
-				// יחס 5/4 → גובה = רוחב * 4/5
-				const h = Math.round((w * 4) / 5);
+				// יחס 16/9 → גובה = רוחב * 9/16 (נמוך יותר ממובייל הקודם)
+				const h = Math.round((w * 9) / 16);
 				setMobileCanvasH(h);
 				// מדידת גובה כותרת ראשית (header) כדי להצמיד את הקנבס מתחתיה
 				try {
@@ -2548,7 +2548,7 @@ function LivePageInner() {
 			<main className="max-w-7xl mx-auto px-4 lg:px-1 py-6" dir="rtl">
 			<div className="grid grid-cols-1 lg:grid-cols-12 gap-0 lg:gap-10">
 				<section className="lg:col-span-8">
-					<div ref={canvasWrapRef} className="w-full aspect-[5/4] lg:aspect-[16/9] bg-white border overflow-hidden rounded fixed inset-x-0 z-30 lg:static" style={{ height: mobileCanvasH || undefined, top: mobileHeaderH || 0 }}>
+					<div ref={canvasWrapRef} className="w-full aspect-[16/9] lg:aspect-[16/9] bg-white border overflow-hidden rounded fixed inset-x-0 z-30 lg:static" style={{ height: mobileCanvasH || undefined, top: mobileHeaderH || 0 }}>
 						<Canvas
 							shadows={false}
 							flat

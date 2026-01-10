@@ -2536,7 +2536,7 @@ function LivePageInner() {
 		<>
 			<div className="min-h-screen w-full bg-[#EFEFEF]">
 			<main className="max-w-7xl mx-auto px-4 lg:px-1 py-6" dir="rtl">
-			<div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10">
+			<div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-10">
 				<section className="lg:col-span-8">
 					<div ref={canvasWrapRef} className="w-full aspect-[5/4] lg:aspect-[16/9] bg-white border overflow-hidden rounded fixed inset-x-0 z-30 lg:static" style={{ height: mobileCanvasH || undefined, top: mobileHeaderH || 0 }}>
 						<Canvas
@@ -2727,8 +2727,6 @@ function LivePageInner() {
 					</div>
 					{/* ספייסר למובייל משמר גובה הקנבס הקבוע כדי שהתוכן יתחיל מתחתיו */}
 					<div className="block lg:hidden w-full" style={{ height: mobileCanvasH || undefined }} />
-					{/* מרווח קטן בין סוף הקנבס לתחילת הקטגוריות (מובייל) */}
-					<div className="block lg:hidden h-3" />
 					{/* פירוט צבעים ומסלול – מוצג רק אם נבחר מעקה */}
 					{railing !== 'none' && (
 						<div className="mt-3 border rounded bg-white">
@@ -3764,16 +3762,16 @@ function LivePageInner() {
 		</main>
 
 		{/* מובייל: סיכום קבוע בתחתית — נשאר בזמן גלילה */}
-		<div className="lg:hidden fixed inset-x-0 bottom-0 z-40 border-t bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
-			<div className="max-w-7xl mx-auto px-3 py-1 flex items-center justify-between gap-2">
+		<div className="lg:hidden fixed inset-x-0 bottom-0 z-40 border-t bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 shadow-xl">
+			<div className="max-w-7xl mx-auto px-5 py-3.5 flex items-center justify-between gap-4">
 				<button
 					onClick={openBooking}
 					aria-label="פתח טופס תיאום פגישה"
-					className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-3 py-1.5 font-semibold shadow-sm hover:opacity-95 cursor-pointer"
+					className="inline-flex items-center gap-3 rounded-md bg-[#1a1a2e] text-white px-5 py-3 text-lg font-semibold shadow-lg hover:opacity-95 cursor-pointer"
 				>
 					<span>תיאום פגישה</span>
 				</button>
-				<div className="text-base font-semibold text-[#1a1a2e]">
+				<div className="text-2xl font-extrabold text-[#1a1a2e]">
 					<span>{`סה\"כ `}₪{total.toLocaleString('he-IL')}</span>
 				</div>
 			</div>

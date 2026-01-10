@@ -804,10 +804,10 @@ export default function Home() {
                 <img
                   src={encodeURI("/images/ChatGPT Image Jan 10, 2026, 11_01_37 PM.png")}
                   alt="עץ טבעי"
-                  className="w-full h-[414px] md:h-[598px] object-contain bg-transparent translate-y-6 md:translate-y-0 md:scale-[1.4] md:origin-center"
+                  className="w-full h-[414px] md:h-[598px] object-contain bg-transparent translate-y-6 md:translate-y-0 md:scale-[1.4] md:origin-center lg:-translate-y-6"
                 />
               </a>
-              <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-32 lg:top-32 z-10 px-1 text-center">
+              <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-32 lg:top-40 z-10 px-1 text-center">
                 <h3 className="text-lg md:text-2xl font-semibold text-[#1a1a2e] tracking-tight">עץ (WOOD)</h3>
                 <p className="text-base md:text-lg text-gray-700">המפגש שבין החמימות הגולמית של העץ לבין איכות בלתי מתפשרת. אנו משתמשים בטקסטורות עץ שנבחרו בקפידה ליצירת הרמוניה יומיומית, המשלבת בין המגע הטבעי לבין עיצוב על זמני.</p>
                 <div className="mt-1 flex items-center justify-center gap-3 text-[#1a1a2e] text-sm md:text-base w-max mx-auto">

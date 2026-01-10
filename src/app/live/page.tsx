@@ -3445,7 +3445,7 @@ function LivePageInner() {
 					</div>
 
 					{/* דסקטופ: הפאנל המקורי */}
-					<div className="hidden lg:block relative border p-4 bg-white rounded-xl shadow-sm space-y-5 flex flex-col min-h-[70vh]">
+					<div className="hidden lg:flex relative border p-4 bg-white rounded-xl shadow-sm space-y-5 flex-col min-h-[70vh]">
 						<div>
 							<button
 								className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50 transition-all duration-150 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${desktopOpenCat === 'box' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}

@@ -623,7 +623,7 @@ export default function Home() {
             {/* Desktop: paragraph + CTA on the same row */}
             <div className="hidden lg:flex items-center gap-12">
               <p
-                className="text-gray-100 text-3xl"
+                className="text-gray-100 text-4xl"
                 style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
               >
                 בחרו צורה, טקסטורה ומעקה – וראו הכל בהדמייה LIVE עם חישוב מחיר משוער

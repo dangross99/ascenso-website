@@ -3394,7 +3394,6 @@ function LivePageInner() {
 																	style={{ backgroundColor: sw.color, borderColor: sw.border }}
 																/>
 															))}
-															<span className="text-[11px] text-gray-600">{glassTone === 'extra' ? 'שקוף אקסטרה קליר' : glassTone === 'smoked' ? 'מושחר' : 'ברונזה'}</span>
 														</div>
 													</div>
 												)}
@@ -3413,9 +3412,6 @@ function LivePageInner() {
 																	style={{ backgroundImage: opt.image ? `url("${encodeURI(opt.image)}")` : undefined, borderColor: '#ddd' }}
 																/>
 															))}
-															<span className="text-[11px] text-gray-600">
-																{cableOptions.find(c => c.id === cableId)?.name || (cableOptions[0]?.name ?? 'בחר דגם כבל')}
-															</span>
 														</div>
 													</div>
 												)}
@@ -3450,11 +3446,6 @@ function LivePageInner() {
 																	style={{ backgroundImage: opt.images?.[0] ? `url("${encodeURI(opt.images[0])}")` : undefined, borderColor: '#ddd' }}
 																/>
 															))}
-															<span className="text-[11px] text-gray-600">
-																{railingMetalSolid === '#111111' ? 'שחור' :
-																 railingMetalSolid === '#F5F5F5' ? 'לבן' :
-																 metalRailingOptions.find(m => m.id === railingMetalId)?.name || 'בחר גוון'}
-															</span>
 														</div>
 													</div>
 												)}

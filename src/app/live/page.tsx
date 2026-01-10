@@ -1531,18 +1531,25 @@ function LivePageInner() {
 	React.useLayoutEffect(() => {
 		const update = () => {
 			if (typeof window === 'undefined') return;
-			const w = window.innerWidth;
-			// יחס 5/4 → גובה = רוחב * 4/5
-			const h = Math.round((w * 4) / 5);
-			setMobileCanvasH(h);
-			// מדידת גובה כותרת ראשית (header) כדי להצמיד את הקנבס מתחתיה
-			try {
-				const hdr = document.querySelector('.ascenso-sticky-header') || document.querySelector('header');
-				if (hdr) {
-					const rect = (hdr as HTMLElement).getBoundingClientRect();
-					setMobileHeaderH(Math.round(rect.height));
-				}
-			} catch {}
+			const isMobile = window.innerWidth < 1024;
+			if (isMobile) {
+				const w = window.innerWidth;
+				// יחס 5/4 → גובה = רוחב * 4/5
+				const h = Math.round((w * 4) / 5);
+				setMobileCanvasH(h);
+				// מדידת גובה כותרת ראשית (header) כדי להצמיד את הקנבס מתחתיה
+				try {
+					const hdr = document.querySelector('.ascenso-sticky-header') || document.querySelector('header');
+					if (hdr) {
+						const rect = (hdr as HTMLElement).getBoundingClientRect();
+						setMobileHeaderH(Math.round(rect.height));
+					}
+				} catch {}
+			} else {
+				// בדסקטופ – ביטול אילוצי מובייל
+				setMobileCanvasH(0);
+				setMobileHeaderH(0);
+			}
 		};
 		update();
 		window.addEventListener('resize', update);

@@ -1527,14 +1527,22 @@ function LivePageInner() {
 	}, []);
 	// גובה קנבס במובייל (יחס 5/4) עבור פריסת fixed + ספייסר תואם
 	const [mobileCanvasH, setMobileCanvasH] = React.useState<number>(0);
+	const [mobileHeaderH, setMobileHeaderH] = React.useState<number>(0);
 	React.useLayoutEffect(() => {
 		const update = () => {
-			const el = canvasWrapRef.current;
-			if (!el) return;
-			// מדוד רוחב אמיתי של המכל
-			const w = el.getBoundingClientRect().width || window.innerWidth;
-			const h = Math.round((w * 4) / 5); // יחס 5/4
+			if (typeof window === 'undefined') return;
+			const w = window.innerWidth;
+			// יחס 5/4 → גובה = רוחב * 4/5
+			const h = Math.round((w * 4) / 5);
 			setMobileCanvasH(h);
+			// מדידת גובה כותרת ראשית (header) כדי להצמיד את הקנבס מתחתיה
+			try {
+				const hdr = document.querySelector('header');
+				if (hdr) {
+					const rect = (hdr as HTMLElement).getBoundingClientRect();
+					setMobileHeaderH(Math.round(rect.height));
+				}
+			} catch {}
 		};
 		update();
 		window.addEventListener('resize', update);
@@ -2523,7 +2531,7 @@ function LivePageInner() {
 			<main className="max-w-7xl mx-auto px-4 lg:px-1 py-6" dir="rtl">
 			<div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10">
 				<section className="lg:col-span-8">
-					<div ref={canvasWrapRef} className="relative w-full lg:aspect-[16/9] bg-white border overflow-hidden rounded fixed top-0 inset-x-0 z-30 lg:static" style={{ height: mobileCanvasH || undefined }}>
+					<div ref={canvasWrapRef} className="relative w-full aspect-[5/4] lg:aspect-[16/9] bg-white border overflow-hidden rounded fixed inset-x-0 z-30 lg:static" style={{ height: mobileCanvasH || undefined, top: mobileHeaderH || 0 }}>
 						<Canvas
 							shadows={false}
 							flat

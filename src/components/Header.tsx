@@ -484,6 +484,8 @@ const Header: React.FC = () => {
 
   return (
     <>
+      {/* Wrapper דביק/מקובע: במובייל בדף ההדמייה נהפוך ל-fixed, אחרת sticky */}
+      <div className={`ascenso-sticky-header ${usePathname() === '/live' ? 'fixed top-0 left-0 right-0 z-40 md:sticky md:top-0' : 'sticky top-0 z-40'}`}>
       {/* Top Bar */}
       <div className="w-full bg-[#1a1a2e] text-white text-xs">
         <div className="w-full px-0 md:pr-6 md:pl-0 py-2 md:py-1 flex items-center gap-3 flex-wrap justify-center md:justify-start" dir="rtl">
@@ -1381,6 +1383,7 @@ const Header: React.FC = () => {
           ))}
         </nav>
       </header>
+      </div>
 
       {/* Wishlist Modal */}
       {wishlistOpen && (

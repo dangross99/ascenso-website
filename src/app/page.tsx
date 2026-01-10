@@ -666,12 +666,12 @@ export default function Home() {
                     <a href="/materials" className="block group">
                     <div className="relative overflow-hidden aspect-[3/4] rounded-lg md:rounded-xl mb-3 md:mb-5 shadow-sm transition-transform duration-300 group-hover:scale-[1.03]">
                         {mat.images?.[0] ? (
-                          <Image
+                        <Image
                             src={mat.images[0]}
                             alt={mat.name}
-                            fill
+                          fill
                             className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
-                          />
+                        />
                         ) : (
                           <div className="w-full h-full bg-[#dcdcdc] animate-pulse" />
                         )}
@@ -685,12 +685,12 @@ export default function Home() {
                     <div className="flex-[0_0_45%] sm:flex-[0_0_28%] md:flex-[0_0_22%] lg:flex-[0_0_18%] pl-4 md:pl-8" key={`skeleton-${index}`}>
                       <div className="relative overflow-hidden aspect-[3/4] rounded-lg md:rounded-xl mb-3 md:mb-5 shadow-sm">
                         <div className="w-full h-full bg-[#dcdcdc] animate-pulse" />
+                        </div>
                       </div>
-                    </div>
                   ))
                 }
-              </div>
-            </div>
+                    </div>
+                  </div>
             {mounted && (
               <>
             <button
@@ -778,9 +778,9 @@ export default function Home() {
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 22s7-6.29 7-12a7 7 0 1 0-14 0c0 5.71 7 12 7 12Z" stroke="currentColor" strokeWidth="1.8"/><circle cx="12" cy="10" r="2.8" stroke="currentColor" strokeWidth="1.6"/></svg>
                     קולומביה
                   </span>
-                </div>
-              </div>
-            </div>
+        </div>
+          </div>
+        </div>
             {/* Wood */}
             <div className="relative flex flex-col gap-1">
               <a href="/materials?cat=wood" className="block">
@@ -800,7 +800,7 @@ export default function Home() {
                       <path d="M7 17C10 14 13 11 19 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
                     </svg>
                     טבע
-                  </span>
+                    </span>
                   <span className="inline-flex items-center gap-1">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                       <path d="M12 3l7 4v5c0 5-3.5 9-7 9s-7-4-7-9V7l7-4Z" stroke="currentColor" strokeWidth="1.8" />
@@ -808,9 +808,9 @@ export default function Home() {
                     </svg>
                     לכה בעמידות גבוהה
                   </span>
+                  </div>
+                  </div>
                 </div>
-              </div>
-            </div>
             {/* Marble / Natural Stone */}
             <div className="relative flex flex-col gap-1">
               <a href="/materials?cat=metal" className="block">
@@ -867,18 +867,18 @@ export default function Home() {
                   <div className="bg-white rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <span className="text-4xl md:text-5xl font-bold text-[#1a1a2e]">1</span>
-              </div>
+                      </div>
                     <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">בחירת דגם וטקסטורה</h3>
                     <p className="text-gray-700 leading-relaxed text-base">נכנסים להדמייה LIVE, בוחרים צורה, חומר ומעקה.</p>
                     
-              </div>
-            </div>
+                      </div>
+                    </div>
                 {/* Slide 2 */}
                 <div className="step-card snap-start flex-[0_0_100%] sm:flex-[0_0_100%] md:flex-[0_0_100%] lg:flex-[0_0_100%]">
                   <div className="bg-white rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <span className="text-4xl md:text-5xl font-bold text-[#1a1a2e]">2</span>
-              </div>
+                  </div>
                     <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">מחיר מיידי</h3>
                     <p className="text-gray-700 leading-relaxed text-base">רואים את המחיר מתעדכן בזמן אמת לפי הבחירות שלכם.</p>
                     
@@ -889,7 +889,7 @@ export default function Home() {
                   <div className="bg-white rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <span className="text-4xl md:text-5xl font-bold text-[#1a1a2e]">3</span>
-                    </div>
+          </div>
                     <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">תיאום מדידה בשטח</h3>
                     <p className="text-gray-700 leading-relaxed text-base">קובעים ביקור למדידה, התאמות וסגירת מפרט.</p>
                     
@@ -900,25 +900,25 @@ export default function Home() {
                   <div className="bg-white rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <span className="text-4xl md:text-5xl font-bold text-[#1a1a2e]">4</span>
-          </div>
+              </div>
                     <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">תכנון וייצור</h3>
                     <p className="text-gray-700 leading-relaxed text-base">מהנדס מלווה, תכנון מוקפד וייצור קפדני.</p>
                     
-          </div>
-        </div>
+              </div>
+            </div>
                 {/* Slide 5 */}
                 <div className="step-card snap-start flex-[0_0_100%] sm:flex-[0_0_100%] md:flex-[0_0_100%] lg:flex-[0_0_100%]">
                   <div className="bg-white rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
                     <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                       <span className="text-4xl md:text-5xl font-bold text-[#1a1a2e]">5</span>
-            </div>
+              </div>
                     <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">התקנה נקייה ומהירה</h3>
                     <p className="text-gray-700 leading-relaxed text-base">צוות התקנה מקצועי, עמידה בזמנים ותוצאה מושלמת.</p>
                     
               </div>
-                    </div>
-                  </div>
-                </div>
+            </div>
+          </div>
+          </div>
 
             {/* Desktop: straight row right-to-left */}
             <div className="hidden lg:block">
@@ -927,34 +927,34 @@ export default function Home() {
                 <div className="bg-white rounded-lg p-8 text-center min-h-[260px] flex flex-col justify-start" dir="rtl">
                   <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                     <span className="text-5xl font-bold text-[#1a1a2e]">1</span>
-                  </div>
+            </div>
                   <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">בחירת דגם וטקסטורה</h3>
                   <p className="text-gray-700 leading-relaxed text-base">נכנסים להדמייה LIVE, בוחרים צורה, חומר ומעקה.</p>
-                </div>
+              </div>
                 {/* 2 */}
                 <div className="bg-white rounded-lg p-8 text-center min-h-[260px] flex flex-col justify-start" dir="rtl">
                   <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                     <span className="text-5xl font-bold text-[#1a1a2e]">2</span>
-                  </div>
+                </div>
                   <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">מחיר מיידי</h3>
                   <p className="text-gray-700 leading-relaxed text-base">רואים את המחיר מתעדכן בזמן אמת לפי הבחירות שלכם.</p>
-                </div>
+                      </div>
                 {/* 3 */}
                 <div className="bg-white rounded-lg p-8 text-center min-h-[260px] flex flex-col justify-start" dir="rtl">
                   <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                     <span className="text-5xl font-bold text-[#1a1a2e]">3</span>
-                  </div>
+                    </div>
                   <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">תיאום מדידה בשטח</h3>
                   <p className="text-gray-700 leading-relaxed text-base">קובעים ביקור למדידה, התאמות וסגירת מפרט.</p>
-                </div>
+                      </div>
                 {/* 4 */}
                 <div className="bg-white rounded-lg p-8 text-center min-h-[260px] flex flex-col justify-start" dir="rtl">
                   <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
                     <span className="text-5xl font-bold text-[#1a1a2e]">4</span>
-                  </div>
+                    </div>
                   <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">תכנון וייצור</h3>
                   <p className="text-gray-700 leading-relaxed text-base">מהנדס מלווה, תכנון מוקפד וייצור קפדני.</p>
-                </div>
+                      </div>
                 {/* 5 */}
                 <div className="bg-white rounded-lg p-8 text-center min-h-[260px] flex flex-col justify-start" dir="rtl">
                   <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
@@ -962,9 +962,9 @@ export default function Home() {
                   </div>
                   <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">התקנה נקייה ומהירה</h3>
                   <p className="text-gray-700 leading-relaxed text-base">צוות התקנה מקצועי, עמידה בזמנים ותוצאה מושלמת.</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
             {/* Dots pagination */}
             <div className="flex items-center justify-center gap-3 mt-6 lg:hidden">
@@ -975,7 +975,7 @@ export default function Home() {
                   className={`w-2.5 h-2.5 rounded-full border border-[#1a1a2e] ${i === stepsIndex ? 'bg-[#1a1a2e]' : 'bg-transparent'} transition-colors`}
                   aria-label={`Go to slide ${i + 1}`}
                 />
-              ))}
+                    ))}
                 </div>
 
             <div className="text-center mt-10">
@@ -1008,22 +1008,22 @@ export default function Home() {
             <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4 select-none">
               <div className="text-white/85 text-xs md:text-sm mb-1">
                 מערכות כבלים 8 מ"מ בציפוי PVD
-              </div>
+                      </div>
               <div className="text-white font-prosto tracking-[0.1em] leading-none text-4xl md:text-7xl lg:text-8xl">
                 OFF 10%
-              </div>
+                        </div>
               <div className="text-white/85 text-xs md:text-sm mt-1">
                 בתוקף עד סוף חודש פברואר
-              </div>
+                      </div>
               <a
                 href="/live"
                 className="mt-3 md:mt-5 inline-block px-14 py-3.5 rounded-md bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-widest transition-colors duration-300 hover:bg-white/95"
               >
                 התחל הזמנה
               </a>
-            </div>
-          </div>
-        </div>
+                    </div>
+                  </div>
+              </div>
       </section>
 
       {/* 6. תלת‑ממד – סקירה קצרה (במיקום ובצבע הרקע הקודמים) */}
@@ -1045,7 +1045,7 @@ export default function Home() {
                     enableZoom={false}
                     rotateSpeed={0.6}
                     target={[0, 1.1, 0.5]}
-                  />
+                />
                 </Canvas>
                 {show3DHint && (
                   <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
@@ -1054,7 +1054,7 @@ export default function Home() {
                       onClick={() => setShow3DHint(false)}
                       className="pointer-events-auto w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#1a1a2e]/85 text-white shadow-lg hover:bg-[#1a1a2e] transition-colors flex items-center justify-center"
                       aria-label="לחץ כדי להתחיל לסובב"
-                    >
+            >
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <path d="M12 6v3l4-4-4-4v3C6.48 4 2 8.48 2 14c0 2.08.64 4 1.73 5.59l1.46-1.46A7.94 7.94 0 0 1 4 14c0-4.42 3.58-8 8-8Zm8.27-1.59L18.81 5.87A7.94 7.94 0 0 1 20 14c0 4.42-3.58 8-8 8v-3l-4 4 4 4v-3c5.52 0 10-4.48 10-10 0-2.08-.64-4-1.73-5.59Z" fill="currentColor"/>
               </svg>

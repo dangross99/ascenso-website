@@ -3346,20 +3346,14 @@ function LivePageInner() {
 												</div>
 
 												{/* החלפת צד מהירה לכל המדרגות – מובייל */}
-												<div className="pt-2 border-t flex items-center justify-between">
-													<span className="text-sm">
-														צד נוכחי: {globalRailingSide === 'right' ? 'ימין' : 'שמאל'}
-													</span>
+												<div className="pt-2 border-t flex items-center justify-center">
 													<button
-														className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100"
+														className="px-4 py-2 text-sm rounded-full border bg-white hover:bg-gray-100"
 														onClick={() => setMasterSide(prev => (prev === 'left' ? 'right' : 'left'))}
 														title="החלף צד לכל המדרגות"
 													>
 														החלף צד
 													</button>
-												</div>
-												<div className="text-[11px] text-gray-500 -mt-1">
-													ההחלפה חלה על כל המדרגות ופודסטים ישרים.
 												</div>
 
 												{/* פרטים לפי סוג מעקה – כמו בדסקטופ */}

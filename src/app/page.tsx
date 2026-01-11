@@ -829,15 +829,15 @@ export default function Home() {
                   </div>
                 </div>
             {/* Marble / Natural Stone */}
-            <div className="relative flex flex-col gap-1 lg:col-start-2 lg:-mt-96 lg:z-50">
+            <div className="relative flex flex-col gap-1 lg:col-start-2 lg:-mt-[32rem] lg:z-50">
               <a href="/materials?cat=metal" className="block">
                 <img
                   src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 05_44_10 PM.png")}
                   alt="מתכת"
-                  className="w-full h-[414px] md:h-[598px] object-contain bg-transparent translate-y-3 md:translate-y-0 md:scale-[1.4] md:origin-right md:object-right lg:translate-y-[120px]"
+                  className="w-full h-[414px] md:h-[598px] object-contain bg-transparent translate-y-3 md:translate-y-0 md:scale-[1.4] md:origin-right md:object-right lg:-translate-y-[60px]"
                 />
               </a>
-              <div className="absolute inset-x-0 bottom-64 md:bottom-auto md:top-32 lg:-top-[140px] z-10 px-1 text-center" dir="rtl">
+              <div className="absolute inset-x-0 bottom-64 md:bottom-auto md:top-32 lg:-top-[200px] z-10 px-1 text-center" dir="rtl">
                 <h3 className="text-lg md:text-2xl font-semibold text-[#1a1a2e] tracking-tight">מתכת (METAL)</h3>
                 <p className="text-base md:text-lg text-gray-700">מתכות אצילות שעוברות תהליכי עיבוד וחימצון ייחודיים ליצירת עומק ויזואלי מהפנט. הטקסטורות המטאליות שלנו הן תוצאה של דיוק ומגע יד אנושית, המעניקים לכל משטח אופי תעשייתי מתוחכם וגימור מרהיב שמשתנה עם האור.</p>
                 <div className="mt-1 flex items-center justify-center gap-6 md:gap-8 text-[#1a1a2e] text-sm md:text-base w-max mx-auto">

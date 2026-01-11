@@ -779,64 +779,134 @@ function Staircase3D({
 				}
 				if (current) segs.push(current);
 
-				return segs.map((sg, i) => {
-					// y(x) = k*x + b, כאשר k = ±(riser / run) לפי כיוון ההתקדמות של המקטע
-					const k0 = sg.stepRun === Number.POSITIVE_INFINITY ? 0 : (riser / sg.stepRun);
-					const dirSign = (sg.end >= sg.start ? 1 : -1);
-					const k = k0 * dirSign;
-					const b = sg.baseBottomY - k * sg.baseCoord - (sg.overlap ?? 0);
-					// קביעת גובה כולל: treadThickness + (גובה מעל הפנים + חפיפה תחתונה)
-					const isLandingSeg = sg.stepRun === Number.POSITIVE_INFINITY;
-					const tH = treadThickness + (isLandingSeg
-						? (heightAboveFaceLanding + overlapLanding)
-						: (heightAboveFaceStep + overlapStep));
+				// פאנל לכל מדרגה/פודסט – מונע החסרות של המדרגה הראשונה/האחרונה אחרי פניות
+				const panels: React.ReactElement[] = [];
+				let sIdx3 = 0;
+				let lIdx3 = 0;
+				for (let i = 0; i < treads.length; i++) {
+					const t = treads[i];
+					const yaw = t.rotation[1];
+					const axis: 'x' | 'z' = Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z';
+					const bottomY = t.position[1] - treadThickness / 2;
 
-					if (sg.axis === 'x') {
-						const zPos = (sg.zConst ?? ((sg.zSign ?? 1) * (treadWidth / 2 + distance)));
+					// פודסט ישר עם מעקה (ללא פנייה)
+					if (t.isLanding) {
+						const enabledL = (landingRailingStates?.[lIdx3++] ?? false);
+						if (!enabledL || t.turn) continue;
+						const k = 0;
+						const b = bottomY - overlapLanding;
+						const tH = treadThickness + (heightAboveFaceLanding + overlapLanding);
+						if (axis === 'x') {
+							const x0 = t.position[0] - t.run / 2;
+							const x1 = t.position[0] + t.run / 2;
+							const sidePref = (landingRailingSides?.[lIdx3 - 1] ?? 'right');
+							const rZ = -Math.cos(yaw);
+							const zSign = (sidePref === 'right' ? (rZ >= 0 ? 1 : -1) : (rZ >= 0 ? -1 : 1)) as 1 | -1;
+							const zPos = t.position[2] + zSign * (treadWidth / 2 + distance);
+							const geom = new BufferGeometry();
+							const positions = new Float32BufferAttribute([
+								x0, k * x0 + b, zPos,
+								x1, k * x1 + b, zPos,
+								x0, k * x0 + b + tH, zPos,
+								x1, k * x1 + b + tH, zPos,
+							], 3);
+							geom.setAttribute('position', positions);
+							geom.setIndex([0, 1, 2, 2, 1, 3]);
+							geom.computeVertexNormals();
+							panels.push(
+								<mesh key={`gstep-Lx-${i}`} castShadow={false} receiveShadow={false}>
+									<primitive object={geom} attach="geometry" />
+									<meshBasicMaterial color={color} transparent opacity={opacity} side={2} depthWrite={false} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
+								</mesh>
+							);
+						} else {
+							const z0 = t.position[2] - t.run / 2;
+							const z1 = t.position[2] + t.run / 2;
+							const sidePref = (landingRailingSides?.[lIdx3 - 1] ?? 'right');
+							const rX = Math.sin(yaw);
+							const signX = (sidePref === 'right' ? (rX >= 0 ? 1 : -1) : (rX >= 0 ? -1 : 1)) as 1 | -1;
+							const xGlass = t.position[0] + signX * (treadWidth / 2 + distance);
+							const geom = new BufferGeometry();
+							const positions = new Float32BufferAttribute([
+								xGlass, k * z0 + b, z0,
+								xGlass, k * z1 + b, z1,
+								xGlass, k * z0 + b + tH, z0,
+								xGlass, k * z1 + b + tH, z1,
+							], 3);
+							geom.setAttribute('position', positions);
+							geom.setIndex([0, 1, 2, 2, 1, 3]);
+							geom.computeVertexNormals();
+							panels.push(
+								<mesh key={`gstep-Lz-${i}`} castShadow={false} receiveShadow={false}>
+									<primitive object={geom} attach="geometry" />
+									<meshBasicMaterial color={color} transparent opacity={opacity} side={2} depthWrite={false} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
+								</mesh>
+							);
+						}
+						continue;
+					}
+
+					// מדרגה בודדת
+					const idxForStep = sIdx3;
+					const enabled = stepRailingStates[sIdx3++] ?? false;
+					if (!enabled) continue;
+					const sidePref = (typeof stepRailingSides !== 'undefined' ? (stepRailingSides[idxForStep] ?? 'right') : 'right');
+
+					if (axis === 'x') {
+						const x0 = t.position[0] - t.run / 2;
+						const x1 = t.position[0] + t.run / 2;
+						const dirSign = (x1 >= x0 ? 1 : -1);
+						const k = (riser / treadDepth) * dirSign;
+						const b = bottomY - k * t.position[0] - overlapStep;
+						const tH = treadThickness + (heightAboveFaceStep + overlapStep);
+						const rZ = -Math.cos(yaw);
+						const zSign = (sidePref === 'right' ? (rZ >= 0 ? 1 : -1) : (rZ >= 0 ? -1 : 1)) as 1 | -1;
+						const zPos = t.position[2] + zSign * (treadWidth / 2 + distance);
 						const geom = new BufferGeometry();
 						const positions = new Float32BufferAttribute([
-							sg.start, k * sg.start + b, zPos,
-							sg.end, k * sg.end + b, zPos,
-							sg.start, k * sg.start + b + tH, zPos,
-							sg.end, k * sg.end + b + tH, zPos,
+							x0, k * x0 + b, zPos,
+							x1, k * x1 + b, zPos,
+							x0, k * x0 + b + tH, zPos,
+							x1, k * x1 + b + tH, zPos,
 						], 3);
 						geom.setAttribute('position', positions);
 						geom.setIndex([0, 1, 2, 2, 1, 3]);
 						geom.computeVertexNormals();
-						return (
-							<group key={`gseg-x-${i}`}>
-								<mesh castShadow={false} receiveShadow={false}>
-									<primitive object={geom} attach="geometry" />
-									<meshBasicMaterial color={color} transparent opacity={opacity} side={2} depthWrite={false}
-										polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
-								</mesh>
-							</group>
+						panels.push(
+							<mesh key={`gstep-x-${i}`} castShadow={false} receiveShadow={false}>
+								<primitive object={geom} attach="geometry" />
+								<meshBasicMaterial color={color} transparent opacity={opacity} side={2} depthWrite={false} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
+							</mesh>
 						);
 					} else {
-						const xGlass = sg.xConst ?? 0;
-						const signX = sg.signX ?? 1;
-						const xSide = xGlass - signX * distance;
-						const zGeom = new BufferGeometry();
+						const z0 = t.position[2] - t.run / 2;
+						const z1 = t.position[2] + t.run / 2;
+						const dirSign = (z1 >= z0 ? 1 : -1);
+						const k = (riser / treadDepth) * dirSign;
+						const b = bottomY - k * t.position[2] - overlapStep;
+						const tH = treadThickness + (heightAboveFaceStep + overlapStep);
+						const rX = Math.sin(yaw);
+						const signXDesired = (sidePref === 'right' ? (rX >= 0 ? 1 : -1) : (rX >= 0 ? -1 : 1)) as 1 | -1;
+						const xGlass = t.position[0] + signXDesired * (treadWidth / 2 + distance);
+						const geom = new BufferGeometry();
 						const positions = new Float32BufferAttribute([
-							xGlass, k * sg.start + b, sg.start,
-							xGlass, k * sg.end + b, sg.end,
-							xGlass, k * sg.start + b + tH, sg.start,
-							xGlass, k * sg.end + b + tH, sg.end,
+							xGlass, k * z0 + b, z0,
+							xGlass, k * z1 + b, z1,
+							xGlass, k * z0 + b + tH, z0,
+							xGlass, k * z1 + b + tH, z1,
 						], 3);
-						zGeom.setAttribute('position', positions);
-						zGeom.setIndex([0,1,2,2,1,3]);
-						zGeom.computeVertexNormals();
-						return (
-							<group key={`gseg-z-${i}`}>
-								<mesh castShadow={false} receiveShadow={false}>
-									<primitive object={zGeom} attach="geometry" />
-									<meshBasicMaterial color={color} transparent opacity={opacity} side={2} depthWrite={false}
-										polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
-								</mesh>
-							</group>
+						geom.setAttribute('position', positions);
+						geom.setIndex([0, 1, 2, 2, 1, 3]);
+						geom.computeVertexNormals();
+						panels.push(
+							<mesh key={`gstep-z-${i}`} castShadow={false} receiveShadow={false}>
+								<primitive object={geom} attach="geometry" />
+								<meshBasicMaterial color={color} transparent opacity={opacity} side={2} depthWrite={false} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
+							</mesh>
 						);
 					}
-				});
+				}
+				return <group>{panels}</group>;
 			})()}
 
 			{/* מערכת כבלי נירוסטה – 3 כבלים אנכיים לכל מדרגה בצד הנבחר ופודסט ישר עם 9 כבלים */}
@@ -1116,51 +1186,156 @@ function Staircase3D({
 				}
 				if (current) segs.push(current);
 
-				return segs.map((sg, i) => {
-					const k0 = sg.stepRun === Number.POSITIVE_INFINITY ? 0 : (riser / sg.stepRun);
-					const dirSign = (sg.end >= sg.start ? 1 : -1);
-					const k = k0 * dirSign;
-					const b = sg.baseBottomY - k * sg.baseCoord - (sg.overlap ?? 0);
-					const isLandingSeg = sg.stepRun === Number.POSITIVE_INFINITY;
-					const tH = treadThickness + (isLandingSeg
-						? (heightAboveFaceLanding + overlapLanding)
-						: (heightAboveFaceStep + overlapStep));
+				// פאנל לכל מדרגה/פודסט – מונע החסרות בגבולות אחרי פניות
+				const itemsEls: React.ReactElement[] = [];
+				let sIdx3 = 0;
+				let lIdx3 = 0;
+				for (let i = 0; i < treads.length; i++) {
+					const t = treads[i];
+					const yaw = t.rotation[1];
+					const axis: 'x' | 'z' = Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z';
+					const bottomY = t.position[1] - treadThickness / 2;
 
-					if (sg.axis === 'x') {
-						const zPos = (sg.zConst ?? ((sg.zSign ?? 1) * (treadWidth / 2 + distance)));
+					// פודסט ישר
+					if (t.isLanding) {
+						const enabledL = (landingRailingStates?.[lIdx3++] ?? false);
+						if (!enabledL || t.turn) continue;
+						const k = 0;
+						const b = bottomY - overlapLanding;
+						const tH = treadThickness + (heightAboveFaceLanding + overlapLanding);
+						if (axis === 'x') {
+							const x0 = t.position[0] - t.run / 2;
+							const x1 = t.position[0] + t.run / 2;
+							const sidePref = (landingRailingSides?.[lIdx3 - 1] ?? 'right');
+							const rZ = -Math.cos(yaw);
+							const zSign = (sidePref === 'right' ? (rZ >= 0 ? 1 : -1) : (rZ >= 0 ? -1 : 1)) as 1 | -1;
+							const zPos = t.position[2] + zSign * (treadWidth / 2 + distance);
+							const geom = new BufferGeometry();
+							const positions = new Float32BufferAttribute([
+								x0, k * x0 + b, zPos,
+								x1, k * x1 + b, zPos,
+								x0, k * x0 + b + tH, zPos,
+								x1, k * x1 + b + tH, zPos,
+							], 3);
+							const uvs = new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2);
+							geom.setAttribute('position', positions);
+							geom.setAttribute('uv', uvs);
+							geom.setIndex([0,1,2,2,1,3]);
+							geom.computeVertexNormals();
+							// cover
+							const len = Math.abs(x1 - x0);
+							const h = tH;
+							const texW = (railingMap.image && (railingMap.image as any).width) || 1024;
+							const texH = (railingMap.image && (railingMap.image as any).height) || 1024;
+							const texAspect = texW / texH;
+							const geoAspect = len / h;
+							let repU = 1, repV = 1;
+							if (geoAspect > texAspect) { repU = texAspect / geoAspect; repV = 1; } else { repU = 1; repV = geoAspect / texAspect; }
+							repU = Math.max(0.92, Math.min(1, repU));
+							repV = Math.max(0.92, Math.min(1, repV));
+							const offU = (1 - repU) / 2;
+							const offV = (1 - repV) / 2;
+							const mapTex = railingMap.clone();
+							// @ts-ignore
+							mapTex.colorSpace = SRGBColorSpace;
+							mapTex.wrapS = mapTex.wrapT = ClampToEdgeWrapping;
+							mapTex.generateMipmaps = false;
+							mapTex.minFilter = LinearFilter;
+							mapTex.repeat.set(repU, repV);
+							mapTex.offset.set(offU, offV);
+							mapTex.needsUpdate = true;
+							itemsEls.push(
+								<mesh key={`mstep-Lx-${i}`} castShadow receiveShadow>
+									<primitive object={geom} attach="geometry" />
+									{railingSolidColor ? <meshBasicMaterial color={railingSolidColor} side={2} /> : <meshBasicMaterial map={mapTex} side={2} />}
+								</mesh>
+							);
+						} else {
+							const z0 = t.position[2] - t.run / 2;
+							const z1 = t.position[2] + t.run / 2;
+							const sidePref = (landingRailingSides?.[lIdx3 - 1] ?? 'right');
+							const rX = Math.sin(yaw);
+							const signX = (sidePref === 'right' ? (rX >= 0 ? 1 : -1) : (rX >= 0 ? -1 : 1)) as 1 | -1;
+							const xPos = t.position[0] + signX * (treadWidth / 2 + distance);
+							const geom = new BufferGeometry();
+							const positions = new Float32BufferAttribute([
+								xPos, k * z0 + b, z0,
+								xPos, k * z1 + b, z1,
+								xPos, k * z0 + b + tH, z0,
+								xPos, k * z1 + b + tH, z1,
+							], 3);
+							const uvs = new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2);
+							geom.setAttribute('position', positions);
+							geom.setAttribute('uv', uvs);
+							geom.setIndex([0,1,2,2,1,3]);
+							geom.computeVertexNormals();
+							const len = Math.abs(z1 - z0);
+							const h = tH;
+							const texW = (railingMap.image && (railingMap.image as any).width) || 1024;
+							const texH = (railingMap.image && (railingMap.image as any).height) || 1024;
+							const texAspect = texW / texH;
+							const geoAspect = len / h;
+							let repU = 1, repV = 1;
+							if (geoAspect > texAspect) { repU = texAspect / geoAspect; repV = 1; } else { repU = 1; repV = geoAspect / texAspect; }
+							repU = Math.max(0.92, Math.min(1, repU));
+							repV = Math.max(0.92, Math.min(1, repV));
+							const offU = (1 - repU) / 2;
+							const offV = (1 - repV) / 2;
+							const mapTex = railingMap.clone();
+							// @ts-ignore
+							mapTex.colorSpace = SRGBColorSpace;
+							mapTex.wrapS = mapTex.wrapT = ClampToEdgeWrapping;
+							mapTex.generateMipmaps = false;
+							mapTex.minFilter = LinearFilter;
+							mapTex.repeat.set(repU, repV);
+							mapTex.offset.set(offU, offV);
+							mapTex.needsUpdate = true;
+							itemsEls.push(
+								<mesh key={`mstep-Lz-${i}`} castShadow receiveShadow>
+									<primitive object={geom} attach="geometry" />
+									{railingSolidColor ? <meshBasicMaterial color={railingSolidColor} side={2} /> : <meshBasicMaterial map={mapTex} side={2} />}
+								</mesh>
+							);
+						}
+						continue;
+					}
+
+					// מדרגה
+					const idxForStep = sIdx3;
+					const enabled = stepRailingStates[sIdx3++] ?? false;
+					if (!enabled) continue;
+					const sidePref = (typeof stepRailingSides !== 'undefined' ? (stepRailingSides[idxForStep] ?? 'right') : 'right');
+
+					if (axis === 'x') {
+						const x0 = t.position[0] - t.run / 2;
+						const x1 = t.position[0] + t.run / 2;
+						const dirSign = (x1 >= x0 ? 1 : -1);
+						const k = (riser / treadDepth) * dirSign;
+						const b = bottomY - k * t.position[0] - overlapStep;
+						const tH = treadThickness + (heightAboveFaceStep + overlapStep);
+						const rZ = -Math.cos(yaw);
+						const zSign = (sidePref === 'right' ? (rZ >= 0 ? 1 : -1) : (rZ >= 0 ? -1 : 1)) as 1 | -1;
+						const zPos = t.position[2] + zSign * (treadWidth / 2 + distance);
 						const geom = new BufferGeometry();
 						const positions = new Float32BufferAttribute([
-							sg.start, k * sg.start + b, zPos,
-							sg.end, k * sg.end + b, zPos,
-							sg.start, k * sg.start + b + tH, zPos,
-							sg.end, k * sg.end + b + tH, zPos,
+							x0, k * x0 + b, zPos,
+							x1, k * x1 + b, zPos,
+							x0, k * x0 + b + tH, zPos,
+							x1, k * x1 + b + tH, zPos,
 						], 3);
-						const uvs = new Float32BufferAttribute([
-							0, 0,
-							1, 0,
-							0, 1,
-							1, 1,
-						], 2);
+						const uvs = new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2);
 						geom.setAttribute('position', positions);
 						geom.setAttribute('uv', uvs);
-						geom.setIndex([0, 1, 2, 2, 1, 3]);
+						geom.setIndex([0,1,2,2,1,3]);
 						geom.computeVertexNormals();
-						// מיפוי "cover" ללא חזרות: משמר אחידות ללא ריבועים חוזרים
-						const len = Math.abs(sg.end - sg.start);
+						const len = Math.abs(x1 - x0);
 						const h = tH;
 						const texW = (railingMap.image && (railingMap.image as any).width) || 1024;
 						const texH = (railingMap.image && (railingMap.image as any).height) || 1024;
 						const texAspect = texW / texH;
 						const geoAspect = len / h;
 						let repU = 1, repV = 1;
-						if (geoAspect > texAspect) {
-							// הפאנל "רחב" יחסית → נצמצם בציר U ונמרכז
-							repU = texAspect / geoAspect;
-							repV = 1;
-						} else {
-							repU = 1;
-							repV = geoAspect / texAspect;
-						}
+						if (geoAspect > texAspect) { repU = texAspect / geoAspect; repV = 1; } else { repU = 1; repV = geoAspect / texAspect; }
 						repU = Math.max(0.92, Math.min(1, repU));
 						repV = Math.max(0.92, Math.min(1, repV));
 						const offU = (1 - repU) / 2;
@@ -1174,71 +1349,42 @@ function Staircase3D({
 						mapTex.repeat.set(repU, repV);
 						mapTex.offset.set(offU, offV);
 						mapTex.needsUpdate = true;
-						const bumpTex = railingBumpUrl ? railingBumpMap.clone() : undefined;
-						if (bumpTex) {
-							bumpTex.wrapS = bumpTex.wrapT = ClampToEdgeWrapping;
-							bumpTex.generateMipmaps = false;
-							bumpTex.minFilter = LinearFilter;
-							bumpTex.repeat.set(repU, repV);
-							bumpTex.offset.set(offU, offV);
-							bumpTex.needsUpdate = true;
-						}
-						const roughTex = railingRoughnessUrl ? railingRoughMap.clone() : undefined;
-						if (roughTex) {
-							roughTex.wrapS = roughTex.wrapT = ClampToEdgeWrapping;
-							roughTex.generateMipmaps = false;
-							roughTex.minFilter = LinearFilter;
-							roughTex.repeat.set(repU, repV);
-							roughTex.offset.set(offU, offV);
-							roughTex.needsUpdate = true;
-						}
-						return (
-							<group key={`mseg-x-${i}`}>
-								<mesh castShadow receiveShadow>
-									<primitive object={geom} attach="geometry" />
-									{railingSolidColor ? (
-										<meshBasicMaterial key={`msolid-${railingSolidColor}`} color={railingSolidColor} side={2} />
-									) : (
-										<meshBasicMaterial key={`mtex-${(mapTex as any)?.image?.src || 'na'}`} map={mapTex} side={2} />
-									)}
-								</mesh>
-							</group>
+						itemsEls.push(
+							<mesh key={`mstep-x-${i}`} castShadow receiveShadow>
+								<primitive object={geom} attach="geometry" />
+								{railingSolidColor ? <meshBasicMaterial color={railingSolidColor} side={2} /> : <meshBasicMaterial map={mapTex} side={2} />}
+							</mesh>
 						);
 					} else {
-						const xMetal = sg.xConst ?? 0;
-						const signX = sg.signX ?? 1;
-						const zGeom = new BufferGeometry();
+						const z0 = t.position[2] - t.run / 2;
+						const z1 = t.position[2] + t.run / 2;
+						const dirSign = (z1 >= z0 ? 1 : -1);
+						const k = (riser / treadDepth) * dirSign;
+						const b = bottomY - k * t.position[2] - overlapStep;
+						const tH = treadThickness + (heightAboveFaceStep + overlapStep);
+						const rX = Math.sin(yaw);
+						const signXDesired = (sidePref === 'right' ? (rX >= 0 ? 1 : -1) : (rX >= 0 ? -1 : 1)) as 1 | -1;
+						const xPos = t.position[0] + signXDesired * (treadWidth / 2 + distance);
+						const geom = new BufferGeometry();
 						const positions = new Float32BufferAttribute([
-							xMetal, k * sg.start + b, sg.start,
-							xMetal, k * sg.end + b, sg.end,
-							xMetal, k * sg.start + b + tH, sg.start,
-							xMetal, k * sg.end + b + tH, sg.end,
+							xPos, k * z0 + b, z0,
+							xPos, k * z1 + b, z1,
+							xPos, k * z0 + b + tH, z0,
+							xPos, k * z1 + b + tH, z1,
 						], 3);
-						const uvs = new Float32BufferAttribute([
-							0, 0,
-							1, 0,
-							0, 1,
-							1, 1,
-						], 2);
-						zGeom.setAttribute('position', positions);
-						zGeom.setAttribute('uv', uvs);
-						zGeom.setIndex([0,1,2,2,1,3]);
-						zGeom.computeVertexNormals();
-						// מיפוי "cover" ללא חזרות
-						const len = Math.abs(sg.end - sg.start);
+						const uvs = new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2);
+						geom.setAttribute('position', positions);
+						geom.setAttribute('uv', uvs);
+						geom.setIndex([0,1,2,2,1,3]);
+						geom.computeVertexNormals();
+						const len = Math.abs(z1 - z0);
 						const h = tH;
 						const texW = (railingMap.image && (railingMap.image as any).width) || 1024;
 						const texH = (railingMap.image && (railingMap.image as any).height) || 1024;
 						const texAspect = texW / texH;
 						const geoAspect = len / h;
 						let repU = 1, repV = 1;
-						if (geoAspect > texAspect) {
-							repU = texAspect / geoAspect;
-							repV = 1;
-						} else {
-							repU = 1;
-							repV = geoAspect / texAspect;
-						}
+						if (geoAspect > texAspect) { repU = texAspect / geoAspect; repV = 1; } else { repU = 1; repV = geoAspect / texAspect; }
 						repU = Math.max(0.92, Math.min(1, repU));
 						repV = Math.max(0.92, Math.min(1, repV));
 						const offU = (1 - repU) / 2;
@@ -1252,38 +1398,15 @@ function Staircase3D({
 						mapTex.repeat.set(repU, repV);
 						mapTex.offset.set(offU, offV);
 						mapTex.needsUpdate = true;
-						const bumpTex = railingBumpUrl ? railingBumpMap.clone() : undefined;
-						if (bumpTex) {
-							bumpTex.wrapS = bumpTex.wrapT = ClampToEdgeWrapping;
-							bumpTex.generateMipmaps = false;
-							bumpTex.minFilter = LinearFilter;
-							bumpTex.repeat.set(repU, repV);
-							bumpTex.offset.set(offU, offV);
-							bumpTex.needsUpdate = true;
-						}
-						const roughTex = railingRoughnessUrl ? railingRoughMap.clone() : undefined;
-						if (roughTex) {
-							roughTex.wrapS = roughTex.wrapT = ClampToEdgeWrapping;
-							roughTex.generateMipmaps = false;
-							roughTex.minFilter = LinearFilter;
-							roughTex.repeat.set(repU, repV);
-							roughTex.offset.set(offU, offV);
-							roughTex.needsUpdate = true;
-						}
-						return (
-							<group key={`mseg-z-${i}`}>
-								<mesh castShadow receiveShadow>
-									<primitive object={zGeom} attach="geometry" />
-									{railingSolidColor ? (
-										<meshBasicMaterial key={`msolid-${railingSolidColor}`} color={railingSolidColor} side={2} />
-									) : (
-										<meshBasicMaterial key={`mtex-${(mapTex as any)?.image?.src || 'na'}`} map={mapTex} side={2} />
-									)}
-								</mesh>
-							</group>
+						itemsEls.push(
+							<mesh key={`mstep-z-${i}`} castShadow receiveShadow>
+								<primitive object={geom} attach="geometry" />
+								{railingSolidColor ? <meshBasicMaterial color={railingSolidColor} side={2} /> : <meshBasicMaterial map={mapTex} side={2} />}
+							</mesh>
 						);
 					}
-				});
+				}
+				return itemsEls;
 			})()}
 			{/* רצפה – מותאמת אוטומטית לגבולות המהלך */}
 			<mesh rotation={[-Math.PI / 2, 0, 0]} position={[floorBounds.cx, floorBounds.y, floorBounds.cz]} receiveShadow>

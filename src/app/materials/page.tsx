@@ -179,7 +179,7 @@ export default function MaterialsPage() {
 
 						{/* מחיר */}
 						<div className="mb-3">
-							<div className="text-[11px] text-gray-500 mb-2">המחיר כולל התקנה</div>
+							<div className="text-sm text-gray-600 mb-2">המחיר כולל התקנה</div>
 							<input
 								type="range"
 								min={2000}
@@ -190,7 +190,7 @@ export default function MaterialsPage() {
 								className="w-full accent-[#1a1a2e]"
 								aria-label="סינון לפי מחיר מקסימלי"
 							/>
-							<div className="flex justify-between text-[10px] text-gray-500 mt-1">
+							<div className="flex justify-between text-sm text-gray-600 mt-1">
 								<span>₪2000</span>
 								<span>₪2500</span>
 								<span>₪3000</span>

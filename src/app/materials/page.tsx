@@ -136,7 +136,7 @@ export default function MaterialsPage() {
 	// הוסר פס הגלילה העליון
 
 	return (
-		<main className="max-w-7xl mx-auto px-4 pt-10 md:pt-14 pb-6 bg-[#EFEFEF]" dir="rtl">
+		<main className="max-w-7xl mx-auto px-4 pt-6 md:pt-8 pb-6 bg-[#EFEFEF]" dir="rtl">
 			{/* פס גלילה עליון הוסר לפי בקשה */}
 
 			{/* אזור תוכן: סינון + תוצאות */}

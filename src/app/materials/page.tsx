@@ -141,8 +141,8 @@ export default function MaterialsPage() {
 
 			{/* אזור תוכן: סינון + תוצאות */}
 			<div className="grid grid-cols-1 lg:grid-cols-12 gap-8" dir="ltr">
-				{/* סינון צדדי - משמאל בדסקטופ */}
-				<aside className="lg:col-span-3 lg:-ml-8 lg:sticky lg:top-24 self-start" dir="rtl">
+				{/* סינון בראש הדף בדסקטופ */}
+				<aside className="lg:col-span-12 self-start" dir="rtl">
 					<div className="border p-4 bg-white rounded-xl shadow-sm">
 						<h3 className="text-base font-semibold mb-4">סינון</h3>
 
@@ -210,7 +210,7 @@ export default function MaterialsPage() {
 				</aside>
 
 				{/* תוצאות */}
-				<section className="lg:col-span-9" dir="rtl">
+				<section className="lg:col-span-12" dir="rtl">
 					<div className="flex items-center justify-between mb-3 text-sm text-gray-600">
 						<span>{filteredItems.length} תוצאות</span>
 						<div className="flex items-center gap-2">

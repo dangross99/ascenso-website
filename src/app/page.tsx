@@ -868,7 +868,7 @@ export default function Home() {
       {/* 4.5. Premium Collections Section (removed per request) */}
 
       {/* 5. תהליך העבודה */}
-      <section className="bg-white -mt-24 md:mt-0 lg:-mt-64 pt-0 pb-4 md:py-6 relative z-30" dir="rtl">
+      <section className="bg-white -mt-24 md:mt-0 lg:-mt-72 pt-0 pb-4 md:py-6 relative z-30" dir="rtl">
         <div className="w-full px-8 md:px-16 lg:px-24">
           <div className="relative">
             {/* Mobile/Tablet: Slider */}
@@ -995,7 +995,7 @@ export default function Home() {
                     ))}
                 </div>
 
-            <div className="text-center mt-6">
+            <div className="text-center mt-2">
                   <a
                 href="/live"
                 className="inline-block px-14 py-3.5 bg-[#1a1a2e] text-white text-sm md:text-base font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90"

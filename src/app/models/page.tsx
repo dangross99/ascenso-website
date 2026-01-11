@@ -166,13 +166,9 @@ export default function ModelsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {SHAPES.map(shape => (
           <section key={shape.id} id={shape.id} className="border bg-white">
-            <div className="relative aspect-[16/9] overflow-hidden">
-              <Image src={shape.image} alt={shape.name} fill className="object-cover" />
-            </div>
             <div className="p-4">
-              <div className="mb-1 relative">
-                <h2 className="text-xl font-bold text-gray-900 text-center">{shape.name}</h2>
-                <span className="absolute left-0 top-0 text-xs text-gray-500">קוד: {shape.code}</span>
+              <div className="mb-1 text-center">
+                <h2 className="text-xl font-bold text-gray-900">{shape.name}</h2>
               </div>
               <div className="mb-4">
                 <Schematic type={shape.id} />

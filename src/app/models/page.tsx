@@ -179,7 +179,7 @@ export default function ModelsPage() {
                   href={`/live?shape=${encodeURIComponent(shape.id)}&code=${encodeURIComponent(
                     shape.code
                   )}&name=${encodeURIComponent(shape.name)}`}
-                  className="inline-block px-4 py-2 border border-gray-300 text-sm rounded-md cursor-pointer transition-colors duration-200 bg-white hover:bg-gray-100"
+                  className="inline-block px-4 py-2 bg-[#1a1a2e] text-white text-sm rounded-md cursor-pointer transition-colors duration-200 hover:opacity-90 shadow-sm"
                 >
                   פתח הדמייה LIVE
                 </a>

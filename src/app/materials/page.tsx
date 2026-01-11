@@ -279,7 +279,7 @@ export default function MaterialsPage() {
 										<div className="mt-3 flex justify-center">
 											<a
 												href={`/live?material=${encodeURIComponent(it.materialId)}&color=${encodeURIComponent(selectedColorId)}&price=${it.price}`}
-												className="inline-block px-14 py-3.5 bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-widest rounded-md transition-colors duration-300 hover:bg-white/95 cursor-pointer border"
+												className="inline-block px-14 py-3.5 bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-widest rounded-md transition-colors duration-300 hover:bg-gray-100 group-hover:bg-gray-100 cursor-pointer border"
 											>
 												צפייה בטקסטורה LIVE
 											</a>
@@ -321,7 +321,7 @@ export default function MaterialsPage() {
 						{lightbox.href && (
 							<a
 								href={lightbox.href}
-								className="inline-block px-14 py-3.5 rounded-md bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-widest shadow-sm hover:bg-white/95 cursor-pointer"
+								className="inline-block px-14 py-3.5 rounded-md bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-widest shadow-sm hover:bg-gray-100 cursor-pointer transition-colors"
 							>
 								צפייה בטקסטורה LIVE
 							</a>

@@ -618,7 +618,7 @@ export default function Home() {
               className="lg:hidden text-gray-100 text-base md:text-2xl max-w-2xl"
               style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
             >
-              בחרו צורה, טקסטורה ומעקה – וראו הכל בהדמייה LIVE עם חישוב מחיר משוער
+              בחרו מדרגות, טקסטורה ומעקה – וראו הכל בהדמייה LIVE עם חישוב מחיר משוער
             </p>
             {/* Desktop: paragraph + CTA on the same row */}
             <div className="hidden lg:flex items-center gap-12">
@@ -626,13 +626,13 @@ export default function Home() {
                 className="text-gray-100 text-3xl"
                 style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
               >
-                בחרו צורה, טקסטורה ומעקה – וראו הכל בהדמייה LIVE עם חישוב מחיר משוער
+                בחרו מדרגות, טקסטורה ומעקה – וראו הכל בהדמייה LIVE עם חישוב מחיר משוער
               </p>
               <a
                 href="/live"
                 className="inline-block px-14 py-3.5 bg-white/80 text-[#1a1a2e]/90 text-xl font-semibold shadow-sm hover:bg-white transition-all duration-300 active:scale-[0.98] rounded-md border border-white/60"
               >
-                התחל הזמנה
+                עיצוב המדרגות שלך
               </a>
             </div>
           </div>
@@ -643,7 +643,7 @@ export default function Home() {
               href="/live"
               className="mx-auto px-14 py-3.5 bg-white/70 text-[#1a1a2e]/80 text-base md:text-xl font-semibold shadow-sm hover:bg-white/60 transition-all duration-300 active:scale-[0.98] rounded-md border border-white/60"
             >
-              התחל הזמנה
+              עיצוב המדרגות שלך
             </a>
           </div>
         </div>
@@ -868,7 +868,7 @@ export default function Home() {
       {/* 4.5. Premium Collections Section (removed per request) */}
 
       {/* 5. תהליך העבודה */}
-      <section className="bg-white -mt-24 md:mt-0 lg:-mt-72 pt-0 pb-4 md:py-6 relative z-30" dir="rtl">
+      <section className="bg-white -mt-24 md:mt-0 lg:-mt-[17rem] pt-0 pb-4 md:py-6 relative z-30" dir="rtl">
         <div className="w-full px-8 md:px-16 lg:px-24">
           <div className="relative">
             {/* Mobile/Tablet: Slider */}
@@ -1000,7 +1000,7 @@ export default function Home() {
                 href="/live"
                 className="inline-block px-14 py-3.5 bg-[#1a1a2e] text-white text-sm md:text-base font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90"
                   >
-                התחל הזמנה
+                עיצוב המדרגות שלך
                   </a>
             </div>
           </div>
@@ -1036,7 +1036,7 @@ export default function Home() {
                 href="/live"
                 className="mt-3 md:mt-5 inline-block px-14 py-3.5 rounded-md bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-widest transition-colors duration-300 hover:bg-white/95"
               >
-                התחל הזמנה
+                עיצוב המדרגות שלך
               </a>
                     </div>
                   </div>
@@ -1095,7 +1095,7 @@ export default function Home() {
                 href="/live"
                 className="inline-block px-14 py-3.5 bg-[#1a1a2e] text-white text-sm md:text-base font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90 mx-auto"
                   >
-                התחל הזמנה
+                עיצוב המדרגות שלך
                   </a>
             </div>
           </div>

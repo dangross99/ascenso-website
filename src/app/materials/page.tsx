@@ -281,7 +281,7 @@ export default function MaterialsPage() {
 												href={`/live?material=${encodeURIComponent(it.materialId)}&color=${encodeURIComponent(selectedColorId)}&price=${it.price}`}
 												className="inline-block px-14 py-3.5 bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-widest rounded-md transition-colors duration-300 hover:bg-white/95 cursor-pointer border"
 											>
-												לעצב את המדרגות עם הטקסטורה
+												פתח הדמייה LIVE
 											</a>
 										</div>
 									</div>
@@ -323,7 +323,7 @@ export default function MaterialsPage() {
 								href={lightbox.href}
 								className="inline-block px-14 py-3.5 rounded-md bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-widest shadow-sm hover:bg-white/95 cursor-pointer"
 							>
-								לעצב את המדרגות עם הטקסטורה
+								פתח הדמייה LIVE
 							</a>
 						)}
 					</div>

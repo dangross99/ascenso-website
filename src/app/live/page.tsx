@@ -773,8 +773,10 @@ function Staircase3D({
 				if (current) segs.push(current);
 
 				return segs.map((sg, i) => {
-					// y(x) = k*x + b, כאשר k = riser / run, ו-b נקבע כך שהקו עובר דרך מרכז המדרך הראשון
-					const k = riser / sg.stepRun;
+					// y(x) = k*x + b, כאשר k = ±(riser / run) לפי כיוון ההתקדמות של המקטע
+					const k0 = sg.stepRun === Number.POSITIVE_INFINITY ? 0 : (riser / sg.stepRun);
+					const dirSign = (sg.end >= sg.start ? 1 : -1);
+					const k = k0 * dirSign;
 					const b = sg.baseBottomY - k * sg.baseCoord - (sg.overlap ?? 0);
 					// קביעת גובה כולל: treadThickness + (גובה מעל הפנים + חפיפה תחתונה)
 					const isLandingSeg = sg.stepRun === Number.POSITIVE_INFINITY;
@@ -1101,7 +1103,9 @@ function Staircase3D({
 				if (current) segs.push(current);
 
 				return segs.map((sg, i) => {
-					const k = riser / sg.stepRun;
+					const k0 = sg.stepRun === Number.POSITIVE_INFINITY ? 0 : (riser / sg.stepRun);
+					const dirSign = (sg.end >= sg.start ? 1 : -1);
+					const k = k0 * dirSign;
 					const b = sg.baseBottomY - k * sg.baseCoord - (sg.overlap ?? 0);
 					const isLandingSeg = sg.stepRun === Number.POSITIVE_INFINITY;
 					const tH = treadThickness + (isLandingSeg

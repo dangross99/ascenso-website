@@ -149,25 +149,25 @@ export default function MaterialsPage() {
 						<div className="mb-5">
 							<div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
 								<button
-									className={`w-full py-2 text-base rounded-full border cursor-pointer bg-white text-[#1a1a2e] ${materialFilter === null ? 'border-[#1a1a2e] font-semibold' : 'border-gray-300 hover:border-gray-400'}`}
+									className={`w-full py-2 text-base rounded-full border cursor-pointer transition-colors ${materialFilter === null ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-[#1a1a2e] border-gray-300 hover:border-gray-400'}`}
 									onClick={() => setMaterialFilter(null)}
 								>
 									הכל
 								</button>
 								<button
-									className={`w-full py-2 text-base rounded-full border cursor-pointer bg-white text-[#1a1a2e] ${materialFilter === 'wood' ? 'border-[#1a1a2e] font-semibold' : 'border-gray-300 hover:border-gray-400'}`}
+									className={`w-full py-2 text-base rounded-full border cursor-pointer transition-colors ${materialFilter === 'wood' ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-[#1a1a2e] border-gray-300 hover:border-gray-400'}`}
 									onClick={() => setMaterialFilter('wood')}
 								>
 									עץ
 								</button>
 								<button
-									className={`w-full py-2 text-base rounded-full border cursor-pointer bg-white text-[#1a1a2e] ${materialFilter === 'metal' ? 'border-[#1a1a2e] font-semibold' : 'border-gray-300 hover:border-gray-400'}`}
+									className={`w-full py-2 text-base rounded-full border cursor-pointer transition-colors ${materialFilter === 'metal' ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-[#1a1a2e] border-gray-300 hover:border-gray-400'}`}
 									onClick={() => setMaterialFilter('metal')}
 								>
 									מתכת
 								</button>
 								<button
-									className={`w-full py-2 text-base rounded-full border cursor-pointer bg-white text-[#1a1a2e] ${materialFilter === 'stone' ? 'border-[#1a1a2e] font-semibold' : 'border-gray-300 hover:border-gray-400'}`}
+									className={`w-full py-2 text-base rounded-full border cursor-pointer transition-colors ${materialFilter === 'stone' ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-[#1a1a2e] border-gray-300 hover:border-gray-400'}`}
 									onClick={() => setMaterialFilter('stone')}
 								>
 									אבן טבעית

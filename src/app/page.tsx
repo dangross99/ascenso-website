@@ -774,7 +774,7 @@ export default function Home() {
                 <img
                   src={encodeURI("/images/ChatGPT Image Jan 10, 2026, 08_04_27 PM.png")}
                   alt="אבן טבעית"
-                  className="w-full h-[414px] md:h-[598px] object-contain bg-transparent translate-y-4 md:translate-y-0 md:scale-[1.4] md:origin-left md:object-left lg:-translate-y-48"
+                  className="w-full h-[414px] md:h-[598px] object-contain bg-transparent translate-y-4 md:translate-y-0 md:scale-[1.4] md:origin-left md:object-left lg:-translate-y-44"
                 />
               </a>
               <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-32 lg:top-72 z-10 px-1 text-center" dir="rtl">
@@ -804,7 +804,7 @@ export default function Home() {
                 <img
                   src={encodeURI("/images/ChatGPT Image Jan 10, 2026, 11_01_37 PM.png")}
                   alt="עץ טבעי"
-                  className="block w-full h-[414px] md:h-[598px] object-contain bg-transparent translate-y-6 md:translate-y-0 md:scale-[1.4] md:origin-center lg:-translate-y-48"
+                  className="block w-full h-[414px] md:h-[598px] object-contain bg-transparent translate-y-6 md:translate-y-0 md:scale-[1.4] md:origin-center lg:-translate-y-44"
                 />
               </a>
               <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-32 lg:top-72 z-10 px-1 text-center">
@@ -829,7 +829,7 @@ export default function Home() {
                   </div>
                 </div>
             {/* Marble / Natural Stone */}
-            <div className="relative flex flex-col gap-1 lg:col-start-2 lg:-mt-[32rem] lg:z-50">
+            <div className="relative flex flex-col gap-1 lg:col-start-2 lg:-mt-[32rem] lg:z-10">
               <a href="/materials?cat=metal" className="block">
                 <img
                   src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 05_44_10 PM.png")}
@@ -868,7 +868,7 @@ export default function Home() {
       {/* 4.5. Premium Collections Section (removed per request) */}
 
       {/* 5. תהליך העבודה */}
-      <section className="bg-white -mt-24 md:mt-0 pt-0 pb-4 md:py-6" dir="rtl">
+      <section className="bg-white -mt-24 md:mt-0 pt-0 pb-4 md:py-6 relative z-30" dir="rtl">
         <div className="w-full px-8 md:px-16 lg:px-24">
           <div className="relative">
             {/* Mobile/Tablet: Slider */}

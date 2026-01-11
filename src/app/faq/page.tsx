@@ -60,14 +60,13 @@ const faqs: Array<{ q: string; a: React.ReactNode }> = [
 export default function FAQPage() {
   return (
     <main className="max-w-4xl mx-auto px-4 py-8" dir="rtl">
-      <h1 className="text-2xl font-bold mb-6">שאלות תשובות</h1>
 
       <section className="space-y-3">
         {faqs.map((item, idx) => (
-          <details key={idx} className="group rounded-md border bg-white open:bg-gray-50">
-            <summary className="cursor-pointer list-none px-4 py-3 flex items-center justify-between">
+          <details key={idx} className="group rounded-md border bg-white">
+            <summary className="cursor-pointer list-none px-4 py-3 flex items-center justify-between rounded-md transition-colors group-open:bg-[#1a1a2e] group-open:text-white">
               <span className="font-medium">{item.q}</span>
-              <span className="text-gray-400 group-open:rotate-180 transition-transform">⌄</span>
+              <span className="text-gray-400 group-open:text-white group-open:rotate-180 transition-transform">⌄</span>
             </summary>
             <div className="px-4 pb-4 text-gray-700 text-sm">{item.a}</div>
           </details>

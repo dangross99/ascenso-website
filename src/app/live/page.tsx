@@ -616,7 +616,7 @@ function Staircase3D({
 				const opacity = glassSelected === 'smoked' ? 0.5 : glassSelected === 'bronze' ? 0.42 : 0.48;
 				const color = glassSelected === 'smoked' ? '#4a5568' : glassSelected === 'bronze' ? '#b08d57' : '#aee7ff';
 				const totalH = treadThickness + 1.0;
-				const distance = 0.01; // מרחק המעקה מהמדרך (1 ס"מ)
+				const distance = 0.03; // מרחק המעקה מהמדרך (3 ס"מ למניעת חפיפה/זי-פייטינג)
 				const overlapStep = 0.11; // חפיפה למטה במדרגות (11 ס"מ)
 				const overlapLanding = 0.20; // חפיפה למטה בפודסטים (20 ס"מ)
 				const heightAboveFaceStep = 1.18; // גובה מעל פני מדרגה
@@ -958,7 +958,7 @@ function Staircase3D({
 			{(() => {
 				if (railingKind !== 'metal') return null;
 				if (!stepRailingStates) return null;
-				const distance = 0.01; // מרחק המעקה מהמדרך (1 ס"מ)
+				const distance = 0.03; // מרחק המעקה מהמדרך (3 ס"מ למניעת חפיפה/זי-פייטינג)
 				const overlapStep = 0.11;
 				const overlapLanding = 0.20;
 				const heightAboveFaceStep = 1.18;

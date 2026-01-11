@@ -767,7 +767,7 @@ export default function Home() {
       {/* High-end Materials Section – “swatch” cards with overlay text */}
       <section className="w-full mt-8 md:mt-0 pt-4 pb-0 md:py-8" dir="rtl">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-2 md:gap-x-20 md:gap-y-12 lg:gap-x-24 lg:gap-y-16 xl:gap-x-28 xl:gap-y-20">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-2 md:gap-x-20 md:gap-y-12 lg:gap-x-24 lg:gap-y-16 xl:gap-x-28 xl:gap-y-20 overflow-visible">
             {/* Stone */}
             <div className="relative flex flex-col gap-1">
               <a href="/materials?cat=stone" className="block">
@@ -829,7 +829,7 @@ export default function Home() {
                   </div>
                 </div>
             {/* Marble / Natural Stone */}
-            <div className="relative flex flex-col gap-1 lg:col-start-2 lg:-mt-40">
+            <div className="relative flex flex-col gap-1 lg:col-start-2 lg:-mt-40 lg:z-30">
               <a href="/materials?cat=metal" className="block">
                 <img
                   src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 05_44_10 PM.png")}

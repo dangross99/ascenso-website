@@ -312,16 +312,16 @@ export default function MaterialsPage() {
 					aria-modal="true"
 					role="dialog"
 				>
-					<div className="relative max-w-6xl max-h-[92vh] w-full h-full flex flex-col items-center justify-center gap-4" onClick={e => e.stopPropagation()}>
+					<div className="relative max-w-6xl max-h-[92vh] w-auto h-auto flex flex-col items-center justify-center gap-4 pointer-events-none">
 						<img
 							src={lightbox.src}
 							alt="תצוגה מוגדלת"
-							className="max-w-[95vw] max-h-[82vh] object-contain"
+							className="max-w-[95vw] max-h-[82vh] object-contain pointer-events-auto"
 						/>
 						{lightbox.href && (
 							<a
 								href={lightbox.href}
-								className="inline-block px-14 py-3.5 rounded-md bg-transparent text-white text-sm md:text-base font-bold tracking-widest shadow-sm hover:bg-gray-300 cursor-pointer transition-colors"
+								className="inline-block px-14 py-3.5 rounded-md bg-transparent text-white text-sm md:text-base font-bold tracking-widest shadow-sm hover:bg-gray-300 cursor-pointer transition-colors pointer-events-auto"
 							>
 								צפייה בטקסטורה LIVE
 							</a>

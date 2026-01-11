@@ -1750,16 +1750,19 @@ function LivePageInner() {
 				const inner: 'right' | 'left' =
 					nextTurn ? (nextTurn === 'right' ? 'right' : 'left') :
 						(prevTurn ? (prevTurn === 'right' ? 'right' : 'left') : 'right');
+				// ברירת מחדל מבוקשת: הצד ההפוך (לא פנימי)
+				const defaultSide: 'right' | 'left' = inner === 'right' ? 'left' : 'right';
 				if (seg.steps > 0) {
-					for (let s = 0; s < seg.steps; s++) stepSides.push(inner);
+					for (let s = 0; s < seg.steps; s++) stepSides.push(defaultSide);
 				}
 			} else {
 				// פודסט: אם יש פנייה – עדכן הפנייה האחרונה; אם אין – שמור את הצד של הריצה האחרונה
 				if (typeof seg.turn === 'undefined') {
-					landingSides.push(prevTurn ? (prevTurn === 'right' ? 'right' : 'left') : 'right');
+					const innerFromPrev: 'right' | 'left' = prevTurn ? (prevTurn === 'right' ? 'right' : 'left') : 'right';
+					landingSides.push(innerFromPrev === 'right' ? 'left' : 'right');
 				} else {
 					prevTurn = seg.turn;
-					landingSides.push(seg.turn === 'right' ? 'right' : 'left');
+					landingSides.push(seg.turn === 'right' ? 'left' : 'right');
 				}
 			}
 		}

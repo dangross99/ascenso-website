@@ -229,8 +229,8 @@ export default function MaterialsPage() {
 							const displaySrc = selectedVariantSrc || FALLBACK_SRC;
 							const safeSrc = brokenGridById[it.id] ? FALLBACK_SRC : (displaySrc || FALLBACK_SRC);
 							return (
-								<article key={i} className="border bg-white group">
-									<div className="relative aspect-[4/3] overflow-hidden">
+								<article key={i} className="bg-white group">
+									<div className="relative aspect-[4/3] overflow-hidden rounded-t-[9999px] rounded-b-none">
 										<Image
 											src={safeSrc}
 											alt={it.name}

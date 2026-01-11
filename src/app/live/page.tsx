@@ -1729,6 +1729,39 @@ function LivePageInner() {
 		return steps;
 	}, [pathSegments, steps]);
 
+	// חישוב צד "פנימי" כברירת מחדל לכל מדרגה ולכל פודסט ישר, בהתאם לכיוון הפניות במסלול
+	const computeInnerDefaultSides = React.useCallback(() => {
+		const stepSides: Array<'right' | 'left'> = [];
+		const landingSides: Array<'right' | 'left'> = [];
+		if (!pathSegments || !pathSegments.length) return { stepSides, landingSides };
+		let prevTurn: 'left' | 'right' | undefined = undefined;
+		for (let i = 0; i < pathSegments.length; i++) {
+			const seg = pathSegments[i];
+			if (seg.kind === 'straight') {
+				let nextTurn: 'left' | 'right' | undefined = undefined;
+				if (i + 1 < pathSegments.length && pathSegments[i + 1].kind === 'landing') {
+					const nxt = pathSegments[i + 1] as Extract<PathSegment, { kind: 'landing' }>;
+					nextTurn = nxt.turn;
+				}
+				const inner: 'right' | 'left' =
+					nextTurn ? (nextTurn === 'right' ? 'right' : 'left') :
+						(prevTurn ? (prevTurn === 'right' ? 'right' : 'left') : 'right');
+				if (seg.steps > 0) {
+					for (let s = 0; s < seg.steps; s++) stepSides.push(inner);
+				}
+			} else {
+				// פודסט: אם יש פנייה – עדכן הפנייה האחרונה; אם אין – שמור את הצד של הריצה האחרונה
+				if (typeof seg.turn === 'undefined') {
+					landingSides.push(prevTurn ? (prevTurn === 'right' ? 'right' : 'left') : 'right');
+				} else {
+					prevTurn = seg.turn;
+					landingSides.push(seg.turn === 'right' ? 'right' : 'left');
+				}
+			}
+		}
+		return { stepSides, landingSides };
+	}, [pathSegments]);
+
 	// צד נוכחי גלובלי (רוב) למעקה – מציג מה הצד הדומיננטי כדי לאפשר החלפה מהירה במובייל
 	const globalRailingSide = React.useMemo<'right' | 'left'>(() => {
 		let right = 0, left = 0;
@@ -1752,44 +1785,40 @@ function LivePageInner() {
 	}, [pathSegments]);
 	React.useEffect(() => {
 		// התאמת מערכי המעקה לאורך המסלול החדש ושמירת מידע קיים.
-		// מדרגות חדשות יקבלו צד ברירת מחדל לפי רוב הצדדים הפעילים כיום.
+		// מדרגות חדשות יקבלו צד ברירת מחדל "פנימי" לפי המסלול.
 		const nextLen = stepsTotalForPath;
+		const { stepSides } = computeInnerDefaultSides();
 
 		setStepRailing(prev => {
-			// אם נבחר "ללא" – אפס את כל המעקות
 			if (railing === 'none') {
 				return new Array<boolean>(nextLen).fill(false);
 			}
-			// אחרת שמור ערכים קיימים והוסף ברירת מחדל פעילה לחדשים
 			const out = new Array<boolean>(nextLen);
 			for (let i = 0; i < nextLen; i++) out[i] = prev[i] ?? true;
 			return out;
 		});
 
 		setStepRailingSide(prev => {
-			// חשב רוב צדדי המעקה הקיימים (רק היכן שמעקה פעיל)
-			let rightCount = 0;
-			let leftCount = 0;
-			for (let i = 0; i < prev.length; i++) {
-				const has = (stepRailing[i] ?? (railing !== 'none')) === true;
-				if (!has) continue;
-				if (prev[i] === 'left') leftCount++; else rightCount++;
-			}
-			const defaultSide: 'right' | 'left' = rightCount >= leftCount ? 'right' : 'left';
-
 			const out = new Array<'right' | 'left'>(nextLen);
-			for (let i = 0; i < nextLen; i++) out[i] = prev[i] ?? defaultSide;
+			for (let i = 0; i < nextLen; i++) out[i] = prev[i] ?? (stepSides[i] ?? 'right');
 			return out;
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [stepsTotalForPath, railing]);
+	}, [stepsTotalForPath, railing, computeInnerDefaultSides]);
 	React.useEffect(() => {
 		// לכל פודסט: עם פנייה = בלי מעקה; בלי פנייה = לפי ברירת המחדל הגלובלית
 		const out = landingMeta.map(turn => (turn ? false : railing !== 'none'));
 		setLandingRailing(out);
-		setLandingRailingSide(new Array<'right' | 'left'>(landingMeta.length).fill('right'));
+		const { landingSides } = computeInnerDefaultSides();
+		setLandingRailingSide(prev => {
+			const outSides = new Array<'right' | 'left'>(landingMeta.length);
+			for (let i = 0; i < outSides.length; i++) {
+				outSides[i] = prev[i] ?? (landingSides[i] ?? 'right');
+			}
+			return outSides;
+		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [landingMeta, railing]);
+	}, [landingMeta, railing, computeInnerDefaultSides]);
 	// סנכרון מערכי מצב כבל פר‑מדרגה/פודסט לפי אורך המסלול
 	React.useEffect(() => {
 		setStepCableSpanMode(prev => {
@@ -3390,6 +3419,12 @@ function LivePageInner() {
 																const nextLen = stepsTotalForPath;
 																setStepRailing(new Array<boolean>(nextLen).fill(next !== 'none'));
 																setLandingRailing(landingMeta.map(turn => (turn ? false : (next !== 'none'))));
+																// ברירת מחדל לצדדים: פנימי כאשר מפעילים לראשונה
+																if (railing === 'none' && next !== 'none') {
+																	const { stepSides, landingSides } = computeInnerDefaultSides();
+																	setStepRailingSide(stepSides);
+																	setLandingRailingSide(landingSides);
+																}
 															}}
 														>
 															{opt.label}
@@ -3745,6 +3780,12 @@ function LivePageInner() {
 														const nextLen = stepsTotalForPath;
 														setStepRailing(new Array<boolean>(nextLen).fill(next !== 'none'));
 														setLandingRailing(landingMeta.map(turn => (turn ? false : (next !== 'none'))));
+													// ברירת מחדל לצדדים: פנימי כאשר מפעילים לראשונה
+													if (railing === 'none' && next !== 'none') {
+														const { stepSides, landingSides } = computeInnerDefaultSides();
+														setStepRailingSide(stepSides);
+														setLandingRailingSide(landingSides);
+													}
 													}}
 												>
 													{opt.label}

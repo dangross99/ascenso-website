@@ -855,8 +855,8 @@ function Staircase3D({
 					if (axis === 'x') {
 						const x0 = t.position[0] - t.run / 2;
 						const x1 = t.position[0] + t.run / 2;
-						const dirSign = (x1 >= x0 ? 1 : -1);
-						const k = (riser / treadDepth) * dirSign;
+						const dirAxis = (Math.cos(yaw) >= 0 ? 1 : -1); // +X או -X
+						const k = (riser / treadDepth) * dirAxis;
 						const b = bottomY - k * t.position[0] - overlapStep;
 						const tH = treadThickness + (heightAboveFaceStep + overlapStep);
 						const rZ = -Math.cos(yaw);
@@ -881,8 +881,8 @@ function Staircase3D({
 					} else {
 						const z0 = t.position[2] - t.run / 2;
 						const z1 = t.position[2] + t.run / 2;
-						const dirSign = (z1 >= z0 ? 1 : -1);
-						const k = (riser / treadDepth) * dirSign;
+						const dirAxis = (Math.sin(yaw) >= 0 ? 1 : -1); // +Z או -Z
+						const k = (riser / treadDepth) * dirAxis;
 						const b = bottomY - k * t.position[2] - overlapStep;
 						const tH = treadThickness + (heightAboveFaceStep + overlapStep);
 						const rX = Math.sin(yaw);
@@ -1309,8 +1309,8 @@ function Staircase3D({
 					if (axis === 'x') {
 						const x0 = t.position[0] - t.run / 2;
 						const x1 = t.position[0] + t.run / 2;
-						const dirSign = (x1 >= x0 ? 1 : -1);
-						const k = (riser / treadDepth) * dirSign;
+						const dirAxis = (Math.cos(yaw) >= 0 ? 1 : -1); // +X או -X
+						const k = (riser / treadDepth) * dirAxis;
 						const b = bottomY - k * t.position[0] - overlapStep;
 						const tH = treadThickness + (heightAboveFaceStep + overlapStep);
 						const rZ = -Math.cos(yaw);
@@ -1358,8 +1358,8 @@ function Staircase3D({
 					} else {
 						const z0 = t.position[2] - t.run / 2;
 						const z1 = t.position[2] + t.run / 2;
-						const dirSign = (z1 >= z0 ? 1 : -1);
-						const k = (riser / treadDepth) * dirSign;
+						const dirAxis = (Math.sin(yaw) >= 0 ? 1 : -1); // +Z או -Z
+						const k = (riser / treadDepth) * dirAxis;
 						const b = bottomY - k * t.position[2] - overlapStep;
 						const tH = treadThickness + (heightAboveFaceStep + overlapStep);
 						const rX = Math.sin(yaw);

@@ -774,10 +774,10 @@ export default function Home() {
                 <img
                   src={encodeURI("/images/ChatGPT Image Jan 10, 2026, 08_04_27 PM.png")}
                   alt="אבן טבעית"
-                  className="w-full h-[414px] md:h-[598px] object-contain bg-transparent translate-y-4 md:translate-y-0 md:scale-[1.4] md:origin-left md:object-left"
+                  className="w-full h-[414px] md:h-[598px] object-contain bg-transparent translate-y-4 md:translate-y-0 md:scale-[1.4] md:origin-left md:object-left lg:-translate-y-6"
                 />
               </a>
-              <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-32 lg:top-32 z-10 px-1 text-center" dir="rtl">
+              <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-32 lg:top-40 z-10 px-1 text-center" dir="rtl">
                 <h3 className="text-lg md:text-2xl font-semibold text-[#1a1a2e] tracking-tight">אבן טבעית (Natural Stone)</h3>
                 <p className="text-base md:text-lg text-gray-700">
                   אנו בוחרים ידנית כל לוח ממחצבות העילית של איטליה, ברזיל וקולומביה. כל גיד וטקסטורה הם עדות לתהליך של מיליוני שנים, המעניקים לכל פריט זהות ייחודית שאין לה עותק. יצירה של{"\u00A0"}הטבע.

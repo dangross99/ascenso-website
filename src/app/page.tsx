@@ -809,7 +809,7 @@ export default function Home() {
                 />
                 {/* Desktop image (replacement) */}
                 <img
-                  src={encodeURI("/images/ChatGPT Image Jan 11, 2026, 11_05_11 AM.png")}
+                  src={encodeURI("/images/ChatGPT Image Jan 11, 2026, 11_10_55 AM.png")}
                   alt="עץ טבעי"
                   className="hidden lg:block w-full h-[414px] md:h-[598px] object-contain bg-transparent translate-y-6 md:translate-y-0 md:scale-[1.4] md:origin-center lg:-translate-y-40"
                 />

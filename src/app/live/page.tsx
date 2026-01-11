@@ -2877,7 +2877,7 @@ function LivePageInner() {
 													title={sw.label}
 													aria-label={sw.label}
 													onClick={() => setGlassTone(sw.id)}
-													className={`w-6 h-6 rounded-full border-2 ${glassTone === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+													className={`w-6 h-6 rounded-full border-2 cursor-pointer ${glassTone === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 													style={{ backgroundColor: sw.color, borderColor: sw.border }}
 												/>
 											))}
@@ -2891,7 +2891,7 @@ function LivePageInner() {
 													title={opt.name}
 													aria-label={opt.name}
 													onClick={() => setCableId(opt.id)}
-													className={`w-8 h-8 rounded-full border-2 bg-center bg-cover ${cableId === opt.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+													className={`w-8 h-8 rounded-full border-2 bg-center bg-cover cursor-pointer ${cableId === opt.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 													style={{ backgroundImage: opt.image ? `url("${encodeURI(opt.image)}")` : undefined, borderColor: '#ddd' }}
 												/>
 											))}
@@ -2906,14 +2906,14 @@ function LivePageInner() {
 												title="שחור"
 												aria-label="שחור"
 												onClick={() => { setRailingMetalSolid('#111111'); setRailingMetalId(null); }}
-												className={`w-8 h-8 rounded-full border-2 ${railingMetalSolid === '#111111' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+												className={`w-8 h-8 rounded-full border-2 cursor-pointer ${railingMetalSolid === '#111111' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 												style={{ backgroundColor: '#111111', borderColor: '#2b2b2b' }}
 											/>
 											<button
 												title="לבן"
 												aria-label="לבן"
 												onClick={() => { setRailingMetalSolid('#F5F5F5'); setRailingMetalId(null); }}
-												className={`w-8 h-8 rounded-full border-2 ${railingMetalSolid === '#F5F5F5' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+												className={`w-8 h-8 rounded-full border-2 cursor-pointer ${railingMetalSolid === '#F5F5F5' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 												style={{ backgroundColor: '#F5F5F5', borderColor: '#e5e5e5' }}
 											/>
 											{/* טקסטורות מתכת */}
@@ -2923,7 +2923,7 @@ function LivePageInner() {
 													title={opt.name}
 													aria-label={opt.name}
 													onClick={() => { setRailingMetalId(opt.id); setRailingMetalSolid(null); }}
-													className={`w-8 h-8 rounded-full border-2 bg-center bg-cover ${(railingMetalId === opt.id && !railingMetalSolid) ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+													className={`w-8 h-8 rounded-full border-2 bg-center bg-cover cursor-pointer ${(railingMetalId === opt.id && !railingMetalSolid) ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 													style={{ backgroundImage: opt.images?.[0] ? `url("${encodeURI(opt.images[0])}")` : undefined, borderColor: '#ddd' }}
 												/>
 											))}
@@ -3185,7 +3185,7 @@ function LivePageInner() {
 								el: (
 									<div>
 										<button
-											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'box' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
+											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] cursor-pointer ${mobileOpenCat === 'box' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
 											onClick={() => setMobileOpenCat(prev => (prev === 'box' ? null : 'box'))}
 											aria-expanded={mobileOpenCat === 'box'}
 										>
@@ -3222,7 +3222,7 @@ function LivePageInner() {
 								el: (
 									<div>
 										<button
-											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'material' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
+											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] cursor-pointer ${mobileOpenCat === 'material' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
 											onClick={() => setMobileOpenCat(prev => (prev === 'material' ? null : 'material'))}
 											aria-expanded={mobileOpenCat === 'material'}
 										>
@@ -3255,7 +3255,7 @@ function LivePageInner() {
 									el: (
 										<div>
 											<button
-												className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'woodTexture' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
+												className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] cursor-pointer ${mobileOpenCat === 'woodTexture' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
 												onClick={() => setMobileOpenCat(prev => (prev === 'woodTexture' ? null : 'woodTexture'))}
 												aria-expanded={mobileOpenCat === 'woodTexture'}
 											>
@@ -3288,7 +3288,7 @@ function LivePageInner() {
 									el: (
 										<div>
 											<button
-												className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'woodColor' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
+												className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] cursor-pointer ${mobileOpenCat === 'woodColor' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
 												onClick={() => setMobileOpenCat(prev => (prev === 'woodColor' ? null : 'woodColor'))}
 												aria-expanded={mobileOpenCat === 'woodColor'}
 											>
@@ -3314,7 +3314,7 @@ function LivePageInner() {
 																			onClick={() => startTransition(() => {
 																				setActiveColor(sw.id);
 																			})}
-																			className={`w-8 h-8 rounded-full border-2 ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+															className={`w-8 h-8 rounded-full border-2 cursor-pointer ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																			style={{
 																				backgroundImage: img ? `url("${encodeURI(img)}")` : undefined,
 																				backgroundColor: img ? undefined : solid,
@@ -3340,7 +3340,7 @@ function LivePageInner() {
 									el: (
 										<div>
 											<button
-											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'nonWoodTexture' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
+											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] cursor-pointer ${mobileOpenCat === 'nonWoodTexture' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
 												onClick={() => setMobileOpenCat(prev => (prev === 'nonWoodTexture' ? null : 'nonWoodTexture'))}
 												aria-expanded={mobileOpenCat === 'nonWoodTexture'}
 											>
@@ -3383,7 +3383,7 @@ function LivePageInner() {
 								el: (
 									<div>
 										<button
-											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'path' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
+											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] cursor-pointer ${mobileOpenCat === 'path' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
 											onClick={() => setMobileOpenCat(prev => (prev === 'path' ? null : 'path'))}
 											aria-expanded={mobileOpenCat === 'path'}
 										>
@@ -3507,7 +3507,7 @@ function LivePageInner() {
 								el: (
 									<div>
 										<button
-											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${mobileOpenCat === 'railing' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
+											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] cursor-pointer ${mobileOpenCat === 'railing' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
 											onClick={() => setMobileOpenCat(prev => (prev === 'railing' ? null : 'railing'))}
 											aria-expanded={mobileOpenCat === 'railing'}
 										>
@@ -3609,7 +3609,7 @@ function LivePageInner() {
 																	title={opt.name}
 																	aria-label={opt.name}
 																	onClick={() => setCableId(opt.id)}
-																	className={`w-8 h-8 rounded-full border-2 bg-center bg-cover ${cableId === opt.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+																	className={`w-8 h-8 rounded-full border-2 bg-center bg-cover cursor-pointer ${cableId === opt.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																	style={{ backgroundImage: opt.image ? `url("${encodeURI(opt.image)}")` : undefined, borderColor: '#ddd' }}
 																/>
 															))}
@@ -3626,14 +3626,14 @@ function LivePageInner() {
 																title="שחור"
 																aria-label="שחור"
 																onClick={() => { setRailingMetalSolid('#111111'); setRailingMetalId(null); }}
-																className={`w-8 h-8 rounded-full border-2 ${railingMetalSolid === '#111111' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+																className={`w-8 h-8 rounded-full border-2 cursor-pointer ${railingMetalSolid === '#111111' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																style={{ backgroundColor: '#111111', borderColor: '#2b2b2b' }}
 															/>
 															<button
 																title="לבן"
 																aria-label="לבן"
 																onClick={() => { setRailingMetalSolid('#F5F5F5'); setRailingMetalId(null); }}
-																className={`w-8 h-8 rounded-full border-2 ${railingMetalSolid === '#F5F5F5' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+																className={`w-8 h-8 rounded-full border-2 cursor-pointer ${railingMetalSolid === '#F5F5F5' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																style={{ backgroundColor: '#F5F5F5', borderColor: '#e5e5e5' }}
 															/>
 															{/* טקסטורות מתכת */}
@@ -3643,7 +3643,7 @@ function LivePageInner() {
 																	title={opt.name}
 																	aria-label={opt.name}
 																	onClick={() => { setRailingMetalId(opt.id); setRailingMetalSolid(null); }}
-																	className={`w-8 h-8 rounded-full border-2 bg-center bg-cover ${(railingMetalId === opt.id && !railingMetalSolid) ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+																	className={`w-8 h-8 rounded-full border-2 bg-center bg-cover cursor-pointer ${(railingMetalId === opt.id && !railingMetalSolid) ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																	style={{ backgroundImage: opt.images?.[0] ? `url("${encodeURI(opt.images[0])}")` : undefined, borderColor: '#ddd' }}
 																/>
 															))}

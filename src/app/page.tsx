@@ -829,7 +829,7 @@ export default function Home() {
                   </div>
                 </div>
             {/* Marble / Natural Stone */}
-            <div className="relative flex flex-col gap-1 lg:col-start-2">
+            <div className="relative flex flex-col gap-1 lg:col-start-2 lg:-mt-40">
               <a href="/materials?cat=metal" className="block">
                 <img
                   src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 05_44_10 PM.png")}

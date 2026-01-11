@@ -632,6 +632,7 @@ function Staircase3D({
 					xConst?: number; // למקטע לאורך Z – מיקום X של המשטח
 					signX?: 1 | -1;
 					zSign?: 1 | -1; // למקטע לאורך X – באיזה צד בציר Z לשים את הזכוכית
+					zConst?: number; // למקטע לאורך X – מיקום Z של המשטח (עוגן מוחלט)
 				};
 				const segs: Seg[] = [];
 				let sIdx2 = 0;
@@ -657,6 +658,7 @@ function Staircase3D({
 							const sidePref = (landingRailingSides?.[lIdx2 - 1] ?? 'right');
 							const rZ = -Math.cos(yaw);
 							const zSign = (sidePref === 'right' ? (rZ >= 0 ? 1 : -1) : (rZ >= 0 ? -1 : 1)) as 1 | -1;
+							const zGlass = t.position[2] + zSign * (treadWidth / 2 + distance);
 							// פודסט ישר – פאנל שטוח (k=0) ע"י stepRun=Infinity
 							segs.push({
 								axis: 'x',
@@ -667,6 +669,7 @@ function Staircase3D({
 								stepRun: Number.POSITIVE_INFINITY,
 								overlap: overlapLanding,
 								zSign,
+								zConst: zGlass,
 							});
 						} else {
 							const z0 = t.position[2] - t.run / 2;
@@ -701,6 +704,7 @@ function Staircase3D({
 						if (!current || current.axis !== 'x') {
 							const rZ = -Math.cos(yaw);
 							const zSign = (sidePref === 'right' ? (rZ >= 0 ? 1 : -1) : (rZ >= 0 ? -1 : 1)) as 1 | -1;
+							const zGlass = t.position[2] + zSign * (treadWidth / 2 + distance);
 							current = {
 								axis: 'x',
 								start: x0,
@@ -710,6 +714,7 @@ function Staircase3D({
 								stepRun: treadDepth,
 								overlap: overlapStep,
 								zSign,
+								zConst: zGlass,
 							};
 						} else {
 							const rZ = -Math.cos(yaw);
@@ -725,9 +730,11 @@ function Staircase3D({
 									stepRun: treadDepth,
 									overlap: overlapStep,
 									zSign: zSignNow,
+									zConst: t.position[2] + zSignNow * (treadWidth / 2 + distance),
 								};
 							} else {
 								current.end = x1;
+								current.zConst = t.position[2] + zSignNow * (treadWidth / 2 + distance);
 							}
 						}
 					} else {
@@ -785,7 +792,7 @@ function Staircase3D({
 						: (heightAboveFaceStep + overlapStep));
 
 					if (sg.axis === 'x') {
-						const zPos = (sg.zSign ?? 1) * (treadWidth / 2 + distance);
+						const zPos = (sg.zConst ?? ((sg.zSign ?? 1) * (treadWidth / 2 + distance)));
 						const geom = new BufferGeometry();
 						const positions = new Float32BufferAttribute([
 							sg.start, k * sg.start + b, zPos,
@@ -966,6 +973,7 @@ function Staircase3D({
 					xConst?: number;
 					signX?: 1 | -1;
 					zSign?: 1 | -1;
+					zConst?: number;
 				};
 				const segs: Seg[] = [];
 				let sIdx2 = 0;
@@ -989,6 +997,7 @@ function Staircase3D({
 							const sidePref = (landingRailingSides?.[lIdx2 - 1] ?? 'right');
 							const rZ = -Math.cos(yaw);
 							const zSign = (sidePref === 'right' ? (rZ >= 0 ? 1 : -1) : (rZ >= 0 ? -1 : 1)) as 1 | -1;
+							const zMetal = t.position[2] + zSign * (treadWidth / 2 + distance);
 							segs.push({
 								axis: 'x',
 								start: x0,
@@ -998,6 +1007,7 @@ function Staircase3D({
 								stepRun: Number.POSITIVE_INFINITY,
 								overlap: overlapLanding,
 								zSign,
+								zConst: zMetal,
 							});
 						} else {
 							const z0 = t.position[2] - t.run / 2;
@@ -1031,6 +1041,7 @@ function Staircase3D({
 						const x1 = t.position[0] + t.run / 2;
 						const rZ = -Math.cos(yaw);
 						const zSignDesired = (sidePref === 'right' ? (rZ >= 0 ? 1 : -1) : (rZ >= 0 ? -1 : 1)) as 1 | -1;
+						const zMetal = t.position[2] + zSignDesired * (treadWidth / 2 + distance);
 						if (!current) {
 							current = {
 								axis: 'x',
@@ -1041,6 +1052,7 @@ function Staircase3D({
 								stepRun: treadDepth,
 								overlap: overlapStep,
 								zSign: zSignDesired,
+								zConst: zMetal,
 							};
 						} else {
 							if (current.zSign !== zSignDesired) {
@@ -1054,10 +1066,12 @@ function Staircase3D({
 									stepRun: treadDepth,
 									overlap: overlapStep,
 									zSign: zSignDesired,
+									zConst: zMetal,
 								};
 							} else {
 								current.end = x1;
 								current.zSign = zSignDesired;
+								current.zConst = zMetal;
 							}
 						}
 					} else {
@@ -1113,7 +1127,7 @@ function Staircase3D({
 						: (heightAboveFaceStep + overlapStep));
 
 					if (sg.axis === 'x') {
-						const zPos = (sg.zSign ?? 1) * (treadWidth / 2 + distance);
+						const zPos = (sg.zConst ?? ((sg.zSign ?? 1) * (treadWidth / 2 + distance)));
 						const geom = new BufferGeometry();
 						const positions = new Float32BufferAttribute([
 							sg.start, k * sg.start + b, zPos,

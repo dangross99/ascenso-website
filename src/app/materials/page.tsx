@@ -144,11 +144,9 @@ export default function MaterialsPage() {
 				{/* סינון בראש הדף בדסקטופ */}
 				<aside className="lg:col-span-12 self-start" dir="rtl">
 					<div className="border p-4 bg-white rounded-xl shadow-sm">
-						<h3 className="text-base font-semibold mb-4">סינון</h3>
 
 						{/* קטגוריות (במקום Origin) */}
 						<div className="mb-5">
-							<div className="text-sm font-medium mb-2">קטגוריות</div>
 							<div className="flex flex-wrap gap-2">
 								<button
 									className={`px-3 py-1 text-sm rounded-full border cursor-pointer bg-white text-[#1a1a2e] ${materialFilter === null ? 'border-[#1a1a2e] font-semibold' : 'border-gray-300 hover:border-gray-400'}`}
@@ -181,12 +179,6 @@ export default function MaterialsPage() {
 
 						{/* מחיר */}
 						<div className="mb-3">
-							<div className="flex items-center justify-between mb-2">
-								<div className="text-sm font-medium">מחיר</div>
-								<div className="text-xs text-gray-600">
-									עד ₪{priceFilter ?? 0}
-								</div>
-							</div>
 							<div className="text-[11px] text-gray-500 mb-2">המחיר כולל התקנה</div>
 							<input
 								type="range"

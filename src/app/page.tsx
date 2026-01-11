@@ -777,7 +777,7 @@ export default function Home() {
                   className="w-full h-[414px] md:h-[598px] object-contain bg-transparent translate-y-4 md:translate-y-0 md:scale-[1.4] md:origin-left md:object-left lg:-translate-y-40"
                 />
               </a>
-              <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-32 lg:top-64 z-10 px-1 text-center" dir="rtl">
+              <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-32 lg:top-72 z-10 px-1 text-center" dir="rtl">
                 <h3 className="text-lg md:text-2xl font-semibold text-[#1a1a2e] tracking-tight">אבן טבעית (Natural Stone)</h3>
                 <p className="text-base md:text-lg text-gray-700">
                   אנו בוחרים ידנית כל לוח ממחצבות העילית של איטליה, ברזיל וקולומביה. כל גיד וטקסטורה הם עדות לתהליך של מיליוני שנים, המעניקים לכל פריט זהות ייחודית שאין לה עותק. יצירה של{"\u00A0"}הטבע.
@@ -807,7 +807,7 @@ export default function Home() {
                   className="block w-full h-[414px] md:h-[598px] object-contain bg-transparent translate-y-6 md:translate-y-0 md:scale-[1.4] md:origin-center lg:-translate-y-40"
                 />
               </a>
-              <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-32 lg:top-64 z-10 px-1 text-center">
+              <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-32 lg:top-72 z-10 px-1 text-center">
                 <h3 className="text-lg md:text-2xl font-semibold text-[#1a1a2e] tracking-tight">עץ (WOOD)</h3>
                 <p className="text-base md:text-lg text-gray-700">המפגש שבין החמימות הגולמית של העץ לבין איכות בלתי מתפשרת. אנו משתמשים בטקסטורות עץ שנבחרו בקפידה ליצירת הרמוניה יומיומית, המשלבת בין המגע הטבעי לבין עיצוב על זמני.</p>
                 <div className="mt-1 flex items-center justify-center gap-3 text-[#1a1a2e] text-sm md:text-base w-max mx-auto">
@@ -834,7 +834,7 @@ export default function Home() {
                 <img
                   src={encodeURI("/images/ChatGPT Image Jan 6, 2026, 05_44_10 PM.png")}
                   alt="מתכת"
-                  className="w-full h-[414px] md:h-[598px] object-contain bg-transparent translate-y-3 md:translate-y-0 md:scale-[1.4] md:origin-right md:object-right lg:-translate-y-[60px]"
+                  className="w-full h-[414px] md:h-[598px] object-contain bg-transparent translate-y-3 md:translate-y-0 md:scale-[1.4] md:origin-right md:object-right lg:-translate-y-[60px] lg:-translate-x-10"
                 />
               </a>
               <div className="absolute inset-x-0 bottom-64 md:bottom-auto md:top-32 lg:-top-[180px] z-10 px-1 text-center" dir="rtl">

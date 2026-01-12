@@ -2337,8 +2337,21 @@ function LivePageInner() {
 	// מחשבון מחיר בסיסי (מותאם למסלול)
 	function calculatePrice(): { breakdown: Array<{ label: string; value: number }>; total: number } {
 		const baseSetup = 1500; // פתיחת תיק/מדידות/שינוע בסיסי
-		const perStep = 800; // לכל שלב
-		const landingPrice = perStep * 3; // לכל פודסט – פי 3 ממחיר מדרגה
+		// מחיר למדרגה לפי החומר/טקסטורה הנבחרים (ברירת מחדל 800)
+		let perStep = 800;
+		// בחירת רשומת חומר פעילה
+		let selectedRecord: MaterialRecord | undefined;
+		if (activeMaterial === 'wood') {
+			// לדגמי עץ – קח את הדגם הפעיל (יש בו price בסיסי)
+			selectedRecord = activeModel as any;
+		} else {
+			// למתכת/אבן – קח את הרשומה ע"פ activeTexId
+			selectedRecord = nonWoodModels.find(r => r.id === activeTexId) || undefined;
+		}
+		if (selectedRecord && typeof selectedRecord.price === 'number' && selectedRecord.price > 0) {
+			perStep = selectedRecord.price;
+		}
+		const landingPrice = perStep * 3; // פודסט = פי 3 ממדרגה
 		// חישוב מתוך המסלול
 		const stepsTotal = pathSegments.reduce((s, seg) => s + (seg.kind === 'straight' ? seg.steps : 0), 0);
 		const landingCount = pathSegments.reduce((s, seg) => s + (seg.kind === 'landing' ? 1 : 0), 0);

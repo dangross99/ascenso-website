@@ -130,3 +130,17 @@ body {
 .hide-scrollbar::-webkit-scrollbar {
   display: none; /* Chrome, Safari */
 }
+
+/* --- Hide datalist dropdown arrow (keep suggestions) --- */
+/* Chrome / Edge / Safari */
+input[list]::-webkit-calendar-picker-indicator {
+  display: none !important;
+  opacity: 0 !important;
+}
+/* IE/old Edge artefacts */
+input::-ms-clear,
+input::-ms-reveal {
+  display: none;
+  width: 0;
+  height: 0;
+}

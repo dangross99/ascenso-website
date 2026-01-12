@@ -642,5 +642,15 @@
         "/images/materials/wood_model_11_white-v1766948002057-600.webp"
       ]
     }
+  },
+  {
+    "id": "stone_amazonas_brazil",
+    "name": "Amazonas Brazil",
+    "category": "stone",
+    "colors": [],
+    "price": 3500,
+    "images": [
+      "/images/materials/stone/amazonas-brazil.png"
+    ]
   }
 ]

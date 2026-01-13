@@ -648,9 +648,119 @@
     "name": "Amazonas Brazil",
     "category": "stone",
     "colors": [],
-    "price": 3500,
+    "price": 4300,
     "images": [
       "/images/materials/amazonas-brazil.png"
+    ]
+  },
+  {
+    "id": "stone_green_alpi",
+    "name": "Green Alpi",
+    "category": "stone",
+    "colors": [],
+    "price": 4100,
+    "images": [
+      "/images/materials/green-alpi.png"
+    ]
+  },
+  {
+    "id": "stone_travertine_silver",
+    "name": "Travertine Silver",
+    "category": "stone",
+    "colors": [],
+    "price": 3400,
+    "images": [
+      "/images/materials/travertine-silver.png"
+    ]
+  },
+  {
+    "id": "stone_four_seasons",
+    "name": "Four Seasons",
+    "category": "stone",
+    "colors": [],
+    "price": 4900,
+    "images": [
+      "/images/materials/four-seasons.png"
+    ]
+  },
+  {
+    "id": "stone_parisian_stone",
+    "name": "Parisian Stone",
+    "category": "stone",
+    "colors": [],
+    "price": 3600,
+    "images": [
+      "/images/materials/parisian-stone.jpeg"
+    ]
+  },
+  {
+    "id": "stone_red_wine",
+    "name": "Red Wine",
+    "category": "stone",
+    "colors": [],
+    "price": 3900,
+    "images": [
+      "/images/materials/red-wine.jpeg"
+    ]
+  },
+  {
+    "id": "stone_black_gold",
+    "name": "Black Gold",
+    "category": "stone",
+    "colors": [],
+    "price": 3200,
+    "images": [
+      "/images/materials/black-gold.png"
+    ]
+  },
+  {
+    "id": "stone_land_stone",
+    "name": "Land Stone",
+    "category": "stone",
+    "colors": [],
+    "price": 3600,
+    "images": [
+      "/images/materials/land-stone.png"
+    ]
+  },
+  {
+    "id": "stone_rain_stone",
+    "name": "Rain Stone",
+    "category": "stone",
+    "colors": [],
+    "price": 3700,
+    "images": [
+      "/images/materials/rain-stone.png"
+    ]
+  },
+  {
+    "id": "stone_river_stone",
+    "name": "River Stone",
+    "category": "stone",
+    "colors": [],
+    "price": 3600,
+    "images": [
+      "/images/materials/river-stone.png"
+    ]
+  },
+  {
+    "id": "stone_tiger_stone",
+    "name": "Tiger Stone",
+    "category": "stone",
+    "colors": [],
+    "price": 3300,
+    "images": [
+      "/images/materials/tiger-stone.png"
+    ]
+  },
+  {
+    "id": "stone_van_gogh",
+    "name": "Van Gogh",
+    "category": "stone",
+    "colors": [],
+    "price": 4200,
+    "images": [
+      "/images/materials/van-gogh.png"
     ]
   }
 ]

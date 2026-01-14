@@ -68,7 +68,7 @@ export default function MaterialsPage() {
 		);
 	const [materialFilter, setMaterialFilter] = React.useState<string | null>(null);
 	// color filter removed
-	const [priceFilter, setPriceFilter] = React.useState<number | null>(5000); // max price (slider)
+	const [priceFilter, setPriceFilter] = React.useState<number | null>(7000); // max price (slider)
 	const [allItems, setAllItems] = React.useState<MaterialItem[]>([]);
 	const [visibleCount, setVisibleCount] = React.useState<number>(9);
 	// צבע נבחר לכל פריט עץ (מפה לפי id)
@@ -183,20 +183,23 @@ export default function MaterialsPage() {
 							<input
 								type="range"
 								min={2000}
-								max={5000}
+								max={7000}
 								step={100}
-								value={priceFilter ?? 5000}
+								value={priceFilter ?? 7000}
 								onChange={e => setPriceFilter(parseInt(e.target.value, 10))}
 								className="w-full accent-[#1a1a2e]"
 								aria-label="סינון לפי מחיר מקסימלי"
 							/>
-							<div className="flex justify-between text-sm text-gray-600 mt-1">
-								<span>₪2000</span>
-								<span>₪2500</span>
-								<span>₪3000</span>
-								<span>₪4000</span>
-								<span>₪5000</span>
-							</div>
+							{(() => {
+								const ticks = [2000, 3000, 4000, 5000, 6000, 7000];
+								return (
+									<div className="flex justify-between text-sm text-gray-600 mt-1">
+										{ticks.map(v => (
+											<span key={v}>₪{v.toLocaleString('he-IL')}</span>
+										))}
+									</div>
+								);
+							})()}
 						</div>
 					</div>
 				</aside>

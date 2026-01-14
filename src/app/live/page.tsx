@@ -52,6 +52,8 @@ type MaterialRecord = {
 	variants?: Record<string, string[]>;
 	pbr?: { bump?: string[]; roughness?: string[] };
 	pbrVariants?: Record<string, { bump?: string[]; roughness?: string[] }>;
+	// עבור פריטי מתכת/אבן בגוון אחיד ללא טקסטורה
+	solid?: string; // hex כמו '#111111' או '#F5F5F5'
 };
 
 const WOOD_SWATCHES: { id: string; label: string }[] = [
@@ -115,6 +117,7 @@ function Staircase3D({
 	steps,
 	color,
 	materialKind,
+	materialSolidColor,
 	textureUrl,
 	bumpUrl,
 	roughnessUrl,
@@ -142,6 +145,7 @@ function Staircase3D({
 	steps: number;
 	color: string;
 	materialKind: 'wood' | 'metal' | 'stone';
+	materialSolidColor?: string | null;
 	textureUrl?: string | null;
 	bumpUrl?: string | null;
 	roughnessUrl?: string | null;
@@ -386,6 +390,7 @@ function Staircase3D({
 	const map = useLoader(TextureLoader, tex || '/images/products/white-onyx.jpg');
 	const bumpMap = useLoader(TextureLoader, (bumpUrl || '/images/products/white-onyx.jpg'));
 	const roughMap = useLoader(TextureLoader, (roughnessUrl || '/images/products/white-onyx.jpg'));
+	const useSolidMat = !!materialSolidColor;
 
 	// טקסטורות למעקה (למתכת) – נטענות תמיד לשמירת סדר hooks, גם אם לא בשימוש
 	const railingTex = React.useMemo(() => railingTextureUrl || null, [railingTextureUrl]);
@@ -547,13 +552,19 @@ function Staircase3D({
 							})()
 						) : materialKind === 'metal' ? (
 							(() => {
+								if (useSolidMat) {
+									return (<meshBasicMaterial color={materialSolidColor || '#eeeeee'} side={2} />);
+								}
 								const ft = buildFaceTextures(t.run, treadWidth);
-							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
+								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
 							})()
 						) : (
 							(() => {
+								if (useSolidMat) {
+									return (<meshBasicMaterial color={materialSolidColor || '#eeeeee'} side={2} />);
+								}
 								const ft = buildFaceTextures(t.run, treadWidth);
-							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
+								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
 							})()
 						)}
 					</mesh>
@@ -562,6 +573,9 @@ function Staircase3D({
 					<mesh rotation={[Math.PI / 2, 0, 0]} position={[0, -treadThickness / 2 - 0.0005, 0]} receiveShadow>
 						<planeGeometry args={[t.run, treadWidth, 8, 8]} />
 						{(() => {
+							if (useSolidMat) {
+								return (<meshBasicMaterial color={materialSolidColor || '#eeeeee'} />);
+							}
 							const ft = buildFaceTextures(t.run, treadWidth);
 							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
 						})()}
@@ -571,6 +585,9 @@ function Staircase3D({
 					<mesh rotation={[0, Math.PI / 2, 0]} position={[t.run / 2 + 0.0005, 0, 0]} receiveShadow>
 						<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
 						{(() => {
+							if (useSolidMat) {
+								return (<meshBasicMaterial color={materialSolidColor || '#eeeeee'} />);
+							}
 							const ft = buildFaceTextures(treadWidth, treadThickness);
 							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
 						})()}
@@ -580,6 +597,9 @@ function Staircase3D({
 					<mesh rotation={[0, -Math.PI / 2, 0]} position={[-t.run / 2 - 0.0005, 0, 0]} receiveShadow>
 						<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
 						{(() => {
+							if (useSolidMat) {
+								return (<meshBasicMaterial color={materialSolidColor || '#eeeeee'} />);
+							}
 							const ft = buildFaceTextures(treadWidth, treadThickness);
 							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
 						})()}
@@ -589,6 +609,9 @@ function Staircase3D({
 					<mesh rotation={[0, 0, 0]} position={[0, 0, treadWidth / 2 + 0.0005]} receiveShadow>
 						<planeGeometry args={[t.run, treadThickness, 8, 8]} />
 						{(() => {
+							if (useSolidMat) {
+								return (<meshBasicMaterial color={materialSolidColor || '#eeeeee'} />);
+							}
 							const ft = buildFaceTextures(t.run, treadThickness);
 							return (<meshBasicMaterial map={ft.color} />);
 						})()}
@@ -598,6 +621,9 @@ function Staircase3D({
 					<mesh rotation={[0, Math.PI, 0]} position={[0, 0, -treadWidth / 2 - 0.0005]} receiveShadow>
 						<planeGeometry args={[t.run, treadThickness, 8, 8]} />
 						{(() => {
+							if (useSolidMat) {
+								return (<meshBasicMaterial color={materialSolidColor || '#eeeeee'} />);
+							}
 							const ft = buildFaceTextures(t.run, treadThickness);
 							return (<meshBasicMaterial map={ft.color} />);
 						})()}
@@ -2334,7 +2360,7 @@ function LivePageInner() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [activeMaterial, activeColor, activeModel?.id, activeTexId, shape, steps, box, pathSegments]);
 
-	// מחשבון מחיר בסיסי (מותאם למסלול)
+	// מחשבון מחיר בסיסי (מותאם למסלול) + תמחור מעקה לפי סוג
 	function calculatePrice(): { breakdown: Array<{ label: string; value: number }>; total: number } {
 		const baseSetup = 1500; // פתיחת תיק/מדידות/שינוע בסיסי
 		// מחיר למדרגה לפי החומר/טקסטורה הנבחרים (ברירת מחדל 800)
@@ -2357,11 +2383,45 @@ function LivePageInner() {
 		const landingCount = pathSegments.reduce((s, seg) => s + (seg.kind === 'landing' ? 1 : 0), 0);
 		const shapeMultiplier = landingCount === 0 ? 1.0 : landingCount === 1 ? 1.1 : 1.15;
 
-		const items = [
+		const items: Array<{ label: string; value: number }> = [
 			{ label: 'פתיחת פרויקט', value: baseSetup },
 			{ label: `מדרגות (${stepsTotal} יח׳)`, value: stepsTotal * perStep },
 			{ label: `פודסטים (${landingCount})`, value: landingCount * landingPrice },
 		];
+
+		// תמחור מעקה
+		// אומדני אורך/שטח: עומק מדרגה 0.30 מ׳; פודסט 0.90 מ׳; גובה זכוכית משוער ~1.1–1.2 מ׳
+		const STEP_RUN_M = 0.30;
+		const LANDING_RUN_M = 0.90;
+		const GLASS_H_STEP_M = 1.18;
+		const GLASS_H_LAND_M = 1.09;
+
+		const stepsEnabledCount = (stepRailing?.length ? stepRailing.filter(Boolean).length : 0);
+		const landingsEnabledCount = (landingRailing?.length ? landingRailing.filter(Boolean).length : 0);
+
+		if (railing === 'glass') {
+			const areaM2 =
+				stepsEnabledCount * (STEP_RUN_M * GLASS_H_STEP_M) +
+				landingsEnabledCount * (LANDING_RUN_M * GLASS_H_LAND_M);
+			const glassRate = 1700; // ₪ למ״ר
+			const cost = Math.round(areaM2 * glassRate);
+			if (cost > 0) items.push({ label: `מעקה זכוכית (~${areaM2.toFixed(2)} מ״ר)`, value: cost });
+		} else if (railing === 'metal') {
+			// תמחור לפי מטר רץ; מחיר למטר = מחיר המדרגה הנוכחי
+			const totalMeters =
+				stepsEnabledCount * STEP_RUN_M +
+				landingsEnabledCount * LANDING_RUN_M;
+			const ratePerMeter = perStep; // לפי דרישתך
+			const cost = Math.round(totalMeters * ratePerMeter);
+			if (cost > 0) items.push({ label: `מעקה מתכת (~${totalMeters.toFixed(2)} מ׳)`, value: cost });
+		} else if (railing === 'cable') {
+			// כבלי נירוסטה – 1100 ₪ לכל כבל שמופיע בהדמייה
+			// במודל: 3 כבלים לכל מדרגה עם מעקה, ו‑9 כבלים לכל פודסט ישר עם מעקה
+			const cablesCount = stepsEnabledCount * 3 + landingsEnabledCount * 9;
+			const cost = cablesCount * 1100;
+			if (cost > 0) items.push({ label: `מערכת כבלי נירוסטה (${cablesCount} כבלים)`, value: cost });
+		}
+
 		const subtotal = items.reduce((s, i) => s + i.value, 0);
 		const total = Math.round(subtotal * shapeMultiplier);
 		return { breakdown: items, total };
@@ -2713,26 +2773,21 @@ function LivePageInner() {
 										if (activeMaterial === 'wood') {
 											return activeModel?.variants?.[activeColor]?.[0] || activeModel?.images?.[0] || null;
 										}
-										return (
-											nonWoodModels.find(r => r.id === activeTexId)?.images?.[0] ||
-											nonWoodModels[0]?.images?.[0] ||
-											null
-										);
+										const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0];
+										if (sel?.solid) return null;
+										return sel?.images?.[0] || null;
 									})()}
 									bumpUrl={
 										activeMaterial === 'wood'
 											? activeModel?.pbrVariants?.[activeColor]?.bump?.[0] || null
-											: nonWoodModels.find(r => r.id === activeTexId)?.pbr?.bump?.[0] ||
-											  nonWoodModels[0]?.pbr?.bump?.[0] ||
-											  null
+											: (() => { const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0]; return sel?.solid ? null : (sel?.pbr?.bump?.[0] || null); })()
 									}
 									roughnessUrl={
 										activeMaterial === 'wood'
 											? activeModel?.pbrVariants?.[activeColor]?.roughness?.[0] || null
-											: nonWoodModels.find(r => r.id === activeTexId)?.pbr?.roughness?.[0] ||
-											  nonWoodModels[0]?.pbr?.roughness?.[0] ||
-											  null
+											: (() => { const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0]; return sel?.solid ? null : (sel?.pbr?.roughness?.[0] || null); })()
 									}
+									materialSolidColor={(() => { if (activeMaterial === 'wood') return null; const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0]; return (sel as any)?.solid || null; })()}
 									tileScale={(() => {
 										if (activeMaterial === 'wood') {
 											const cfg = MODEL_CONFIG[activeModel?.id || ''] || DEFAULT_MODEL_CONFIG;
@@ -3379,7 +3434,7 @@ function LivePageInner() {
 													if (activeMaterial === 'stone') setActiveStoneTexId(m.id);
 												})}
 																className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-																style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
+																style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, backgroundColor: (!m.images || m.images.length === 0) && (m as any).solid ? (m as any).solid : undefined, borderColor: '#ddd' }}
 															/>
 														))}
 													</div>
@@ -3858,7 +3913,7 @@ function LivePageInner() {
 														setActiveMetalTexId(m.id);
 													})}
 													className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-													style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
+													style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, backgroundColor: (!m.images || m.images.length === 0) && (m as any).solid ? (m as any).solid : undefined, borderColor: '#ddd' }}
 												/>
 											))}
 										</div>

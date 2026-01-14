@@ -5,12 +5,12 @@
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": ["/assets/materials_src/wood/אדמה/אדמה טבעי.png"],
+    "images": ["/images/materials/wood/אדמה/אדמה טבעי.png"],
     "variants": {
-      "oak": ["/assets/materials_src/wood/אדמה/אדמה טבעי.png"],
-      "walnut": ["/assets/materials_src/wood/אדמה/אדמה אגוז.png"],
-      "white": ["/assets/materials_src/wood/אדמה/אדמה לבנה.png"],
-      "black": ["/assets/materials_src/wood/אדמה/אדמה שחורה.png"]
+      "oak": ["/images/materials/wood/אדמה/אדמה טבעי.png"],
+      "walnut": ["/images/materials/wood/אדמה/אדמה אגוז.png"],
+      "white": ["/images/materials/wood/אדמה/אדמה לבנה.png"],
+      "black": ["/images/materials/wood/אדמה/אדמה שחורה.png"]
     }
   },
   {
@@ -19,12 +19,12 @@
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": ["/assets/materials_src/wood/חריטה/חריטה טבעי.png"],
+    "images": ["/images/materials/wood/חריטה/חריטה טבעי.png"],
     "variants": {
-      "oak": ["/assets/materials_src/wood/חריטה/חריטה טבעי.png"],
-      "walnut": ["/assets/materials_src/wood/חריטה/חריטה אגוז.png"],
-      "white": ["/assets/materials_src/wood/חריטה/חריטה לבנה.png"],
-      "black": ["/assets/materials_src/wood/חריטה/חריטה שחורה.png"]
+      "oak": ["/images/materials/wood/חריטה/חריטה טבעי.png"],
+      "walnut": ["/images/materials/wood/חריטה/חריטה אגוז.png"],
+      "white": ["/images/materials/wood/חריטה/חריטה לבנה.png"],
+      "black": ["/images/materials/wood/חריטה/חריטה שחורה.png"]
     }
   },
   {
@@ -33,12 +33,12 @@
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": ["/assets/materials_src/wood/שוקולד/שוקולד טבעי.png"],
+    "images": ["/images/materials/wood/שוקולד/שוקולד טבעי.png"],
     "variants": {
-      "oak": ["/assets/materials_src/wood/שוקולד/שוקולד טבעי.png"],
-      "walnut": ["/assets/materials_src/wood/שוקולד/שוקולד אגוז.png"],
-      "white": ["/assets/materials_src/wood/שוקולד/שוקולד לבן.png"],
-      "black": ["/assets/materials_src/wood/שוקולד/שוקולד שחור.png"]
+      "oak": ["/images/materials/wood/שוקולד/שוקולד טבעי.png"],
+      "walnut": ["/images/materials/wood/שוקולד/שוקולד אגוז.png"],
+      "white": ["/images/materials/wood/שוקולד/שוקולד לבן.png"],
+      "black": ["/images/materials/wood/שוקולד/שוקולד שחור.png"]
     }
   },
   {
@@ -47,12 +47,12 @@
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": ["/assets/materials_src/wood/ציור/ציור טבעי.png"],
+    "images": ["/images/materials/wood/ציור/ציור טבעי.png"],
     "variants": {
-      "oak": ["/assets/materials_src/wood/ציור/ציור טבעי.png"],
-      "walnut": ["/assets/materials_src/wood/ציור/ציור אגוז.png"],
-      "white": ["/assets/materials_src/wood/ציור/ציור לבן.png"],
-      "black": ["/assets/materials_src/wood/ציור/ציור שחור.png"]
+      "oak": ["/images/materials/wood/ציור/ציור טבעי.png"],
+      "walnut": ["/images/materials/wood/ציור/ציור אגוז.png"],
+      "white": ["/images/materials/wood/ציור/ציור לבן.png"],
+      "black": ["/images/materials/wood/ציור/ציור שחור.png"]
     }
   },
   {
@@ -61,12 +61,12 @@
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": ["/assets/materials_src/wood/דומינו/דומינו טבעי.png"],
+    "images": ["/images/materials/wood/דומינו/דומינו טבעי.png"],
     "variants": {
-      "oak": ["/assets/materials_src/wood/דומינו/דומינו טבעי.png"],
-      "walnut": ["/assets/materials_src/wood/דומינו/דומינו אגוז.png"],
-      "white": ["/assets/materials_src/wood/דומינו/דומינו לבן.png"],
-      "black": ["/assets/materials_src/wood/דומינו/דומינו שחור.png"]
+      "oak": ["/images/materials/wood/דומינו/דומינו טבעי.png"],
+      "walnut": ["/images/materials/wood/דומינו/דומינו אגוז.png"],
+      "white": ["/images/materials/wood/דומינו/דומינו לבן.png"],
+      "black": ["/images/materials/wood/דומינו/דומינו שחור.png"]
     }
   },
   {
@@ -75,12 +75,12 @@
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": ["/assets/materials_src/wood/פטיש/פטיש טבעי.png"],
+    "images": ["/images/materials/wood/פטיש/פטיש טבעי.png"],
     "variants": {
-      "oak": ["/assets/materials_src/wood/פטיש/פטיש טבעי.png"],
-      "walnut": ["/assets/materials_src/wood/פטיש/פטיש אגוז.png"],
-      "white": ["/assets/materials_src/wood/פטיש/פטיש לבן.png"],
-      "black": ["/assets/materials_src/wood/פטיש/פטיש שחורה.png"]
+      "oak": ["/images/materials/wood/פטיש/פטיש טבעי.png"],
+      "walnut": ["/images/materials/wood/פטיש/פטיש אגוז.png"],
+      "white": ["/images/materials/wood/פטיש/פטיש לבן.png"],
+      "black": ["/images/materials/wood/פטיש/פטיש שחורה.png"]
     }
   },
   {
@@ -89,12 +89,12 @@
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": ["/assets/materials_src/wood/עטיפה/עטיפה טבעי.png"],
+    "images": ["/images/materials/wood/עטיפה/עטיפה טבעי.png"],
     "variants": {
-      "oak": ["/assets/materials_src/wood/עטיפה/עטיפה טבעי.png"],
-      "walnut": ["/assets/materials_src/wood/עטיפה/עטיפה אגוז.png"],
-      "white": ["/assets/materials_src/wood/עטיפה/עטיפה לבנה.png"],
-      "black": ["/assets/materials_src/wood/עטיפה/עטיפה שחורה.png"]
+      "oak": ["/images/materials/wood/עטיפה/עטיפה טבעי.png"],
+      "walnut": ["/images/materials/wood/עטיפה/עטיפה אגוז.png"],
+      "white": ["/images/materials/wood/עטיפה/עטיפה לבנה.png"],
+      "black": ["/images/materials/wood/עטיפה/עטיפה שחורה.png"]
     }
   },
   {
@@ -103,12 +103,12 @@
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": ["/assets/materials_src/wood/נקי/נקי טבעי.png"],
+    "images": ["/images/materials/wood/נקי/נקי טבעי.png"],
     "variants": {
-      "oak": ["/assets/materials_src/wood/נקי/נקי טבעי.png"],
-      "walnut": ["/assets/materials_src/wood/נקי/נקי אגוז.png"],
-      "white": ["/assets/materials_src/wood/נקי/נקי לבן.png"],
-      "black": ["/assets/materials_src/wood/נקי/נקי שחור.png"]
+      "oak": ["/images/materials/wood/נקי/נקי טבעי.png"],
+      "walnut": ["/images/materials/wood/נקי/נקי אגוז.png"],
+      "white": ["/images/materials/wood/נקי/נקי לבן.png"],
+      "black": ["/images/materials/wood/נקי/נקי שחור.png"]
     }
   },
   

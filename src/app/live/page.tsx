@@ -3037,7 +3037,7 @@ function LivePageInner() {
 													aria-label={opt.name}
 													onClick={() => { setRailingMetalId(opt.id); setRailingMetalSolid(null); }}
 													className={`w-8 h-8 rounded-full border-2 bg-center bg-cover cursor-pointer ${(railingMetalId === opt.id && !railingMetalSolid) ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-													style={{ backgroundImage: opt.images?.[0] ? `url("${encodeURI(opt.images[0])}")` : undefined, borderColor: '#ddd' }}
+													style={{ backgroundImage: opt.images?.[0] ? `url("${encodeURI(opt.images[0])}")` : undefined, borderColor: '#ddd', backgroundSize: '140%' }}
 												/>
 											))}
 											<span className="text-xs text-gray-600">
@@ -3953,7 +3953,7 @@ function LivePageInner() {
 														setActiveMetalTexId(m.id);
 													})}
 													className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-													style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, backgroundColor: (!m.images || m.images.length === 0) && (m as any).solid ? (m as any).solid : undefined, borderColor: '#ddd' }}
+													style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, backgroundColor: (!m.images || m.images.length === 0) && (m as any).solid ? (m as any).solid : undefined, borderColor: '#ddd', backgroundSize: (m as any).category === 'metal' ? '140%' as any : undefined }}
 												/>
 											))}
 										</div>

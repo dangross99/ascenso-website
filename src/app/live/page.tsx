@@ -451,9 +451,10 @@ function Staircase3D({
 			repU = 1;
 			repV = geoAspect / texAspect;
 		}
-		// הגנה קטנה מתפרים
-		repU = Math.max(0.92, Math.min(1, repU));
-		repV = Math.max(0.92, Math.min(1, repV));
+		// הגנה קטנה מתפרים אך בלי "מסגרות" כהות בקצוות הטקסטורה
+		// חותכים מקסימום ~0.5% במקום 8% שהוביל לשוליים כהים בחלק מהתמונות
+		repU = Math.max(0.995, Math.min(1, repU));
+		repV = Math.max(0.995, Math.min(1, repV));
 		const offU = (1 - repU) / 2;
 		const offV = (1 - repV) / 2;
 
@@ -2145,16 +2146,29 @@ function LivePageInner() {
 		() => records.filter(r => r.category === 'wood' && r.variants && Object.keys(r.variants).length),
 		[records]
 	);
-	const nonWoodModels = React.useMemo(
-		() =>
-			records.filter(r =>
-				r.category === activeMaterial &&
-				activeMaterial !== 'wood' &&
-				// במתכת הסתרת צבעים אחידים (לבן/שחור) – נשאיר רק טקסטורות עם תמונה
-				(activeMaterial !== 'metal' || (Array.isArray(r.images) && r.images.length > 0))
-			),
-		[records, activeMaterial]
-	);
+	const nonWoodModels = React.useMemo(() => {
+		const isWB = (rec: any) => {
+			const name = (rec?.name || rec?.id || '').toString().toLowerCase();
+			const byIdOrName = /\b(white|black)\b/.test(name);
+			const bySolid =
+				typeof rec?.solid === 'string' &&
+				['#ffffff', '#fff', '#f5f5f5', '#111111', '#000', '#000000'].includes(rec.solid.toLowerCase());
+			return byIdOrName || bySolid;
+		};
+		return records.filter((r) => {
+			// חייב להיות מאותה קטגוריה ולא עץ
+			if (r.category !== activeMaterial || activeMaterial === 'wood') return false;
+			// הסתר פריטים מסומנים כנסתרים
+			if ((r as any).hidden) return false;
+			// מתכת: אל תציג לבן/שחור ודרוש תמונה
+			if (activeMaterial === 'metal') {
+				if (isWB(r)) return false;
+				return Array.isArray((r as any).images) && (r as any).images.length > 0;
+			}
+			// אבן: הצג כרגיל
+			return true;
+		});
+	}, [records, activeMaterial]);
 	// אם הטקסטורה הפעילה לא קיימת לאחר הסינון (למשל metal_solid_white/black), בחר את הראשונה הזמינה
 	React.useEffect(() => {
 		if (activeMaterial === 'wood') return;
@@ -2164,14 +2178,24 @@ function LivePageInner() {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [activeMaterial, nonWoodModels]);
-	const metalRailingOptions = React.useMemo(
-		() => records.filter(r =>
-			r.category === 'metal' &&
-			Array.isArray(r.images) &&
-			r.images.length > 0 // במעקה מתכת מציגים רק טקסטורות עם תמונה, ללא צבעים "solid"
-		),
-		[records]
-	);
+	const metalRailingOptions = React.useMemo(() => {
+		const isWB = (rec: any) => {
+			const name = (rec?.name || rec?.id || '').toString().toLowerCase();
+			const byIdOrName = /\b(white|black)\b/.test(name);
+			const bySolid =
+				typeof rec?.solid === 'string' &&
+				['#ffffff', '#fff', '#f5f5f5', '#111111', '#000', '#000000'].includes(rec.solid.toLowerCase());
+			return byIdOrName || bySolid;
+		};
+		return records.filter(
+			(r) =>
+				r.category === 'metal' &&
+				!(r as any).hidden &&
+				!isWB(r) &&
+				Array.isArray((r as any).images) &&
+				(r as any).images.length > 0
+		);
+	}, [records]);
 	// Preload טקסטורות רלוונטיות להפחתת הבהובים בעת מעבר בחירה
 	React.useEffect(() => {
 		try {

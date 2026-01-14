@@ -79,7 +79,7 @@ const MODEL_CONFIG: Record<string, { tile?: number; bump?: number; inset?: numbe
 	'wave-carved': { tile: 0.9, bump: 0.35 },
 	// חיתוך קל לשוליים כהים בטקסטורות מתכת ספציפיות
 	'antique_gold': { inset: 0.06 },
-	'silver': { inset: 0.06 },
+	'antique_silver': { inset: 0.06 },
 };
 const DEFAULT_MODEL_CONFIG = { tile: 1.5, bump: 0.18, inset: 0 };
 

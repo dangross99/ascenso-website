@@ -56,10 +56,10 @@ type MaterialRecord = {
 	solid?: string; // hex כמו '#111111' או '#F5F5F5'
 };
 
-// צבעי עץ מוצגים בלבד: אלון, אגוז, שחור, לבן
+// צבעי עץ מוצגים בלבד: טבעי, אגוז, שחור, לבן
 const WOOD_SWATCHES: { id: string; label: string }[] = [
-	{ id: 'oak', label: 'אלון' },
-	{ id: 'walnut', label: 'וולנט' },
+	{ id: 'oak', label: 'טבעי' },
+	{ id: 'walnut', label: 'אגוז' },
 	{ id: 'black', label: 'שחור' },
 	{ id: 'white', label: 'לבן' },
 ];

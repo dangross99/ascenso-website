@@ -573,22 +573,8 @@
     ],
     "price": 4000,
     "images": [
-      "/images/materials/antique_gold-v1768407662604-400.webp",
-      "/images/materials/antique_gold-v1768407662604-700.webp",
-      "/images/materials/antique_gold-v1768407662604-1000.webp"
-    ],
-    "pbr": {
-      "bump": [
-        "/images/materials/antique_gold-pbrbump-v1768407662604-400.webp",
-        "/images/materials/antique_gold-pbrbump-v1768407662604-700.webp",
-        "/images/materials/antique_gold-pbrbump-v1768407662604-1000.webp"
-      ],
-      "roughness": [
-        "/images/materials/antique_gold-pbrrough-v1768407662604-400.webp",
-        "/images/materials/antique_gold-pbrrough-v1768407662604-700.webp",
-        "/images/materials/antique_gold-pbrrough-v1768407662604-1000.webp"
-      ]
-    }
+      "/images/materials/Antique Gold.jpeg"
+    ]
   },
   {
     "id": "antique_silver",
@@ -599,22 +585,8 @@
     ],
     "price": 4800,
     "images": [
-      "/images/materials/antique_silver-v1768407662604-400.webp",
-      "/images/materials/antique_silver-v1768407662604-700.webp",
-      "/images/materials/antique_silver-v1768407662604-1000.webp"
-    ],
-    "pbr": {
-      "bump": [
-        "/images/materials/antique_silver-pbrbump-v1768407662604-400.webp",
-        "/images/materials/antique_silver-pbrbump-v1768407662604-700.webp",
-        "/images/materials/antique_silver-pbrbump-v1768407662604-1000.webp"
-      ],
-      "roughness": [
-        "/images/materials/antique_silver-pbrrough-v1768407662604-400.webp",
-        "/images/materials/antique_silver-pbrrough-v1768407662604-700.webp",
-        "/images/materials/antique_silver-pbrrough-v1768407662604-1000.webp"
-      ]
-    }
+      "/images/materials/Antique Silver.jpeg"
+    ]
   },
   {
     "id": "black",
@@ -625,22 +597,9 @@
     ],
     "price": 3000,
     "images": [
-      "/images/materials/black-v1768407662604-400.webp",
-      "/images/materials/black-v1768407662604-700.webp",
-      "/images/materials/black-v1768407662604-1000.webp"
+      "/images/materials/Black.png"
     ],
-    "pbr": {
-      "bump": [
-        "/images/materials/black-pbrbump-v1768407662604-400.webp",
-        "/images/materials/black-pbrbump-v1768407662604-700.webp",
-        "/images/materials/black-pbrbump-v1768407662604-1000.webp"
-      ],
-      "roughness": [
-        "/images/materials/black-pbrrough-v1768407662604-400.webp",
-        "/images/materials/black-pbrrough-v1768407662604-700.webp",
-        "/images/materials/black-pbrrough-v1768407662604-1000.webp"
-      ]
-    }
+    "hidden": true
   },
   {
     "id": "champagne",
@@ -651,22 +610,8 @@
     ],
     "price": 4200,
     "images": [
-      "/images/materials/champagne-v1768407662604-400.webp",
-      "/images/materials/champagne-v1768407662604-700.webp",
-      "/images/materials/champagne-v1768407662604-1000.webp"
-    ],
-    "pbr": {
-      "bump": [
-        "/images/materials/champagne-pbrbump-v1768407662604-400.webp",
-        "/images/materials/champagne-pbrbump-v1768407662604-700.webp",
-        "/images/materials/champagne-pbrbump-v1768407662604-1000.webp"
-      ],
-      "roughness": [
-        "/images/materials/champagne-pbrrough-v1768407662604-400.webp",
-        "/images/materials/champagne-pbrrough-v1768407662604-700.webp",
-        "/images/materials/champagne-pbrrough-v1768407662604-1000.webp"
-      ]
-    }
+      "/images/materials/Champagne.png"
+    ]
   },
   {
     "id": "gold_silver",
@@ -677,22 +622,8 @@
     ],
     "price": 3500,
     "images": [
-      "/images/materials/gold_silver-v1768407662604-400.webp",
-      "/images/materials/gold_silver-v1768407662604-700.webp",
-      "/images/materials/gold_silver-v1768407662604-1000.webp"
-    ],
-    "pbr": {
-      "bump": [
-        "/images/materials/gold_silver-pbrbump-v1768407662604-400.webp",
-        "/images/materials/gold_silver-pbrbump-v1768407662604-700.webp",
-        "/images/materials/gold_silver-pbrbump-v1768407662604-1000.webp"
-      ],
-      "roughness": [
-        "/images/materials/gold_silver-pbrrough-v1768407662604-400.webp",
-        "/images/materials/gold_silver-pbrrough-v1768407662604-700.webp",
-        "/images/materials/gold_silver-pbrrough-v1768407662604-1000.webp"
-      ]
-    }
+      "/images/materials/Gold Silver.jpeg"
+    ]
   },
   {
     "id": "gold",
@@ -703,22 +634,8 @@
     ],
     "price": 3400,
     "images": [
-      "/images/materials/gold-v1768407662604-400.webp",
-      "/images/materials/gold-v1768407662604-700.webp",
-      "/images/materials/gold-v1768407662604-1000.webp"
-    ],
-    "pbr": {
-      "bump": [
-        "/images/materials/gold-pbrbump-v1768407662604-400.webp",
-        "/images/materials/gold-pbrbump-v1768407662604-700.webp",
-        "/images/materials/gold-pbrbump-v1768407662604-1000.webp"
-      ],
-      "roughness": [
-        "/images/materials/gold-pbrrough-v1768407662604-400.webp",
-        "/images/materials/gold-pbrrough-v1768407662604-700.webp",
-        "/images/materials/gold-pbrrough-v1768407662604-1000.webp"
-      ]
-    }
+      "/images/materials/Gold.png"
+    ]
   },
   {
     "id": "golden_rust",
@@ -729,22 +646,8 @@
     ],
     "price": 4400,
     "images": [
-      "/images/materials/golden_rust-v1768407662604-400.webp",
-      "/images/materials/golden_rust-v1768407662604-700.webp",
-      "/images/materials/golden_rust-v1768407662604-1000.webp"
-    ],
-    "pbr": {
-      "bump": [
-        "/images/materials/golden_rust-pbrbump-v1768407662604-400.webp",
-        "/images/materials/golden_rust-pbrbump-v1768407662604-700.webp",
-        "/images/materials/golden_rust-pbrbump-v1768407662604-1000.webp"
-      ],
-      "roughness": [
-        "/images/materials/golden_rust-pbrrough-v1768407662604-400.webp",
-        "/images/materials/golden_rust-pbrrough-v1768407662604-700.webp",
-        "/images/materials/golden_rust-pbrrough-v1768407662604-1000.webp"
-      ]
-    }
+      "/images/materials/Golden Rust.jpeg"
+    ]
   },
   {
     "id": "graphite",
@@ -755,22 +658,8 @@
     ],
     "price": 3600,
     "images": [
-      "/images/materials/graphite-v1768407662604-400.webp",
-      "/images/materials/graphite-v1768407662604-700.webp",
-      "/images/materials/graphite-v1768407662604-1000.webp"
-    ],
-    "pbr": {
-      "bump": [
-        "/images/materials/graphite-pbrbump-v1768407662604-400.webp",
-        "/images/materials/graphite-pbrbump-v1768407662604-700.webp",
-        "/images/materials/graphite-pbrbump-v1768407662604-1000.webp"
-      ],
-      "roughness": [
-        "/images/materials/graphite-pbrrough-v1768407662604-400.webp",
-        "/images/materials/graphite-pbrrough-v1768407662604-700.webp",
-        "/images/materials/graphite-pbrrough-v1768407662604-1000.webp"
-      ]
-    }
+      "/images/materials/Graphite.jpeg"
+    ]
   },
   {
     "id": "rain",
@@ -781,22 +670,8 @@
     ],
     "price": 4600,
     "images": [
-      "/images/materials/rain-v1768407662604-400.webp",
-      "/images/materials/rain-v1768407662604-700.webp",
-      "/images/materials/rain-v1768407662604-1000.webp"
-    ],
-    "pbr": {
-      "bump": [
-        "/images/materials/rain-pbrbump-v1768407662604-400.webp",
-        "/images/materials/rain-pbrbump-v1768407662604-700.webp",
-        "/images/materials/rain-pbrbump-v1768407662604-1000.webp"
-      ],
-      "roughness": [
-        "/images/materials/rain-pbrrough-v1768407662604-400.webp",
-        "/images/materials/rain-pbrrough-v1768407662604-700.webp",
-        "/images/materials/rain-pbrrough-v1768407662604-1000.webp"
-      ]
-    }
+      "/images/materials/Rain.jpeg"
+    ]
   },
   {
     "id": "rose_gold",
@@ -807,22 +682,8 @@
     ],
     "price": 3800,
     "images": [
-      "/images/materials/rose_gold-v1768407662604-400.webp",
-      "/images/materials/rose_gold-v1768407662604-700.webp",
-      "/images/materials/rose_gold-v1768407662604-1000.webp"
-    ],
-    "pbr": {
-      "bump": [
-        "/images/materials/rose_gold-pbrbump-v1768407662604-400.webp",
-        "/images/materials/rose_gold-pbrbump-v1768407662604-700.webp",
-        "/images/materials/rose_gold-pbrbump-v1768407662604-1000.webp"
-      ],
-      "roughness": [
-        "/images/materials/rose_gold-pbrrough-v1768407662604-400.webp",
-        "/images/materials/rose_gold-pbrrough-v1768407662604-700.webp",
-        "/images/materials/rose_gold-pbrrough-v1768407662604-1000.webp"
-      ]
-    }
+      "/images/materials/Rose Gold.png"
+    ]
   },
   {
     "id": "silver",
@@ -833,22 +694,8 @@
     ],
     "price": 3700,
     "images": [
-      "/images/materials/silver-v1768407662604-400.webp",
-      "/images/materials/silver-v1768407662604-700.webp",
-      "/images/materials/silver-v1768407662604-1000.webp"
-    ],
-    "pbr": {
-      "bump": [
-        "/images/materials/silver-pbrbump-v1768407662604-400.webp",
-        "/images/materials/silver-pbrbump-v1768407662604-700.webp",
-        "/images/materials/silver-pbrbump-v1768407662604-1000.webp"
-      ],
-      "roughness": [
-        "/images/materials/silver-pbrrough-v1768407662604-400.webp",
-        "/images/materials/silver-pbrrough-v1768407662604-700.webp",
-        "/images/materials/silver-pbrrough-v1768407662604-1000.webp"
-      ]
-    }
+      "/images/materials/Silver.jpeg"
+    ]
   },
   {
     "id": "white",
@@ -859,22 +706,8 @@
     ],
     "price": 3000,
     "images": [
-      "/images/materials/white-v1768407662604-400.webp",
-      "/images/materials/white-v1768407662604-700.webp",
-      "/images/materials/white-v1768407662604-1000.webp"
+      "/images/materials/White.png"
     ],
-    "pbr": {
-      "bump": [
-        "/images/materials/white-pbrbump-v1768407662604-400.webp",
-        "/images/materials/white-pbrbump-v1768407662604-700.webp",
-        "/images/materials/white-pbrbump-v1768407662604-1000.webp"
-      ],
-      "roughness": [
-        "/images/materials/white-pbrrough-v1768407662604-400.webp",
-        "/images/materials/white-pbrrough-v1768407662604-700.webp",
-        "/images/materials/white-pbrrough-v1768407662604-1000.webp"
-      ]
-    },
     "hidden": true
   }
 ]

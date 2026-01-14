@@ -78,8 +78,8 @@ const COLOR_HEX: Record<string, string> = {
 const MODEL_CONFIG: Record<string, { tile?: number; bump?: number; inset?: number }> = {
 	'wave-carved': { tile: 0.9, bump: 0.35 },
 	// חיתוך לשוליים כהים בטקסטורות מתכת ספציפיות
-	'antique_gold': { inset: 0.25 },
-	'antique_silver': { inset: 0.25 },
+	'antique_gold': { inset: 0.30 },
+	'antique_silver': { inset: 0.30 },
 };
 const DEFAULT_MODEL_CONFIG = { tile: 1.5, bump: 0.18, inset: 0 };
 
@@ -462,7 +462,7 @@ function Staircase3D({
 		let offU = (1 - repU) / 2;
 		let offV = (1 - repV) / 2;
 		// חיתוך יעד לפי קונפיגורציה (למשל שוליים כהים)
-		const inset = Math.max(0, Math.min(0.25, uvInset || 0));
+		const inset = Math.max(0, Math.min(0.30, uvInset || 0));
 		if (inset > 0) {
 			const cutU = Math.min(repU - 0.01, inset * 2);
 			const cutV = Math.min(repV - 0.01, inset * 2);

@@ -128,6 +128,7 @@ function Staircase3D({
 	tileScale = 1.5,
 	bumpScaleOverride,
 	uvInset = 0,
+	railingUvInset = 0,
 	treadThicknessOverride,
 	pathSegments,
 	glassTone,
@@ -157,6 +158,7 @@ function Staircase3D({
 	tileScale?: number;
 	bumpScaleOverride?: number;
 	uvInset?: number;
+	railingUvInset?: number;
 	treadThicknessOverride?: number;
 	pathSegments?: PathSegment[] | null;
 	glassTone?: 'extra' | 'smoked' | 'bronze';
@@ -1281,10 +1283,17 @@ function Staircase3D({
 							const geoAspect = len / h;
 							let repU = 1, repV = 1;
 							if (geoAspect > texAspect) { repU = texAspect / geoAspect; repV = 1; } else { repU = 1; repV = geoAspect / texAspect; }
-							repU = Math.max(0.92, Math.min(1, repU));
-							repV = Math.max(0.92, Math.min(1, repV));
-							const offU = (1 - repU) / 2;
-							const offV = (1 - repV) / 2;
+							repU = Math.max(0.995, Math.min(1, repU));
+							repV = Math.max(0.995, Math.min(1, repV));
+							let offU = (1 - repU) / 2;
+							let offV = (1 - repV) / 2;
+							const rinset = Math.max(0, Math.min(0.30, railingUvInset || 0));
+							if (rinset > 0) {
+								const cutU = Math.min(repU - 0.01, rinset * 2);
+								const cutV = Math.min(repV - 0.01, rinset * 2);
+								if (cutU > 0) { repU -= cutU; offU += cutU / 2; }
+								if (cutV > 0) { repV -= cutV; offV += cutV / 2; }
+							}
 							const mapTex = railingMap.clone();
 							// @ts-ignore
 							mapTex.colorSpace = SRGBColorSpace;
@@ -1327,10 +1336,17 @@ function Staircase3D({
 							const geoAspect = len / h;
 							let repU = 1, repV = 1;
 							if (geoAspect > texAspect) { repU = texAspect / geoAspect; repV = 1; } else { repU = 1; repV = geoAspect / texAspect; }
-							repU = Math.max(0.92, Math.min(1, repU));
-							repV = Math.max(0.92, Math.min(1, repV));
-							const offU = (1 - repU) / 2;
-							const offV = (1 - repV) / 2;
+							repU = Math.max(0.995, Math.min(1, repU));
+							repV = Math.max(0.995, Math.min(1, repV));
+							let offU = (1 - repU) / 2;
+							let offV = (1 - repV) / 2;
+							const rinset2 = Math.max(0, Math.min(0.30, railingUvInset || 0));
+							if (rinset2 > 0) {
+								const cutU = Math.min(repU - 0.01, rinset2 * 2);
+								const cutV = Math.min(repV - 0.01, rinset2 * 2);
+								if (cutU > 0) { repU -= cutU; offU += cutU / 2; }
+								if (cutV > 0) { repV -= cutV; offV += cutV / 2; }
+							}
 							const mapTex = railingMap.clone();
 							// @ts-ignore
 							mapTex.colorSpace = SRGBColorSpace;
@@ -1386,10 +1402,17 @@ function Staircase3D({
 						const geoAspect = len / h;
 						let repU = 1, repV = 1;
 						if (geoAspect > texAspect) { repU = texAspect / geoAspect; repV = 1; } else { repU = 1; repV = geoAspect / texAspect; }
-						repU = Math.max(0.92, Math.min(1, repU));
-						repV = Math.max(0.92, Math.min(1, repV));
-						const offU = (1 - repU) / 2;
-						const offV = (1 - repV) / 2;
+						repU = Math.max(0.995, Math.min(1, repU));
+						repV = Math.max(0.995, Math.min(1, repV));
+						let offU = (1 - repU) / 2;
+						let offV = (1 - repV) / 2;
+						const rinset3 = Math.max(0, Math.min(0.30, railingUvInset || 0));
+						if (rinset3 > 0) {
+							const cutU = Math.min(repU - 0.01, rinset3 * 2);
+							const cutV = Math.min(repV - 0.01, rinset3 * 2);
+							if (cutU > 0) { repU -= cutU; offU += cutU / 2; }
+							if (cutV > 0) { repV -= cutV; offV += cutV / 2; }
+						}
 						const mapTex = railingMap.clone();
 						// @ts-ignore
 						mapTex.colorSpace = SRGBColorSpace;
@@ -1435,10 +1458,17 @@ function Staircase3D({
 						const geoAspect = len / h;
 						let repU = 1, repV = 1;
 						if (geoAspect > texAspect) { repU = texAspect / geoAspect; repV = 1; } else { repU = 1; repV = geoAspect / texAspect; }
-						repU = Math.max(0.92, Math.min(1, repU));
-						repV = Math.max(0.92, Math.min(1, repV));
-						const offU = (1 - repU) / 2;
-						const offV = (1 - repV) / 2;
+						repU = Math.max(0.995, Math.min(1, repU));
+						repV = Math.max(0.995, Math.min(1, repV));
+						let offU = (1 - repU) / 2;
+						let offV = (1 - repV) / 2;
+						const rinset4 = Math.max(0, Math.min(0.30, railingUvInset || 0));
+						if (rinset4 > 0) {
+							const cutU = Math.min(repU - 0.01, rinset4 * 2);
+							const cutV = Math.min(repV - 0.01, rinset4 * 2);
+							if (cutU > 0) { repU -= cutU; offU += cutU / 2; }
+							if (cutV > 0) { repV -= cutV; offV += cutV / 2; }
+						}
 						const mapTex = railingMap.clone();
 						// @ts-ignore
 						mapTex.colorSpace = SRGBColorSpace;
@@ -2832,6 +2862,14 @@ function LivePageInner() {
 											return rec?.pbr?.roughness?.[0] || null;
 										}
 										return null;
+									})()}
+									railingUvInset={(() => {
+										if (railing === 'metal') {
+											const rec = metalRailingOptions.find(r => r.id === railingMetalId) || metalRailingOptions[0];
+											const cfg = MODEL_CONFIG[rec?.id || ''] || DEFAULT_MODEL_CONFIG;
+											return cfg.inset || 0;
+										}
+										return 0;
 									})()}
 									textureUrl={(() => {
 										if (activeMaterial === 'wood') {

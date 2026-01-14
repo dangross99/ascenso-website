@@ -6,7 +6,7 @@
     "colors": [
       "gray"
     ],
-    "price": 3000,
+    "price": 4200,
     "images": [
       "/images/materials/chatgpt_image_dec_27_2025_09_06_48_pm-v1766948002057-600.webp"
     ],
@@ -26,7 +26,7 @@
     "colors": [
       "gray"
     ],
-    "price": 3000,
+    "price": 3800,
     "images": [
       "/images/materials/chatgpt_image_dec_27_2025_09_15_55_pm-v1766948002057-600.webp"
     ],
@@ -46,7 +46,7 @@
     "colors": [
       "gray"
     ],
-    "price": 3000,
+    "price": 3600,
     "images": [
       "/images/materials/chatgpt_image_dec_27_2025_09_19_42_pm-v1766948002057-600.webp"
     ],
@@ -66,7 +66,7 @@
     "colors": [
       "gray"
     ],
-    "price": 3000,
+    "price": 3400,
     "images": [
       "/images/materials/whatsapp_image_2025_12_27_at_16_55_39-v1766948002057-600.webp"
     ],
@@ -86,7 +86,7 @@
     "colors": [
       "gray"
     ],
-    "price": 3000,
+    "price": 4600,
     "images": [
       "/images/materials/whatsapp_image_2025_12_27_at_16_55_40_1-v1766948002057-600.webp"
     ],
@@ -106,7 +106,7 @@
     "colors": [
       "gray"
     ],
-    "price": 3000,
+    "price": 4400,
     "images": [
       "/images/materials/whatsapp_image_2025_12_27_at_16_55_42_1-v1766948002057-600.webp"
     ],
@@ -126,7 +126,7 @@
     "colors": [
       "gray"
     ],
-    "price": 3000,
+    "price": 3500,
     "images": [
       "/images/materials/whatsapp_image_2025_12_27_at_16_55_42_2-v1766948002057-600.webp"
     ],
@@ -146,7 +146,7 @@
     "colors": [
       "gray"
     ],
-    "price": 3000,
+    "price": 4800,
     "images": [
       "/images/materials/whatsapp_image_2025_12_27_at_16_55_42-v1766948002057-600.webp"
     ],
@@ -166,7 +166,7 @@
     "colors": [
       "gray"
     ],
-    "price": 3000,
+    "price": 4000,
     "images": [
       "/images/materials/whatsapp_image_2025_12_27_at_16_55_43_1-v1766948002057-600.webp"
     ],
@@ -186,7 +186,7 @@
     "colors": [
       "gray"
     ],
-    "price": 3000,
+    "price": 3700,
     "images": [
       "/images/materials/whatsapp_image_2025_12_27_at_21_04_01-v1766948002057-600.webp"
     ],
@@ -198,6 +198,24 @@
         "/images/materials/whatsapp_image_2025_12_27_at_21_04_01-pbrrough-v1766948002057-600.webp"
       ]
     }
+  },
+  {
+    "id": "metal_solid_white",
+    "name": "Metal White",
+    "category": "metal",
+    "colors": [],
+    "price": 3000,
+    "images": [],
+    "solid": "#F5F5F5"
+  },
+  {
+    "id": "metal_solid_black",
+    "name": "Metal Black",
+    "category": "metal",
+    "colors": [],
+    "price": 3000,
+    "images": [],
+    "solid": "#111111"
   },
   {
     "id": "wave_carved",
@@ -648,7 +666,7 @@
     "name": "Amazonas Brazil",
     "category": "stone",
     "colors": [],
-    "price": 4300,
+    "price": 5800,
     "images": [
       "/images/materials/amazonas-brazil.png"
     ]
@@ -658,7 +676,7 @@
     "name": "Green Alpi",
     "category": "stone",
     "colors": [],
-    "price": 4100,
+    "price": 5500,
     "images": [
       "/images/materials/green-alpi.png"
     ]
@@ -668,7 +686,7 @@
     "name": "Travertine Silver",
     "category": "stone",
     "colors": [],
-    "price": 3400,
+    "price": 4600,
     "images": [
       "/images/materials/travertine-silver.png"
     ]
@@ -678,7 +696,7 @@
     "name": "Four Seasons",
     "category": "stone",
     "colors": [],
-    "price": 4900,
+    "price": 6600,
     "images": [
       "/images/materials/four-seasons.png"
     ]
@@ -688,7 +706,7 @@
     "name": "Parisian Stone",
     "category": "stone",
     "colors": [],
-    "price": 3600,
+    "price": 4900,
     "images": [
       "/images/materials/parisian-stone.jpeg"
     ]
@@ -698,7 +716,7 @@
     "name": "Red Wine",
     "category": "stone",
     "colors": [],
-    "price": 3900,
+    "price": 5300,
     "images": [
       "/images/materials/red-wine.jpeg"
     ]
@@ -708,7 +726,7 @@
     "name": "Black Gold",
     "category": "stone",
     "colors": [],
-    "price": 3200,
+    "price": 4300,
     "images": [
       "/images/materials/black-gold.png"
     ]
@@ -718,7 +736,7 @@
     "name": "Land Stone",
     "category": "stone",
     "colors": [],
-    "price": 3600,
+    "price": 4900,
     "images": [
       "/images/materials/land-stone.png"
     ]
@@ -728,7 +746,7 @@
     "name": "Rain Stone",
     "category": "stone",
     "colors": [],
-    "price": 3700,
+    "price": 5000,
     "images": [
       "/images/materials/rain-stone.png"
     ]
@@ -738,7 +756,7 @@
     "name": "River Stone",
     "category": "stone",
     "colors": [],
-    "price": 3600,
+    "price": 4900,
     "images": [
       "/images/materials/river-stone.png"
     ]
@@ -748,7 +766,7 @@
     "name": "Tiger Stone",
     "category": "stone",
     "colors": [],
-    "price": 3300,
+    "price": 4500,
     "images": [
       "/images/materials/tiger-stone.png"
     ]
@@ -758,7 +776,7 @@
     "name": "Van Gogh",
     "category": "stone",
     "colors": [],
-    "price": 4200,
+    "price": 5700,
     "images": [
       "/images/materials/van-gogh.png"
     ]

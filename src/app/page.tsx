@@ -227,13 +227,46 @@ export default function Home() {
         const res = await fetch(`/data/materials.json?ts=${Date.now()}`, { cache: "no-store" });
         const json: MaterialRecord[] = await res.json();
         if (!cancelled) {
-          // בחר תמהיל מאזנים: אבן + עץ + מתכת (סך הכל עד 10)
+          // תמהיל מאוזן ומעורבב: אבן/עץ/מתכת, ללא רצפים ארוכים של אותה קטגוריה
           const all = Array.isArray(json) ? json : [];
-          const stones = all.filter(m => m.category === "stone").slice(0, 4);
-          const woods  = all.filter(m => m.category === "wood").slice(0, 3);
-          const metals = all.filter(m => m.category === "metal").slice(0, 3);
-          const mixed = [...stones, ...woods, ...metals].slice(0, 10);
-          setTopMaterials(mixed);
+          const buckets = {
+            stone: all.filter(m => m.category === "stone"),
+            wood:  all.filter(m => m.category === "wood"),
+            metal: all.filter(m => m.category === "metal"),
+          };
+          const order: Array<keyof typeof buckets> = ["stone", "wood", "metal"];
+          const idx: Record<string, number> = { stone: 0, wood: 0, metal: 0 };
+          const out: MaterialRecord[] = [];
+          let lastCat: string | null = null;
+          let start = 0;
+          while (out.length < 10) {
+            let placed = false;
+            // נסה לבחור קטגוריה הבאה שונה מהקודמת (round‑robin)
+            for (let k = 0; k < order.length; k++) {
+              const cat = order[(start + k) % order.length];
+              if (idx[cat] < buckets[cat].length && cat !== lastCat) {
+                out.push(buckets[cat][idx[cat]++]);
+                lastCat = cat;
+                placed = true;
+                start = (start + 1) % order.length;
+                break;
+              }
+            }
+            if (!placed) {
+              // אם נתקענו (לדוגמה דלילות בקטגוריה מסוימת), קח כל מה שנותר
+              let fallbackPlaced = false;
+              for (const cat of order) {
+                if (idx[cat] < buckets[cat].length) {
+                  out.push(buckets[cat][idx[cat]++]);
+                  lastCat = cat;
+                  fallbackPlaced = true;
+                  break;
+                }
+              }
+              if (!fallbackPlaced) break; // נגמרו פריטים
+            }
+          }
+          setTopMaterials(out);
         }
       } catch {
         // נשתמש בדמו (images) אם נכשל

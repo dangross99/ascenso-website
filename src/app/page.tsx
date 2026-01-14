@@ -227,8 +227,13 @@ export default function Home() {
         const res = await fetch(`/data/materials.json?ts=${Date.now()}`, { cache: "no-store" });
         const json: MaterialRecord[] = await res.json();
         if (!cancelled) {
-          // בחר כמה טקסטורות ראשיות להצגה (עד 10)
-          setTopMaterials((json || []).slice(0, 10));
+          // בחר תמהיל מאזנים: אבן + עץ + מתכת (סך הכל עד 10)
+          const all = Array.isArray(json) ? json : [];
+          const stones = all.filter(m => m.category === "stone").slice(0, 4);
+          const woods  = all.filter(m => m.category === "wood").slice(0, 3);
+          const metals = all.filter(m => m.category === "metal").slice(0, 3);
+          const mixed = [...stones, ...woods, ...metals].slice(0, 10);
+          setTopMaterials(mixed);
         }
       } catch {
         // נשתמש בדמו (images) אם נכשל

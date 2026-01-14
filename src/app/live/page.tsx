@@ -391,6 +391,11 @@ function Staircase3D({
 	const bumpMap = useLoader(TextureLoader, (bumpUrl || '/images/products/white-onyx.jpg'));
 	const roughMap = useLoader(TextureLoader, (roughnessUrl || '/images/products/white-onyx.jpg'));
 	const useSolidMat = !!materialSolidColor;
+	// עבור גוון לבן מאוד – נשתמש בצבע מעט כהה יותר לפאות הצד/תחתית כדי לייצר קונטרסט ויזואלי
+	const solidColorMain = (materialSolidColor || '').toString();
+	const isNearWhite = typeof solidColorMain === 'string' && /^#(?:fff|ffffff|f5f5f5|f6f6f6|f7f7f7)$/i.test(solidColorMain);
+	const solidTopColor = isNearWhite ? '#F7F7F7' : (solidColorMain || '#EEEEEE');
+	const solidSideColor = isNearWhite ? '#D9D9D9' : (solidColorMain || '#CCCCCC');
 
 	// טקסטורות למעקה (למתכת) – נטענות תמיד לשמירת סדר hooks, גם אם לא בשימוש
 	const railingTex = React.useMemo(() => railingTextureUrl || null, [railingTextureUrl]);
@@ -536,7 +541,7 @@ function Staircase3D({
 					<mesh castShadow receiveShadow>
 						<boxGeometry args={[t.run, treadThickness, treadWidth]} />
 						<meshBasicMaterial
-							color={(materialKind !== 'wood' && useSolidMat) ? (materialSolidColor || '#cccccc') : (materialKind === 'metal' ? '#8f8f8f' : '#b3a59a')}
+							color={(materialKind !== 'wood' && useSolidMat) ? (solidSideColor) : (materialKind === 'metal' ? '#8f8f8f' : '#b3a59a')}
 							polygonOffset
 							polygonOffsetFactor={1}
 							polygonOffsetUnits={1}
@@ -558,7 +563,7 @@ function Staircase3D({
 						) : materialKind === 'metal' ? (
 							(() => {
 								if (useSolidMat) {
-									return (<meshBasicMaterial color={materialSolidColor || '#eeeeee'} side={2} />);
+									return (<meshBasicMaterial color={solidTopColor} side={2} />);
 								}
 								const ft = buildFaceTextures(t.run, treadWidth);
 								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
@@ -566,7 +571,7 @@ function Staircase3D({
 						) : (
 							(() => {
 								if (useSolidMat) {
-									return (<meshBasicMaterial color={materialSolidColor || '#eeeeee'} side={2} />);
+									return (<meshBasicMaterial color={solidTopColor} side={2} />);
 								}
 								const ft = buildFaceTextures(t.run, treadWidth);
 								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
@@ -579,7 +584,7 @@ function Staircase3D({
 						<planeGeometry args={[t.run, treadWidth, 8, 8]} />
 						{(() => {
 							if (useSolidMat) {
-								return (<meshBasicMaterial color={materialSolidColor || '#eeeeee'} />);
+								return (<meshBasicMaterial color={solidSideColor} />);
 							}
 							const ft = buildFaceTextures(t.run, treadWidth);
 							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
@@ -591,7 +596,7 @@ function Staircase3D({
 						<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
 						{(() => {
 							if (useSolidMat) {
-								return (<meshBasicMaterial color={materialSolidColor || '#eeeeee'} />);
+								return (<meshBasicMaterial color={solidSideColor} />);
 							}
 							const ft = buildFaceTextures(treadWidth, treadThickness);
 							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
@@ -603,7 +608,7 @@ function Staircase3D({
 						<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
 						{(() => {
 							if (useSolidMat) {
-								return (<meshBasicMaterial color={materialSolidColor || '#eeeeee'} />);
+								return (<meshBasicMaterial color={solidSideColor} />);
 							}
 							const ft = buildFaceTextures(treadWidth, treadThickness);
 							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
@@ -615,7 +620,7 @@ function Staircase3D({
 						<planeGeometry args={[t.run, treadThickness, 8, 8]} />
 						{(() => {
 							if (useSolidMat) {
-								return (<meshBasicMaterial color={materialSolidColor || '#eeeeee'} />);
+								return (<meshBasicMaterial color={solidSideColor} />);
 							}
 							const ft = buildFaceTextures(t.run, treadThickness);
 							return (<meshBasicMaterial map={ft.color} />);
@@ -627,7 +632,7 @@ function Staircase3D({
 						<planeGeometry args={[t.run, treadThickness, 8, 8]} />
 						{(() => {
 							if (useSolidMat) {
-								return (<meshBasicMaterial color={materialSolidColor || '#eeeeee'} />);
+								return (<meshBasicMaterial color={solidSideColor} />);
 							}
 							const ft = buildFaceTextures(t.run, treadThickness);
 							return (<meshBasicMaterial map={ft.color} />);

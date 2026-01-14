@@ -451,10 +451,9 @@ function Staircase3D({
 			repU = 1;
 			repV = geoAspect / texAspect;
 		}
-		// הגנה קטנה מתפרים אך בלי "מסגרות" כהות בקצוות הטקסטורה
-		// חותכים מקסימום ~0.5% במקום 8% שהוביל לשוליים כהים בחלק מהתמונות
-		repU = Math.max(0.995, Math.min(1, repU));
-		repV = Math.max(0.995, Math.min(1, repV));
+		// הגנה קטנה מתפרים
+		repU = Math.max(0.92, Math.min(1, repU));
+		repV = Math.max(0.92, Math.min(1, repV));
 		const offU = (1 - repU) / 2;
 		const offV = (1 - repV) / 2;
 

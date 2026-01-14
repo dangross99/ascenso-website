@@ -4078,8 +4078,11 @@ function LivePageInner() {
 					>
 						<span>תיאום פגישה</span>
 					</button>
-					<div className="text-lg font-bold text-[#1a1a2e]">
-						<span>{`סה\"כ כולל מע\"מ `}₪{total.toLocaleString('he-IL')}</span>
+					<div className="text-right text-[#1a1a2e]">
+						<div className="text-lg font-bold">
+							<span>{`סה\"כ `}₪{total.toLocaleString('he-IL')}</span>
+						</div>
+						<div className="text-[11px] text-gray-500 leading-snug">כולל מע״מ 18%</div>
 					</div>
 				</div>
 			</div>
@@ -4099,8 +4102,11 @@ function LivePageInner() {
 					>
 						<span>תיאום פגישה</span>
 					</button>
-					<div className="text-xl font-bold text-[#1a1a2e]">
-						<span>{`סה\"כ כולל מע\"מ `}₪{total.toLocaleString('he-IL')}</span>
+					<div className="text-right text-[#1a1a2e]">
+						<div className="text-xl font-bold">
+							<span>{`סה\"כ `}₪{total.toLocaleString('he-IL')}</span>
+						</div>
+						<div className="text-[11px] text-gray-500 leading-snug">כולל מע״מ 18%</div>
 					</div>
 				</div>
 			</div>

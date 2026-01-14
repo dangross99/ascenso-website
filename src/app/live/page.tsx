@@ -2146,9 +2146,24 @@ function LivePageInner() {
 		[records]
 	);
 	const nonWoodModels = React.useMemo(
-		() => records.filter(r => r.category === activeMaterial && activeMaterial !== 'wood'),
+		() =>
+			records.filter(r =>
+				r.category === activeMaterial &&
+				activeMaterial !== 'wood' &&
+				// במתכת הסתרת צבעים אחידים (לבן/שחור) – נשאיר רק טקסטורות עם תמונה
+				(activeMaterial !== 'metal' || (Array.isArray(r.images) && r.images.length > 0))
+			),
 		[records, activeMaterial]
 	);
+	// אם הטקסטורה הפעילה לא קיימת לאחר הסינון (למשל metal_solid_white/black), בחר את הראשונה הזמינה
+	React.useEffect(() => {
+		if (activeMaterial === 'wood') return;
+		if (!nonWoodModels.length) return;
+		if (!nonWoodModels.some(m => m.id === activeTexId)) {
+			setActiveTexId(nonWoodModels[0].id);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [activeMaterial, nonWoodModels]);
 	const metalRailingOptions = React.useMemo(
 		() => records.filter(r =>
 			r.category === 'metal' &&

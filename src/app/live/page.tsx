@@ -78,8 +78,8 @@ const COLOR_HEX: Record<string, string> = {
 const MODEL_CONFIG: Record<string, { tile?: number; bump?: number; inset?: number }> = {
 	'wave-carved': { tile: 0.9, bump: 0.35 },
 	// חיתוך לשוליים כהים בטקסטורות מתכת ספציפיות
-	'antique_gold': { inset: 0.10 },
-	'antique_silver': { inset: 0.10 },
+	'antique_gold': { inset: 0.15 },
+	'antique_silver': { inset: 0.15 },
 };
 const DEFAULT_MODEL_CONFIG = { tile: 1.5, bump: 0.18, inset: 0 };
 

@@ -80,6 +80,7 @@ const MODEL_CONFIG: Record<string, { tile?: number; bump?: number; inset?: numbe
 	// חיתוך לשוליים כהים בטקסטורות מתכת ספציפיות
 	'antique_gold': { inset: 0.30 },
 	'antique_silver': { inset: 0.30 },
+	'gold_silver': { inset: 0.15 },
 };
 const DEFAULT_MODEL_CONFIG = { tile: 1.5, bump: 0.18, inset: 0 };
 

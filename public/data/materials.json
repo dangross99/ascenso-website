@@ -598,8 +598,7 @@
     "price": 3000,
     "images": [
       "/images/materials/Black.png"
-    ],
-    "hidden": true
+    ]
   },
   {
     "id": "champagne",
@@ -707,7 +706,6 @@
     "price": 3000,
     "images": [
       "/images/materials/White.png"
-    ],
-    "hidden": true
+    ]
   }
 ]

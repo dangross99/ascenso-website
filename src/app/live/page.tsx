@@ -2433,7 +2433,15 @@ function LivePageInner() {
 		}
 
 		const subtotal = items.reduce((s, i) => s + i.value, 0);
-		const total = Math.round(subtotal * shapeMultiplier);
+		// החלת מקדם צורה (פודסטים/מורכבות)
+		const preVatTotal = Math.round(subtotal * shapeMultiplier);
+		// מע״מ בישראל 18% (המחירים המוצגים הם לפני מע״מ)
+		const VAT_RATE = 0.18;
+		const vat = Math.round(preVatTotal * VAT_RATE);
+		if (vat > 0) {
+			items.push({ label: `מע״מ (18%)`, value: vat });
+		}
+		const total = preVatTotal + vat;
 		return { breakdown: items, total };
 	}
 

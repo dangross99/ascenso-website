@@ -3759,7 +3759,7 @@ function LivePageInner() {
 
 						{/* פירוט חשבון – מוצג בסוף המובייל מתחת לקטגוריות */}
 						<div className="mt-3 bg-white rounded-md p-3">
-							<div className="font-semibold mb-1">מחיר משוער (לפני מע״מ)</div>
+							<div className="font-semibold mb-1">פירוט חשבון (כולל מע״מ)</div>
 							<ul className="text-sm text-gray-700 space-y-1">
 								{breakdown.map(b => (
 									<li key={b.label} className="flex justify-between">
@@ -3769,10 +3769,12 @@ function LivePageInner() {
 								))}
 							</ul>
 							<div className="mt-2 pt-2 border-t flex justify-between font-bold">
-								<span>סה״כ</span>
+								<span>סה״כ כולל מע״מ</span>
 								<span>₪{total.toLocaleString('he-IL')}</span>
 							</div>
-							<div className="text-[11px] text-gray-500 mt-1">הערכה משוערת להמחשה בלבד.</div>
+							<div className="text-[11px] text-gray-500 mt-1">
+								הערכה משוערת להמחשה בלבד.<br/>המחיר כולל קונסטרוקציה והתקנה.
+							</div>
 						</div>
 					</div>
 
@@ -4036,7 +4038,7 @@ function LivePageInner() {
 								)}
 							</div>
 							<div ref={priceRef} className={`bg-gray-50 rounded-md p-3 ${pricePing ? 'ring-2 ring-[#1a1a2e]' : ''}`}>
-								<div className="font-semibold mb-1">מחיר משוער (לפני מע״מ)</div>
+								<div className="font-semibold mb-1">פירוט חשבון (כולל מע״מ)</div>
 								<ul className="text-sm text-gray-700 space-y-1">
 									{breakdown.map(b => (
 										<li key={b.label} className="flex justify-between">
@@ -4046,10 +4048,12 @@ function LivePageInner() {
 									))}
 								</ul>
 								<div className="mt-2 pt-2 border-t flex justify-between font-bold">
-									<span>סה״כ</span>
+									<span>סה״כ כולל מע״מ</span>
 									<span>₪{total.toLocaleString('he-IL')}</span>
 								</div>
-								<div className="text-[11px] text-gray-500 mt-1">הערכה משוערת להמחשה בלבד.</div>
+								<div className="text-[11px] text-gray-500 mt-1">
+									הערכה משוערת להמחשה בלבד.<br/>המחיר כולל קונסטרוקציה והתקנה.
+								</div>
 							</div>
 
 						{/* ספייסר תחתון בפאנל כדי שלא ייכנס מתחת לסרגל הקבוע בדסקטופ */}
@@ -4075,7 +4079,7 @@ function LivePageInner() {
 						<span>תיאום פגישה</span>
 					</button>
 					<div className="text-lg font-bold text-[#1a1a2e]">
-						<span>{`סה\"כ `}₪{total.toLocaleString('he-IL')}</span>
+						<span>{`סה\"כ כולל מע\"מ `}₪{total.toLocaleString('he-IL')}</span>
 					</div>
 				</div>
 			</div>
@@ -4096,7 +4100,7 @@ function LivePageInner() {
 						<span>תיאום פגישה</span>
 					</button>
 					<div className="text-xl font-bold text-[#1a1a2e]">
-						<span>{`סה\"כ `}₪{total.toLocaleString('he-IL')}</span>
+						<span>{`סה\"כ כולל מע\"מ `}₪{total.toLocaleString('he-IL')}</span>
 					</div>
 				</div>
 			</div>

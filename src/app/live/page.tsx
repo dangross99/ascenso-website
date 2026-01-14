@@ -535,7 +535,12 @@ function Staircase3D({
 					{/* גוף המדרך */}
 					<mesh castShadow receiveShadow>
 						<boxGeometry args={[t.run, treadThickness, treadWidth]} />
-						<meshBasicMaterial color={materialKind === 'metal' ? '#8f8f8f' : '#b3a59a'} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
+						<meshBasicMaterial
+							color={(materialKind !== 'wood' && useSolidMat) ? (materialSolidColor || '#cccccc') : (materialKind === 'metal' ? '#8f8f8f' : '#b3a59a')}
+							polygonOffset
+							polygonOffsetFactor={1}
+							polygonOffsetUnits={1}
+						/>
 					</mesh>
 					{/* שכבת פני השטח עם תבליט אמיתי לעץ; למתכת/אבן – כיסוי מרקם */}
 					<mesh
@@ -3304,7 +3309,12 @@ function LivePageInner() {
 														<button
 															key={m}
 															className={`px-3 py-1 text-sm rounded-full border ${activeMaterial === m ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
-															onClick={() => startTransition(() => setActiveMaterial(m))}
+															onClick={() => {
+																startTransition(() => {
+																	setActiveMaterial(m);
+																	setMobileOpenCat(m === 'wood' ? 'woodTexture' : 'nonWoodTexture');
+																});
+															}}
 														>
 															{m === 'wood' ? 'עץ' : m === 'metal' ? 'מתכת' : 'אבן טבעית'}
 														</button>
@@ -3799,7 +3809,12 @@ function LivePageInner() {
 											<button
 												key={m}
 												className={`px-3 py-1 text-sm rounded-full border ${activeMaterial === m ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
-												onClick={() => startTransition(() => setActiveMaterial(m))}
+												onClick={() => {
+													startTransition(() => {
+														setActiveMaterial(m);
+														setDesktopOpenCat(m === 'wood' ? 'woodTexture' : 'nonWoodTexture');
+													});
+												}}
 											>
 												{m === 'wood' ? 'עץ' : m === 'metal' ? 'מתכת' : 'אבן טבעית'}
 											</button>

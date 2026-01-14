@@ -1,223 +1,5 @@
 [
   {
-    "id": "chatgpt_image_dec_27_2025_09_06_48_pm",
-    "name": "Champagne",
-    "category": "metal",
-    "colors": [
-      "gray"
-    ],
-    "price": 4200,
-    "images": [
-      "/images/materials/chatgpt_image_dec_27_2025_09_06_48_pm-v1766948002057-600.webp"
-    ],
-    "pbr": {
-      "bump": [
-        "/images/materials/chatgpt_image_dec_27_2025_09_06_48_pm-pbrbump-v1766948002057-600.webp"
-      ],
-      "roughness": [
-        "/images/materials/chatgpt_image_dec_27_2025_09_06_48_pm-pbrrough-v1766948002057-600.webp"
-      ]
-    }
-  },
-  {
-    "id": "chatgpt_image_dec_27_2025_09_15_55_pm",
-    "name": "Rose Gold",
-    "category": "metal",
-    "colors": [
-      "gray"
-    ],
-    "price": 3800,
-    "images": [
-      "/images/materials/chatgpt_image_dec_27_2025_09_15_55_pm-v1766948002057-600.webp"
-    ],
-    "pbr": {
-      "bump": [
-        "/images/materials/chatgpt_image_dec_27_2025_09_15_55_pm-pbrbump-v1766948002057-600.webp"
-      ],
-      "roughness": [
-        "/images/materials/chatgpt_image_dec_27_2025_09_15_55_pm-pbrrough-v1766948002057-600.webp"
-      ]
-    }
-  },
-  {
-    "id": "chatgpt_image_dec_27_2025_09_19_42_pm",
-    "name": "Graphite",
-    "category": "metal",
-    "colors": [
-      "gray"
-    ],
-    "price": 3600,
-    "images": [
-      "/images/materials/chatgpt_image_dec_27_2025_09_19_42_pm-v1766948002057-600.webp"
-    ],
-    "pbr": {
-      "bump": [
-        "/images/materials/chatgpt_image_dec_27_2025_09_19_42_pm-pbrbump-v1766948002057-600.webp"
-      ],
-      "roughness": [
-        "/images/materials/chatgpt_image_dec_27_2025_09_19_42_pm-pbrrough-v1766948002057-600.webp"
-      ]
-    }
-  },
-  {
-    "id": "whatsapp_image_2025_12_27_at_16_55_39",
-    "name": "Gold",
-    "category": "metal",
-    "colors": [
-      "gray"
-    ],
-    "price": 3400,
-    "images": [
-      "/images/materials/whatsapp_image_2025_12_27_at_16_55_39-v1766948002057-600.webp"
-    ],
-    "pbr": {
-      "bump": [
-        "/images/materials/whatsapp_image_2025_12_27_at_16_55_39-pbrbump-v1766948002057-600.webp"
-      ],
-      "roughness": [
-        "/images/materials/whatsapp_image_2025_12_27_at_16_55_39-pbrrough-v1766948002057-600.webp"
-      ]
-    }
-  },
-  {
-    "id": "whatsapp_image_2025_12_27_at_16_55_40_1",
-    "name": "Rain",
-    "category": "metal",
-    "colors": [
-      "gray"
-    ],
-    "price": 4600,
-    "images": [
-      "/images/materials/whatsapp_image_2025_12_27_at_16_55_40_1-v1766948002057-600.webp"
-    ],
-    "pbr": {
-      "bump": [
-        "/images/materials/whatsapp_image_2025_12_27_at_16_55_40_1-pbrbump-v1766948002057-600.webp"
-      ],
-      "roughness": [
-        "/images/materials/whatsapp_image_2025_12_27_at_16_55_40_1-pbrrough-v1766948002057-600.webp"
-      ]
-    }
-  },
-  {
-    "id": "whatsapp_image_2025_12_27_at_16_55_42_1",
-    "name": "Golden Rust",
-    "category": "metal",
-    "colors": [
-      "gray"
-    ],
-    "price": 4400,
-    "images": [
-      "/images/materials/whatsapp_image_2025_12_27_at_16_55_42_1-v1766948002057-600.webp"
-    ],
-    "pbr": {
-      "bump": [
-        "/images/materials/whatsapp_image_2025_12_27_at_16_55_42_1-pbrbump-v1766948002057-600.webp"
-      ],
-      "roughness": [
-        "/images/materials/whatsapp_image_2025_12_27_at_16_55_42_1-pbrrough-v1766948002057-600.webp"
-      ]
-    }
-  },
-  {
-    "id": "whatsapp_image_2025_12_27_at_16_55_42_2",
-    "name": "Gold Silver",
-    "category": "metal",
-    "colors": [
-      "gray"
-    ],
-    "price": 3500,
-    "images": [
-      "/images/materials/whatsapp_image_2025_12_27_at_16_55_42_2-v1766948002057-600.webp"
-    ],
-    "pbr": {
-      "bump": [
-        "/images/materials/whatsapp_image_2025_12_27_at_16_55_42_2-pbrbump-v1766948002057-600.webp"
-      ],
-      "roughness": [
-        "/images/materials/whatsapp_image_2025_12_27_at_16_55_42_2-pbrrough-v1766948002057-600.webp"
-      ]
-    }
-  },
-  {
-    "id": "whatsapp_image_2025_12_27_at_16_55_42",
-    "name": "Antique Silver",
-    "category": "metal",
-    "colors": [
-      "gray"
-    ],
-    "price": 4800,
-    "images": [
-      "/images/materials/whatsapp_image_2025_12_27_at_16_55_42-v1766948002057-600.webp"
-    ],
-    "pbr": {
-      "bump": [
-        "/images/materials/whatsapp_image_2025_12_27_at_16_55_42-pbrbump-v1766948002057-600.webp"
-      ],
-      "roughness": [
-        "/images/materials/whatsapp_image_2025_12_27_at_16_55_42-pbrrough-v1766948002057-600.webp"
-      ]
-    }
-  },
-  {
-    "id": "whatsapp_image_2025_12_27_at_16_55_43_1",
-    "name": "Antique Gold",
-    "category": "metal",
-    "colors": [
-      "gray"
-    ],
-    "price": 4000,
-    "images": [
-      "/images/materials/whatsapp_image_2025_12_27_at_16_55_43_1-v1766948002057-600.webp"
-    ],
-    "pbr": {
-      "bump": [
-        "/images/materials/whatsapp_image_2025_12_27_at_16_55_43_1-pbrbump-v1766948002057-600.webp"
-      ],
-      "roughness": [
-        "/images/materials/whatsapp_image_2025_12_27_at_16_55_43_1-pbrrough-v1766948002057-600.webp"
-      ]
-    }
-  },
-  {
-    "id": "whatsapp_image_2025_12_27_at_21_04_01",
-    "name": "Silver",
-    "category": "metal",
-    "colors": [
-      "gray"
-    ],
-    "price": 3700,
-    "images": [
-      "/images/materials/whatsapp_image_2025_12_27_at_21_04_01-v1766948002057-600.webp"
-    ],
-    "pbr": {
-      "bump": [
-        "/images/materials/whatsapp_image_2025_12_27_at_21_04_01-pbrbump-v1766948002057-600.webp"
-      ],
-      "roughness": [
-        "/images/materials/whatsapp_image_2025_12_27_at_21_04_01-pbrrough-v1766948002057-600.webp"
-      ]
-    }
-  },
-  {
-    "id": "metal_solid_white",
-    "name": "Metal White",
-    "category": "metal",
-    "colors": [],
-    "price": 3000,
-    "images": [],
-    "solid": "#F5F5F5"
-  },
-  {
-    "id": "metal_solid_black",
-    "name": "Metal Black",
-    "category": "metal",
-    "colors": [],
-    "price": 3000,
-    "images": [],
-    "solid": "#111111"
-  },
-  {
     "id": "wave_carved",
     "name": "wave_carved",
     "category": "wood",
@@ -252,7 +34,8 @@
       "white": [
         "/images/materials/wave_carved_white-v1766948002057-600.webp"
       ]
-    }
+    },
+    "hidden": true
   },
   {
     "id": "wood_model_01",
@@ -780,5 +563,318 @@
     "images": [
       "/images/materials/van-gogh.png"
     ]
+  },
+  {
+    "id": "antique_gold",
+    "name": "Antique Gold",
+    "category": "metal",
+    "colors": [
+      "gray"
+    ],
+    "price": 4000,
+    "images": [
+      "/images/materials/antique_gold-v1768407662604-400.webp",
+      "/images/materials/antique_gold-v1768407662604-700.webp",
+      "/images/materials/antique_gold-v1768407662604-1000.webp"
+    ],
+    "pbr": {
+      "bump": [
+        "/images/materials/antique_gold-pbrbump-v1768407662604-400.webp",
+        "/images/materials/antique_gold-pbrbump-v1768407662604-700.webp",
+        "/images/materials/antique_gold-pbrbump-v1768407662604-1000.webp"
+      ],
+      "roughness": [
+        "/images/materials/antique_gold-pbrrough-v1768407662604-400.webp",
+        "/images/materials/antique_gold-pbrrough-v1768407662604-700.webp",
+        "/images/materials/antique_gold-pbrrough-v1768407662604-1000.webp"
+      ]
+    }
+  },
+  {
+    "id": "antique_silver",
+    "name": "Antique Silver",
+    "category": "metal",
+    "colors": [
+      "gray"
+    ],
+    "price": 4800,
+    "images": [
+      "/images/materials/antique_silver-v1768407662604-400.webp",
+      "/images/materials/antique_silver-v1768407662604-700.webp",
+      "/images/materials/antique_silver-v1768407662604-1000.webp"
+    ],
+    "pbr": {
+      "bump": [
+        "/images/materials/antique_silver-pbrbump-v1768407662604-400.webp",
+        "/images/materials/antique_silver-pbrbump-v1768407662604-700.webp",
+        "/images/materials/antique_silver-pbrbump-v1768407662604-1000.webp"
+      ],
+      "roughness": [
+        "/images/materials/antique_silver-pbrrough-v1768407662604-400.webp",
+        "/images/materials/antique_silver-pbrrough-v1768407662604-700.webp",
+        "/images/materials/antique_silver-pbrrough-v1768407662604-1000.webp"
+      ]
+    }
+  },
+  {
+    "id": "black",
+    "name": "Black",
+    "category": "metal",
+    "colors": [
+      "gray"
+    ],
+    "price": 3000,
+    "images": [
+      "/images/materials/black-v1768407662604-400.webp",
+      "/images/materials/black-v1768407662604-700.webp",
+      "/images/materials/black-v1768407662604-1000.webp"
+    ],
+    "pbr": {
+      "bump": [
+        "/images/materials/black-pbrbump-v1768407662604-400.webp",
+        "/images/materials/black-pbrbump-v1768407662604-700.webp",
+        "/images/materials/black-pbrbump-v1768407662604-1000.webp"
+      ],
+      "roughness": [
+        "/images/materials/black-pbrrough-v1768407662604-400.webp",
+        "/images/materials/black-pbrrough-v1768407662604-700.webp",
+        "/images/materials/black-pbrrough-v1768407662604-1000.webp"
+      ]
+    }
+  },
+  {
+    "id": "champagne",
+    "name": "Champagne",
+    "category": "metal",
+    "colors": [
+      "gray"
+    ],
+    "price": 4200,
+    "images": [
+      "/images/materials/champagne-v1768407662604-400.webp",
+      "/images/materials/champagne-v1768407662604-700.webp",
+      "/images/materials/champagne-v1768407662604-1000.webp"
+    ],
+    "pbr": {
+      "bump": [
+        "/images/materials/champagne-pbrbump-v1768407662604-400.webp",
+        "/images/materials/champagne-pbrbump-v1768407662604-700.webp",
+        "/images/materials/champagne-pbrbump-v1768407662604-1000.webp"
+      ],
+      "roughness": [
+        "/images/materials/champagne-pbrrough-v1768407662604-400.webp",
+        "/images/materials/champagne-pbrrough-v1768407662604-700.webp",
+        "/images/materials/champagne-pbrrough-v1768407662604-1000.webp"
+      ]
+    }
+  },
+  {
+    "id": "gold_silver",
+    "name": "Gold Silver",
+    "category": "metal",
+    "colors": [
+      "gray"
+    ],
+    "price": 3500,
+    "images": [
+      "/images/materials/gold_silver-v1768407662604-400.webp",
+      "/images/materials/gold_silver-v1768407662604-700.webp",
+      "/images/materials/gold_silver-v1768407662604-1000.webp"
+    ],
+    "pbr": {
+      "bump": [
+        "/images/materials/gold_silver-pbrbump-v1768407662604-400.webp",
+        "/images/materials/gold_silver-pbrbump-v1768407662604-700.webp",
+        "/images/materials/gold_silver-pbrbump-v1768407662604-1000.webp"
+      ],
+      "roughness": [
+        "/images/materials/gold_silver-pbrrough-v1768407662604-400.webp",
+        "/images/materials/gold_silver-pbrrough-v1768407662604-700.webp",
+        "/images/materials/gold_silver-pbrrough-v1768407662604-1000.webp"
+      ]
+    }
+  },
+  {
+    "id": "gold",
+    "name": "Gold",
+    "category": "metal",
+    "colors": [
+      "gray"
+    ],
+    "price": 3400,
+    "images": [
+      "/images/materials/gold-v1768407662604-400.webp",
+      "/images/materials/gold-v1768407662604-700.webp",
+      "/images/materials/gold-v1768407662604-1000.webp"
+    ],
+    "pbr": {
+      "bump": [
+        "/images/materials/gold-pbrbump-v1768407662604-400.webp",
+        "/images/materials/gold-pbrbump-v1768407662604-700.webp",
+        "/images/materials/gold-pbrbump-v1768407662604-1000.webp"
+      ],
+      "roughness": [
+        "/images/materials/gold-pbrrough-v1768407662604-400.webp",
+        "/images/materials/gold-pbrrough-v1768407662604-700.webp",
+        "/images/materials/gold-pbrrough-v1768407662604-1000.webp"
+      ]
+    }
+  },
+  {
+    "id": "golden_rust",
+    "name": "Golden Rust",
+    "category": "metal",
+    "colors": [
+      "gray"
+    ],
+    "price": 4400,
+    "images": [
+      "/images/materials/golden_rust-v1768407662604-400.webp",
+      "/images/materials/golden_rust-v1768407662604-700.webp",
+      "/images/materials/golden_rust-v1768407662604-1000.webp"
+    ],
+    "pbr": {
+      "bump": [
+        "/images/materials/golden_rust-pbrbump-v1768407662604-400.webp",
+        "/images/materials/golden_rust-pbrbump-v1768407662604-700.webp",
+        "/images/materials/golden_rust-pbrbump-v1768407662604-1000.webp"
+      ],
+      "roughness": [
+        "/images/materials/golden_rust-pbrrough-v1768407662604-400.webp",
+        "/images/materials/golden_rust-pbrrough-v1768407662604-700.webp",
+        "/images/materials/golden_rust-pbrrough-v1768407662604-1000.webp"
+      ]
+    }
+  },
+  {
+    "id": "graphite",
+    "name": "Graphite",
+    "category": "metal",
+    "colors": [
+      "gray"
+    ],
+    "price": 3600,
+    "images": [
+      "/images/materials/graphite-v1768407662604-400.webp",
+      "/images/materials/graphite-v1768407662604-700.webp",
+      "/images/materials/graphite-v1768407662604-1000.webp"
+    ],
+    "pbr": {
+      "bump": [
+        "/images/materials/graphite-pbrbump-v1768407662604-400.webp",
+        "/images/materials/graphite-pbrbump-v1768407662604-700.webp",
+        "/images/materials/graphite-pbrbump-v1768407662604-1000.webp"
+      ],
+      "roughness": [
+        "/images/materials/graphite-pbrrough-v1768407662604-400.webp",
+        "/images/materials/graphite-pbrrough-v1768407662604-700.webp",
+        "/images/materials/graphite-pbrrough-v1768407662604-1000.webp"
+      ]
+    }
+  },
+  {
+    "id": "rain",
+    "name": "Rain",
+    "category": "metal",
+    "colors": [
+      "gray"
+    ],
+    "price": 4600,
+    "images": [
+      "/images/materials/rain-v1768407662604-400.webp",
+      "/images/materials/rain-v1768407662604-700.webp",
+      "/images/materials/rain-v1768407662604-1000.webp"
+    ],
+    "pbr": {
+      "bump": [
+        "/images/materials/rain-pbrbump-v1768407662604-400.webp",
+        "/images/materials/rain-pbrbump-v1768407662604-700.webp",
+        "/images/materials/rain-pbrbump-v1768407662604-1000.webp"
+      ],
+      "roughness": [
+        "/images/materials/rain-pbrrough-v1768407662604-400.webp",
+        "/images/materials/rain-pbrrough-v1768407662604-700.webp",
+        "/images/materials/rain-pbrrough-v1768407662604-1000.webp"
+      ]
+    }
+  },
+  {
+    "id": "rose_gold",
+    "name": "Rose Gold",
+    "category": "metal",
+    "colors": [
+      "gray"
+    ],
+    "price": 3800,
+    "images": [
+      "/images/materials/rose_gold-v1768407662604-400.webp",
+      "/images/materials/rose_gold-v1768407662604-700.webp",
+      "/images/materials/rose_gold-v1768407662604-1000.webp"
+    ],
+    "pbr": {
+      "bump": [
+        "/images/materials/rose_gold-pbrbump-v1768407662604-400.webp",
+        "/images/materials/rose_gold-pbrbump-v1768407662604-700.webp",
+        "/images/materials/rose_gold-pbrbump-v1768407662604-1000.webp"
+      ],
+      "roughness": [
+        "/images/materials/rose_gold-pbrrough-v1768407662604-400.webp",
+        "/images/materials/rose_gold-pbrrough-v1768407662604-700.webp",
+        "/images/materials/rose_gold-pbrrough-v1768407662604-1000.webp"
+      ]
+    }
+  },
+  {
+    "id": "silver",
+    "name": "Silver",
+    "category": "metal",
+    "colors": [
+      "gray"
+    ],
+    "price": 3700,
+    "images": [
+      "/images/materials/silver-v1768407662604-400.webp",
+      "/images/materials/silver-v1768407662604-700.webp",
+      "/images/materials/silver-v1768407662604-1000.webp"
+    ],
+    "pbr": {
+      "bump": [
+        "/images/materials/silver-pbrbump-v1768407662604-400.webp",
+        "/images/materials/silver-pbrbump-v1768407662604-700.webp",
+        "/images/materials/silver-pbrbump-v1768407662604-1000.webp"
+      ],
+      "roughness": [
+        "/images/materials/silver-pbrrough-v1768407662604-400.webp",
+        "/images/materials/silver-pbrrough-v1768407662604-700.webp",
+        "/images/materials/silver-pbrrough-v1768407662604-1000.webp"
+      ]
+    }
+  },
+  {
+    "id": "white",
+    "name": "White",
+    "category": "metal",
+    "colors": [
+      "gray"
+    ],
+    "price": 3000,
+    "images": [
+      "/images/materials/white-v1768407662604-400.webp",
+      "/images/materials/white-v1768407662604-700.webp",
+      "/images/materials/white-v1768407662604-1000.webp"
+    ],
+    "pbr": {
+      "bump": [
+        "/images/materials/white-pbrbump-v1768407662604-400.webp",
+        "/images/materials/white-pbrbump-v1768407662604-700.webp",
+        "/images/materials/white-pbrbump-v1768407662604-1000.webp"
+      ],
+      "roughness": [
+        "/images/materials/white-pbrrough-v1768407662604-400.webp",
+        "/images/materials/white-pbrrough-v1768407662604-700.webp",
+        "/images/materials/white-pbrrough-v1768407662604-1000.webp"
+      ]
+    },
+    "hidden": true
   }
 ]

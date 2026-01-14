@@ -2146,26 +2146,16 @@ function LivePageInner() {
 		[records]
 	);
 	const nonWoodModels = React.useMemo(() => {
-		const isWB = (rec: any) => {
-			const name = (rec?.name || rec?.id || '').toString().toLowerCase();
-			const byIdOrName = /\b(white|black)\b/.test(name);
-			const bySolid =
-				typeof rec?.solid === 'string' &&
-				['#ffffff', '#fff', '#f5f5f5', '#111111', '#000', '#000000'].includes(rec.solid.toLowerCase());
-			return byIdOrName || bySolid;
-		};
 		return records.filter((r) => {
-			// חייב להיות מאותה קטגוריה ולא עץ
+			// מאותה קטגוריה ולא עץ
 			if (r.category !== activeMaterial || activeMaterial === 'wood') return false;
 			// הסתר פריטים מסומנים כנסתרים
 			if ((r as any).hidden) return false;
-			// מתכת: אל תציג לבן/שחור ודרוש תמונה
+			// למתכת – דרוש שתהיה תמונה (כולל White/Black עם קבצים)
 			if (activeMaterial === 'metal') {
-				if (isWB(r)) return false;
 				return Array.isArray((r as any).images) && (r as any).images.length > 0;
 			}
-			// אבן: הצג כרגיל
-			return true;
+			return true; // אבן
 		});
 	}, [records, activeMaterial]);
 	// אם הטקסטורה הפעילה לא קיימת לאחר הסינון (למשל metal_solid_white/black), בחר את הראשונה הזמינה

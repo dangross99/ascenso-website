@@ -26,14 +26,12 @@ type MaterialItem = {
 // בוטל: סינון צבעים הוסר מהעמוד
 
 // גווני עץ לדוגמה בכל כרטיס – בחירה תשפיע ויזואלית על התמונה (Overlay)
-// מציגים אך ורק 6 צבעים קבועים לדגמי עץ (ללא צביעה מלאכותית)
+// צבעי עץ מוצגים בלבד: טבעי, אגוז, שחור, לבן
 const WOOD_SWATCHES: { id: string; label: string; hex: string }[] = [
+	{ id: 'oak', label: 'טבעי', hex: '#C8A165' },
+	{ id: 'walnut', label: 'אגוז', hex: '#7B5A39' },
 	{ id: 'black', label: 'שחור', hex: '#111827' },
-	{ id: 'graphite', label: 'גרפיט', hex: '#3E3E3E' },
 	{ id: 'white', label: 'לבן', hex: '#F3F4F6' },
-	{ id: 'natural', label: 'טבעי בהיר', hex: '#D5C4A1' },
-	{ id: 'walnut', label: 'וולנט', hex: '#7B5A39' },
-	{ id: 'oak', label: 'אלון', hex: '#C8A165' },
 ];
 
 // הוסרו נתוני דמה – הטעינה כולה מגיעה מ-materials.json
@@ -96,8 +94,18 @@ export default function MaterialsPage() {
 			try {
 				const res = await fetch(`/data/materials.json?ts=${Date.now()}`, { cache: 'no-store' });
 				const json: MaterialRecord[] = await res.json();
+				// הסתר פריטים שמסומנים כ-hidden, ובנוסף עבור עץ – השאר רק את הדגמים החדשים שמצביעים ל-assets/materials_src/wood
+				const visibleJson = Array.isArray(json)
+					? json.filter((r: any) => {
+						if (r?.hidden) return false;
+						if (r?.category === 'wood') {
+							return typeof r?.images?.[0] === 'string' && r.images[0].startsWith('/assets/materials_src/wood');
+						}
+						return true;
+					})
+					: [];
 				if (cancelled) return;
-				const items: MaterialItem[] = json.map((rec, idx) => ({
+				const items: MaterialItem[] = visibleJson.map((rec, idx) => ({
 					id: rec.id || `json-${idx}`,
 					materialId: rec.category,
 					name: rec.name,

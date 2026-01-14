@@ -26,7 +26,7 @@ const heebo = Heebo({
 
 export const metadata = {
   title: {
-    default: "אסנסו מדרגות מרחפות",
+    default: "ASCENSO — Custom Stairs & Materials",
     template: "%s | ASCENSO",
   },
   description:

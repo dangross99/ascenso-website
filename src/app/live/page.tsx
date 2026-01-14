@@ -2991,22 +2991,7 @@ function LivePageInner() {
 										</div>
 									) : railing === 'metal' ? (
 										<div className="flex items-center gap-3 flex-wrap">
-											{/* צבעים אחידים */}
-											<button
-												title="שחור"
-												aria-label="שחור"
-												onClick={() => { setRailingMetalSolid('#111111'); setRailingMetalId(null); }}
-												className={`w-8 h-8 rounded-full border-2 cursor-pointer ${railingMetalSolid === '#111111' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-												style={{ backgroundColor: '#111111', borderColor: '#2b2b2b' }}
-											/>
-											<button
-												title="לבן"
-												aria-label="לבן"
-												onClick={() => { setRailingMetalSolid('#F5F5F5'); setRailingMetalId(null); }}
-												className={`w-8 h-8 rounded-full border-2 cursor-pointer ${railingMetalSolid === '#F5F5F5' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-												style={{ backgroundColor: '#F5F5F5', borderColor: '#e5e5e5' }}
-											/>
-											{/* טקסטורות מתכת */}
+											{/* טקסטורות מתכת (ללא צבעים אחידים) */}
 											{metalRailingOptions.map(opt => (
 												<button
 													key={opt.id}
@@ -3018,9 +3003,7 @@ function LivePageInner() {
 												/>
 											))}
 											<span className="text-xs text-gray-600">
-												{railingMetalSolid === '#111111' ? 'שחור' :
-												 railingMetalSolid === '#F5F5F5' ? 'לבן' :
-												 metalRailingOptions.find(m => m.id === railingMetalId)?.name || 'בחר גוון'}
+												{metalRailingOptions.find(m => m.id === railingMetalId)?.name || 'בחר גוון'}
 											</span>
 										</div>
 									) : (
@@ -3716,22 +3699,7 @@ function LivePageInner() {
 													<div className="pt-2 border-t">
 														<div className="text-xs font-medium mb-2">גוון/טקסטורה</div>
 														<div className="flex items-center gap-3 flex-wrap">
-															{/* צבעים אחידים */}
-															<button
-																title="שחור"
-																aria-label="שחור"
-																onClick={() => { setRailingMetalSolid('#111111'); setRailingMetalId(null); }}
-																className={`w-8 h-8 rounded-full border-2 cursor-pointer ${railingMetalSolid === '#111111' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-																style={{ backgroundColor: '#111111', borderColor: '#2b2b2b' }}
-															/>
-															<button
-																title="לבן"
-																aria-label="לבן"
-																onClick={() => { setRailingMetalSolid('#F5F5F5'); setRailingMetalId(null); }}
-																className={`w-8 h-8 rounded-full border-2 cursor-pointer ${railingMetalSolid === '#F5F5F5' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-																style={{ backgroundColor: '#F5F5F5', borderColor: '#e5e5e5' }}
-															/>
-															{/* טקסטורות מתכת */}
+															{/* טקסטורות מתכת (ללא צבעים אחידים) */}
 															{metalRailingOptions.map(opt => (
 																<button
 																	key={opt.id}

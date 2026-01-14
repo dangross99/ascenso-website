@@ -94,15 +94,16 @@ export default function MaterialsPage() {
 			try {
 				const res = await fetch(`/data/materials.json?ts=${Date.now()}`, { cache: 'no-store' });
 				const json: MaterialRecord[] = await res.json();
-				// הסתר פריטים שמסומנים כ-hidden, ובנוסף עבור עץ – השאר רק את הדגמים החדשים שמצביעים ל-assets/materials_src/wood
+				// הסתר פריטים שמסומנים כ-hidden, ועבור עץ – תמיכה גם בנתיבים החדשים תחת public וגם בנתיב הקודם
 				const visibleJson = Array.isArray(json)
 					? json.filter((r: any) => {
-						if (r?.hidden) return false;
-						if (r?.category === 'wood') {
-							return typeof r?.images?.[0] === 'string' && r.images[0].startsWith('/assets/materials_src/wood');
-						}
-						return true;
-					})
+							if (r?.hidden) return false;
+							if (r?.category === 'wood') {
+								const img = typeof r?.images?.[0] === 'string' ? r.images[0] : '';
+								return img.startsWith('/images/materials/wood') || img.startsWith('/assets/materials_src/wood');
+							}
+							return true;
+					  })
 					: [];
 				if (cancelled) return;
 				const items: MaterialItem[] = visibleJson.map((rec, idx) => ({

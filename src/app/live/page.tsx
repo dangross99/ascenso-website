@@ -2186,11 +2186,12 @@ function LivePageInner() {
 	// בחר רשומת דגם פעילה לפי model או לפי קטגוריה (ברירת מחדל: הראשון)
 	const woodModels = React.useMemo(
 		() =>
-			records.filter(r =>
-				r.category === 'wood' &&
-				// נשתמש רק בדגמים החדשים שמצביעים לתמונות מתוך assets/materials_src/wood (בעברית)
-				(typeof r.images?.[0] === 'string' && r.images[0].startsWith('/assets/materials_src/wood'))
-			),
+			records.filter(r => {
+				if (r.category !== 'wood') return false;
+				const img = typeof r.images?.[0] === 'string' ? r.images[0] : '';
+				// תמיכה גם בנתיבים החדשים תחת public וגם בנתיב הקודם
+				return img.startsWith('/images/materials/wood') || img.startsWith('/assets/materials_src/wood');
+			}),
 		[records]
 	);
 	const nonWoodModels = React.useMemo(() => {

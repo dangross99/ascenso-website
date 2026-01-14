@@ -1,449 +1,127 @@
 [
   {
-    "id": "wave_carved",
-    "name": "wave_carved",
+    "id": "wood_adama",
+    "name": "אדמה",
     "category": "wood",
-    "colors": [
-      "black",
-      "graphite",
-      "natural",
-      "oak",
-      "walnut",
-      "white"
-    ],
+    "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": [
-      "/images/materials/wave_carved_oak-v1766948002057-600.webp"
-    ],
+    "images": ["/assets/materials_src/wood/אדמה/אדמה טבעי.png"],
     "variants": {
-      "black": [
-        "/images/materials/wave_carved_black-v1766948002057-600.webp"
-      ],
-      "graphite": [
-        "/images/materials/wave_carved_graphite-v1766948002057-600.webp"
-      ],
-      "natural": [
-        "/images/materials/wave_carved_natural-v1766948002057-600.webp"
-      ],
-      "oak": [
-        "/images/materials/wave_carved_oak-v1766948002057-600.webp"
-      ],
-      "walnut": [
-        "/images/materials/wave_carved_walnut-v1766948002057-600.webp"
-      ],
-      "white": [
-        "/images/materials/wave_carved_white-v1766948002057-600.webp"
-      ]
-    },
-    "hidden": true
-  },
-  {
-    "id": "wood_model_01",
-    "name": "wood_model_01",
-    "category": "wood",
-    "colors": [
-      "black",
-      "graphite",
-      "natural",
-      "oak",
-      "walnut",
-      "white"
-    ],
-    "price": 3000,
-    "images": [
-      "/images/materials/wood_model_01_oak-v1766948002057-600.webp"
-    ],
-    "variants": {
-      "black": [
-        "/images/materials/wood_model_01_black-v1766948002057-600.webp"
-      ],
-      "graphite": [
-        "/images/materials/wood_model_01_graphite-v1766948002057-600.webp"
-      ],
-      "natural": [
-        "/images/materials/wood_model_01_natural-v1766948002057-600.webp"
-      ],
-      "oak": [
-        "/images/materials/wood_model_01_oak-v1766948002057-600.webp"
-      ],
-      "walnut": [
-        "/images/materials/wood_model_01_walnut-v1766948002057-600.webp"
-      ],
-      "white": [
-        "/images/materials/wood_model_01_white-v1766948002057-600.webp"
-      ]
+      "oak": ["/assets/materials_src/wood/אדמה/אדמה טבעי.png"],
+      "walnut": ["/assets/materials_src/wood/אדמה/אדמה אגוז.png"],
+      "white": ["/assets/materials_src/wood/אדמה/אדמה לבנה.png"],
+      "black": ["/assets/materials_src/wood/אדמה/אדמה שחורה.png"]
     }
   },
   {
-    "id": "wood_model_02",
-    "name": "wood_model_02",
+    "id": "wood_carved",
+    "name": "חריטה",
     "category": "wood",
-    "colors": [
-      "black",
-      "graphite",
-      "natural",
-      "oak",
-      "walnut",
-      "white"
-    ],
+    "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": [
-      "/images/materials/wood_model_02_oak-v1766948002057-600.webp"
-    ],
+    "images": ["/assets/materials_src/wood/חריטה/חריטה טבעי.png"],
     "variants": {
-      "black": [
-        "/images/materials/wood_model_02_black-v1766948002057-600.webp"
-      ],
-      "graphite": [
-        "/images/materials/wood_model_02_graphite-v1766948002057-600.webp"
-      ],
-      "natural": [
-        "/images/materials/wood_model_02_natural-v1766948002057-600.webp"
-      ],
-      "oak": [
-        "/images/materials/wood_model_02_oak-v1766948002057-600.webp"
-      ],
-      "walnut": [
-        "/images/materials/wood_model_02_walnut-v1766948002057-600.webp"
-      ],
-      "white": [
-        "/images/materials/wood_model_02_white-v1766948002057-600.webp"
-      ]
+      "oak": ["/assets/materials_src/wood/חריטה/חריטה טבעי.png"],
+      "walnut": ["/assets/materials_src/wood/חריטה/חריטה אגוז.png"],
+      "white": ["/assets/materials_src/wood/חריטה/חריטה לבנה.png"],
+      "black": ["/assets/materials_src/wood/חריטה/חריטה שחורה.png"]
     }
   },
   {
-    "id": "wood_model_03",
-    "name": "wood_model_03",
+    "id": "wood_chocolate",
+    "name": "שוקולד",
     "category": "wood",
-    "colors": [
-      "black",
-      "graphite",
-      "natural",
-      "oak",
-      "walnut",
-      "white"
-    ],
+    "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": [
-      "/images/materials/wood_model_03_oak-v1766948002057-600.webp"
-    ],
+    "images": ["/assets/materials_src/wood/שוקולד/שוקולד טבעי.png"],
     "variants": {
-      "black": [
-        "/images/materials/wood_model_03_black-v1766948002057-600.webp"
-      ],
-      "graphite": [
-        "/images/materials/wood_model_03_graphite-v1766948002057-600.webp"
-      ],
-      "natural": [
-        "/images/materials/wood_model_03_natural-v1766948002057-600.webp"
-      ],
-      "oak": [
-        "/images/materials/wood_model_03_oak-v1766948002057-600.webp"
-      ],
-      "walnut": [
-        "/images/materials/wood_model_03_walnut-v1766948002057-600.webp"
-      ],
-      "white": [
-        "/images/materials/wood_model_03_white-v1766948002057-600.webp"
-      ]
+      "oak": ["/assets/materials_src/wood/שוקולד/שוקולד טבעי.png"],
+      "walnut": ["/assets/materials_src/wood/שוקולד/שוקולד אגוז.png"],
+      "white": ["/assets/materials_src/wood/שוקולד/שוקולד לבן.png"],
+      "black": ["/assets/materials_src/wood/שוקולד/שוקולד שחור.png"]
     }
   },
   {
-    "id": "wood_model_04",
-    "name": "wood_model_04",
+    "id": "wood_painted",
+    "name": "ציור",
     "category": "wood",
-    "colors": [
-      "black",
-      "graphite",
-      "natural",
-      "oak",
-      "walnut",
-      "white"
-    ],
+    "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": [
-      "/images/materials/wood_model_04_oak-v1766948002057-600.webp"
-    ],
+    "images": ["/assets/materials_src/wood/ציור/ציור טבעי.png"],
     "variants": {
-      "black": [
-        "/images/materials/wood_model_04_black-v1766948002057-600.webp"
-      ],
-      "graphite": [
-        "/images/materials/wood_model_04_graphite-v1766948002057-600.webp"
-      ],
-      "natural": [
-        "/images/materials/wood_model_04_natural-v1766948002057-600.webp"
-      ],
-      "oak": [
-        "/images/materials/wood_model_04_oak-v1766948002057-600.webp"
-      ],
-      "walnut": [
-        "/images/materials/wood_model_04_walnut-v1766948002057-600.webp"
-      ],
-      "white": [
-        "/images/materials/wood_model_04_white-v1766948002057-600.webp"
-      ]
+      "oak": ["/assets/materials_src/wood/ציור/ציור טבעי.png"],
+      "walnut": ["/assets/materials_src/wood/ציור/ציור אגוז.png"],
+      "white": ["/assets/materials_src/wood/ציור/ציור לבן.png"],
+      "black": ["/assets/materials_src/wood/ציור/ציור שחור.png"]
     }
   },
   {
-    "id": "wood_model_05",
-    "name": "wood_model_05",
+    "id": "wood_domino",
+    "name": "דומינו",
     "category": "wood",
-    "colors": [
-      "black",
-      "graphite",
-      "natural",
-      "oak",
-      "walnut",
-      "white"
-    ],
+    "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": [
-      "/images/materials/wood_model_05_oak-v1766948002057-600.webp"
-    ],
+    "images": ["/assets/materials_src/wood/דומינו/דומינו טבעי.png"],
     "variants": {
-      "black": [
-        "/images/materials/wood_model_05_black-v1766948002057-600.webp"
-      ],
-      "graphite": [
-        "/images/materials/wood_model_05_graphite-v1766948002057-600.webp"
-      ],
-      "natural": [
-        "/images/materials/wood_model_05_natural-v1766948002057-600.webp"
-      ],
-      "oak": [
-        "/images/materials/wood_model_05_oak-v1766948002057-600.webp"
-      ],
-      "walnut": [
-        "/images/materials/wood_model_05_walnut-v1766948002057-600.webp"
-      ],
-      "white": [
-        "/images/materials/wood_model_05_white-v1766948002057-600.webp"
-      ]
+      "oak": ["/assets/materials_src/wood/דומינו/דומינו טבעי.png"],
+      "walnut": ["/assets/materials_src/wood/דומינו/דומינו אגוז.png"],
+      "white": ["/assets/materials_src/wood/דומינו/דומינו לבן.png"],
+      "black": ["/assets/materials_src/wood/דומינו/דומינו שחור.png"]
     }
   },
   {
-    "id": "wood_model_06",
-    "name": "wood_model_06",
+    "id": "wood_hammered",
+    "name": "פטיש",
     "category": "wood",
-    "colors": [
-      "black",
-      "graphite",
-      "natural",
-      "oak",
-      "walnut",
-      "white"
-    ],
+    "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": [
-      "/images/materials/wood_model_06_oak-v1766948002057-600.webp"
-    ],
+    "images": ["/assets/materials_src/wood/פטיש/פטיש טבעי.png"],
     "variants": {
-      "black": [
-        "/images/materials/wood_model_06_black-v1766948002057-600.webp"
-      ],
-      "graphite": [
-        "/images/materials/wood_model_06_graphite-v1766948002057-600.webp"
-      ],
-      "natural": [
-        "/images/materials/wood_model_06_natural-v1766948002057-600.webp"
-      ],
-      "oak": [
-        "/images/materials/wood_model_06_oak-v1766948002057-600.webp"
-      ],
-      "walnut": [
-        "/images/materials/wood_model_06_walnut-v1766948002057-600.webp"
-      ],
-      "white": [
-        "/images/materials/wood_model_06_white-v1766948002057-600.webp"
-      ]
+      "oak": ["/assets/materials_src/wood/פטיש/פטיש טבעי.png"],
+      "walnut": ["/assets/materials_src/wood/פטיש/פטיש אגוז.png"],
+      "white": ["/assets/materials_src/wood/פטיש/פטיש לבן.png"],
+      "black": ["/assets/materials_src/wood/פטיש/פטיש שחורה.png"]
     }
   },
   {
-    "id": "wood_model_07",
-    "name": "wood_model_07",
+    "id": "wood_wrapped",
+    "name": "עטיפה",
     "category": "wood",
-    "colors": [
-      "black",
-      "graphite",
-      "natural",
-      "oak",
-      "walnut",
-      "white"
-    ],
+    "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": [
-      "/images/materials/wood_model_07_oak-v1766948002057-600.webp"
-    ],
+    "images": ["/assets/materials_src/wood/עטיפה/עטיפה טבעי.png"],
     "variants": {
-      "black": [
-        "/images/materials/wood_model_07_black-v1766948002057-600.webp"
-      ],
-      "graphite": [
-        "/images/materials/wood_model_07_graphite-v1766948002057-600.webp"
-      ],
-      "natural": [
-        "/images/materials/wood_model_07_natural-v1766948002057-600.webp"
-      ],
-      "oak": [
-        "/images/materials/wood_model_07_oak-v1766948002057-600.webp"
-      ],
-      "walnut": [
-        "/images/materials/wood_model_07_walnut-v1766948002057-600.webp"
-      ],
-      "white": [
-        "/images/materials/wood_model_07_white-v1766948002057-600.webp"
-      ]
+      "oak": ["/assets/materials_src/wood/עטיפה/עטיפה טבעי.png"],
+      "walnut": ["/assets/materials_src/wood/עטיפה/עטיפה אגוז.png"],
+      "white": ["/assets/materials_src/wood/עטיפה/עטיפה לבנה.png"],
+      "black": ["/assets/materials_src/wood/עטיפה/עטיפה שחורה.png"]
     }
   },
   {
-    "id": "wood_model_08",
-    "name": "wood_model_08",
+    "id": "wood_plain",
+    "name": "נקי",
     "category": "wood",
-    "colors": [
-      "black",
-      "graphite",
-      "natural",
-      "oak",
-      "walnut",
-      "white"
-    ],
+    "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": [
-      "/images/materials/wood_model_08_oak-v1766948002057-600.webp"
-    ],
+    "images": ["/assets/materials_src/wood/נקי/נקי טבעי.png"],
     "variants": {
-      "black": [
-        "/images/materials/wood_model_08_black-v1766948002057-600.webp"
-      ],
-      "graphite": [
-        "/images/materials/wood_model_08_graphite-v1766948002057-600.webp"
-      ],
-      "natural": [
-        "/images/materials/wood_model_08_natural-v1766948002057-600.webp"
-      ],
-      "oak": [
-        "/images/materials/wood_model_08_oak-v1766948002057-600.webp"
-      ],
-      "walnut": [
-        "/images/materials/wood_model_08_walnut-v1766948002057-600.webp"
-      ],
-      "white": [
-        "/images/materials/wood_model_08_white-v1766948002057-600.webp"
-      ]
+      "oak": ["/assets/materials_src/wood/נקי/נקי טבעי.png"],
+      "walnut": ["/assets/materials_src/wood/נקי/נקי אגוז.png"],
+      "white": ["/assets/materials_src/wood/נקי/נקי לבן.png"],
+      "black": ["/assets/materials_src/wood/נקי/נקי שחור.png"]
     }
   },
-  {
-    "id": "wood_model_09",
-    "name": "wood_model_09",
-    "category": "wood",
-    "colors": [
-      "black",
-      "graphite",
-      "natural",
-      "oak",
-      "walnut",
-      "white"
-    ],
-    "price": 3000,
-    "images": [
-      "/images/materials/wood_model_09_oak-v1766948002057-600.webp"
-    ],
-    "variants": {
-      "black": [
-        "/images/materials/wood_model_09_black-v1766948002057-600.webp"
-      ],
-      "graphite": [
-        "/images/materials/wood_model_09_graphite-v1766948002057-600.webp"
-      ],
-      "natural": [
-        "/images/materials/wood_model_09_natural-v1766948002057-600.webp"
-      ],
-      "oak": [
-        "/images/materials/wood_model_09_oak-v1766948002057-600.webp"
-      ],
-      "walnut": [
-        "/images/materials/wood_model_09_walnut-v1766948002057-600.webp"
-      ],
-      "white": [
-        "/images/materials/wood_model_09_white-v1766948002057-600.webp"
-      ]
-    }
-  },
-  {
-    "id": "wood_model_10",
-    "name": "wood_model_10",
-    "category": "wood",
-    "colors": [
-      "black",
-      "graphite",
-      "natural",
-      "oak",
-      "walnut",
-      "white"
-    ],
-    "price": 3000,
-    "images": [
-      "/images/materials/wood_model_10_oak-v1766948002057-600.webp"
-    ],
-    "variants": {
-      "black": [
-        "/images/materials/wood_model_10_black-v1766948002057-600.webp"
-      ],
-      "graphite": [
-        "/images/materials/wood_model_10_graphite-v1766948002057-600.webp"
-      ],
-      "natural": [
-        "/images/materials/wood_model_10_natural-v1766948002057-600.webp"
-      ],
-      "oak": [
-        "/images/materials/wood_model_10_oak-v1766948002057-600.webp"
-      ],
-      "walnut": [
-        "/images/materials/wood_model_10_walnut-v1766948002057-600.webp"
-      ],
-      "white": [
-        "/images/materials/wood_model_10_white-v1766948002057-600.webp"
-      ]
-    }
-  },
-  {
-    "id": "wood_model_11",
-    "name": "wood_model_11",
-    "category": "wood",
-    "colors": [
-      "black",
-      "graphite",
-      "natural",
-      "oak",
-      "walnut",
-      "white"
-    ],
-    "price": 3000,
-    "images": [
-      "/images/materials/wood_model_11_oak-v1766948002057-600.webp"
-    ],
-    "variants": {
-      "black": [
-        "/images/materials/wood_model_11_black-v1766948002057-600.webp"
-      ],
-      "graphite": [
-        "/images/materials/wood_model_11_graphite-v1766948002057-600.webp"
-      ],
-      "natural": [
-        "/images/materials/wood_model_11_natural-v1766948002057-600.webp"
-      ],
-      "oak": [
-        "/images/materials/wood_model_11_oak-v1766948002057-600.webp"
-      ],
-      "walnut": [
-        "/images/materials/wood_model_11_walnut-v1766948002057-600.webp"
-      ],
-      "white": [
-        "/images/materials/wood_model_11_white-v1766948002057-600.webp"
-      ]
-    }
-  },
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   {
     "id": "stone_amazonas_brazil",
     "name": "Amazonas Brazil",

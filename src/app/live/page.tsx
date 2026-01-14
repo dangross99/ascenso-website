@@ -2150,7 +2150,11 @@ function LivePageInner() {
 		[records, activeMaterial]
 	);
 	const metalRailingOptions = React.useMemo(
-		() => records.filter(r => r.category === 'metal'),
+		() => records.filter(r =>
+			r.category === 'metal' &&
+			Array.isArray(r.images) &&
+			r.images.length > 0 // במעקה מתכת מציגים רק טקסטורות עם תמונה, ללא צבעים "solid"
+		),
 		[records]
 	);
 	// Preload טקסטורות רלוונטיות להפחתת הבהובים בעת מעבר בחירה

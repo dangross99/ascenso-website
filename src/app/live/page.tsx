@@ -75,10 +75,13 @@ const COLOR_HEX: Record<string, string> = {
 };
 
 // קונפיגורציה פרטנית לכל דגם (טיילינג ועומק bump רצוי)
-const MODEL_CONFIG: Record<string, { tile?: number; bump?: number }> = {
+const MODEL_CONFIG: Record<string, { tile?: number; bump?: number; inset?: number }> = {
 	'wave-carved': { tile: 0.9, bump: 0.35 },
+	// חיתוך קל לשוליים כהים בטקסטורות מתכת ספציפיות
+	'antique_gold': { inset: 0.06 },
+	'silver': { inset: 0.06 },
 };
-const DEFAULT_MODEL_CONFIG = { tile: 1.5, bump: 0.18 };
+const DEFAULT_MODEL_CONFIG = { tile: 1.5, bump: 0.18, inset: 0 };
 
 
 
@@ -123,6 +126,7 @@ function Staircase3D({
 	roughnessUrl,
 	tileScale = 1.5,
 	bumpScaleOverride,
+	uvInset = 0,
 	treadThicknessOverride,
 	pathSegments,
 	glassTone,
@@ -151,6 +155,7 @@ function Staircase3D({
 	roughnessUrl?: string | null;
 	tileScale?: number;
 	bumpScaleOverride?: number;
+	uvInset?: number;
 	treadThicknessOverride?: number;
 	pathSegments?: PathSegment[] | null;
 	glassTone?: 'extra' | 'smoked' | 'bronze';
@@ -451,11 +456,19 @@ function Staircase3D({
 			repU = 1;
 			repV = geoAspect / texAspect;
 		}
-		// הגנה קטנה מתפרים
-		repU = Math.max(0.92, Math.min(1, repU));
-		repV = Math.max(0.92, Math.min(1, repV));
-		const offU = (1 - repU) / 2;
-		const offV = (1 - repV) / 2;
+		// הגנה קטנה מתפרים (כמעט ללא חיתוך)
+		repU = Math.max(0.995, Math.min(1, repU));
+		repV = Math.max(0.995, Math.min(1, repV));
+		let offU = (1 - repU) / 2;
+		let offV = (1 - repV) / 2;
+		// חיתוך יעד לפי קונפיגורציה (למשל שוליים כהים)
+		const inset = Math.max(0, Math.min(0.15, uvInset || 0));
+		if (inset > 0) {
+			const cutU = Math.min(repU - 0.01, inset * 2);
+			const cutV = Math.min(repV - 0.01, inset * 2);
+			if (cutU > 0) { repU -= cutU; offU += cutU / 2; }
+			if (cutV > 0) { repV -= cutV; offV += cutV / 2; }
+		}
 
 		const mk = (base: any) => {
 			const t = base.clone();
@@ -2853,6 +2866,14 @@ function LivePageInner() {
 										}
 										const cfg = MODEL_CONFIG[activeTexId || ''] || DEFAULT_MODEL_CONFIG;
 										return cfg.bump;
+									})()}
+									uvInset={(() => {
+										if (activeMaterial === 'wood') {
+											const cfg = MODEL_CONFIG[activeModel?.id || ''] || DEFAULT_MODEL_CONFIG;
+											return cfg.inset || 0;
+										}
+										const cfg = MODEL_CONFIG[activeTexId || ''] || DEFAULT_MODEL_CONFIG;
+										return cfg.inset || 0;
 									})()}
 								/>
 								<OrbitControls ref={orbitRef} enableDamping makeDefault zoomToCursor target={[0.304, 0.930, -0.053]} />

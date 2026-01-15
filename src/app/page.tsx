@@ -227,46 +227,41 @@ export default function Home() {
         const res = await fetch(`/data/materials.json?ts=${Date.now()}`, { cache: "no-store" });
         const json: MaterialRecord[] = await res.json();
         if (!cancelled) {
-          // תמהיל מאוזן ומעורבב: אבן/עץ/מתכת, ללא רצפים ארוכים של אותה קטגוריה
+          // סדר קבוע לפי דרישת הלקוח לדף הבית (10 פריטים):
+          // 1) stone_amazonas_brazil
+          // 2) wood_wrapped — walnut image
+          // 3) golden_rust
+          // 4) stone_green_alpi
+          // 5) wood_carved
+          // 6) rose_gold
+          // 7) stone_travertine_silver
+          // 8) wood_chocolate
+          // 9) silver
+          // 10) stone_land_stone
           const all = Array.isArray(json) ? json : [];
-          const buckets = {
-            stone: all.filter(m => m.category === "stone"),
-            wood:  all.filter(m => m.category === "wood"),
-            metal: all.filter(m => m.category === "metal"),
+          const byId = new Map(all.map((m) => [m.id, m]));
+          const pick = (id: string, variant?: string): MaterialRecord | null => {
+            const base = byId.get(id);
+            if (!base) return null;
+            if (variant && (base as any).variants && (base as any).variants[variant]?.[0]) {
+              // החזר עותק עם תמונת ה-variant במקום התמונה הראשית
+              return { ...base, images: [(base as any).variants[variant][0]] };
+            }
+            return base;
           };
-          const order: Array<keyof typeof buckets> = ["stone", "wood", "metal"];
-          const idx: Record<string, number> = { stone: 0, wood: 0, metal: 0 };
-          const out: MaterialRecord[] = [];
-          let lastCat: string | null = null;
-          let start = 0;
-          while (out.length < 10) {
-            let placed = false;
-            // נסה לבחור קטגוריה הבאה שונה מהקודמת (round‑robin)
-            for (let k = 0; k < order.length; k++) {
-              const cat = order[(start + k) % order.length];
-              if (idx[cat] < buckets[cat].length && cat !== lastCat) {
-                out.push(buckets[cat][idx[cat]++]);
-                lastCat = cat;
-                placed = true;
-                start = (start + 1) % order.length;
-                break;
-              }
-            }
-            if (!placed) {
-              // אם נתקענו (לדוגמה דלילות בקטגוריה מסוימת), קח כל מה שנותר
-              let fallbackPlaced = false;
-              for (const cat of order) {
-                if (idx[cat] < buckets[cat].length) {
-                  out.push(buckets[cat][idx[cat]++]);
-                  lastCat = cat;
-                  fallbackPlaced = true;
-                  break;
-                }
-              }
-              if (!fallbackPlaced) break; // נגמרו פריטים
-            }
-          }
-          setTopMaterials(out);
+          const selected: MaterialRecord[] = [
+            pick("stone_amazonas_brazil"),
+            pick("wood_wrapped", "walnut"),
+            pick("golden_rust"),
+            pick("stone_green_alpi"),
+            pick("wood_carved"),
+            pick("rose_gold"),
+            pick("stone_travertine_silver"),
+            pick("wood_chocolate"),
+            pick("silver"),
+            pick("stone_land_stone"),
+          ].filter(Boolean) as MaterialRecord[];
+          setTopMaterials(selected);
         }
       } catch {
         // נשתמש בדמו (images) אם נכשל

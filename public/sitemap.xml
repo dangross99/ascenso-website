@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://ascenso.co.il/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <lastmod>2026-01-15</lastmod>
+  </url>
+  <url>
+    <loc>https://ascenso.co.il/materials</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-01-15</lastmod>
+  </url>
+  <url>
+    <loc>https://ascenso.co.il/live</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-01-15</lastmod>
+  </url>
+  <url>
+    <loc>https://ascenso.co.il/models</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <lastmod>2026-01-15</lastmod>
+  </url>
+  <url>
+    <loc>https://ascenso.co.il/faq</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <lastmod>2026-01-15</lastmod>
+  </url>
+</urlset>
+

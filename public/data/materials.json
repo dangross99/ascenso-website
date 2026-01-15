@@ -4,7 +4,7 @@
     "name": "אדמה",
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
-    "price": 3000,
+    "price": 3900,
     "images": ["/images/materials/wood/earth/earth-natural.png"],
     "variants": {
       "oak": ["/images/materials/wood/earth/earth-natural.png"],
@@ -18,7 +18,7 @@
     "name": "חריטה",
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
-    "price": 3000,
+    "price": 3600,
     "images": ["/images/materials/wood/carved/carved-natural.png"],
     "variants": {
       "oak": ["/images/materials/wood/carved/carved-natural.png"],
@@ -32,7 +32,7 @@
     "name": "שוקולד",
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
-    "price": 3000,
+    "price": 3700,
     "images": ["/images/materials/wood/chocolate/chocolate-natural.png"],
     "variants": {
       "oak": ["/images/materials/wood/chocolate/chocolate-natural.png"],
@@ -46,7 +46,7 @@
     "name": "ציור",
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
-    "price": 3000,
+    "price": 3900,
     "images": ["/images/materials/wood/painted/painted-natural.png"],
     "variants": {
       "oak": ["/images/materials/wood/painted/painted-natural.png"],
@@ -60,7 +60,7 @@
     "name": "דומינו",
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
-    "price": 3000,
+    "price": 3800,
     "images": ["/images/materials/wood/domino/domino-natural.png"],
     "variants": {
       "oak": ["/images/materials/wood/domino/domino-natural.png"],
@@ -74,7 +74,7 @@
     "name": "פטיש",
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
-    "price": 3000,
+    "price": 3800,
     "images": ["/images/materials/wood/hammered/hammered-natural.png"],
     "variants": {
       "oak": ["/images/materials/wood/hammered/hammered-natural.png"],
@@ -88,7 +88,7 @@
     "name": "עטיפה",
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
-    "price": 3000,
+    "price": 4200,
     "images": ["/images/materials/wood/wrapped/wrapped-natural.png"],
     "variants": {
       "oak": ["/images/materials/wood/wrapped/wrapped-natural.png"],
@@ -102,7 +102,7 @@
     "name": "נקי",
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
-    "price": 3000,
+    "price": 2800,
     "images": ["/images/materials/wood/plain/plain-natural.png"],
     "variants": {
       "oak": ["/images/materials/wood/plain/plain-natural.png"],

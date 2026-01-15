@@ -5,12 +5,12 @@
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": ["/assets/materials_src/wood/earth/earth-natural.png"],
+    "images": ["/images/materials/wood/earth/earth-natural.png"],
     "variants": {
-      "oak": ["/assets/materials_src/wood/earth/earth-natural.png"],
-      "walnut": ["/assets/materials_src/wood/earth/earth-walnut.png"],
-      "white": ["/assets/materials_src/wood/earth/earth-white.png"],
-      "black": ["/assets/materials_src/wood/earth/earth-black.png"]
+      "oak": ["/images/materials/wood/earth/earth-natural.png"],
+      "walnut": ["/images/materials/wood/earth/earth-walnut.png"],
+      "white": ["/images/materials/wood/earth/earth-white.png"],
+      "black": ["/images/materials/wood/earth/earth-black.png"]
     }
   },
   {
@@ -19,12 +19,12 @@
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": ["/assets/materials_src/wood/carved/carved-natural.png"],
+    "images": ["/images/materials/wood/carved/carved-natural.png"],
     "variants": {
-      "oak": ["/assets/materials_src/wood/carved/carved-natural.png"],
-      "walnut": ["/assets/materials_src/wood/carved/carved-walnut.png"],
-      "white": ["/assets/materials_src/wood/carved/carved-white.png"],
-      "black": ["/assets/materials_src/wood/carved/carved-black.png"]
+      "oak": ["/images/materials/wood/carved/carved-natural.png"],
+      "walnut": ["/images/materials/wood/carved/carved-walnut.png"],
+      "white": ["/images/materials/wood/carved/carved-white.png"],
+      "black": ["/images/materials/wood/carved/carved-black.png"]
     }
   },
   {
@@ -33,12 +33,12 @@
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": ["/assets/materials_src/wood/chocolate/chocolate-natural.png"],
+    "images": ["/images/materials/wood/chocolate/chocolate-natural.png"],
     "variants": {
-      "oak": ["/assets/materials_src/wood/chocolate/chocolate-natural.png"],
-      "walnut": ["/assets/materials_src/wood/chocolate/chocolate-walnut.png"],
-      "white": ["/assets/materials_src/wood/chocolate/chocolate-white.png"],
-      "black": ["/assets/materials_src/wood/chocolate/chocolate-black.png"]
+      "oak": ["/images/materials/wood/chocolate/chocolate-natural.png"],
+      "walnut": ["/images/materials/wood/chocolate/chocolate-walnut.png"],
+      "white": ["/images/materials/wood/chocolate/chocolate-white.png"],
+      "black": ["/images/materials/wood/chocolate/chocolate-black.png"]
     }
   },
   {
@@ -47,12 +47,12 @@
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": ["/assets/materials_src/wood/painted/painted-natural.png"],
+    "images": ["/images/materials/wood/painted/painted-natural.png"],
     "variants": {
-      "oak": ["/assets/materials_src/wood/painted/painted-natural.png"],
-      "walnut": ["/assets/materials_src/wood/painted/painted-walnut.png"],
-      "white": ["/assets/materials_src/wood/painted/painted-white.png"],
-      "black": ["/assets/materials_src/wood/painted/painted-black.png"]
+      "oak": ["/images/materials/wood/painted/painted-natural.png"],
+      "walnut": ["/images/materials/wood/painted/painted-walnut.png"],
+      "white": ["/images/materials/wood/painted/painted-white.png"],
+      "black": ["/images/materials/wood/painted/painted-black.png"]
     }
   },
   {
@@ -61,12 +61,12 @@
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": ["/assets/materials_src/wood/domino/domino-natural.png"],
+    "images": ["/images/materials/wood/domino/domino-natural.png"],
     "variants": {
-      "oak": ["/assets/materials_src/wood/domino/domino-natural.png"],
-      "walnut": ["/assets/materials_src/wood/domino/domino-walnut.png"],
-      "white": ["/assets/materials_src/wood/domino/domino-white.png"],
-      "black": ["/assets/materials_src/wood/domino/domino-black.png"]
+      "oak": ["/images/materials/wood/domino/domino-natural.png"],
+      "walnut": ["/images/materials/wood/domino/domino-walnut.png"],
+      "white": ["/images/materials/wood/domino/domino-white.png"],
+      "black": ["/images/materials/wood/domino/domino-black.png"]
     }
   },
   {
@@ -75,12 +75,12 @@
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": ["/assets/materials_src/wood/hammered/hammered-natural.png"],
+    "images": ["/images/materials/wood/hammered/hammered-natural.png"],
     "variants": {
-      "oak": ["/assets/materials_src/wood/hammered/hammered-natural.png"],
-      "walnut": ["/assets/materials_src/wood/hammered/hammered-walnut.png"],
-      "white": ["/assets/materials_src/wood/hammered/hammered-white.png"],
-      "black": ["/assets/materials_src/wood/hammered/hammered-black.png"]
+      "oak": ["/images/materials/wood/hammered/hammered-natural.png"],
+      "walnut": ["/images/materials/wood/hammered/hammered-walnut.png"],
+      "white": ["/images/materials/wood/hammered/hammered-white.png"],
+      "black": ["/images/materials/wood/hammered/hammered-black.png"]
     }
   },
   {
@@ -89,12 +89,12 @@
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": ["/assets/materials_src/wood/wrapped/wrapped-natural.png"],
+    "images": ["/images/materials/wood/wrapped/wrapped-natural.png"],
     "variants": {
-      "oak": ["/assets/materials_src/wood/wrapped/wrapped-natural.png"],
-      "walnut": ["/assets/materials_src/wood/wrapped/wrapped-walnut.png"],
-      "white": ["/assets/materials_src/wood/wrapped/wrapped-white.png"],
-      "black": ["/assets/materials_src/wood/wrapped/wrapped-black.png"]
+      "oak": ["/images/materials/wood/wrapped/wrapped-natural.png"],
+      "walnut": ["/images/materials/wood/wrapped/wrapped-walnut.png"],
+      "white": ["/images/materials/wood/wrapped/wrapped-white.png"],
+      "black": ["/images/materials/wood/wrapped/wrapped-black.png"]
     }
   },
   {
@@ -103,12 +103,12 @@
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
     "price": 3000,
-    "images": ["/assets/materials_src/wood/plain/plain-natural.png"],
+    "images": ["/images/materials/wood/plain/plain-natural.png"],
     "variants": {
-      "oak": ["/assets/materials_src/wood/plain/plain-natural.png"],
-      "walnut": ["/assets/materials_src/wood/plain/plain-walnut.png"],
-      "white": ["/assets/materials_src/wood/plain/plain-white.png"],
-      "black": ["/assets/materials_src/wood/plain/plain-black.png"]
+      "oak": ["/images/materials/wood/plain/plain-natural.png"],
+      "walnut": ["/images/materials/wood/plain/plain-walnut.png"],
+      "white": ["/images/materials/wood/plain/plain-white.png"],
+      "black": ["/images/materials/wood/plain/plain-black.png"]
     }
   },
   

@@ -2452,7 +2452,16 @@ function LivePageInner() {
 	}, [activeMaterial, activeColor, activeModel?.id, activeTexId, shape, steps, box, pathSegments]);
 
 	// מחשבון מחיר בסיסי (מותאם למסלול) + תמחור מעקה לפי סוג
-	function calculatePrice(): { breakdown: Array<{ label: string; value: number }>; total: number } {
+	function calculatePrice(): {
+		breakdown: Array<{
+			label: string;
+			value: number;
+			qty?: number;
+			unitPrice?: number;
+			unitLabel?: string;
+		}>;
+		total: number;
+	} {
 		const baseSetup = 1500; // פתיחת תיק/מדידות/שינוע בסיסי
 		// מחיר למדרגה לפי החומר/טקסטורה הנבחרים (ברירת מחדל 800)
 		let perStep = 800;
@@ -2474,10 +2483,16 @@ function LivePageInner() {
 		const landingCount = pathSegments.reduce((s, seg) => s + (seg.kind === 'landing' ? 1 : 0), 0);
 		const shapeMultiplier = landingCount === 0 ? 1.0 : landingCount === 1 ? 1.1 : 1.15;
 
-		const items: Array<{ label: string; value: number }> = [
+		const items: Array<{
+			label: string;
+			value: number;
+			qty?: number;
+			unitPrice?: number;
+			unitLabel?: string;
+		}> = [
 			{ label: 'פתיחת פרויקט', value: baseSetup },
-			{ label: `מדרגות (${stepsTotal} יח׳)`, value: stepsTotal * perStep },
-			{ label: `פודסטים (${landingCount})`, value: landingCount * landingPrice },
+			{ label: 'מדרגות', value: stepsTotal * perStep, qty: stepsTotal, unitPrice: perStep, unitLabel: 'יח׳' },
+			{ label: 'פודסטים', value: landingCount * landingPrice, qty: landingCount, unitPrice: landingPrice, unitLabel: 'יח׳' },
 		];
 
 		// תמחור מעקה
@@ -2496,7 +2511,7 @@ function LivePageInner() {
 				landingsEnabledCount * (LANDING_RUN_M * GLASS_H_LAND_M);
 			const glassRate = 1700; // ₪ למ״ר
 			const cost = Math.round(areaM2 * glassRate);
-			if (cost > 0) items.push({ label: `מעקה זכוכית (~${areaM2.toFixed(2)} מ״ר)`, value: cost });
+			if (cost > 0) items.push({ label: 'מעקה זכוכית', value: cost, qty: areaM2, unitPrice: glassRate, unitLabel: 'מ״ר' });
 		} else if (railing === 'metal') {
 			// תמחור לפי מטר רץ; מחיר למטר = מחיר המדרגה הנוכחי
 			const totalMeters =
@@ -2504,13 +2519,13 @@ function LivePageInner() {
 				landingsEnabledCount * LANDING_RUN_M;
 			const ratePerMeter = perStep; // לפי דרישתך
 			const cost = Math.round(totalMeters * ratePerMeter);
-			if (cost > 0) items.push({ label: `מעקה מתכת (~${totalMeters.toFixed(2)} מ׳)`, value: cost });
+			if (cost > 0) items.push({ label: 'מעקה מתכת', value: cost, qty: totalMeters, unitPrice: ratePerMeter, unitLabel: 'מ׳' });
 		} else if (railing === 'cable') {
 			// כבלי נירוסטה – 1100 ₪ לכל כבל שמופיע בהדמייה
 			// במודל: 3 כבלים לכל מדרגה עם מעקה, ו‑9 כבלים לכל פודסט ישר עם מעקה
 			const cablesCount = stepsEnabledCount * 3 + landingsEnabledCount * 9;
 			const cost = cablesCount * 1100;
-			if (cost > 0) items.push({ label: `מערכת כבלי נירוסטה (${cablesCount} כבלים)`, value: cost });
+			if (cost > 0) items.push({ label: 'מערכת כבלי נירוסטה', value: cost, qty: cablesCount, unitPrice: 1100, unitLabel: 'כבל' });
 		}
 
 		const subtotal = items.reduce((s, i) => s + i.value, 0);
@@ -3828,7 +3843,23 @@ function LivePageInner() {
 							<ul className="text-sm text-gray-700 space-y-1">
 								{breakdown.map(b => (
 									<li key={b.label} className="flex justify-between">
-										<span>{b.label}</span>
+										<span>
+											{b.label}
+											{typeof b.qty !== 'undefined' && typeof b.unitPrice !== 'undefined' && (
+												<span className="text-gray-500">
+													{' '}
+													(
+													{(() => {
+														const isDecimalQty = b.unitLabel === 'מ׳' || b.unitLabel === 'מ״ר';
+														const qtyStr = isDecimalQty
+															? `${(b.qty as number).toFixed(2)}${b.unitLabel ? ` ${b.unitLabel}` : ''}`
+															: `${Number(b.qty).toLocaleString('he-IL')}${b.unitLabel ? ` ${b.unitLabel}` : ''}`;
+														return `${qtyStr} × ₪${Number(b.unitPrice).toLocaleString('he-IL')}`;
+													})()}
+													)
+												</span>
+											)}
+										</span>
 										<span>₪{b.value.toLocaleString('he-IL')}</span>
 									</li>
 								))}
@@ -4107,7 +4138,23 @@ function LivePageInner() {
 								<ul className="text-sm text-gray-700 space-y-1">
 									{breakdown.map(b => (
 										<li key={b.label} className="flex justify-between">
-											<span>{b.label}</span>
+											<span>
+												{b.label}
+												{typeof b.qty !== 'undefined' && typeof b.unitPrice !== 'undefined' && (
+													<span className="text-gray-500">
+														{' '}
+														(
+														{(() => {
+															const isDecimalQty = b.unitLabel === 'מ׳' || b.unitLabel === 'מ״ר';
+															const qtyStr = isDecimalQty
+																? `${(b.qty as number).toFixed(2)}${b.unitLabel ? ` ${b.unitLabel}` : ''}`
+																: `${Number(b.qty).toLocaleString('he-IL')}${b.unitLabel ? ` ${b.unitLabel}` : ''}`;
+															return `${qtyStr} × ₪${Number(b.unitPrice).toLocaleString('he-IL')}`;
+														})()}
+														)
+													</span>
+												)}
+											</span>
 											<span>₪{b.value.toLocaleString('he-IL')}</span>
 										</li>
 									))}

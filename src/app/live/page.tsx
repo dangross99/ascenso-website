@@ -2477,7 +2477,7 @@ function LivePageInner() {
 		if (selectedRecord && typeof selectedRecord.price === 'number' && selectedRecord.price > 0) {
 			perStep = selectedRecord.price;
 		}
-		const landingPrice = perStep * 3; // פודסט = פי 3 ממדרגה
+		const landingPrice = perStep * 2.5; // פודסט = פי 2.5 ממדרגה
 		// חישוב מתוך המסלול
 		const stepsTotal = pathSegments.reduce((s, seg) => s + (seg.kind === 'straight' ? seg.steps : 0), 0);
 		const landingCount = pathSegments.reduce((s, seg) => s + (seg.kind === 'landing' ? 1 : 0), 0);

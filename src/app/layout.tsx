@@ -25,12 +25,60 @@ const heebo = Heebo({
 });
 
 export const metadata = {
+  metadataBase: new URL("https://ascenso.co.il"),
   title: {
-    default: "ASCENSO — Custom Stairs & Materials",
+    default: "מדרגות מרחפות | ASCENSO",
     template: "%s | ASCENSO",
   },
   description:
-    "ASCENSO — תכנון, הדמיה והצעת מחיר בזמן אמת למדרגות עץ, מתכת וזכוכית. בחרו מסלול, טקסטורה ומעקה, וקבלו הצעת מחיר מיידית.",
+    "מדרגות מרחפות בעיצוב אישי ובאיכות פרימיום. תכנון, הדמיה LIVE והצעת מחיר מיידית — עץ, מתכת וזכוכית. ASCENSO: ייצור והתקנה מדויקת בכל רחבי הארץ.",
+  keywords: [
+    "מדרגות מרחפות",
+    "מדרגות",
+    "מדרגות עץ",
+    "מדרגות מתכת",
+    "הדמיית מדרגות",
+    "מעקות זכוכית",
+    "ASCENSO",
+  ],
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    url: "https://ascenso.co.il/",
+    siteName: "ASCENSO",
+    title: "מדרגות מרחפות | ASCENSO",
+    description:
+      "מדרגות מרחפות בעיצוב אישי ובאיכות פרימיום. הדמיה LIVE והצעת מחיר מיידית.",
+    images: [
+      {
+        url: "/images/hero1.png?v=1",
+        width: 1200,
+        height: 630,
+        alt: "מדרגות מרחפות של ASCENSO",
+      },
+    ],
+    locale: "he_IL",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "מדרגות מרחפות | ASCENSO",
+    description:
+      "מדרגות מרחפות בעיצוב אישי ובאיכות פרימיום. הדמיה LIVE והצעת מחיר מיידית.",
+    images: ["/images/hero1.png?v=1"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
 } as const;
 
 export default function RootLayout({

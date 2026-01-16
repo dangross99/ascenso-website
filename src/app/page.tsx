@@ -640,6 +640,7 @@ export default function Home() {
           {/* Right side: Text (RTL) */}
           <div className="text-center md:text-right w-full md:w-[60%] max-w-none lg:whitespace-nowrap">
             <h1 className="text-4xl md:text-6xl lg:text-7xl text-white mb-2 md:mb-4 leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]">
+              <span className="block">מדרגות מרחפות —</span>
               <span className="font-heebo tracking-widest uppercase">
                 <span className="font-extrabold">ASCEN</span>
                 <span className="font-[200]">S</span>
@@ -651,7 +652,7 @@ export default function Home() {
               className="lg:hidden text-gray-100 text-base md:text-2xl max-w-2xl"
               style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
             >
-              בחרו מדרגות, טקסטורה ומעקה – וראו הכל בהדמייה LIVE עם חישוב מחיר משוער
+              בחרו דגם מדרגות מרחפות, טקסטורה ומעקה – וראו הכל בהדמייה LIVE עם חישוב מחיר משוער
             </p>
             {/* Desktop: paragraph + CTA on the same row */}
             <div className="hidden lg:flex items-center gap-12">
@@ -659,7 +660,7 @@ export default function Home() {
                 className="text-gray-100 text-3xl"
                 style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
               >
-                בחרו מדרגות, טקסטורה ומעקה – וראו הכל בהדמייה LIVE עם חישוב מחיר משוער
+                בחרו דגם מדרגות מרחפות, טקסטורה ומעקה – וראו הכל בהדמייה LIVE עם חישוב מחיר משוער
               </p>
               <a
                 href="/live"
@@ -699,6 +700,51 @@ export default function Home() {
           }
         `}</style>
       </section>
+
+      {/* JSON-LD: WebSite + Service (מדרגות מרחפות) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "ASCENSO",
+            url: "https://ascenso.co.il",
+            inLanguage: "he-IL",
+            potentialAction: {
+              "@type": "SearchAction",
+              target: "https://ascenso.co.il/?q={search_term_string}",
+              "query-input": "required name=search_term_string",
+            },
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Service",
+            serviceType: "מדרגות מרחפות",
+            name: "מדרגות מרחפות",
+            provider: {
+              "@type": "Organization",
+              name: "ASCENSO",
+              url: "https://ascenso.co.il",
+            },
+            areaServed: {
+              "@type": "Country",
+              name: "IL",
+            },
+            offers: {
+              "@type": "Offer",
+              priceCurrency: "ILS",
+              availability: "https://schema.org/InStock",
+              url: "https://ascenso.co.il/live",
+            },
+          }),
+        }}
+      />
 
 
       {/* High-end Materials Section */}

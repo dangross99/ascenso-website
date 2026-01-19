@@ -2854,8 +2854,7 @@ function LivePageInner() {
 								key: 'box',
 								el: (
 									<div className="p-3">
-										<div className="text-xs font-medium mb-2">דגם תיבה</div>
-										<div className="flex flex-wrap gap-2">
+										<div className="flex flex-wrap justify-center gap-2">
 											{([
 												{ id: 'thick', label: 'תיבה עבה‑דופן' },
 												{ id: 'thin', label: 'תיבה דקה‑דופן' },

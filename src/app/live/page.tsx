@@ -4564,11 +4564,11 @@ function LivePageInner() {
 			</div>
 		)}
 
-		{/* דסקטופ: סיכום קבוע מיושר בדיוק לפאנל הקטגוריות */}
-		{desktopBarPos && (
+		{/* דסקטופ: סיכום קבוע מיושר בדיוק לפאנל הקטגוריות – מוסתר בשלב זה */}
+		{false && desktopBarPos && (
 			<div
 				className="hidden lg:block fixed bottom-0 z-40 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 border shadow-lg rounded-t-lg"
-				style={{ left: desktopBarPos.left - 16, width: desktopBarPos.width + 32 }}
+				style={{ left: (desktopBarPos?.left ?? 0) - 16, width: (desktopBarPos?.width ?? 0) + 32 }}
 			>
 				<div className="px-5 py-3 flex items-center justify-between gap-4">
 					<button

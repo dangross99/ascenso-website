@@ -2854,7 +2854,7 @@ function LivePageInner() {
 								key: 'box',
 								el: (
 									<div className="p-3">
-										<div className="flex flex-wrap justify-center gap-3">
+										<div className="flex flex-wrap justify-center gap-6">
 											{([
 												{ id: 'thick', label: 'תיבה עבה‑דופן' },
 												{ id: 'thin', label: 'תיבה דקה‑דופן' },
@@ -2868,13 +2868,13 @@ function LivePageInner() {
 												>
 													{opt.id === 'thick' ? (
 														<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
-															<rect x="2" y="5" width="48" height="42" rx="8" fill={box === opt.id ? '#F2E9E3' : 'none'} />
-															<rect x="2" y="5" width="48" height="42" rx="8" stroke="currentColor" strokeWidth="2" fill="none" />
+															<rect x="1" y="4" width="50" height="44" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
+															<rect x="1" y="4" width="50" height="44" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
 														</svg>
 													) : (
 														<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
-															<rect x="2" y="20" width="48" height="12" rx="6" fill={box === opt.id ? '#F2E9E3' : 'none'} />
-															<rect x="2" y="20" width="48" height="12" rx="6" stroke="currentColor" strokeWidth="2" fill="none" />
+															<rect x="1" y="22" width="50" height="8" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
+															<rect x="1" y="22" width="50" height="8" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
 														</svg>
 													)}
 													<span className="sr-only">{opt.label}</span>

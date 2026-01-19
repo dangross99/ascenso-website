@@ -2861,7 +2861,7 @@ function LivePageInner() {
 											] as const).map(opt => (
 												<button
 													key={opt.id}
-													className={`px-3 py-1 text-sm rounded-full border ${box === opt.id ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
+													className={`px-4 py-2 text-base rounded-full border ${box === opt.id ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
 													onClick={() => setBox(opt.id)}
 												>
 													{opt.label}
@@ -2879,7 +2879,7 @@ function LivePageInner() {
 											{(['wood', 'metal', 'stone'] as const).map(m => (
 												<button
 													key={m}
-													className={`px-3 py-1 text-sm rounded-full border ${activeMaterial === m ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
+													className={`px-4 py-2 text-base rounded-full border ${activeMaterial === m ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
 													onClick={() => {
 														startTransition(() => {
 															setActiveMaterial(m);
@@ -2905,7 +2905,7 @@ function LivePageInner() {
 														aria-label={m.name || m.id}
 														title={m.name || m.id}
 														onClick={() => startTransition(() => setActiveModelId(m.id))}
-														className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeModelId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+														className={`w-12 h-12 rounded-full border-2 bg-center bg-cover ${activeModelId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 														style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
 													/>
 												))}
@@ -2927,7 +2927,7 @@ function LivePageInner() {
 															aria-label={sw.label}
 															title={sw.label}
 															onClick={() => startTransition(() => setActiveColor(sw.id))}
-															className={`w-8 h-8 rounded-full border-2 cursor-pointer ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+															className={`w-10 h-10 rounded-full border-2 cursor-pointer ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 															style={{ backgroundImage: img ? `url("${encodeURI(img)}")` : undefined, backgroundColor: img ? undefined : solid, backgroundSize: 'cover', backgroundPosition: 'center', borderColor: '#ddd' }}
 														/>
 													);
@@ -2948,7 +2948,7 @@ function LivePageInner() {
 														aria-label={m.name || m.id}
 														title={m.name || m.id}
 														onClick={() => startTransition(() => { setActiveTexId(m.id); if (activeMaterial === 'metal') setActiveMetalTexId(m.id); if (activeMaterial === 'stone') setActiveStoneTexId(m.id); })}
-														className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+														className={`w-12 h-12 rounded-full border-2 bg-center bg-cover ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 														style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, backgroundColor: (!m.images || m.images.length === 0) && (m as any).solid ? (m as any).solid : undefined, borderColor: '#ddd' }}
 													/>
 												))}
@@ -2963,7 +2963,7 @@ function LivePageInner() {
 									<div className="p-3">
 										<div className="flex items-center justify-center gap-2 mb-2 text-center">
 											{(['straight', 'L', 'U'] as const).map(s => (
-												<button key={s} className={`px-3 py-1 text-sm rounded-full border ${shape === s ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`} onClick={() => setShape(s)}>
+												<button key={s} className={`px-4 py-2 text-base rounded-full border ${shape === s ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`} onClick={() => setShape(s)}>
 													{s === 'straight' ? 'ישר' : s === 'L' ? 'צורת L' : 'צורת U'}
 												</button>
 											))}
@@ -2982,7 +2982,7 @@ function LivePageInner() {
 												{ id: 'metal', label: 'מתכת' },
 												{ id: 'cable', label: 'כבלי נירוסטה' },
 											] as const).map(opt => (
-												<button key={opt.id} className={`px-3 py-1 text-sm rounded-full border ${railing === opt.id ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`} onClick={() => setRailing(opt.id)}>
+												<button key={opt.id} className={`px-4 py-2 text-base rounded-full border ${railing === opt.id ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`} onClick={() => setRailing(opt.id)}>
 													{opt.label}
 												</button>
 											))}
@@ -2997,7 +2997,7 @@ function LivePageInner() {
 								<>
 									<div className="flex gap-3 overflow-x-auto px-3 pt-2 w-full lg:justify-center">
 										{order.map(tab => (
-											<button key={tab} className={`inline-flex items-center justify-center px-4 py-2 text-base md:text-lg whitespace-nowrap text-center border-b-2 ${mobileOpenCat === tab ? 'border-[#1a1a2e] text-[#1a1a2e] font-semibold' : 'border-transparent text-gray-600 hover:text-gray-800'}`} onClick={() => setMobileOpenCat(tab)}>
+											<button key={tab} className={`inline-flex items-center justify-center px-4 py-2 text-sm md:text-base whitespace-nowrap text-center border-b-2 min-h-[44px] ${mobileOpenCat === tab ? 'border-[#1a1a2e] text-[#1a1a2e] font-semibold' : 'border-transparent text-gray-600 hover:text-gray-800'}`} onClick={() => setMobileOpenCat(tab)}>
 												{getCatTitle(tab)}
 											</button>
 										))}
@@ -4167,7 +4167,7 @@ function LivePageInner() {
 											{tabOrder.map(tab => (
 												<button
 													key={tab}
-													className={`inline-flex items-center justify-center px-4 py-2 text-base md:text-lg whitespace-nowrap text-center border-b-2 ${mobileOpenCat === tab ? 'border-[#1a1a2e] text-[#1a1a2e] font-semibold' : 'border-transparent text-gray-600 hover:text-gray-800'}`}
+													className={`inline-flex items-center justify-center px-4 py-2 text-sm md:text-base whitespace-nowrap text-center border-b-2 min-h-[44px] ${mobileOpenCat === tab ? 'border-[#1a1a2e] text-[#1a1a2e] font-semibold' : 'border-transparent text-gray-600 hover:text-gray-800'}`}
 													onClick={() => setMobileOpenCat(tab)}
 													aria-selected={mobileOpenCat === tab}
 													role="tab"

@@ -3227,16 +3227,7 @@ function LivePageInner() {
 						{/* פירוט חשבון צדדי בדסקטופ */}
 						<div className="hidden lg:block lg:col-span-1">
 							<div className="bg-white rounded-md p-3 h-full">
-								<div className="mb-2 flex items-center justify-between">
-									<div className="font-semibold">פירוט חשבון (כולל מע״מ)</div>
-									<button
-										onClick={() => setBookingOpen(true)}
-										className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-3 py-1.5 text-sm font-semibold shadow-sm hover:opacity-95 cursor-pointer"
-										aria-label="פתח טופס תיאום פגישה"
-									>
-										<span>תיאום פגישה</span>
-									</button>
-								</div>
+								<div className="font-semibold mb-1">פירוט חשבון (כולל מע״מ)</div>
 								<ul className="text-sm text-gray-700 space-y-1">
 									{breakdown.map(b => (
 										<li key={b.label} className="flex justify-between">
@@ -3265,6 +3256,13 @@ function LivePageInner() {
 									<span>סה״כ כולל מע״מ</span>
 									<span>₪{total.toLocaleString('he-IL')}</span>
 								</div>
+								<button
+									onClick={() => setBookingOpen(true)}
+									className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-md bg-[#1a1a2e] text-white px-5 py-3 text-base font-semibold shadow-sm hover:opacity-95 cursor-pointer"
+									aria-label="פתח טופס תיאום פגישה"
+								>
+									<span>תיאום פגישה</span>
+								</button>
 								<div className="text-[11px] text-gray-500 mt-1">
 									הערכה משוערת להמחשה בלבד.<br/>המחיר כולל קונסטרוקציה והתקנה.
 								</div>
@@ -3274,16 +3272,7 @@ function LivePageInner() {
 
 					{/* פירוט חשבון מתחת להדמייה – מובייל/טאבלט בלבד */}
 					<div className="mt-3 bg-white rounded-md p-3 lg:hidden">
-						<div className="mb-2 flex items-center justify-between">
-							<div className="font-semibold">פירוט חשבון (כולל מע״מ)</div>
-							<button
-								onClick={() => setBookingOpen(true)}
-								className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-3 py-1.5 text-sm font-semibold shadow-sm hover:opacity-95 cursor-pointer"
-								aria-label="פתח טופס תיאום פגישה"
-							>
-								<span>תיאום פגישה</span>
-							</button>
-						</div>
+						<div className="font-semibold mb-1">פירוט חשבון (כולל מע״מ)</div>
 						<ul className="text-sm text-gray-700 space-y-1">
 							{breakdown.map(b => (
 								<li key={b.label} className="flex justify-between">
@@ -3312,6 +3301,13 @@ function LivePageInner() {
 							<span>סה״כ כולל מע״מ</span>
 							<span>₪{total.toLocaleString('he-IL')}</span>
 						</div>
+						<button
+							onClick={() => setBookingOpen(true)}
+							className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-md bg-[#1a1a2e] text-white px-5 py-3 text-base font-semibold shadow-sm hover:opacity-95 cursor-pointer"
+							aria-label="פתח טופס תיאום פגישה"
+						>
+							<span>תיאום פגישה</span>
+						</button>
 						<div className="text-[11px] text-gray-500 mt-1">
 							הערכה משוערת להמחשה בלבד.<br/>המחיר כולל קונסטרוקציה והתקנה.
 						</div>

@@ -4167,8 +4167,8 @@ function LivePageInner() {
 						</div>
 					</div>
 
-					{/* דסקטופ: הפאנל המקורי */}
-					<div className="hidden lg:flex relative border p-4 bg-white rounded-xl shadow-sm space-y-5 flex-col min-h-[70vh]">
+					{/* דסקטופ: הפאנל המקורי – מוסתר בשלב זה */}
+					<div className="hidden lg:hidden relative border p-4 bg-white rounded-xl shadow-sm space-y-5 flex-col min-h-[70vh]">
 						{/* בחירת דגם מדרגה – אינליין (דסקטופ) */}
 						<div>
 							<div className="text-xs font-medium mb-2" dir="rtl">דגם מדרגה</div>

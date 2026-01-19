@@ -3009,7 +3009,11 @@ function LivePageInner() {
 											</button>
 										))}
 									</div>
-									<div className="pt-2">{mapNodes.get((mobileOpenCat || order[0]) as Cat) as React.ReactElement}</div>
+									<div className="pt-2 flex justify-center">
+										<div className="w-full max-w-5xl text-center">
+											{mapNodes.get((mobileOpenCat || order[0]) as Cat) as React.ReactElement}
+										</div>
+									</div>
 								</>
 							);
 						})()}
@@ -4180,8 +4184,10 @@ function LivePageInner() {
 											))}
 										</div>
 									</div>
-									<div className="mt-2">
-										{mapNodes.get((mobileOpenCat || tabOrder[0]) as Cat) as React.ReactElement}
+									<div className="mt-2 flex justify-center">
+										<div className="w-full max-w-5xl text-center">
+											{mapNodes.get((mobileOpenCat || tabOrder[0]) as Cat) as React.ReactElement}
+										</div>
 									</div>
 								</>
 							);

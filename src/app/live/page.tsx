@@ -2840,9 +2840,9 @@ function LivePageInner() {
 	return (
 		<>
 			<div className="min-h-screen w-full bg-[#EFEFEF]">
-			<main className="w-screen px-0 py-6" dir="rtl" style={{ marginLeft: 'calc(50% - 50vw)' }}>
+			<main className="max-w-7xl mx-auto px-4 lg:px-6 py-6" dir="rtl">
 			<div className="grid grid-cols-1 gap-0">
-				<section className="lg:col-span-12">
+				<section>
 					{/* טאבים עליונים – מוצגים לפני ההדמייה בכל הגדלים */}
 					<div id="live-top-tabs" ref={topTabsRef} className="bg-white/95 backdrop-blur border rounded-md mb-2" dir="rtl">
 						{(() => {

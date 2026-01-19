@@ -2867,13 +2867,13 @@ function LivePageInner() {
 													onClick={() => setBox(opt.id)}
 												>
 													{opt.id === 'thick' ? (
-														<svg width="52" height="52" viewBox="0 0 24 24" aria-hidden="true">
-															<rect x="3" y="9" width="18" height="6" rx="2" fill="currentColor" opacity="0.25" />
-															<rect x="4" y="10" width="16" height="4" rx="1" stroke="currentColor" strokeWidth="2" fill="none" />
+														<svg width="52" height="52" viewBox="0 0 64 64" aria-hidden="true">
+															<rect x="8" y="26" width="48" height="12" rx="6" fill="currentColor" opacity="0.25" />
+															<rect x="10" y="28" width="44" height="8" rx="4" stroke="currentColor" strokeWidth="3" fill="none" />
 														</svg>
 													) : (
-														<svg width="52" height="52" viewBox="0 0 24 24" aria-hidden="true">
-															<rect x="4" y="11" width="16" height="2" rx="1" stroke="currentColor" strokeWidth="2" fill="none" />
+														<svg width="52" height="52" viewBox="0 0 64 64" aria-hidden="true">
+															<rect x="10" y="30" width="44" height="4" rx="2" stroke="currentColor" strokeWidth="3" fill="none" />
 														</svg>
 													)}
 													<span className="sr-only">{opt.label}</span>

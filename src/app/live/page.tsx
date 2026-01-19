@@ -3038,6 +3038,38 @@ function LivePageInner() {
 					/>
 					{/* רווח זהה ל-gap בין קטגוריות */}
 					<div className="block lg:hidden h-3" />
+
+					{/* בחירת דגם מדרגה – אינליין בסגנון טאבים אופקיים (מובייל) */}
+					<div className="lg:hidden bg-white border rounded-md px-3 py-2">
+						<div className="text-xs font-medium mb-2" dir="rtl">דגם מדרגה</div>
+						<div role="tablist" aria-label="בחירת דגם מדרגה" className="flex items-center gap-2 overflow-x-auto">
+							<button
+								role="tab"
+								aria-selected={box === 'thick'}
+								className={`flex items-center gap-2 px-3 py-2 rounded-full border text-sm whitespace-nowrap ${box === 'thick' ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white hover:bg-gray-100'}`}
+								onClick={() => setBox('thick')}
+							>
+								{/* Icon: thick profile */}
+								<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+									<rect x="3" y="9" width="18" height="6" rx="2" fill="currentColor" opacity="0.2" />
+									<rect x="4" y="10" width="16" height="4" rx="1" stroke="currentColor" fill="none" />
+								</svg>
+								דופן עבה
+							</button>
+							<button
+								role="tab"
+								aria-selected={box === 'thin'}
+								className={`flex items-center gap-2 px-3 py-2 rounded-full border text-sm whitespace-nowrap ${box === 'thin' ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white hover:bg-gray-100'}`}
+								onClick={() => setBox('thin')}
+							>
+								{/* Icon: thin profile */}
+								<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+									<rect x="4" y="11" width="16" height="2" rx="1" stroke="currentColor" fill="none" />
+								</svg>
+								קצר
+							</button>
+						</div>
+					</div>
 					{/* פירוט צבעים ומסלול – מוצג רק אם נבחר מעקה (מובייל מוסתר לשמירת ריווח מול הקטגוריה הראשונה) */}
 					{railing !== 'none' && (
 						<div className="hidden lg:block mt-3 border rounded bg-white">
@@ -3883,6 +3915,35 @@ function LivePageInner() {
 
 					{/* דסקטופ: הפאנל המקורי */}
 					<div className="hidden lg:flex relative border p-4 bg-white rounded-xl shadow-sm space-y-5 flex-col min-h-[70vh]">
+						{/* בחירת דגם מדרגה – אינליין (דסקטופ) */}
+						<div>
+							<div className="text-xs font-medium mb-2" dir="rtl">דגם מדרגה</div>
+							<div role="tablist" aria-label="בחירת דגם מדרגה" className="flex items-center gap-2">
+								<button
+									role="tab"
+									aria-selected={box === 'thick'}
+									className={`flex items-center gap-2 px-3 py-2 rounded-full border text-sm whitespace-nowrap ${box === 'thick' ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white hover:bg-gray-100'}`}
+									onClick={() => setBox('thick')}
+								>
+									<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+										<rect x="3" y="9" width="18" height="6" rx="2" fill="currentColor" opacity="0.2" />
+										<rect x="4" y="10" width="16" height="4" rx="1" stroke="currentColor" fill="none" />
+									</svg>
+									דופן עבה
+								</button>
+								<button
+									role="tab"
+									aria-selected={box === 'thin'}
+									className={`flex items-center gap-2 px-3 py-2 rounded-full border text-sm whitespace-nowrap ${box === 'thin' ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white hover:bg-gray-100'}`}
+									onClick={() => setBox('thin')}
+								>
+									<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+										<rect x="4" y="11" width="16" height="2" rx="1" stroke="currentColor" fill="none" />
+									</svg>
+									קצר
+								</button>
+							</div>
+						</div>
 						<div>
 							<button
 								className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md cursor-pointer hover:bg-gray-50 transition-all duration-150 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] ${desktopOpenCat === 'box' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}

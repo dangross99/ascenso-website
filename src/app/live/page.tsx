@@ -5,6 +5,7 @@ import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Canvas, useLoader } from '@react-three/fiber';
 import { OrbitControls, useTexture, useProgress } from '@react-three/drei';
+import Footer from '@/components/Footer';
 // Overlay טעינה לקנבס – מוצג בזמן טעינת טקסטורות/נכסים
 function CanvasLoadingOverlay() {
 	const { active, progress } = useProgress();
@@ -3226,7 +3227,16 @@ function LivePageInner() {
 						{/* פירוט חשבון צדדי בדסקטופ */}
 						<div className="hidden lg:block lg:col-span-1">
 							<div className="bg-white rounded-md p-3 h-full">
-								<div className="font-semibold mb-1">פירוט חשבון (כולל מע״מ)</div>
+								<div className="mb-2 flex items-center justify-between">
+									<div className="font-semibold">פירוט חשבון (כולל מע״מ)</div>
+									<button
+										onClick={() => setBookingOpen(true)}
+										className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-3 py-1.5 text-sm font-semibold shadow-sm hover:opacity-95 cursor-pointer"
+										aria-label="פתח טופס תיאום פגישה"
+									>
+										<span>תיאום פגישה</span>
+									</button>
+								</div>
 								<ul className="text-sm text-gray-700 space-y-1">
 									{breakdown.map(b => (
 										<li key={b.label} className="flex justify-between">
@@ -3264,7 +3274,16 @@ function LivePageInner() {
 
 					{/* פירוט חשבון מתחת להדמייה – מובייל/טאבלט בלבד */}
 					<div className="mt-3 bg-white rounded-md p-3 lg:hidden">
-						<div className="font-semibold mb-1">פירוט חשבון (כולל מע״מ)</div>
+						<div className="mb-2 flex items-center justify-between">
+							<div className="font-semibold">פירוט חשבון (כולל מע״מ)</div>
+							<button
+								onClick={() => setBookingOpen(true)}
+								className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-3 py-1.5 text-sm font-semibold shadow-sm hover:opacity-95 cursor-pointer"
+								aria-label="פתח טופס תיאום פגישה"
+							>
+								<span>תיאום פגישה</span>
+							</button>
+						</div>
 						<ul className="text-sm text-gray-700 space-y-1">
 							{breakdown.map(b => (
 								<li key={b.label} className="flex justify-between">
@@ -4821,6 +4840,7 @@ function LivePageInner() {
 			</div>
 		)}
 			</div>
+			<Footer />
 		</>
 	);
 }

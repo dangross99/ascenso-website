@@ -2253,9 +2253,9 @@ function LivePageInner() {
 				if (sel?.pbr?.bump?.[0]) urls.add(sel.pbr.bump[0]);
 				if (sel?.pbr?.roughness?.[0]) urls.add(sel.pbr.roughness[0]);
 			}
-			// מעקה מתכת
-			if (railing === 'metal') {
-				const rec = metalRailingOptions.find(r => r.id === railingMetalId) || metalRailingOptions[0];
+			// מעקה מתכת – נטען משאבים רק אם נבחרה טקסטורה (לא צבע אחיד)
+			if (railing === 'metal' && railingMetalId) {
+				const rec = metalRailingOptions.find(r => r.id === railingMetalId);
 				if (rec?.images?.[0]) urls.add(rec.images[0]);
 				if (rec?.pbr?.bump?.[0]) urls.add(rec.pbr.bump[0]);
 				if (rec?.pbr?.roughness?.[0]) urls.add(rec.pbr.roughness[0]);
@@ -2270,12 +2270,12 @@ function LivePageInner() {
 		} catch {}
 	}, [activeMaterial, activeModelId, woodModels, activeColor, nonWoodModels, activeTexId, railing, metalRailingOptions, railingMetalId]);
 	React.useEffect(() => {
-		// ברירת מחדל לבחירת גוון מתכת למעקה
-		if (railing === 'metal' && !railingMetalId && metalRailingOptions.length) {
-			setRailingMetalId(metalRailingOptions[0].id);
+		// ברירת מחדל: אם בחרו "מעקה מתכת" ואין בחירה, נקבע שחור אחיד
+		if (railing === 'metal' && !railingMetalId && !railingMetalSolid) {
+			setRailingMetalSolid('#111111');
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [railing, metalRailingOptions]);
+	}, [railing]);
 	// הבטחת בחירה חד-חד-ערכית: אם נבחר צבע אחיד, נבטל טקסטורה ולהפך
 	React.useEffect(() => {
 		if (railing !== 'metal') return;
@@ -2863,29 +2863,29 @@ function LivePageInner() {
 									stepRailingSides={stepRailingSide}
 									landingRailingSides={landingRailingSide}
 									railingTextureUrl={(() => {
-										if (railing === 'metal') {
-											const rec = metalRailingOptions.find(r => r.id === railingMetalId) || metalRailingOptions[0];
+										if (railing === 'metal' && railingMetalId) {
+											const rec = metalRailingOptions.find(r => r.id === railingMetalId);
 											return rec?.images?.[0] || null;
 										}
 										return null;
 									})()}
 									railingBumpUrl={(() => {
-										if (railing === 'metal') {
-											const rec = metalRailingOptions.find(r => r.id === railingMetalId) || metalRailingOptions[0];
+										if (railing === 'metal' && railingMetalId) {
+											const rec = metalRailingOptions.find(r => r.id === railingMetalId);
 											return rec?.pbr?.bump?.[0] || null;
 										}
 										return null;
 									})()}
 									railingRoughnessUrl={(() => {
-										if (railing === 'metal') {
-											const rec = metalRailingOptions.find(r => r.id === railingMetalId) || metalRailingOptions[0];
+										if (railing === 'metal' && railingMetalId) {
+											const rec = metalRailingOptions.find(r => r.id === railingMetalId);
 											return rec?.pbr?.roughness?.[0] || null;
 										}
 										return null;
 									})()}
 									railingUvInset={(() => {
-										if (railing === 'metal') {
-											const rec = metalRailingOptions.find(r => r.id === railingMetalId) || metalRailingOptions[0];
+										if (railing === 'metal' && railingMetalId) {
+											const rec = metalRailingOptions.find(r => r.id === railingMetalId);
 											const cfg = MODEL_CONFIG[rec?.id || ''] || DEFAULT_MODEL_CONFIG;
 											return cfg.inset || 0;
 										}
@@ -3099,19 +3099,23 @@ function LivePageInner() {
 										</div>
 									) : railing === 'metal' ? (
 										<div className="flex items-center gap-3 flex-wrap">
-											{/* טקסטורות מתכת (ללא צבעים אחידים) */}
-											{metalRailingOptions.map(opt => (
-												<button
-													key={opt.id}
-													title={opt.name}
-													aria-label={opt.name}
-													onClick={() => { setRailingMetalId(opt.id); setRailingMetalSolid(null); }}
-													className={`w-8 h-8 rounded-full border-2 bg-center bg-cover cursor-pointer ${(railingMetalId === opt.id && !railingMetalSolid) ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-													style={{ backgroundImage: opt.images?.[0] ? `url("${encodeURI(opt.images[0])}")` : undefined, borderColor: '#ddd', backgroundSize: '140%' }}
-												/>
-											))}
+											{/* צבעים אחידים בלבד: שחור / לבן */}
+											<button
+												title="שחור"
+												aria-label="שחור"
+												onClick={() => { setRailingMetalSolid('#111111'); setRailingMetalId(null); }}
+												className={`w-8 h-8 rounded-full border-2 cursor-pointer ${railingMetalSolid === '#111111' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+												style={{ backgroundColor: '#111111', borderColor: '#333' }}
+											/>
+											<button
+												title="לבן"
+												aria-label="לבן"
+												onClick={() => { setRailingMetalSolid('#F5F5F5'); setRailingMetalId(null); }}
+												className={`w-8 h-8 rounded-full border-2 cursor-pointer ${railingMetalSolid === '#F5F5F5' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+												style={{ backgroundColor: '#F5F5F5', borderColor: '#ddd' }}
+											/>
 											<span className="text-xs text-gray-600">
-												{metalRailingOptions.find(m => m.id === railingMetalId)?.name || 'בחר גוון'}
+												{railingMetalSolid === '#111111' ? 'שחור' : railingMetalSolid === '#F5F5F5' ? 'לבן' : 'בחר גוון'}
 											</span>
 										</div>
 									) : (
@@ -3805,19 +3809,22 @@ function LivePageInner() {
 
 												{railing === 'metal' && (
 													<div className="pt-2 border-t">
-														<div className="text-xs font-medium mb-2">גוון/טקסטורה</div>
+														<div className="text-xs font-medium mb-2">גוון</div>
 														<div className="flex items-center gap-3 flex-wrap">
-															{/* טקסטורות מתכת (ללא צבעים אחידים) */}
-															{metalRailingOptions.map(opt => (
-																<button
-																	key={opt.id}
-																	title={opt.name}
-																	aria-label={opt.name}
-																	onClick={() => { setRailingMetalId(opt.id); setRailingMetalSolid(null); }}
-																	className={`w-8 h-8 rounded-full border-2 bg-center bg-cover cursor-pointer ${(railingMetalId === opt.id && !railingMetalSolid) ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-																	style={{ backgroundImage: opt.images?.[0] ? `url("${encodeURI(opt.images[0])}")` : undefined, borderColor: '#ddd' }}
-																/>
-															))}
+															<button
+																title="שחור"
+																aria-label="שחור"
+																onClick={() => { setRailingMetalSolid('#111111'); setRailingMetalId(null); }}
+																className={`w-8 h-8 rounded-full border-2 cursor-pointer ${railingMetalSolid === '#111111' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+																style={{ backgroundColor: '#111111', borderColor: '#333' }}
+															/>
+															<button
+																title="לבן"
+																aria-label="לבן"
+																onClick={() => { setRailingMetalSolid('#F5F5F5'); setRailingMetalId(null); }}
+																className={`w-8 h-8 rounded-full border-2 cursor-pointer ${railingMetalSolid === '#F5F5F5' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+																style={{ backgroundColor: '#F5F5F5', borderColor: '#ddd' }}
+															/>
 														</div>
 													</div>
 												)}

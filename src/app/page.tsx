@@ -640,7 +640,7 @@ export default function Home() {
           {/* Right side: Text (RTL) */}
           <div className="text-center md:text-right w-full md:w-[60%] max-w-none lg:whitespace-nowrap">
             <h1 className="text-4xl md:text-6xl lg:text-7xl text-white mb-2 md:mb-4 leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]">
-              <span className="block">מדרגות מרחפות</span>
+              <span className="block">מדרגות מרחפות —</span>
               <span className="font-heebo tracking-widest uppercase">
                 <span className="font-extrabold">ASCEN</span>
                 <span className="font-[200]">S</span>

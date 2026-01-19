@@ -2875,8 +2875,7 @@ function LivePageInner() {
 								key: 'material',
 								el: (
 									<div className="p-3">
-										<div className="text-xs font-medium mb-2">חומר</div>
-										<div className="flex flex-wrap gap-2">
+										<div className="flex flex-wrap justify-center gap-2 text-center">
 											{(['wood', 'metal', 'stone'] as const).map(m => (
 												<button
 													key={m}
@@ -2899,8 +2898,7 @@ function LivePageInner() {
 									key: 'woodTexture',
 									el: (
 										<div className="p-3">
-											<div className="text-xs font-medium mb-2">טקסטורה</div>
-											<div className="flex flex-wrap gap-3">
+											<div className="flex flex-wrap justify-center gap-3 text-center">
 												{woodModels.map(m => (
 													<button
 														key={m.id}
@@ -2919,8 +2917,7 @@ function LivePageInner() {
 									key: 'woodColor',
 									el: (
 										<div className="p-3">
-											<div className="text-xs font-medium mb-2">צבע</div>
-											<div className="flex items-center gap-3 flex-wrap">
+											<div className="flex items-center justify-center gap-3 flex-wrap text-center">
 												{WOOD_SWATCHES.filter(sw => !!activeModel?.variants?.[sw.id]).map(sw => {
 													const img = activeModel?.variants?.[sw.id]?.[0];
 													const solid = COLOR_HEX[sw.id];
@@ -2944,8 +2941,7 @@ function LivePageInner() {
 									key: 'nonWoodTexture',
 									el: (
 										<div className="p-3">
-											<div className="text-xs font-medium mb-2">טקסטורה</div>
-											<div className="flex flex-wrap gap-3">
+											<div className="flex flex-wrap justify-center gap-3 text-center">
 												{nonWoodModels.map(m => (
 													<button
 														key={m.id}

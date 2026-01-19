@@ -1879,7 +1879,7 @@ function LivePageInner() {
 	// מובייל: אקורדיון קטגוריות בפאנל (ברירת מחדל: סגור כדי שלא ייווצר מרווח נוסף מתחת לקנבס)
 	const [mobileOpenCat, setMobileOpenCat] = React.useState<
 		'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing' | null
-	>(null);
+	>('box');
 	// דסקטופ: אקורדיון קטגוריות – סגורות כברירת מחדל, נפתח בלחיצה
 	const [desktopOpenCat, setDesktopOpenCat] = React.useState<
 		'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing' | null
@@ -3401,6 +3401,7 @@ function LivePageInner() {
 								key: 'box',
 								el: (
 									<div>
+										{false && (
 										<button
 											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] cursor-pointer ${mobileOpenCat === 'box' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
 											onClick={() => setMobileOpenCat(prev => (prev === 'box' ? null : 'box'))}
@@ -3409,6 +3410,7 @@ function LivePageInner() {
 											<span className="font-medium">דגם תיבה</span>
 											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : 'תיבה דקה‑דופן'}</span>
 										</button>
+										)}
 										{mobileOpenCat === 'box' && (
 											<div className="p-3 bg-white border border-t-0 rounded-b-md">
 												<div className="flex flex-wrap gap-2">
@@ -3438,6 +3440,7 @@ function LivePageInner() {
 								key: 'material',
 								el: (
 									<div>
+										{false && (
 										<button
 											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] cursor-pointer ${mobileOpenCat === 'material' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
 											onClick={() => setMobileOpenCat(prev => (prev === 'material' ? null : 'material'))}
@@ -3446,6 +3449,7 @@ function LivePageInner() {
 											<span className="font-medium">חומר</span>
 											<span className="text-sm text-gray-600">{activeMaterial === 'wood' ? 'עץ' : activeMaterial === 'metal' ? 'מתכת' : 'אבן טבעית'}</span>
 										</button>
+										)}
 										{mobileOpenCat === 'material' && (
 											<div className="p-3 bg-white border border-t-0 rounded-b-md">
 												<div className="flex flex-wrap gap-2">
@@ -3476,6 +3480,7 @@ function LivePageInner() {
 									key: 'woodTexture',
 									el: (
 										<div>
+											{false && (
 											<button
 												className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] cursor-pointer ${mobileOpenCat === 'woodTexture' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
 												onClick={() => setMobileOpenCat(prev => (prev === 'woodTexture' ? null : 'woodTexture'))}
@@ -3484,6 +3489,7 @@ function LivePageInner() {
 												<span className="font-medium">טקסטורה</span>
 												<span className="text-sm text-gray-600">{activeModel?.name || activeModel?.id || ''}</span>
 											</button>
+											)}
 											{mobileOpenCat === 'woodTexture' && (
 												<div className="p-3 bg-white border border-t-0 rounded-b-md">
 													<div className="flex flex-wrap gap-3">
@@ -3509,6 +3515,7 @@ function LivePageInner() {
 									key: 'woodColor',
 									el: (
 										<div>
+											{false && (
 											<button
 												className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] cursor-pointer ${mobileOpenCat === 'woodColor' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
 												onClick={() => setMobileOpenCat(prev => (prev === 'woodColor' ? null : 'woodColor'))}
@@ -3519,6 +3526,7 @@ function LivePageInner() {
 													{WOOD_SWATCHES.find(sw => sw.id === activeColor)?.label || activeColor}
 												</span>
 											</button>
+											)}
 											{mobileOpenCat === 'woodColor' && (
 												<div className="p-3 bg-white border border-t-0 rounded-b-md">
 													{(() => {
@@ -3561,6 +3569,7 @@ function LivePageInner() {
 									key: 'nonWoodTexture',
 									el: (
 										<div>
+											{false && (
 											<button
 											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] cursor-pointer ${mobileOpenCat === 'nonWoodTexture' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
 												onClick={() => setMobileOpenCat(prev => (prev === 'nonWoodTexture' ? null : 'nonWoodTexture'))}
@@ -3574,6 +3583,7 @@ function LivePageInner() {
 													})()}
 												</span>
 											</button>
+											)}
 											{mobileOpenCat === 'nonWoodTexture' && (
 												<div className="p-3 bg-white border border-t-0 rounded-b-md">
 													<div className="flex flex-wrap gap-3">
@@ -3604,6 +3614,7 @@ function LivePageInner() {
 								key: 'path',
 								el: (
 									<div>
+										{false && (
 										<button
 											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] cursor-pointer ${mobileOpenCat === 'path' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
 											onClick={() => setMobileOpenCat(prev => (prev === 'path' ? null : 'path'))}
@@ -3612,6 +3623,7 @@ function LivePageInner() {
 											<span className="font-medium">מסלול</span>
 											<span className="text-sm text-gray-600">{encodePath(pathSegments)}</span>
 										</button>
+										)}
 										{mobileOpenCat === 'path' && (
 											<div className="p-3 bg-white border border-t-0 rounded-b-md space-y-3">
 												<div className="flex flex-wrap gap-2">
@@ -3728,6 +3740,7 @@ function LivePageInner() {
 								key: 'railing',
 								el: (
 									<div>
+										{false && (
 										<button
 											className={`w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md transition-all duration-150 hover:bg-gray-50 hover:shadow-sm active:scale-[.99] focus-visible:ring-2 focus-visible:ring-[#1a1a2e] cursor-pointer ${mobileOpenCat === 'railing' ? 'border-[#1a1a2e] !bg-[#E5E7EB] !text-[#1a1a2e]' : ''}`}
 											onClick={() => setMobileOpenCat(prev => (prev === 'railing' ? null : 'railing'))}
@@ -3766,6 +3779,7 @@ function LivePageInner() {
 											</span>
 											<span className="text-sm text-gray-600">{formatRailing()}</span>
 										</button>
+										)}
 										{mobileOpenCat === 'railing' && (
 											<div className="p-3 bg-white border border-t-0 rounded-b-md space-y-3">
 												<div className="flex flex-wrap gap-2">
@@ -3870,10 +3884,33 @@ function LivePageInner() {
 							const fixedOrder: Cat[] = activeMaterial === 'wood'
 								? ['path','box','material','woodTexture','woodColor','railing']
 								: ['path','box','material','nonWoodTexture','railing'];
+							// Tabs bar
+							const tabOrder: Cat[] = activeMaterial === 'wood'
+								? ['box','material','woodTexture','woodColor','path','railing']
+								: ['box','material','nonWoodTexture','path','railing'];
 							const mapNodes = new Map(nodes.map(n => [n.key, n.el]));
-							return fixedOrder
-								.filter(k => mapNodes.has(k))
-								.map(k => <div key={k}>{mapNodes.get(k) as React.ReactElement}</div>);
+							return (
+								<>
+									<div className="sticky top-0 z-20 bg-white/95 backdrop-blur border-b">
+										<div className="flex gap-3 overflow-x-auto px-2 py-2" dir="rtl">
+											{tabOrder.map(tab => (
+												<button
+													key={tab}
+													className={`px-3 py-1.5 text-sm whitespace-nowrap border-b-2 ${mobileOpenCat === tab ? 'border-[#1a1a2e] text-[#1a1a2e] font-semibold' : 'border-transparent text-gray-600 hover:text-gray-800'}`}
+													onClick={() => setMobileOpenCat(tab)}
+													aria-selected={mobileOpenCat === tab}
+													role="tab"
+												>
+													{getCatTitle(tab)}
+												</button>
+											))}
+										</div>
+									</div>
+									<div className="mt-2">
+										{mapNodes.get((mobileOpenCat || tabOrder[0]) as Cat) as React.ReactElement}
+									</div>
+								</>
+							);
 						})()}
 
 						{/* פירוט חשבון – מוצג בסוף המובייל מתחת לקטגוריות */}

@@ -3002,9 +3002,9 @@ function LivePageInner() {
 							const order: Cat[] = activeMaterial === 'wood' ? ['box','material','woodTexture','woodColor','path','railing'] : ['box','material','nonWoodTexture','path','railing'];
 							return (
 								<>
-									<div className="flex gap-3 overflow-x-auto px-3 pt-2">
+									<div className="flex gap-3 overflow-x-auto px-3 pt-2 w-full lg:justify-center">
 										{order.map(tab => (
-											<button key={tab} className={`px-4 py-2 text-base md:text-lg whitespace-nowrap text-center border-b-2 ${mobileOpenCat === tab ? 'border-[#1a1a2e] text-[#1a1a2e] font-semibold' : 'border-transparent text-gray-600 hover:text-gray-800'}`} onClick={() => setMobileOpenCat(tab)}>
+											<button key={tab} className={`inline-flex items-center justify-center px-4 py-2 text-base md:text-lg whitespace-nowrap text-center border-b-2 ${mobileOpenCat === tab ? 'border-[#1a1a2e] text-[#1a1a2e] font-semibold' : 'border-transparent text-gray-600 hover:text-gray-800'}`} onClick={() => setMobileOpenCat(tab)}>
 												{getCatTitle(tab)}
 											</button>
 										))}
@@ -4166,11 +4166,11 @@ function LivePageInner() {
 							return (
 								<>
 									<div className="sticky top-0 z-20 bg-white/95 backdrop-blur border-b">
-										<div className="flex gap-3 overflow-x-auto px-2 py-2" dir="rtl">
+										<div className="flex gap-3 overflow-x-auto px-2 py-2 w-full lg:justify-center" dir="rtl">
 											{tabOrder.map(tab => (
 												<button
 													key={tab}
-													className={`px-4 py-2 text-base md:text-lg whitespace-nowrap text-center border-b-2 ${mobileOpenCat === tab ? 'border-[#1a1a2e] text-[#1a1a2e] font-semibold' : 'border-transparent text-gray-600 hover:text-gray-800'}`}
+													className={`inline-flex items-center justify-center px-4 py-2 text-base md:text-lg whitespace-nowrap text-center border-b-2 ${mobileOpenCat === tab ? 'border-[#1a1a2e] text-[#1a1a2e] font-semibold' : 'border-transparent text-gray-600 hover:text-gray-800'}`}
 													onClick={() => setMobileOpenCat(tab)}
 													aria-selected={mobileOpenCat === tab}
 													role="tab"

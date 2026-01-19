@@ -1745,9 +1745,11 @@ function LivePageInner() {
 		document.addEventListener('fullscreenchange', onFsChange);
 		return () => document.removeEventListener('fullscreenchange', onFsChange);
 	}, []);
-	// גובה קנבס במובייל (יחס 5/4) עבור פריסת fixed + ספייסר תואם
+	// גובה קנבס במובייל (יחס 16/9) עבור פריסת fixed + ספייסר תואם
 	const [mobileCanvasH, setMobileCanvasH] = React.useState<number>(0);
 	const [mobileHeaderH, setMobileHeaderH] = React.useState<number>(0);
+	const [mobileTabsH, setMobileTabsH] = React.useState<number>(0);
+	const topTabsRef = React.useRef<HTMLDivElement | null>(null);
 	// זיהוי מקלדת מובייל (visualViewport) כדי להתאים יישור מודאל/סרגל תחתון
 	const [isKeyboardOpen, setIsKeyboardOpen] = React.useState(false);
 	React.useLayoutEffect(() => {
@@ -1766,21 +1768,29 @@ function LivePageInner() {
 					} catch {}
 					return window.innerWidth;
 				})();
-				// יחס 16/9 → גובה = רוחב * 9/16 (נמוך יותר ממובייל הקודם)
+				// יחס 16/9 → גובה = רוחב * 9/16
 				const h = Math.round((w * 9) / 16);
 				setMobileCanvasH(h);
-				// מדידת גובה כותרת ראשית (header) כדי להצמיד את הקנבס מתחתיה
+				// מדידת גובה כותרת ראשית (header) + סרגל טאבים עליון
 				try {
 					const hdr = document.querySelector('.ascenso-sticky-header') || document.querySelector('header');
 					if (hdr) {
 						const rect = (hdr as HTMLElement).getBoundingClientRect();
 						setMobileHeaderH(Math.round(rect.height));
 					}
+					const tabsEl = document.getElementById('live-top-tabs');
+					if (tabsEl) {
+						const tr = tabsEl.getBoundingClientRect();
+						setMobileTabsH(Math.round(tr.height));
+					} else {
+						setMobileTabsH(0);
+					}
 				} catch {}
 			} else {
 				// בדסקטופ – ביטול אילוצי מובייל
 				setMobileCanvasH(0);
 				setMobileHeaderH(0);
+				setMobileTabsH(0);
 			}
 		};
 		update();
@@ -2833,7 +2843,178 @@ function LivePageInner() {
 			<main className="max-w-7xl mx-auto px-4 lg:px-1 py-6" dir="rtl">
 			<div className="grid grid-cols-1 lg:grid-cols-12 gap-0 lg:gap-10">
 				<section className="lg:col-span-8">
-					<div ref={canvasWrapRef} className="w-full aspect-[16/9] lg:aspect-[16/9] bg-white border overflow-hidden rounded fixed inset-x-0 z-30 lg:relative" style={{ height: mobileCanvasH || undefined, top: mobileHeaderH || 0 }}>
+					{/* טאבים עליונים – מוצגים לפני ההדמייה בכל הגדלים */}
+					<div id="live-top-tabs" ref={topTabsRef} className="bg-white/95 backdrop-blur border rounded-md mb-2" dir="rtl">
+						{(() => {
+							type Cat = 'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing';
+							const nodes: Array<{ key: Cat; el: React.ReactElement }> = [];
+							// נשתמש באותן מחלקות/תכנים מהפאנל הקיים
+							nodes.push({
+								key: 'box',
+								el: (
+									<div className="p-3">
+										<div className="text-xs font-medium mb-2">דגם תיבה</div>
+										<div className="flex flex-wrap gap-2">
+											{([
+												{ id: 'thick', label: 'תיבה עבה‑דופן' },
+												{ id: 'thin', label: 'תיבה דקה‑דופן' },
+											] as const).map(opt => (
+												<button
+													key={opt.id}
+													className={`px-3 py-1 text-sm rounded-full border ${box === opt.id ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
+													onClick={() => setBox(opt.id)}
+												>
+													{opt.label}
+												</button>
+											))}
+										</div>
+									</div>
+								),
+							});
+							nodes.push({
+								key: 'material',
+								el: (
+									<div className="p-3">
+										<div className="text-xs font-medium mb-2">חומר</div>
+										<div className="flex flex-wrap gap-2">
+											{(['wood', 'metal', 'stone'] as const).map(m => (
+												<button
+													key={m}
+													className={`px-3 py-1 text-sm rounded-full border ${activeMaterial === m ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
+													onClick={() => {
+														startTransition(() => {
+															setActiveMaterial(m);
+														});
+													}}
+												>
+													{m === 'wood' ? 'עץ' : m === 'metal' ? 'מתכת' : 'אבן טבעית'}
+												</button>
+											))}
+										</div>
+									</div>
+								),
+							});
+							if (activeMaterial === 'wood') {
+								nodes.push({
+									key: 'woodTexture',
+									el: (
+										<div className="p-3">
+											<div className="text-xs font-medium mb-2">טקסטורה</div>
+											<div className="flex flex-wrap gap-3">
+												{woodModels.map(m => (
+													<button
+														key={m.id}
+														aria-label={m.name || m.id}
+														title={m.name || m.id}
+														onClick={() => startTransition(() => setActiveModelId(m.id))}
+														className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeModelId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+														style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
+													/>
+												))}
+											</div>
+										</div>
+									),
+								});
+								nodes.push({
+									key: 'woodColor',
+									el: (
+										<div className="p-3">
+											<div className="text-xs font-medium mb-2">צבע</div>
+											<div className="flex items-center gap-3 flex-wrap">
+												{WOOD_SWATCHES.filter(sw => !!activeModel?.variants?.[sw.id]).map(sw => {
+													const img = activeModel?.variants?.[sw.id]?.[0];
+													const solid = COLOR_HEX[sw.id];
+													return (
+														<button
+															key={sw.id}
+															aria-label={sw.label}
+															title={sw.label}
+															onClick={() => startTransition(() => setActiveColor(sw.id))}
+															className={`w-8 h-8 rounded-full border-2 cursor-pointer ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+															style={{ backgroundImage: img ? `url("${encodeURI(img)}")` : undefined, backgroundColor: img ? undefined : solid, backgroundSize: 'cover', backgroundPosition: 'center', borderColor: '#ddd' }}
+														/>
+													);
+												})}
+											</div>
+										</div>
+									),
+								});
+							} else {
+								nodes.push({
+									key: 'nonWoodTexture',
+									el: (
+										<div className="p-3">
+											<div className="text-xs font-medium mb-2">טקסטורה</div>
+											<div className="flex flex-wrap gap-3">
+												{nonWoodModels.map(m => (
+													<button
+														key={m.id}
+														aria-label={m.name || m.id}
+														title={m.name || m.id}
+														onClick={() => startTransition(() => { setActiveTexId(m.id); if (activeMaterial === 'metal') setActiveMetalTexId(m.id); if (activeMaterial === 'stone') setActiveStoneTexId(m.id); })}
+														className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+														style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, backgroundColor: (!m.images || m.images.length === 0) && (m as any).solid ? (m as any).solid : undefined, borderColor: '#ddd' }}
+													/>
+												))}
+											</div>
+										</div>
+									),
+								});
+							}
+							nodes.push({
+								key: 'path',
+								el: (
+									<div className="p-3">
+										<div className="text-xs font-medium mb-2">מסלול</div>
+										<div className="flex items-center gap-2 mb-2">
+											{(['straight', 'L', 'U'] as const).map(s => (
+												<button key={s} className={`px-3 py-1 text-sm rounded-full border ${shape === s ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`} onClick={() => setShape(s)}>
+													{s === 'straight' ? 'ישר' : s === 'L' ? 'צורת L' : 'צורת U'}
+												</button>
+											))}
+										</div>
+									</div>
+								),
+							});
+							nodes.push({
+								key: 'railing',
+								el: (
+									<div className="p-3">
+										<div className="text-xs font-medium mb-2">מעקה</div>
+										<div className="flex items-center gap-2 mb-2">
+											{([
+												{ id: 'none', label: 'ללא' },
+												{ id: 'glass', label: 'זכוכית' },
+												{ id: 'metal', label: 'מתכת' },
+												{ id: 'cable', label: 'כבלי נירוסטה' },
+											] as const).map(opt => (
+												<button key={opt.id} className={`px-3 py-1 text-sm rounded-full border ${railing === opt.id ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`} onClick={() => setRailing(opt.id)}>
+													{opt.label}
+												</button>
+											))}
+										</div>
+									</div>
+								),
+							});
+
+							const mapNodes = new Map(nodes.map(n => [n.key, n.el]));
+							const order: Cat[] = activeMaterial === 'wood' ? ['box','material','woodTexture','woodColor','path','railing'] : ['box','material','nonWoodTexture','path','railing'];
+							return (
+								<>
+									<div className="flex gap-3 overflow-x-auto px-3 pt-2">
+										{order.map(tab => (
+											<button key={tab} className={`px-3 py-1.5 text-sm whitespace-nowrap border-b-2 ${mobileOpenCat === tab ? 'border-[#1a1a2e] text-[#1a1a2e] font-semibold' : 'border-transparent text-gray-600 hover:text-gray-800'}`} onClick={() => setMobileOpenCat(tab)}>
+												{getCatTitle(tab)}
+											</button>
+										))}
+									</div>
+									<div className="pt-2">{mapNodes.get((mobileOpenCat || order[0]) as Cat) as React.ReactElement}</div>
+								</>
+							);
+						})()}
+					</div>
+
+					<div ref={canvasWrapRef} className="w-full aspect-[16/9] lg:aspect-[16/9] bg-white border overflow-hidden rounded fixed inset-x-0 z-30 lg:relative" style={{ height: mobileCanvasH || undefined, top: (mobileHeaderH + mobileTabsH) || 0 }}>
 						<Canvas
 							shadows={false}
 							flat
@@ -3034,10 +3215,46 @@ function LivePageInner() {
 					{/* ספייסר למובייל משמר גובה הקנבס הקבוע + גובה ההדר, כדי שהתוכן יתחיל מתחתיו */}
 					<div
 						className="block lg:hidden w-full"
-						style={{ height: ((mobileCanvasH || 0) + (mobileHeaderH || 0)) || undefined }}
+						style={{ height: ((mobileCanvasH || 0) + (mobileHeaderH || 0) + (mobileTabsH || 0)) || undefined }}
 					/>
 					{/* רווח זהה ל-gap בין קטגוריות */}
 					<div className="block lg:hidden h-3" />
+
+					{/* פירוט חשבון מתחת להדמייה (כל הגדלים) */}
+					<div className="mt-3 bg-white rounded-md p-3">
+						<div className="font-semibold mb-1">פירוט חשבון (כולל מע״מ)</div>
+						<ul className="text-sm text-gray-700 space-y-1">
+							{breakdown.map(b => (
+								<li key={b.label} className="flex justify-between">
+									<span>
+										{b.label}
+										{typeof b.qty !== 'undefined' && typeof b.unitPrice !== 'undefined' && (
+											<span className="text-gray-500">
+												{' '}
+												(
+												{(() => {
+													const isDecimalQty = b.unitLabel === 'מ׳' || b.unitLabel === 'מ״ר';
+													const qtyStr = isDecimalQty
+														? `${(b.qty as number).toFixed(2)}${b.unitLabel ? ` ${b.unitLabel}` : ''}`
+														: `${Number(b.qty).toLocaleString('he-IL')}${b.unitLabel ? ` ${b.unitLabel}` : ''}`;
+													return `${qtyStr} × ₪${Number(b.unitPrice).toLocaleString('he-IL')}`;
+												})()}
+												)
+											</span>
+										)}
+									</span>
+									<span>₪{b.value.toLocaleString('he-IL')}</span>
+								</li>
+							))}
+						</ul>
+						<div className="mt-2 pt-2 border-t flex justify-between font-bold">
+							<span>סה״כ כולל מע״מ</span>
+							<span>₪{total.toLocaleString('he-IL')}</span>
+						</div>
+						<div className="text-[11px] text-gray-500 mt-1">
+							הערכה משוערת להמחשה בלבד.<br/>המחיר כולל קונסטרוקציה והתקנה.
+						</div>
+					</div>
 
 					{/* בחירת דגם מדרגה – אינליין בסגנון טאבים אופקיים (מובייל) */}
 					<div className="lg:hidden bg-white border rounded-md px-3 py-2">

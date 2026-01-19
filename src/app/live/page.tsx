@@ -3004,7 +3004,7 @@ function LivePageInner() {
 								<>
 									<div className="flex gap-3 overflow-x-auto px-3 pt-2">
 										{order.map(tab => (
-											<button key={tab} className={`px-3 py-1.5 text-sm whitespace-nowrap border-b-2 ${mobileOpenCat === tab ? 'border-[#1a1a2e] text-[#1a1a2e] font-semibold' : 'border-transparent text-gray-600 hover:text-gray-800'}`} onClick={() => setMobileOpenCat(tab)}>
+											<button key={tab} className={`px-4 py-2 text-base md:text-lg whitespace-nowrap text-center border-b-2 ${mobileOpenCat === tab ? 'border-[#1a1a2e] text-[#1a1a2e] font-semibold' : 'border-transparent text-gray-600 hover:text-gray-800'}`} onClick={() => setMobileOpenCat(tab)}>
 												{getCatTitle(tab)}
 											</button>
 										))}
@@ -4170,7 +4170,7 @@ function LivePageInner() {
 											{tabOrder.map(tab => (
 												<button
 													key={tab}
-													className={`px-3 py-1.5 text-sm whitespace-nowrap border-b-2 ${mobileOpenCat === tab ? 'border-[#1a1a2e] text-[#1a1a2e] font-semibold' : 'border-transparent text-gray-600 hover:text-gray-800'}`}
+													className={`px-4 py-2 text-base md:text-lg whitespace-nowrap text-center border-b-2 ${mobileOpenCat === tab ? 'border-[#1a1a2e] text-[#1a1a2e] font-semibold' : 'border-transparent text-gray-600 hover:text-gray-800'}`}
 													onClick={() => setMobileOpenCat(tab)}
 													aria-selected={mobileOpenCat === tab}
 													role="tab"

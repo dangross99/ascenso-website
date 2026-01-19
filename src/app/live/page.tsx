@@ -2863,18 +2863,18 @@ function LivePageInner() {
 													key={opt.id}
 													aria-label={opt.id === 'thick' ? 'דגם עבה' : 'דגם קצר'}
 													title={opt.id === 'thick' ? 'דגם עבה' : 'דגם קצר'}
-													className={`w-[156px] h-[156px] inline-flex items-center justify-center bg-transparent border-0 ${box === opt.id ? 'text-[#1a1a2e]' : 'text-gray-500 hover:text-gray-700'}`}
+													className={`w-[52px] h-[52px] inline-flex items-center justify-center bg-transparent border-0 ${box === opt.id ? 'text-[#1a1a2e]' : 'text-gray-500 hover:text-gray-700'}`}
 													onClick={() => setBox(opt.id)}
 												>
 													{opt.id === 'thick' ? (
-														<svg width="100%" height="100%" viewBox="0 0 52 52" aria-hidden="true">
-															<rect x="6" y="12" width="40" height="28" rx="6" fill={box === opt.id ? '#F2E9E3' : 'none'} />
-															<rect x="6" y="12" width="40" height="28" rx="6" stroke="currentColor" strokeWidth="2" fill="none" />
+														<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
+															<rect x="2" y="5" width="48" height="42" rx="8" fill={box === opt.id ? '#F2E9E3' : 'none'} />
+															<rect x="2" y="5" width="48" height="42" rx="8" stroke="currentColor" strokeWidth="2" fill="none" />
 														</svg>
 													) : (
-														<svg width="100%" height="100%" viewBox="0 0 52 52" aria-hidden="true">
-															<rect x="6" y="22" width="40" height="8" rx="4" fill={box === opt.id ? '#F2E9E3' : 'none'} />
-															<rect x="6" y="22" width="40" height="8" rx="4" stroke="currentColor" strokeWidth="2" fill="none" />
+														<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
+															<rect x="2" y="20" width="48" height="12" rx="6" fill={box === opt.id ? '#F2E9E3' : 'none'} />
+															<rect x="2" y="20" width="48" height="12" rx="6" stroke="currentColor" strokeWidth="2" fill="none" />
 														</svg>
 													)}
 													<span className="sr-only">{opt.label}</span>

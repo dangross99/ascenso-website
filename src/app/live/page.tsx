@@ -1926,7 +1926,7 @@ function LivePageInner() {
 		cat: 'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing'
 	): string => {
 		switch (cat) {
-			case 'box': return 'דגם תיבה';
+			case 'box': return 'דגם';
 			case 'material': return 'חומר';
 			case 'woodTexture': return 'טקסטורה (עץ)';
 			case 'woodColor': return 'צבע (עץ)';
@@ -2854,17 +2854,29 @@ function LivePageInner() {
 								key: 'box',
 								el: (
 									<div className="p-3">
-										<div className="flex flex-wrap justify-center gap-2">
+										<div className="flex flex-wrap justify-center gap-3">
 											{([
 												{ id: 'thick', label: 'תיבה עבה‑דופן' },
 												{ id: 'thin', label: 'תיבה דקה‑דופן' },
 											] as const).map(opt => (
 												<button
 													key={opt.id}
-													className={`px-4 py-2 text-base rounded-full border ${box === opt.id ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
+													aria-label={opt.id === 'thick' ? 'דגם עבה' : 'דגם קצר'}
+													title={opt.id === 'thick' ? 'דגם עבה' : 'דגם קצר'}
+													className={`w-[52px] h-[52px] rounded-full border inline-flex items-center justify-center ${box === opt.id ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white hover:bg-gray-100'}`}
 													onClick={() => setBox(opt.id)}
 												>
-													{opt.label}
+													{opt.id === 'thick' ? (
+														<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+															<rect x="3" y="9" width="18" height="6" rx="2" fill="currentColor" opacity="0.2" />
+															<rect x="4" y="10" width="16" height="4" rx="1" stroke="currentColor" fill="none" />
+														</svg>
+													) : (
+														<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+															<rect x="4" y="11" width="16" height="2" rx="1" stroke="currentColor" fill="none" />
+														</svg>
+													)}
+													<span className="sr-only">{opt.label}</span>
 												</button>
 											))}
 										</div>

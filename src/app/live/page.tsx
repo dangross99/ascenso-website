@@ -2965,8 +2965,7 @@ function LivePageInner() {
 								key: 'path',
 								el: (
 									<div className="p-3">
-										<div className="text-xs font-medium mb-2">מסלול</div>
-										<div className="flex items-center gap-2 mb-2">
+										<div className="flex items-center justify-center gap-2 mb-2 text-center">
 											{(['straight', 'L', 'U'] as const).map(s => (
 												<button key={s} className={`px-3 py-1 text-sm rounded-full border ${shape === s ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`} onClick={() => setShape(s)}>
 													{s === 'straight' ? 'ישר' : s === 'L' ? 'צורת L' : 'צורת U'}
@@ -2980,8 +2979,7 @@ function LivePageInner() {
 								key: 'railing',
 								el: (
 									<div className="p-3">
-										<div className="text-xs font-medium mb-2">מעקה</div>
-										<div className="flex items-center gap-2 mb-2">
+										<div className="flex items-center justify-center gap-2 mb-2 text-center">
 											{([
 												{ id: 'none', label: 'ללא' },
 												{ id: 'glass', label: 'זכוכית' },

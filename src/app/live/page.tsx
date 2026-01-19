@@ -3014,10 +3014,9 @@ function LivePageInner() {
 						})()}
 					</div>
 
-					{/* פריסת מובייל: 2/3 הדמייה + 1/3 פירוט חשבון באותה שורה; בדסקטופ נפרס אנכית */}
-					<div className="grid grid-cols-3 gap-2 lg:block">
-						<div className="col-span-2">
-							<div ref={canvasWrapRef} className="w-full aspect-[16/9] lg:aspect-auto lg:h-[60vh] bg-white border overflow-hidden rounded relative z-10">
+					<div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+						<div className="lg:col-span-2">
+					<div ref={canvasWrapRef} className="w-full aspect-[16/9] lg:aspect-auto lg:h-[60vh] bg-white border overflow-hidden rounded fixed inset-x-0 z-30 lg:relative" style={{ height: mobileCanvasH || undefined, top: (mobileHeaderH + mobileTabsH) || 0 }}>
 						<Canvas
 							shadows={false}
 							flat
@@ -3214,12 +3213,19 @@ function LivePageInner() {
 								</div>
 							</div>
 						)}
-							</div>
+					</div>
+					{/* ספייסר למובייל משמר גובה הקנבס הקבוע + גובה ההדר, כדי שהתוכן יתחיל מתחתיו */}
+					<div
+						className="block lg:hidden w-full"
+						style={{ height: ((mobileCanvasH || 0) + (mobileHeaderH || 0) + (mobileTabsH || 0)) || undefined }}
+					/>
+					{/* רווח זהה ל-gap בין קטגוריות */}
+					<div className="block lg:hidden h-3" />
 						</div>
 
-						{/* פירוט חשבון לצד ההדמייה במובייל; בדסקטופ מתחת */}
-						<div className="col-span-1 lg:col-span-1">
-							<div className="mt-0 lg:mt-3 bg-white rounded-md p-3 h-full">
+						{/* פירוט חשבון צדדי בדסקטופ */}
+						<div className="hidden lg:block lg:col-span-1">
+							<div className="bg-white rounded-md p-3 h-full">
 								<div className="font-semibold mb-1">פירוט חשבון (כולל מע״מ)</div>
 								<ul className="text-sm text-gray-700 space-y-1">
 									{breakdown.map(b => (
@@ -3256,7 +3262,41 @@ function LivePageInner() {
 						</div>
 					</div>
 
-					{/* בדסקטופ יש כבר את הפאנל של פירוט החשבון מטה מחוץ לגריד הנ"ל */}
+					{/* פירוט חשבון מתחת להדמייה – מובייל/טאבלט בלבד */}
+					<div className="mt-3 bg-white rounded-md p-3 lg:hidden">
+						<div className="font-semibold mb-1">פירוט חשבון (כולל מע״מ)</div>
+						<ul className="text-sm text-gray-700 space-y-1">
+							{breakdown.map(b => (
+								<li key={b.label} className="flex justify-between">
+									<span>
+										{b.label}
+										{typeof b.qty !== 'undefined' && typeof b.unitPrice !== 'undefined' && (
+											<span className="text-gray-500">
+												{' '}
+												(
+												{(() => {
+													const isDecimalQty = b.unitLabel === 'מ׳' || b.unitLabel === 'מ״ר';
+													const qtyStr = isDecimalQty
+														? `${(b.qty as number).toFixed(2)}${b.unitLabel ? ` ${b.unitLabel}` : ''}`
+														: `${Number(b.qty).toLocaleString('he-IL')}${b.unitLabel ? ` ${b.unitLabel}` : ''}`;
+													return `${qtyStr} × ₪${Number(b.unitPrice).toLocaleString('he-IL')}`;
+												})()}
+												)
+											</span>
+										)}
+									</span>
+									<span>₪{b.value.toLocaleString('he-IL')}</span>
+								</li>
+							))}
+						</ul>
+						<div className="mt-2 pt-2 border-t flex justify-between font-bold">
+							<span>סה״כ כולל מע״מ</span>
+							<span>₪{total.toLocaleString('he-IL')}</span>
+						</div>
+						<div className="text-[11px] text-gray-500 mt-1">
+							הערכה משוערת להמחשה בלבד.<br/>המחיר כולל קונסטרוקציה והתקנה.
+						</div>
+					</div>
 
 					{/* בחירת דגם מדרגה – אינליין בסגנון טאבים אופקיים (מובייל) */}
 					<div className="lg:hidden bg-white border rounded-md px-3 py-2">

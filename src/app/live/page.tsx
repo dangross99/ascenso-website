@@ -132,6 +132,9 @@ function Staircase3D({
 	treadThicknessOverride,
 	boxModel = 'rect',
 	wedgeFrontFraction,
+	wedgeFrontThicknessM,
+	shadowGapHeightM,
+	waterfallDropM,
 	pathSegments,
 	glassTone,
 	stepRailingStates,
@@ -164,6 +167,9 @@ function Staircase3D({
 	treadThicknessOverride?: number;
 	boxModel?: 'rect' | 'wedge';
 	wedgeFrontFraction?: number;
+	wedgeFrontThicknessM?: number;
+	shadowGapHeightM?: number;
+	waterfallDropM?: number;
 	pathSegments?: PathSegment[] | null;
 	glassTone?: 'extra' | 'smoked' | 'bronze';
 	stepRailingStates?: boolean[];
@@ -562,7 +568,8 @@ function Staircase3D({
 						(() => {
 							const topY = treadThickness / 2;
 							const frontFrac = Math.max(0.1, Math.min(0.9, typeof wedgeFrontFraction === 'number' ? wedgeFrontFraction : 0.35));
-							const frontTh = Math.max(0.01, treadThickness * frontFrac);
+							const desiredFront = typeof wedgeFrontThicknessM === 'number' ? wedgeFrontThicknessM : (treadThickness * frontFrac);
+							const frontTh = Math.max(0.01, Math.min(treadThickness - 0.005, desiredFront));
 							const seam = 0.001; // הרחבה זעירה לסגירת חיבורים
 							const xBack = t.run / 2;
 							const xFront = -t.run / 2;
@@ -685,6 +692,41 @@ function Staircase3D({
 							})()
 						)}
 					</mesh>
+
+					{/* Shadow-Gap: פס צל דק מתחת לחזית הקדמית */}
+					{boxModel === 'rect' && typeof shadowGapHeightM === 'number' && shadowGapHeightM > 0 && (
+						(() => {
+							const gap = Math.max(0.003, Math.min(0.02, shadowGapHeightM));
+							const xFront = -t.run / 2 - 0.0006;
+							const yTop = treadThickness / 2;
+							return (
+								<mesh rotation={[0, Math.PI / 2, 0]} position={[xFront, yTop - gap / 2 - 0.0025, 0]}>
+									<planeGeometry args={[treadWidth * 0.98, gap, 1, 1]} />
+									<meshBasicMaterial color="#0a0a0a" />
+								</mesh>
+							);
+						})()
+					)}
+
+					{/* Waterfall: ירידה אנכית של החיפוי בחזית */}
+					{boxModel === 'rect' && typeof waterfallDropM === 'number' && waterfallDropM > 0 && (
+						(() => {
+							const drop = Math.max(0.01, Math.min(0.08, waterfallDropM));
+							const xFront = -t.run / 2 - 0.0006;
+							const yTop = treadThickness / 2;
+							const ft = buildFaceTextures(treadWidth, drop);
+							return (
+								<mesh rotation={[0, Math.PI / 2, 0]} position={[xFront, yTop - drop / 2, 0]}>
+									<planeGeometry args={[treadWidth, drop, 4, 2]} />
+									{useSolidMat ? (
+										<meshBasicMaterial color={solidTopColor} side={2} />
+									) : (
+										<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />
+									)}
+								</mesh>
+							);
+						})()
+					)}
 
 					{/* BOTTOM face */}
 					{boxModel !== 'wedge' && (
@@ -1956,7 +1998,7 @@ function LivePageInner() {
 	const qShape = (search.get('shape') as 'straight' | 'L' | 'U') || 'straight';
 	const qSteps = parseInt(search.get('steps') || '', 10);
 	const qTex = search.get('tex') || '';
-	const qBox = (search.get('box') as 'thick' | 'thin' | 'wedge') || 'thick';
+	const qBox = (search.get('box') as 'thick' | 'thin' | 'wedge' | 'shadow' | 'waterfall') || 'thick';
 	const qPath = search.get('path') || '';
 
 	const [records, setRecords] = React.useState<MaterialRecord[]>([]);
@@ -1967,7 +2009,7 @@ function LivePageInner() {
 	// מזהים ייעודיים לכל קטגוריה כדי לשמר בחירה בין מעברים
 	const [activeMetalTexId, setActiveMetalTexId] = React.useState<string | null>(activeMaterial === 'metal' ? (qTex || null) : null);
 	const [activeStoneTexId, setActiveStoneTexId] = React.useState<string | null>(activeMaterial === 'stone' ? (qTex || null) : null);
-	const [box, setBox] = React.useState<'thick' | 'thin' | 'wedge'>(qBox);
+	const [box, setBox] = React.useState<'thick' | 'thin' | 'wedge' | 'shadow' | 'waterfall'>(qBox);
 	const [railing, setRailing] = React.useState<'none' | 'glass' | 'metal' | 'cable'>('none');
 	const [glassTone, setGlassTone] = React.useState<'extra' | 'smoked' | 'bronze'>('extra');
 	const [stepRailing, setStepRailing] = React.useState<boolean[]>([]);
@@ -2748,7 +2790,15 @@ function LivePageInner() {
 			: undefined;
 		const pathText = formatPathForShare(pathSegments);
 		const railingText = formatRailing();
-		const boxText = box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : 'דגם אלכסוני';
+		const boxText = box === 'thick'
+			? 'תיבה עבה‑דופן'
+			: box === 'thin'
+			? 'תיבה דקה‑דופן'
+			: box === 'wedge'
+			? 'דגם אלכסוני'
+			: box === 'shadow'
+			? 'דגם קו צל'
+			: 'דגם חזית נופלת';
 		const totalText = `₪${total.toLocaleString('he-IL')}`;
 		// הכרחת כיוון LTR עבור ה‑URL באמצעות LRI/PDI (איסולציה) למניעת שבירה RTL
 		const ltrUrl = `\u2066${shareUrl}\u2069`;
@@ -2832,7 +2882,15 @@ function LivePageInner() {
 			: undefined;
 		const pathText = formatPathForShare(pathSegments);
 		const railingText = formatRailing();
-		const boxText = box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : 'דגם אלכסוני';
+		const boxText = box === 'thick'
+			? 'תיבה עבה‑דופן'
+			: box === 'thin'
+			? 'תיבה דקה‑דופן'
+			: box === 'wedge'
+			? 'דגם אלכסוני'
+			: box === 'shadow'
+			? 'דגם קו צל'
+			: 'דגם חזית נופלת';
 		const totalText = `₪${total.toLocaleString('he-IL')}`;
 		const leadId = generateLeadId();
 		const timeLabel = preferredTime || '-';
@@ -2960,11 +3018,13 @@ function LivePageInner() {
 												{ id: 'thick', label: 'תיבה עבה‑דופן' as const },
 												{ id: 'thin', label: 'תיבה דקה‑דופן' as const },
 												{ id: 'wedge', label: 'דגם אלכסוני' as const },
+												{ id: 'shadow', label: 'קו צל' as const },
+												{ id: 'waterfall', label: 'חזית נופלת' as const },
 											] as const).map(opt => (
 												<div key={opt.id} className="flex flex-col items-center">
 													<button
-														aria-label={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : 'דגם אלכסוני'}
-														title={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : 'דגם אלכסוני'}
+														aria-label={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : opt.id === 'wedge' ? 'דגם אלכסוני' : opt.id === 'shadow' ? 'קו צל' : 'חזית נופלת'}
+														title={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : opt.id === 'wedge' ? 'דגם אלכסוני' : opt.id === 'shadow' ? 'קו צל' : 'חזית נופלת'}
 														className={`w-[52px] h-[52px] inline-flex items-center justify-center bg-transparent border-0 ${box === opt.id ? 'text-[#1a1a2e]' : 'text-gray-500 hover:text-gray-700'}`}
 														onClick={() => setBox(opt.id)}
 													>
@@ -2978,7 +3038,7 @@ function LivePageInner() {
 																<rect x="1" y="20" width="50" height="12" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
 																<rect x="1" y="20" width="50" height="12" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
 															</svg>
-														) : (
+														) : opt.id === 'wedge' ? (
 															<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
 																<polygon
 																	points="6,36 46,30 46,22 6,16"
@@ -2991,11 +3051,21 @@ function LivePageInner() {
 																	strokeWidth="2"
 																/>
 															</svg>
+														) : opt.id === 'shadow' ? (
+															<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
+																<rect x="6" y="16" width="40" height="20" fill="none" stroke="currentColor" strokeWidth="2" />
+																<rect x="6" y="34" width="40" height="4" fill={box === opt.id ? '#111' : '#888'} />
+															</svg>
+														) : (
+															<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
+																<rect x="6" y="12" width="40" height="16" fill="none" stroke="currentColor" strokeWidth="2" />
+																<rect x="6" y="28" width="40" height="10" fill={box === opt.id ? '#B08968' : '#c0c0c0'} />
+															</svg>
 														)}
 														<span className="sr-only">{opt.label}</span>
 													</button>
 													<span className="mt-1 text-xs text-gray-600">
-														{opt.id === 'thick' ? 'עבה' : opt.id === 'thin' ? 'דק' : 'אלכסוני'}
+														{opt.id === 'thick' ? 'עבה' : opt.id === 'thin' ? 'דק' : opt.id === 'wedge' ? 'אלכסוני' : opt.id === 'shadow' ? 'קו צל' : 'חזית נופלת'}
 													</span>
 												</div>
 											))}
@@ -3176,7 +3246,9 @@ function LivePageInner() {
 									landingCableSpanModes={landingCableSpanMode}
 									treadThicknessOverride={box === 'thick' ? 0.11 : box === 'wedge' ? 0.11 : 0.07}
 									boxModel={box === 'wedge' ? 'wedge' : 'rect'}
-									wedgeFrontFraction={0.35}
+									wedgeFrontThicknessM={0.035}
+									shadowGapHeightM={box === 'shadow' ? 0.008 : undefined}
+									waterfallDropM={box === 'waterfall' ? 0.04 : undefined}
 									pathSegments={pathSegments}
 									glassTone={glassTone}
 									stepRailingStates={stepRailing}

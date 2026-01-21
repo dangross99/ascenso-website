@@ -2863,16 +2863,16 @@ function LivePageInner() {
 													key={opt.id}
 													aria-label={opt.id === 'thick' ? 'דגם עבה' : 'דגם קצר'}
 													title={opt.id === 'thick' ? 'דגם עבה' : 'דגם קצר'}
-													className={`w-[52px] h-[52px] inline-flex items-center justify-center bg-transparent border-0 ${box === opt.id ? 'text-[#1a1a2e]' : 'text-gray-500 hover:text-gray-700'}`}
+													className={`w-[52px] h-[52px] inline-flex items-center justify-center bg-transparent border-0 overflow-hidden ${box === opt.id ? 'text-[#1a1a2e]' : 'text-gray-500 hover:text-gray-700'}`}
 													onClick={() => setBox(opt.id)}
 												>
 													{opt.id === 'thick' ? (
-														<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
+														<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true" className="origin-center scale-125">
 															<rect x="1" y="16" width="50" height="20" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
 															<rect x="1" y="16" width="50" height="20" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
 														</svg>
 													) : (
-														<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
+														<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true" className="origin-center scale-125">
 															<rect x="1" y="20" width="50" height="12" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
 															<rect x="1" y="20" width="50" height="12" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
 														</svg>

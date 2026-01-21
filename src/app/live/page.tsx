@@ -672,64 +672,74 @@ function Staircase3D({
 					</mesh>
 
 					{/* BOTTOM face */}
-					<mesh rotation={[Math.PI / 2, 0, 0]} position={[0, -treadThickness / 2 - 0.0005, 0]} receiveShadow>
-						<planeGeometry args={[t.run, treadWidth, 8, 8]} />
-						{(() => {
-							if (useSolidMat) {
-								return (<meshBasicMaterial color={solidSideColor} />);
-							}
-							const ft = buildFaceTextures(t.run, treadWidth);
-							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
-						})()}
-					</mesh>
+					{boxModel !== 'wedge' && (
+						<mesh rotation={[Math.PI / 2, 0, 0]} position={[0, -treadThickness / 2 - 0.0005, 0]} receiveShadow>
+							<planeGeometry args={[t.run, treadWidth, 8, 8]} />
+							{(() => {
+								if (useSolidMat) {
+									return (<meshBasicMaterial color={solidSideColor} />);
+								}
+								const ft = buildFaceTextures(t.run, treadWidth);
+								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
+							})()}
+						</mesh>
+					)}
 
 					{/* FRONT (+X) */}
-					<mesh rotation={[0, Math.PI / 2, 0]} position={[t.run / 2 + 0.0005, 0, 0]} receiveShadow>
-						<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
-						{(() => {
-							if (useSolidMat) {
-								return (<meshBasicMaterial color={solidSideColor} />);
-							}
-							const ft = buildFaceTextures(treadWidth, treadThickness);
-							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
-						})()}
-					</mesh>
+					{boxModel !== 'wedge' && (
+						<mesh rotation={[0, Math.PI / 2, 0]} position={[t.run / 2 + 0.0005, 0, 0]} receiveShadow>
+							<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
+							{(() => {
+								if (useSolidMat) {
+									return (<meshBasicMaterial color={solidSideColor} />);
+								}
+								const ft = buildFaceTextures(treadWidth, treadThickness);
+								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
+							})()}
+						</mesh>
+					)}
 
 					{/* BACK (-X) */}
-					<mesh rotation={[0, -Math.PI / 2, 0]} position={[-t.run / 2 - 0.0005, 0, 0]} receiveShadow>
-						<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
-						{(() => {
-							if (useSolidMat) {
-								return (<meshBasicMaterial color={solidSideColor} />);
-							}
-							const ft = buildFaceTextures(treadWidth, treadThickness);
-							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
-						})()}
-					</mesh>
+					{boxModel !== 'wedge' && (
+						<mesh rotation={[0, -Math.PI / 2, 0]} position={[-t.run / 2 - 0.0005, 0, 0]} receiveShadow>
+							<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
+							{(() => {
+								if (useSolidMat) {
+									return (<meshBasicMaterial color={solidSideColor} />);
+								}
+								const ft = buildFaceTextures(treadWidth, treadThickness);
+								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
+							})()}
+						</mesh>
+					)}
 
 					{/* RIGHT (+Z) */}
-					<mesh rotation={[0, 0, 0]} position={[0, 0, treadWidth / 2 + 0.0005]} receiveShadow>
-						<planeGeometry args={[t.run, treadThickness, 8, 8]} />
-						{(() => {
-							if (useSolidMat) {
-								return (<meshBasicMaterial color={solidSideColor} />);
-							}
-							const ft = buildFaceTextures(t.run, treadThickness);
-							return (<meshBasicMaterial map={ft.color} />);
-						})()}
-					</mesh>
+					{boxModel !== 'wedge' && (
+						<mesh rotation={[0, 0, 0]} position={[0, 0, treadWidth / 2 + 0.0005]} receiveShadow>
+							<planeGeometry args={[t.run, treadThickness, 8, 8]} />
+							{(() => {
+								if (useSolidMat) {
+									return (<meshBasicMaterial color={solidSideColor} />);
+								}
+								const ft = buildFaceTextures(t.run, treadThickness);
+								return (<meshBasicMaterial map={ft.color} />);
+							})()}
+						</mesh>
+					)}
 
 					{/* LEFT (-Z) */}
-					<mesh rotation={[0, Math.PI, 0]} position={[0, 0, -treadWidth / 2 - 0.0005]} receiveShadow>
-						<planeGeometry args={[t.run, treadThickness, 8, 8]} />
-						{(() => {
-							if (useSolidMat) {
-								return (<meshBasicMaterial color={solidSideColor} />);
-							}
-							const ft = buildFaceTextures(t.run, treadThickness);
-							return (<meshBasicMaterial map={ft.color} />);
-						})()}
-					</mesh>
+					{boxModel !== 'wedge' && (
+						<mesh rotation={[0, Math.PI, 0]} position={[0, 0, -treadWidth / 2 - 0.0005]} receiveShadow>
+							<planeGeometry args={[t.run, treadThickness, 8, 8]} />
+							{(() => {
+								if (useSolidMat) {
+									return (<meshBasicMaterial color={solidSideColor} />);
+								}
+								const ft = buildFaceTextures(t.run, treadThickness);
+								return (<meshBasicMaterial map={ft.color} />);
+							})()}
+						</mesh>
+					)}
 
 					{/* מעקה זכוכית פר-מדרגה מבוטל למען פאנל רציף */}
 					{null}

@@ -2932,13 +2932,14 @@ function LivePageInner() {
 									<div className="p-2 pt-1">
 										<div className="flex flex-wrap justify-center gap-6">
 											{([
-												{ id: 'thick', label: 'תיבה עבה‑דופן' },
-												{ id: 'thin', label: 'תיבה דקה‑דופן' },
+												{ id: 'thick', label: 'תיבה עבה‑דופן' as const },
+												{ id: 'thin', label: 'תיבה דקה‑דופן' as const },
+												{ id: 'wedge', label: 'דגם אלכסוני' as const },
 											] as const).map(opt => (
 												<div key={opt.id} className="flex flex-col items-center">
 													<button
-														aria-label={opt.id === 'thick' ? 'דגם עבה' : 'דגם קצר'}
-														title={opt.id === 'thick' ? 'דגם עבה' : 'דגם קצר'}
+														aria-label={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : 'דגם אלכסוני'}
+														title={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : 'דגם אלכסוני'}
 														className={`w-[52px] h-[52px] inline-flex items-center justify-center bg-transparent border-0 ${box === opt.id ? 'text-[#1a1a2e]' : 'text-gray-500 hover:text-gray-700'}`}
 														onClick={() => setBox(opt.id)}
 													>
@@ -2947,15 +2948,30 @@ function LivePageInner() {
 																<rect x="1" y="16" width="50" height="20" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
 																<rect x="1" y="16" width="50" height="20" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
 															</svg>
-														) : (
+														) : opt.id === 'thin' ? (
 															<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
 																<rect x="1" y="20" width="50" height="12" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
 																<rect x="1" y="20" width="50" height="12" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
 															</svg>
+														) : (
+															<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
+																<polygon
+																	points="6,36 46,30 46,22 6,16"
+																	fill={box === opt.id ? '#F2E9E3' : 'none'}
+																/>
+																<polygon
+																	points="6,36 46,30 46,22 6,16"
+																	fill="none"
+																	stroke="currentColor"
+																	strokeWidth="2"
+																/>
+															</svg>
 														)}
 														<span className="sr-only">{opt.label}</span>
 													</button>
-													<span className="mt-1 text-xs text-gray-600">{opt.id === 'thick' ? 'עבה' : 'דק'}</span>
+													<span className="mt-1 text-xs text-gray-600">
+														{opt.id === 'thick' ? 'עבה' : opt.id === 'thin' ? 'דק' : 'אלכסוני'}
+													</span>
 												</div>
 											))}
 										</div>

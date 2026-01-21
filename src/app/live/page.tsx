@@ -563,13 +563,14 @@ function Staircase3D({
 							const topY = treadThickness / 2;
 							const frontFrac = Math.max(0.1, Math.min(0.9, typeof wedgeFrontFraction === 'number' ? wedgeFrontFraction : 0.35));
 							const frontTh = Math.max(0.01, treadThickness * frontFrac);
+							const seam = 0.001; // הרחבה זעירה לסגירת חיבורים
 							const xBack = t.run / 2;
 							const xFront = -t.run / 2;
-							const zLeft = -treadWidth / 2;
-							const zRight = treadWidth / 2;
+							const zLeft = -treadWidth / 2 - seam;
+							const zRight = treadWidth / 2 + seam;
 							const yTop = topY;
-							const yBottomBack = yTop - treadThickness;
-							const yBottomFront = yTop - frontTh;
+							const yBottomBack = yTop - treadThickness - seam;
+							const yBottomFront = yTop - frontTh - seam;
 							const faceMat = (dimU: number, dimV: number) => {
 								if (useSolidMat) return <meshBasicMaterial color={solidSideColor} side={2} />;
 								const ft = buildFaceTextures(dimU, dimV);
@@ -578,14 +579,14 @@ function Staircase3D({
 							// FRONT at xFront
 							const front = (
 								<mesh key="front" rotation={[0, Math.PI / 2, 0]} position={[xFront - 0.0005, 0, 0]} receiveShadow>
-									<planeGeometry args={[treadWidth, frontTh, 8, 2]} />
+									<planeGeometry args={[treadWidth + seam * 2, frontTh + seam * 2, 8, 2]} />
 									{faceMat(treadWidth, frontTh)}
 								</mesh>
 							);
 							// BACK at xBack
 							const back = (
 								<mesh key="back" rotation={[0, -Math.PI / 2, 0]} position={[xBack + 0.0005, 0, 0]} receiveShadow>
-									<planeGeometry args={[treadWidth, treadThickness, 8, 2]} />
+									<planeGeometry args={[treadWidth + seam * 2, treadThickness + seam * 2, 8, 2]} />
 									{faceMat(treadWidth, treadThickness)}
 								</mesh>
 							);
@@ -594,8 +595,8 @@ function Staircase3D({
 							rightGeom.setAttribute('position', new Float32BufferAttribute([
 								xFront, yBottomFront, zRight,
 								xBack,  yBottomBack,  zRight,
-								xFront, yTop,        zRight,
-								xBack,  yTop,        zRight,
+								xFront, yTop + seam,  zRight,
+								xBack,  yTop + seam,  zRight,
 							], 3));
 							rightGeom.setIndex([0,1,2,2,1,3]);
 							// simple rectangular UVs
@@ -611,8 +612,8 @@ function Staircase3D({
 							leftGeom.setAttribute('position', new Float32BufferAttribute([
 								xBack,  yBottomBack,  zLeft,
 								xFront, yBottomFront, zLeft,
-								xBack,  yTop,        zLeft,
-								xFront, yTop,        zLeft,
+								xBack,  yTop + seam,  zLeft,
+								xFront, yTop + seam,  zLeft,
 							], 3));
 							leftGeom.setIndex([0,1,2,2,1,3]);
 							leftGeom.setAttribute('uv', new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2));
@@ -625,10 +626,10 @@ function Staircase3D({
 							// BOTTOM slanted
 							const bottomGeom = new BufferGeometry();
 							bottomGeom.setAttribute('position', new Float32BufferAttribute([
-								xFront, yBottomFront, zLeft,
-								xBack,  yBottomBack,  zLeft,
-								xFront, yBottomFront, zRight,
-								xBack,  yBottomBack,  zRight,
+								xFront, yBottomFront - seam, zLeft,
+								xBack,  yBottomBack - seam,  zLeft,
+								xFront, yBottomFront - seam, zRight,
+								xBack,  yBottomBack - seam,  zRight,
 							], 3));
 							bottomGeom.setIndex([0,1,2,2,1,3]);
 							bottomGeom.setAttribute('uv', new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2));
@@ -654,7 +655,7 @@ function Staircase3D({
 					{/* שכבת פני השטח עם תבליט אמיתי לעץ; למתכת/אבן – כיסוי מרקם */}
 					<mesh
 						rotation={[-Math.PI / 2, 0, 0]}
-						position={[0, treadThickness / 2 + 0.002, 0]}
+						position={[0, (boxModel === 'wedge' ? (treadThickness / 2 + 0.0005) : (treadThickness / 2 + 0.002)), 0]}
 						castShadow={materialKind !== 'metal'}
 						receiveShadow={materialKind !== 'metal'}
 					>

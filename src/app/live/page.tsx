@@ -2868,8 +2868,8 @@ function LivePageInner() {
 												>
 													{opt.id === 'thick' ? (
 														<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
-															<rect x="1" y="4" width="50" height="44" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
-															<rect x="1" y="4" width="50" height="44" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
+															<rect x="1" y="7" width="50" height="38" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
+															<rect x="1" y="7" width="50" height="38" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
 														</svg>
 													) : (
 														<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">

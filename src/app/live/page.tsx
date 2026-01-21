@@ -697,7 +697,8 @@ function Staircase3D({
 					{boxModel === 'rect' && typeof shadowGapHeightM === 'number' && shadowGapHeightM > 0 && (
 						(() => {
 							const gap = Math.max(0.003, Math.min(0.02, shadowGapHeightM));
-							const xFront = -t.run / 2 - 0.0006;
+							// בחזית של המדרך (צד +X), מוציאים מעט החוצה למנוע z-fighting
+							const xFront = t.run / 2 + 0.002;
 							const yTop = treadThickness / 2;
 							return (
 								<mesh rotation={[0, Math.PI / 2, 0]} position={[xFront, yTop - gap / 2 - 0.0025, 0]}>
@@ -712,7 +713,8 @@ function Staircase3D({
 					{boxModel === 'rect' && typeof waterfallDropM === 'number' && waterfallDropM > 0 && (
 						(() => {
 							const drop = Math.max(0.01, Math.min(0.08, waterfallDropM));
-							const xFront = -t.run / 2 - 0.0006;
+							// חזית קדמית בצד +X, הסט החוצה מעט
+							const xFront = t.run / 2 + 0.002;
 							const yTop = treadThickness / 2;
 							const ft = buildFaceTextures(treadWidth, drop);
 							return (

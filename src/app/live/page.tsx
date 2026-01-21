@@ -2853,32 +2853,34 @@ function LivePageInner() {
 							nodes.push({
 								key: 'box',
 								el: (
-									<div className="p-3">
+									<div className="p-2 pt-1">
 										<div className="flex flex-wrap justify-center gap-6">
 											{([
 												{ id: 'thick', label: 'תיבה עבה‑דופן' },
 												{ id: 'thin', label: 'תיבה דקה‑דופן' },
 											] as const).map(opt => (
-												<button
-													key={opt.id}
-													aria-label={opt.id === 'thick' ? 'דגם עבה' : 'דגם קצר'}
-													title={opt.id === 'thick' ? 'דגם עבה' : 'דגם קצר'}
-													className={`w-[52px] h-[52px] inline-flex items-center justify-center bg-transparent border-0 overflow-hidden ${box === opt.id ? 'text-[#1a1a2e]' : 'text-gray-500 hover:text-gray-700'}`}
-													onClick={() => setBox(opt.id)}
-												>
-													{opt.id === 'thick' ? (
-														<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true" className="origin-center scale-125">
-															<rect x="1" y="16" width="50" height="20" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
-															<rect x="1" y="16" width="50" height="20" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
-														</svg>
-													) : (
-														<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true" className="origin-center scale-125">
-															<rect x="1" y="20" width="50" height="12" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
-															<rect x="1" y="20" width="50" height="12" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
-														</svg>
-													)}
-													<span className="sr-only">{opt.label}</span>
-												</button>
+												<div key={opt.id} className="flex flex-col items-center">
+													<button
+														aria-label={opt.id === 'thick' ? 'דגם עבה' : 'דגם קצר'}
+														title={opt.id === 'thick' ? 'דגם עבה' : 'דגם קצר'}
+														className={`w-[52px] h-[52px] inline-flex items-center justify-center bg-transparent border-0 ${box === opt.id ? 'text-[#1a1a2e]' : 'text-gray-500 hover:text-gray-700'}`}
+														onClick={() => setBox(opt.id)}
+													>
+														{opt.id === 'thick' ? (
+															<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
+																<rect x="1" y="16" width="50" height="20" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
+																<rect x="1" y="16" width="50" height="20" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
+															</svg>
+														) : (
+															<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
+																<rect x="1" y="20" width="50" height="12" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
+																<rect x="1" y="20" width="50" height="12" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
+															</svg>
+														)}
+														<span className="sr-only">{opt.label}</span>
+													</button>
+													<span className="mt-1 text-xs text-gray-600">{opt.id === 'thick' ? 'עבה' : 'דק'}</span>
+												</div>
 											))}
 										</div>
 									</div>
@@ -2910,17 +2912,19 @@ function LivePageInner() {
 								nodes.push({
 									key: 'woodTexture',
 									el: (
-										<div className="p-3">
-											<div className="flex flex-wrap justify-center gap-3 text-center">
+										<div className="p-2 pt-1">
+											<div className="flex flex-wrap justify-center gap-4 text-center">
 												{woodModels.map(m => (
-													<button
-														key={m.id}
-														aria-label={m.name || m.id}
-														title={m.name || m.id}
-														onClick={() => startTransition(() => setActiveModelId(m.id))}
-														className={`w-[52px] h-[52px] rounded-full border-2 bg-center bg-cover ${activeModelId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-														style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
-													/>
+													<div key={m.id} className="flex flex-col items-center w-16">
+														<button
+															aria-label={m.name || m.id}
+															title={m.name || m.id}
+															onClick={() => startTransition(() => setActiveModelId(m.id))}
+															className={`w-[52px] h-[52px] rounded-full border-2 bg-center bg-cover ${activeModelId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+															style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
+														/>
+														<span className="mt-1 text-[11px] text-gray-600 truncate w-16">{m.name || m.id}</span>
+													</div>
 												))}
 											</div>
 										</div>
@@ -2929,20 +2933,22 @@ function LivePageInner() {
 								nodes.push({
 									key: 'woodColor',
 									el: (
-										<div className="p-3">
-											<div className="flex items-center justify-center gap-3 flex-wrap text-center">
+										<div className="p-2 pt-1">
+											<div className="flex items-center justify-center gap-4 flex-wrap text-center">
 												{WOOD_SWATCHES.filter(sw => !!activeModel?.variants?.[sw.id]).map(sw => {
 													const img = activeModel?.variants?.[sw.id]?.[0];
 													const solid = COLOR_HEX[sw.id];
 													return (
-														<button
-															key={sw.id}
-															aria-label={sw.label}
-															title={sw.label}
-															onClick={() => startTransition(() => setActiveColor(sw.id))}
-															className={`w-[52px] h-[52px] rounded-full border-2 cursor-pointer ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-															style={{ backgroundImage: img ? `url("${encodeURI(img)}")` : undefined, backgroundColor: img ? undefined : solid, backgroundSize: 'cover', backgroundPosition: 'center', borderColor: '#ddd' }}
-														/>
+														<div key={sw.id} className="flex flex-col items-center w-16">
+															<button
+																aria-label={sw.label}
+																title={sw.label}
+																onClick={() => startTransition(() => setActiveColor(sw.id))}
+																className={`w-[52px] h-[52px] rounded-full border-2 cursor-pointer ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+																style={{ backgroundImage: img ? `url("${encodeURI(img)}")` : undefined, backgroundColor: img ? undefined : solid, backgroundSize: 'cover', backgroundPosition: 'center', borderColor: '#ddd' }}
+															/>
+															<span className="mt-1 text-[11px] text-gray-600 truncate w-16">{sw.label}</span>
+														</div>
 													);
 												})}
 											</div>
@@ -2953,17 +2959,19 @@ function LivePageInner() {
 								nodes.push({
 									key: 'nonWoodTexture',
 									el: (
-										<div className="p-3">
-											<div className="flex flex-wrap justify-center gap-3 text-center">
+										<div className="p-2 pt-1">
+											<div className="flex flex-wrap justify-center gap-4 text-center">
 												{nonWoodModels.map(m => (
-													<button
-														key={m.id}
-														aria-label={m.name || m.id}
-														title={m.name || m.id}
-														onClick={() => startTransition(() => { setActiveTexId(m.id); if (activeMaterial === 'metal') setActiveMetalTexId(m.id); if (activeMaterial === 'stone') setActiveStoneTexId(m.id); })}
-														className={`w-[52px] h-[52px] rounded-full border-2 bg-center bg-cover ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-														style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, backgroundColor: (!m.images || m.images.length === 0) && (m as any).solid ? (m as any).solid : undefined, borderColor: '#ddd' }}
-													/>
+													<div key={m.id} className="flex flex-col items-center w-20">
+														<button
+															aria-label={m.name || m.id}
+															title={m.name || m.id}
+															onClick={() => startTransition(() => { setActiveTexId(m.id); if (activeMaterial === 'metal') setActiveMetalTexId(m.id); if (activeMaterial === 'stone') setActiveStoneTexId(m.id); })}
+															className={`w-[52px] h-[52px] rounded-full border-2 bg-center bg-cover ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+															style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, backgroundColor: (!m.images || m.images.length === 0) && (m as any).solid ? (m as any).solid : undefined, borderColor: '#ddd' }}
+														/>
+														<span className="mt-1 text-[11px] text-gray-600 truncate w-20">{m.name || m.id}</span>
+													</div>
 												))}
 											</div>
 										</div>
@@ -3015,7 +3023,7 @@ function LivePageInner() {
 											</button>
 										))}
 									</div>
-									<div className="pt-2 flex justify-center">
+									<div className="pt-1 flex justify-center">
 										<div className="w-full max-w-5xl text-center">
 											{mapNodes.get((mobileOpenCat || order[0]) as Cat) as React.ReactElement}
 										</div>
@@ -4190,7 +4198,7 @@ function LivePageInner() {
 											))}
 										</div>
 									</div>
-									<div className="mt-2 flex justify-center">
+									<div className="mt-1 flex justify-center">
 										<div className="w-full max-w-5xl text-center">
 											{mapNodes.get((mobileOpenCat || tabOrder[0]) as Cat) as React.ReactElement}
 										</div>

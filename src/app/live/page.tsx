@@ -561,72 +561,84 @@ function Staircase3D({
 					{boxModel === 'wedge' ? (
 						(() => {
 							const topY = treadThickness / 2;
-							const frontFrac = Math.max(0.1, Math.min(0.9, typeof wedgeFrontFraction === 'number' ? wedgeFrontFraction : 0.4));
-							const frontTh = Math.max(0.012, treadThickness * frontFrac);
-							// בניית גאומטריית טריז פשוטה (ללא הפאה העליונה – מצוירת בנפרד)
-							const pos: number[] = [];
-							const idx: number[] = [];
-							const pushQuad = (a: number[], b: number[], c: number[], d: number[]) => {
-								const baseIndex = pos.length / 3;
-								pos.push(...a, ...b, ...c, ...d);
-								idx.push(baseIndex + 0, baseIndex + 1, baseIndex + 2, baseIndex + 2, baseIndex + 1, baseIndex + 3);
-							};
-							const xBack = t.run / 2;  // ימני
-							const xFront = -t.run / 2; // שמאלי
+							const frontFrac = Math.max(0.1, Math.min(0.9, typeof wedgeFrontFraction === 'number' ? wedgeFrontFraction : 0.35));
+							const frontTh = Math.max(0.01, treadThickness * frontFrac);
+							const xBack = t.run / 2;
+							const xFront = -t.run / 2;
 							const zLeft = -treadWidth / 2;
 							const zRight = treadWidth / 2;
 							const yTop = topY;
 							const yBottomBack = yTop - treadThickness;
 							const yBottomFront = yTop - frontTh;
-							// חזית (front) – מלבן צר
-							pushQuad(
-								[xFront, yBottomFront, zLeft],
-								[xFront, yBottomFront, zRight],
-								[xFront, yTop, zLeft],
-								[xFront, yTop, zRight],
-							);
-							// אחור (back)
-							pushQuad(
-								[xBack, yBottomBack, zRight],
-								[xBack, yBottomBack, zLeft],
-								[xBack, yTop, zRight],
-								[xBack, yTop, zLeft],
-							);
-							// צד ימין (z = +)
-							pushQuad(
-								[xFront, yBottomFront, zRight],
-								[xBack, yBottomBack, zRight],
-								[xFront, yTop, zRight],
-								[xBack, yTop, zRight],
-							);
-							// צד שמאל (z = -)
-							pushQuad(
-								[xBack, yBottomBack, zLeft],
-								[xFront, yBottomFront, zLeft],
-								[xBack, yTop, zLeft],
-								[xFront, yTop, zLeft],
-							);
-							// תחתית משופעת
-							pushQuad(
-								[xFront, yBottomFront, zLeft],
-								[xBack, yBottomBack, zLeft],
-								[xFront, yBottomFront, zRight],
-								[xBack, yBottomBack, zRight],
-							);
-							const geom = new BufferGeometry();
-							geom.setAttribute('position', new Float32BufferAttribute(pos, 3));
-							geom.setIndex(idx);
-							geom.computeVertexNormals();
-							return (
-								<mesh geometry={geom} castShadow receiveShadow>
-									<meshBasicMaterial
-										color={(materialKind !== 'wood' && useSolidMat) ? (solidSideColor) : (materialKind === 'metal' ? '#8f8f8f' : '#b3a59a')}
-										polygonOffset
-										polygonOffsetFactor={1}
-										polygonOffsetUnits={1}
-									/>
+							const faceMat = (dimU: number, dimV: number) => {
+								if (useSolidMat) return <meshBasicMaterial color={solidSideColor} side={2} />;
+								const ft = buildFaceTextures(dimU, dimV);
+								return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />;
+							};
+							// FRONT at xFront
+							const front = (
+								<mesh key="front" rotation={[0, Math.PI / 2, 0]} position={[xFront - 0.0005, 0, 0]} receiveShadow>
+									<planeGeometry args={[treadWidth, frontTh, 8, 2]} />
+									{faceMat(treadWidth, frontTh)}
 								</mesh>
 							);
+							// BACK at xBack
+							const back = (
+								<mesh key="back" rotation={[0, -Math.PI / 2, 0]} position={[xBack + 0.0005, 0, 0]} receiveShadow>
+									<planeGeometry args={[treadWidth, treadThickness, 8, 2]} />
+									{faceMat(treadWidth, treadThickness)}
+								</mesh>
+							);
+							// RIGHT side (trapezoid)
+							const rightGeom = new BufferGeometry();
+							rightGeom.setAttribute('position', new Float32BufferAttribute([
+								xFront, yBottomFront, zRight,
+								xBack,  yBottomBack,  zRight,
+								xFront, yTop,        zRight,
+								xBack,  yTop,        zRight,
+							], 3));
+							rightGeom.setIndex([0,1,2,2,1,3]);
+							// simple rectangular UVs
+							rightGeom.setAttribute('uv', new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2));
+							rightGeom.computeVertexNormals();
+							const right = (
+								<mesh key="right" geometry={rightGeom} receiveShadow>
+									{faceMat(t.run, (treadThickness + frontTh) / 2)}
+								</mesh>
+							);
+							// LEFT side (trapezoid)
+							const leftGeom = new BufferGeometry();
+							leftGeom.setAttribute('position', new Float32BufferAttribute([
+								xBack,  yBottomBack,  zLeft,
+								xFront, yBottomFront, zLeft,
+								xBack,  yTop,        zLeft,
+								xFront, yTop,        zLeft,
+							], 3));
+							leftGeom.setIndex([0,1,2,2,1,3]);
+							leftGeom.setAttribute('uv', new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2));
+							leftGeom.computeVertexNormals();
+							const left = (
+								<mesh key="left" geometry={leftGeom} receiveShadow>
+									{faceMat(t.run, (treadThickness + frontTh) / 2)}
+								</mesh>
+							);
+							// BOTTOM slanted
+							const bottomGeom = new BufferGeometry();
+							bottomGeom.setAttribute('position', new Float32BufferAttribute([
+								xFront, yBottomFront, zLeft,
+								xBack,  yBottomBack,  zLeft,
+								xFront, yBottomFront, zRight,
+								xBack,  yBottomBack,  zRight,
+							], 3));
+							bottomGeom.setIndex([0,1,2,2,1,3]);
+							bottomGeom.setAttribute('uv', new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2));
+							bottomGeom.computeVertexNormals();
+							const bottom = (
+								<mesh key="bottom" geometry={bottomGeom} rotation={[0,0,0]} receiveShadow>
+									{faceMat(t.run, treadWidth)}
+								</mesh>
+							);
+							return <group>{front}{back}{right}{left}{bottom}</group>;
 						})()
 					) : (
 						<mesh castShadow receiveShadow>

@@ -576,16 +576,18 @@ function Staircase3D({
 								const ft = buildFaceTextures(dimU, dimV);
 								return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />;
 							};
+							const yCenterFront = (yTop + yBottomFront) / 2;
+							const yCenterBack = (yTop + yBottomBack) / 2;
 							// FRONT at xFront
 							const front = (
-								<mesh key="front" rotation={[0, Math.PI / 2, 0]} position={[xFront - 0.0005, 0, 0]} receiveShadow>
+								<mesh key="front" rotation={[0, Math.PI / 2, 0]} position={[xFront - 0.0005, yCenterFront, 0]} receiveShadow>
 									<planeGeometry args={[treadWidth + seam * 2, frontTh + seam * 2, 8, 2]} />
 									{faceMat(treadWidth, frontTh)}
 								</mesh>
 							);
 							// BACK at xBack
 							const back = (
-								<mesh key="back" rotation={[0, -Math.PI / 2, 0]} position={[xBack + 0.0005, 0, 0]} receiveShadow>
+								<mesh key="back" rotation={[0, -Math.PI / 2, 0]} position={[xBack + 0.0005, yCenterBack, 0]} receiveShadow>
 									<planeGeometry args={[treadWidth + seam * 2, treadThickness + seam * 2, 8, 2]} />
 									{faceMat(treadWidth, treadThickness)}
 								</mesh>

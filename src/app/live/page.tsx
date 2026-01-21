@@ -130,6 +130,8 @@ function Staircase3D({
 	uvInset = 0,
 	railingUvInset = 0,
 	treadThicknessOverride,
+	boxModel = 'rect',
+	wedgeFrontFraction,
 	pathSegments,
 	glassTone,
 	stepRailingStates,
@@ -160,6 +162,8 @@ function Staircase3D({
 	uvInset?: number;
 	railingUvInset?: number;
 	treadThicknessOverride?: number;
+	boxModel?: 'rect' | 'wedge';
+	wedgeFrontFraction?: number;
 	pathSegments?: PathSegment[] | null;
 	glassTone?: 'extra' | 'smoked' | 'bronze';
 	stepRailingStates?: boolean[];
@@ -554,15 +558,87 @@ function Staircase3D({
 			{(() => { let sIdx = 0; let lIdx = 0; return treads.map((t, idx) => (
 				<group key={idx} position={t.position} rotation={t.rotation}>
 					{/* גוף המדרך */}
-					<mesh castShadow receiveShadow>
-						<boxGeometry args={[t.run, treadThickness, treadWidth]} />
-						<meshBasicMaterial
-							color={(materialKind !== 'wood' && useSolidMat) ? (solidSideColor) : (materialKind === 'metal' ? '#8f8f8f' : '#b3a59a')}
-							polygonOffset
-							polygonOffsetFactor={1}
-							polygonOffsetUnits={1}
-						/>
-					</mesh>
+					{boxModel === 'wedge' ? (
+						(() => {
+							const topY = treadThickness / 2;
+							const frontFrac = Math.max(0.1, Math.min(0.9, typeof wedgeFrontFraction === 'number' ? wedgeFrontFraction : 0.4));
+							const frontTh = Math.max(0.012, treadThickness * frontFrac);
+							// בניית גאומטריית טריז פשוטה (ללא הפאה העליונה – מצוירת בנפרד)
+							const pos: number[] = [];
+							const idx: number[] = [];
+							const pushQuad = (a: number[], b: number[], c: number[], d: number[]) => {
+								const baseIndex = pos.length / 3;
+								pos.push(...a, ...b, ...c, ...d);
+								idx.push(baseIndex + 0, baseIndex + 1, baseIndex + 2, baseIndex + 2, baseIndex + 1, baseIndex + 3);
+							};
+							const xBack = t.run / 2;  // ימני
+							const xFront = -t.run / 2; // שמאלי
+							const zLeft = -treadWidth / 2;
+							const zRight = treadWidth / 2;
+							const yTop = topY;
+							const yBottomBack = yTop - treadThickness;
+							const yBottomFront = yTop - frontTh;
+							// חזית (front) – מלבן צר
+							pushQuad(
+								[xFront, yBottomFront, zLeft],
+								[xFront, yBottomFront, zRight],
+								[xFront, yTop, zLeft],
+								[xFront, yTop, zRight],
+							);
+							// אחור (back)
+							pushQuad(
+								[xBack, yBottomBack, zRight],
+								[xBack, yBottomBack, zLeft],
+								[xBack, yTop, zRight],
+								[xBack, yTop, zLeft],
+							);
+							// צד ימין (z = +)
+							pushQuad(
+								[xFront, yBottomFront, zRight],
+								[xBack, yBottomBack, zRight],
+								[xFront, yTop, zRight],
+								[xBack, yTop, zRight],
+							);
+							// צד שמאל (z = -)
+							pushQuad(
+								[xBack, yBottomBack, zLeft],
+								[xFront, yBottomFront, zLeft],
+								[xBack, yTop, zLeft],
+								[xFront, yTop, zLeft],
+							);
+							// תחתית משופעת
+							pushQuad(
+								[xFront, yBottomFront, zLeft],
+								[xBack, yBottomBack, zLeft],
+								[xFront, yBottomFront, zRight],
+								[xBack, yBottomBack, zRight],
+							);
+							const geom = new BufferGeometry();
+							geom.setAttribute('position', new Float32BufferAttribute(pos, 3));
+							geom.setIndex(idx);
+							geom.computeVertexNormals();
+							return (
+								<mesh geometry={geom} castShadow receiveShadow>
+									<meshBasicMaterial
+										color={(materialKind !== 'wood' && useSolidMat) ? (solidSideColor) : (materialKind === 'metal' ? '#8f8f8f' : '#b3a59a')}
+										polygonOffset
+										polygonOffsetFactor={1}
+										polygonOffsetUnits={1}
+									/>
+								</mesh>
+							);
+						})()
+					) : (
+						<mesh castShadow receiveShadow>
+							<boxGeometry args={[t.run, treadThickness, treadWidth]} />
+							<meshBasicMaterial
+								color={(materialKind !== 'wood' && useSolidMat) ? (solidSideColor) : (materialKind === 'metal' ? '#8f8f8f' : '#b3a59a')}
+								polygonOffset
+								polygonOffsetFactor={1}
+								polygonOffsetUnits={1}
+							/>
+						</mesh>
+					)}
 					{/* שכבת פני השטח עם תבליט אמיתי לעץ; למתכת/אבן – כיסוי מרקם */}
 					<mesh
 						rotation={[-Math.PI / 2, 0, 0]}
@@ -1855,7 +1931,7 @@ function LivePageInner() {
 	const qShape = (search.get('shape') as 'straight' | 'L' | 'U') || 'straight';
 	const qSteps = parseInt(search.get('steps') || '', 10);
 	const qTex = search.get('tex') || '';
-	const qBox = (search.get('box') as 'thick' | 'thin') || 'thick';
+	const qBox = (search.get('box') as 'thick' | 'thin' | 'wedge') || 'thick';
 	const qPath = search.get('path') || '';
 
 	const [records, setRecords] = React.useState<MaterialRecord[]>([]);
@@ -1866,7 +1942,7 @@ function LivePageInner() {
 	// מזהים ייעודיים לכל קטגוריה כדי לשמר בחירה בין מעברים
 	const [activeMetalTexId, setActiveMetalTexId] = React.useState<string | null>(activeMaterial === 'metal' ? (qTex || null) : null);
 	const [activeStoneTexId, setActiveStoneTexId] = React.useState<string | null>(activeMaterial === 'stone' ? (qTex || null) : null);
-	const [box, setBox] = React.useState<'thick' | 'thin'>(qBox);
+	const [box, setBox] = React.useState<'thick' | 'thin' | 'wedge'>(qBox);
 	const [railing, setRailing] = React.useState<'none' | 'glass' | 'metal' | 'cable'>('none');
 	const [glassTone, setGlassTone] = React.useState<'extra' | 'smoked' | 'bronze'>('extra');
 	const [stepRailing, setStepRailing] = React.useState<boolean[]>([]);
@@ -2647,7 +2723,7 @@ function LivePageInner() {
 			: undefined;
 		const pathText = formatPathForShare(pathSegments);
 		const railingText = formatRailing();
-		const boxText = box === 'thick' ? 'תיבה עבה‑דופן' : 'תיבה דקה‑דופן';
+		const boxText = box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : 'דגם אלכסוני';
 		const totalText = `₪${total.toLocaleString('he-IL')}`;
 		// הכרחת כיוון LTR עבור ה‑URL באמצעות LRI/PDI (איסולציה) למניעת שבירה RTL
 		const ltrUrl = `\u2066${shareUrl}\u2069`;
@@ -2731,7 +2807,7 @@ function LivePageInner() {
 			: undefined;
 		const pathText = formatPathForShare(pathSegments);
 		const railingText = formatRailing();
-		const boxText = box === 'thick' ? 'תיבה עבה‑דופן' : 'תיבה דקה‑דופן';
+		const boxText = box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : 'דגם אלכסוני';
 		const totalText = `₪${total.toLocaleString('he-IL')}`;
 		const leadId = generateLeadId();
 		const timeLabel = preferredTime || '-';
@@ -3057,7 +3133,9 @@ function LivePageInner() {
 									cableSpanMode={cableSpanMode}
 									stepCableSpanModes={stepCableSpanMode}
 									landingCableSpanModes={landingCableSpanMode}
-									treadThicknessOverride={box === 'thick' ? 0.11 : 0.07}
+									treadThicknessOverride={box === 'thick' ? 0.11 : box === 'wedge' ? 0.11 : 0.07}
+									boxModel={box === 'wedge' ? 'wedge' : 'rect'}
+									wedgeFrontFraction={0.35}
 									pathSegments={pathSegments}
 									glassTone={glassTone}
 									stepRailingStates={stepRailing}
@@ -3700,7 +3778,7 @@ function LivePageInner() {
 											aria-expanded={mobileOpenCat === 'box'}
 										>
 											<span className="font-medium">דגם תיבה</span>
-											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : 'תיבה דקה‑דופן'}</span>
+											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : 'דגם אלכסוני'}</span>
 										</button>
 										)}
 										{mobileOpenCat === 'box' && (
@@ -4282,7 +4360,7 @@ function LivePageInner() {
 								aria-expanded={desktopOpenCat === 'box'}
 							>
 								<span className="text-sm font-medium">דגם תיבה</span>
-								<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : 'תיבה דקה‑דופן'}</span>
+											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : 'דגם אלכסוני'}</span>
 							</button>
 							{desktopOpenCat === 'box' && (
 								<div className="p-3 bg-white border border-t-0 rounded-b-md">

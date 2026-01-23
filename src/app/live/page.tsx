@@ -709,30 +709,30 @@ function Staircase3D({
 								);
 							})();
 
-							// BOTTOM split לשמאל/ימין – החזית גבוהה יותר במרכז (V)
+							// BOTTOM – שלושה משולשים לאורך: קווי שבירה מהמרכז האחורי אל שתי פינות החזית
 							const bottom = (() => {
-								// שלושה משולשים לאורך המדרך:
-								// A: חזית‑שמאל, B: חזית‑ימין, C: חזית‑מרכז (גבוה), D: גב‑שמאל, E: גב‑ימין
-								const A = [xFront, yBottomFrontEdge, zLeft];
-								const B = [xFront, yBottomFrontEdge, zRight];
-								const C = [xFront, yBottomFrontCenter, 0];
-								const D = [xBack,  yBottomBack,       zLeft];
-								const E = [xBack,  yBottomBack,       zRight];
-
+								// נקודות:
+								// A: חזית‑שמאל (נמוך)
+								// B: חזית‑ימין (נמוך)
+								// C: חזית‑מרכז (גבוה – 90 מ״מ)
+								// F: גב‑מרכז (עובי מלא)
+								const A = [xFront, yBottomFrontEdge, zLeft] as const;
+								const B = [xFront, yBottomFrontEdge, zRight] as const;
+								const C = [xFront, yBottomFrontCenter, 0] as const;
+								const F = [xBack,  yBottomBack,        0] as const;
 								const geom = new BufferGeometry();
 								geom.setAttribute('position', new Float32BufferAttribute([
-									...A, ...B, ...C, ...D, ...E
+									...A, ...B, ...C, ...F
 								], 3));
-								// T1: A-D-C, T2: C-D-E, T3: C-E-B
-								geom.setIndex([0,3,2, 2,3,4, 2,4,1]);
-								// UV בקירוב: xFront→0, xBack→1; zLeft→0, zCenter→0.5, zRight→1
+								// משולשים: A-F-C, C-F-B, A-F-B
+								geom.setIndex([0,3,2, 2,3,1, 0,3,1]);
+								// UV: xFront→0, xBack→1; zLeft→0, center→0.5, zRight→1
 								const uA = 0, vA = 0;
 								const uB = 0, vB = 1;
 								const uC = 0, vC = 0.5;
-								const uD = 1, vD = 0;
-								const uE = 1, vE = 1;
+								const uF = 1, vF = 0.5;
 								geom.setAttribute('uv', new Float32BufferAttribute([
-									uA, vA,  uB, vB,  uC, vC,  uD, vD,  uE, vE
+									uA, vA,  uB, vB,  uC, vC,  uF, vF
 								], 2));
 								geom.computeVertexNormals();
 								return <mesh geometry={geom} receiveShadow>{faceMat(t.run, treadWidth)}</mesh>;
@@ -745,12 +745,14 @@ function Staircase3D({
 								const A: [number, number, number] = [xFront, yBottomFrontEdge, zLeft];
 								const B: [number, number, number] = [xFront, yBottomFrontEdge, zRight];
 								const C: [number, number, number] = [xFront, yBottomFrontCenter, 0];
-								const D: [number, number, number] = [xBack,  yBottomBack,       zLeft];
-								const E: [number, number, number] = [xBack,  yBottomBack,       zRight];
+								const F: [number, number, number] = [xBack,  yBottomBack,        0];
 								const edges = new Float32Array([
-									...A, ...D,  ...D, ...C,  ...C, ...A,
-									...C, ...D,  ...D, ...E,  ...E, ...C,
-									...C, ...E,  ...E, ...B,  ...B, ...C,
+									// A-F, F-C, C-A
+									...A, ...F,  ...F, ...C,  ...C, ...A,
+									// C-F, F-B, B-C
+									...C, ...F,  ...F, ...B,  ...B, ...C,
+									// A-F, F-B, B-A
+									...A, ...F,  ...F, ...B,  ...B, ...A,
 								]);
 								return (
 									<group>
@@ -763,8 +765,7 @@ function Staircase3D({
 										<Text position={[A[0], A[1]-0.005, A[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">A</Text>
 										<Text position={[B[0], B[1]-0.005, B[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">B</Text>
 										<Text position={[C[0], C[1]-0.005, C[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">C</Text>
-										<Text position={[D[0], D[1]-0.005, D[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">D</Text>
-										<Text position={[E[0], E[1]-0.005, E[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">E</Text>
+										<Text position={[F[0], F[1]-0.005, F[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">F</Text>
 									</group>
 								);
 							})() : null;

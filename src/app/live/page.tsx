@@ -686,7 +686,7 @@ function Staircase3D({
 								geom.setAttribute('uv', new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2));
 								geom.computeVertexNormals();
 								return (
-									<mesh rotation={[0, Math.PI / 2, 0]} position={[-0.0005,0,0]} geometry={geom}>
+									<mesh geometry={geom}>
 										{faceMat(treadWidth/2, frontEdgeTh)}
 									</mesh>
 								);
@@ -703,38 +703,39 @@ function Staircase3D({
 								geom.setAttribute('uv', new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2));
 								geom.computeVertexNormals();
 								return (
-									<mesh rotation={[0, Math.PI / 2, 0]} position={[-0.0005,0,0]} geometry={geom}>
+									<mesh geometry={geom}>
 										{faceMat(treadWidth/2, frontEdgeTh)}
 									</mesh>
 								);
 							})();
 
 							// BOTTOM split לשמאל/ימין – החזית גבוהה יותר במרכז (V)
-							const bottomLeft = (() => {
+							const bottom = (() => {
+								// שלושה משולשים לאורך המדרך:
+								// A: חזית‑שמאל, B: חזית‑ימין, C: חזית‑מרכז (גבוה), D: גב‑שמאל, E: גב‑ימין
+								const A = [xFront, yBottomFrontEdge, zLeft];
+								const B = [xFront, yBottomFrontEdge, zRight];
+								const C = [xFront, yBottomFrontCenter, 0];
+								const D = [xBack,  yBottomBack,       zLeft];
+								const E = [xBack,  yBottomBack,       zRight];
+
 								const geom = new BufferGeometry();
 								geom.setAttribute('position', new Float32BufferAttribute([
-									xFront, yBottomFrontCenter, 0,
-									xBack,  yBottomBack,      0,
-									xFront, yBottomFrontEdge, zLeft,
-									xBack,  yBottomBack,      zLeft,
+									...A, ...B, ...C, ...D, ...E
 								], 3));
-								geom.setIndex([0,1,2,2,1,3]);
-								geom.setAttribute('uv', new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2));
+								// T1: A-D-C, T2: C-D-E, T3: C-E-B
+								geom.setIndex([0,3,2, 2,3,4, 2,4,1]);
+								// UV בקירוב: xFront→0, xBack→1; zLeft→0, zCenter→0.5, zRight→1
+								const uA = 0, vA = 0;
+								const uB = 0, vB = 1;
+								const uC = 0, vC = 0.5;
+								const uD = 1, vD = 0;
+								const uE = 1, vE = 1;
+								geom.setAttribute('uv', new Float32BufferAttribute([
+									uA, vA,  uB, vB,  uC, vC,  uD, vD,  uE, vE
+								], 2));
 								geom.computeVertexNormals();
-								return <mesh geometry={geom}>{faceMat(t.run, (frontEdgeTh+backTh)/2)}</mesh>;
-							})();
-							const bottomRight = (() => {
-								const geom = new BufferGeometry();
-								geom.setAttribute('position', new Float32BufferAttribute([
-									xFront, yBottomFrontEdge, zRight,
-									xBack,  yBottomBack,      zRight,
-									xFront, yBottomFrontCenter, 0,
-									xBack,  yBottomBack,      0,
-								], 3));
-								geom.setIndex([0,1,2,2,1,3]);
-								geom.setAttribute('uv', new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2));
-								geom.computeVertexNormals();
-								return <mesh geometry={geom}>{faceMat(t.run, (frontEdgeTh+backTh)/2)}</mesh>;
+								return <mesh geometry={geom} receiveShadow>{faceMat(t.run, treadWidth)}</mesh>;
 							})();
 							// אין צורך ברצועת "רכס" נוספת – שני חצאי התחתית כבר נפגשים במרכז
 
@@ -758,7 +759,7 @@ function Staircase3D({
 								</mesh>
 							);
 
-							return <group>{frontLeft}{frontRight}{bottomLeft}{bottomRight}{back}{sideRight}{sideLeft}</group>;
+							return <group>{frontLeft}{frontRight}{bottom}{back}{sideRight}{sideLeft}</group>;
 						})()
 					) : (
 						<mesh castShadow receiveShadow>

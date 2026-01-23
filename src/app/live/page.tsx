@@ -4,7 +4,7 @@ import Image from 'next/image';
 import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Canvas, useLoader } from '@react-three/fiber';
-import { OrbitControls, useTexture, useProgress } from '@react-three/drei';
+import { OrbitControls, useTexture, useProgress, Text } from '@react-three/drei';
 import Footer from '@/components/Footer';
 // Overlay טעינה לקנבס – מוצג בזמן טעינת טקסטורות/נכסים
 function CanvasLoadingOverlay() {
@@ -739,6 +739,36 @@ function Staircase3D({
 							})();
 							// אין צורך ברצועת "רכס" נוספת – שני חצאי התחתית כבר נפגשים במרכז
 
+							// DEBUG: קווי עזר ותוויות לקודקודים (A,B,C,D,E) של התחתית
+							const showDebug = true;
+							const debugBottom = showDebug ? (() => {
+								const A: [number, number, number] = [xFront, yBottomFrontEdge, zLeft];
+								const B: [number, number, number] = [xFront, yBottomFrontEdge, zRight];
+								const C: [number, number, number] = [xFront, yBottomFrontCenter, 0];
+								const D: [number, number, number] = [xBack,  yBottomBack,       zLeft];
+								const E: [number, number, number] = [xBack,  yBottomBack,       zRight];
+								const edges = new Float32Array([
+									...A, ...D,  ...D, ...C,  ...C, ...A,
+									...C, ...D,  ...D, ...E,  ...E, ...C,
+									...C, ...E,  ...E, ...B,  ...B, ...C,
+								]);
+								return (
+									<group>
+										<lineSegments>
+											<bufferGeometry attach="geometry">
+												<bufferAttribute attach="attributes-position" args={[edges, 3]} />
+											</bufferGeometry>
+											<lineBasicMaterial attach="material" color="#ff3366" />
+										</lineSegments>
+										<Text position={[A[0], A[1]-0.005, A[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">A</Text>
+										<Text position={[B[0], B[1]-0.005, B[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">B</Text>
+										<Text position={[C[0], C[1]-0.005, C[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">C</Text>
+										<Text position={[D[0], D[1]-0.005, D[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">D</Text>
+										<Text position={[E[0], E[1]-0.005, E[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">E</Text>
+									</group>
+								);
+							})() : null;
+
 							// BACK + SIDES (קבועים)
 							const back = (
 								<mesh rotation={[0, -Math.PI / 2, 0]} position={[xBack + 0.0005, (yTop + yBottomBack)/2, 0]} receiveShadow>
@@ -759,7 +789,7 @@ function Staircase3D({
 								</mesh>
 							);
 
-							return <group>{frontLeft}{frontRight}{bottom}{back}{sideRight}{sideLeft}</group>;
+							return <group>{frontLeft}{frontRight}{bottom}{debugBottom}{back}{sideRight}{sideLeft}</group>;
 						})()
 					) : (
 						<mesh castShadow receiveShadow>
@@ -3314,7 +3344,7 @@ function LivePageInner() {
 									cableSpanMode={cableSpanMode}
 									stepCableSpanModes={stepCableSpanMode}
 									landingCableSpanModes={landingCableSpanMode}
-									treadThicknessOverride={box === 'thick' ? 0.11 : (box === 'wedge' || box === 'ridge') ? 0.11 : 0.07}
+									treadThicknessOverride={box === 'thick' ? 0.11 : (box === 'wedge' ? 0.11 : (box === 'ridge' ? 0.025 : 0.07))}
 									boxModel={box === 'wedge' ? 'wedge' : (box === 'ridge' ? 'ridge' : 'rect')}
 									wedgeFrontThicknessM={0.035}
 									ridgeFrontCenterThicknessM={0.09}

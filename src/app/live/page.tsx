@@ -686,18 +686,16 @@ function Staircase3D({
 								const B = [xFront, yBottomFrontEdge, zRight] as const;
 								const D = [xBack,  yBottomBack,       zLeft] as const;
 								const E = [xBack,  yBottomBack,       zRight] as const;
-								const geom = new BufferGeometry();
-								geom.setAttribute('position', new Float32BufferAttribute([
-									...A, ...B, ...D, ...E
-								], 3));
-								// משולשים לאורך עם אפקס בגב‑מרכז: A‑(D/E‑אמצע)‑B + שני משולשים אל הפינות האחוריות
-								// נפרק ל: A‑D‑mid, mid‑D‑E, mid‑E‑B (mid = מרכז בין D ל‑E)
-								const mid = [(D[0]+E[0])/2, (D[1]+E[1])/2, (D[2]+E[2])/2] as const;
-								// נצטרך לבנות מערך עמדות חדש עם mid
+								const mid = [(D[0]+E[0])/2, (D[1]+E[1])/2, (D[2]+E[2])/2] as const; // M – מרכז הגב
+
+								// שלושה משולשים: A‑D‑M, A‑M‑B, B‑M‑E
 								const pos = new Float32Array([
+									// A-D-M
 									...A, ...D, ...mid,
-									...mid, ...D, ...E,
-									...mid, ...E, ...B,
+									// A-M-B
+									...A, ...mid, ...B,
+									// B-M-E
+									...B, ...mid, ...E,
 								]);
 								const g2 = new BufferGeometry();
 								g2.setAttribute('position', new Float32BufferAttribute(pos, 3));
@@ -708,9 +706,12 @@ function Staircase3D({
 								const uE = 1, vE = 1;
 								const uM = 1, vM = 0.5;
 								const uv = new Float32Array([
+									// A-D-M
 									uA,vA, uD,vD, uM,vM,
-									uM,vM, uD,vD, uE,vE,
-									uM,vM, uE,vE, uB,vB,
+									// A-M-B
+									uA,vA, uM,vM, uB,vB,
+									// B-M-E
+									uB,vB, uM,vM, uE,vE,
 								]);
 								g2.setAttribute('uv', new Float32BufferAttribute(uv, 2));
 								g2.computeVertexNormals();

@@ -133,8 +133,8 @@ function Staircase3D({
 	boxModel = 'rect',
 	wedgeFrontFraction,
 	wedgeFrontThicknessM,
-	shadowGapHeightM,
-	waterfallDropM,
+	ridgeFrontCenterThicknessM,
+	ridgeFrontEdgeThicknessM,
 	pathSegments,
 	glassTone,
 	stepRailingStates,
@@ -165,11 +165,11 @@ function Staircase3D({
 	uvInset?: number;
 	railingUvInset?: number;
 	treadThicknessOverride?: number;
-	boxModel?: 'rect' | 'wedge';
+	boxModel?: 'rect' | 'wedge' | 'ridge';
 	wedgeFrontFraction?: number;
 	wedgeFrontThicknessM?: number;
-	shadowGapHeightM?: number;
-	waterfallDropM?: number;
+	ridgeFrontCenterThicknessM?: number;
+	ridgeFrontEdgeThicknessM?: number;
 	pathSegments?: PathSegment[] | null;
 	glassTone?: 'extra' | 'smoked' | 'bronze';
 	stepRailingStates?: boolean[];
@@ -650,6 +650,133 @@ function Staircase3D({
 							);
 							return <group>{front}{back}{right}{left}{bottom}</group>;
 						})()
+					) : boxModel === 'ridge' ? (
+						(() => {
+							// אלכסוני עם רכס מרכזי: חזית גבוהה במרכז (ridge) ונמוכה באגפים.
+							const topY = treadThickness / 2;
+							const backTh = treadThickness;
+							const frontCenterTh = Math.max(0.01, Math.min(treadThickness - 0.005, typeof ridgeFrontCenterThicknessM === 'number' ? ridgeFrontCenterThicknessM : 0.09));
+							const frontEdgeTh = Math.max(0.005, Math.min(frontCenterTh - 0.005, typeof ridgeFrontEdgeThicknessM === 'number' ? ridgeFrontEdgeThicknessM : 0.03));
+							const seam = 0.001;
+							const xBack = t.run / 2;
+							const xFront = -t.run / 2;
+							const zLeft = -treadWidth / 2 - seam;
+							const zRight = treadWidth / 2 + seam;
+							const yTop = topY;
+							const yBottomBack = yTop - backTh - seam;
+							const yBottomFrontCenter = yTop - frontCenterTh - seam;
+							const yBottomFrontEdge = yTop - frontEdgeTh - seam;
+
+							const faceMat = (dimU: number, dimV: number) => {
+								if (useSolidMat) return <meshBasicMaterial color={solidSideColor} side={2} />;
+								const ft = buildFaceTextures(dimU, dimV);
+								return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />;
+							};
+
+							// FRONT split לשתי מחציות (שמאל/ימין) בגלל גבהים שונים בקצה החזית
+							const frontLeft = (() => {
+								const geom = new BufferGeometry();
+								geom.setAttribute('position', new Float32BufferAttribute([
+									xFront, yBottomFrontEdge, 0,      // מרכז‑שמאל יתאחה עם המרכז
+									xFront, yBottomFrontEdge, zLeft,
+									xFront, yTop, 0,
+									xFront, yTop, zLeft,
+								], 3));
+								geom.setIndex([0,1,2,2,1,3]);
+								geom.setAttribute('uv', new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2));
+								geom.computeVertexNormals();
+								return (
+									<mesh rotation={[0, Math.PI / 2, 0]} position={[-0.0005,0,0]} geometry={geom}>
+										{faceMat(treadWidth/2, frontEdgeTh)}
+									</mesh>
+								);
+							})();
+							const frontRight = (() => {
+								const geom = new BufferGeometry();
+								geom.setAttribute('position', new Float32BufferAttribute([
+									xFront, yBottomFrontEdge, zRight,
+									xFront, yBottomFrontEdge, 0,
+									xFront, yTop, zRight,
+									xFront, yTop, 0,
+								], 3));
+								geom.setIndex([0,1,2,2,1,3]);
+								geom.setAttribute('uv', new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2));
+								geom.computeVertexNormals();
+								return (
+									<mesh rotation={[0, Math.PI / 2, 0]} position={[-0.0005,0,0]} geometry={geom}>
+										{faceMat(treadWidth/2, frontEdgeTh)}
+									</mesh>
+								);
+							})();
+
+							// BOTTOM split לשמאל/ימין – החזית גבוהה יותר במרכז
+							const bottomLeft = (() => {
+								const geom = new BufferGeometry();
+								geom.setAttribute('position', new Float32BufferAttribute([
+									xFront, yBottomFrontEdge, 0,
+									xBack,  yBottomBack,      0,
+									xFront, yBottomFrontEdge, zLeft,
+									xBack,  yBottomBack,      zLeft,
+								], 3));
+								geom.setIndex([0,1,2,2,1,3]);
+								geom.setAttribute('uv', new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2));
+								geom.computeVertexNormals();
+								return <mesh geometry={geom}>{faceMat(t.run, (frontEdgeTh+backTh)/2)}</mesh>;
+							})();
+							const bottomRight = (() => {
+								const geom = new BufferGeometry();
+								geom.setAttribute('position', new Float32BufferAttribute([
+									xFront, yBottomFrontEdge, zRight,
+									xBack,  yBottomBack,      zRight,
+									xFront, yBottomFrontEdge, 0,
+									xBack,  yBottomBack,      0,
+								], 3));
+								geom.setIndex([0,1,2,2,1,3]);
+								geom.setAttribute('uv', new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2));
+								geom.computeVertexNormals();
+								return <mesh geometry={geom}>{faceMat(t.run, (frontEdgeTh+backTh)/2)}</mesh>;
+							})();
+
+							// RIDGE central “web” משולש קדמי‑מרכז (לייצר הפרש גובה), נייצר פס צר במרכז
+							const ridge = (() => {
+								const width = Math.min(0.06, treadWidth * 0.08);
+								const z0 = -width/2;
+								const z1 = width/2;
+								const geom = new BufferGeometry();
+								geom.setAttribute('position', new Float32BufferAttribute([
+									xFront, yBottomFrontCenter, z0,
+									xBack,  yBottomBack,        z0,
+									xFront, yBottomFrontCenter, z1,
+									xBack,  yBottomBack,        z1,
+								], 3));
+								geom.setIndex([0,1,2,2,1,3]);
+								geom.setAttribute('uv', new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2));
+								geom.computeVertexNormals();
+								return <mesh geometry={geom}>{faceMat(t.run, (frontCenterTh+backTh)/2)}</mesh>;
+							})();
+
+							// BACK + SIDES (קבועים)
+							const back = (
+								<mesh rotation={[0, -Math.PI / 2, 0]} position={[xBack + 0.0005, (yTop + yBottomBack)/2, 0]} receiveShadow>
+									<planeGeometry args={[treadWidth + seam * 2, backTh + seam * 2, 8, 2]} />
+									{faceMat(treadWidth, backTh)}
+								</mesh>
+							);
+							const sideRight = (
+								<mesh rotation={[0, 0, 0]} position={[0, 0, zRight]} receiveShadow>
+									<planeGeometry args={[t.run, backTh, 8, 2]} />
+									{faceMat(t.run, backTh)}
+								</mesh>
+							);
+							const sideLeft = (
+								<mesh rotation={[0, Math.PI, 0]} position={[0, 0, zLeft]} receiveShadow>
+									<planeGeometry args={[t.run, backTh, 8, 2]} />
+									{faceMat(t.run, backTh)}
+								</mesh>
+							);
+
+							return <group>{frontLeft}{frontRight}{bottomLeft}{bottomRight}{ridge}{back}{sideRight}{sideLeft}</group>;
+						})()
 					) : (
 						<mesh castShadow receiveShadow>
 							<boxGeometry args={[t.run, treadThickness, treadWidth]} />
@@ -664,7 +791,7 @@ function Staircase3D({
 					{/* שכבת פני השטח עם תבליט אמיתי לעץ; למתכת/אבן – כיסוי מרקם */}
 					<mesh
 						rotation={[-Math.PI / 2, 0, 0]}
-						position={[0, (boxModel === 'wedge' ? (treadThickness / 2 + 0.0005) : (treadThickness / 2 + 0.002)), 0]}
+						position={[0, (boxModel !== 'rect' ? (treadThickness / 2 + 0.0005) : (treadThickness / 2 + 0.002)), 0]}
 						castShadow={materialKind !== 'metal'}
 						receiveShadow={materialKind !== 'metal'}
 					>
@@ -693,45 +820,10 @@ function Staircase3D({
 						)}
 					</mesh>
 
-					{/* Shadow-Gap: פס צל דק מתחת לחזית הקדמית */}
-					{boxModel === 'rect' && typeof shadowGapHeightM === 'number' && shadowGapHeightM > 0 && (
-						(() => {
-							const gap = Math.max(0.003, Math.min(0.02, shadowGapHeightM));
-							// בחזית של המדרך (צד +X), מוציאים מעט החוצה למנוע z-fighting
-							const xFront = t.run / 2 + 0.002;
-							const yTop = treadThickness / 2;
-							return (
-								<mesh rotation={[0, Math.PI / 2, 0]} position={[xFront, yTop - gap / 2 - 0.0025, 0]}>
-									<planeGeometry args={[treadWidth * 0.98, gap, 1, 1]} />
-									<meshBasicMaterial color="#0a0a0a" />
-								</mesh>
-							);
-						})()
-					)}
-
-					{/* Waterfall: ירידה אנכית של החיפוי בחזית */}
-					{boxModel === 'rect' && typeof waterfallDropM === 'number' && waterfallDropM > 0 && (
-						(() => {
-							const drop = Math.max(0.01, Math.min(0.08, waterfallDropM));
-							// חזית קדמית בצד +X, הסט החוצה מעט
-							const xFront = t.run / 2 + 0.002;
-							const yTop = treadThickness / 2;
-							const ft = buildFaceTextures(treadWidth, drop);
-							return (
-								<mesh rotation={[0, Math.PI / 2, 0]} position={[xFront, yTop - drop / 2, 0]}>
-									<planeGeometry args={[treadWidth, drop, 4, 2]} />
-									{useSolidMat ? (
-										<meshBasicMaterial color={solidTopColor} side={2} />
-									) : (
-										<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />
-									)}
-								</mesh>
-							);
-						})()
-					)}
+					{/* דגמי קו צל/חזית נופלת הוסרו */}
 
 					{/* BOTTOM face */}
-					{boxModel !== 'wedge' && (
+					{boxModel === 'rect' && (
 						<mesh rotation={[Math.PI / 2, 0, 0]} position={[0, -treadThickness / 2 - 0.0005, 0]} receiveShadow>
 							<planeGeometry args={[t.run, treadWidth, 8, 8]} />
 							{(() => {
@@ -745,7 +837,7 @@ function Staircase3D({
 					)}
 
 					{/* FRONT (+X) */}
-					{boxModel !== 'wedge' && (
+					{boxModel === 'rect' && (
 						<mesh rotation={[0, Math.PI / 2, 0]} position={[t.run / 2 + 0.0005, 0, 0]} receiveShadow>
 							<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
 							{(() => {
@@ -759,7 +851,7 @@ function Staircase3D({
 					)}
 
 					{/* BACK (-X) */}
-					{boxModel !== 'wedge' && (
+					{boxModel === 'rect' && (
 						<mesh rotation={[0, -Math.PI / 2, 0]} position={[-t.run / 2 - 0.0005, 0, 0]} receiveShadow>
 							<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
 							{(() => {
@@ -773,7 +865,7 @@ function Staircase3D({
 					)}
 
 					{/* RIGHT (+Z) */}
-					{boxModel !== 'wedge' && (
+					{boxModel === 'rect' && (
 						<mesh rotation={[0, 0, 0]} position={[0, 0, treadWidth / 2 + 0.0005]} receiveShadow>
 							<planeGeometry args={[t.run, treadThickness, 8, 8]} />
 							{(() => {
@@ -787,7 +879,7 @@ function Staircase3D({
 					)}
 
 					{/* LEFT (-Z) */}
-					{boxModel !== 'wedge' && (
+					{boxModel === 'rect' && (
 						<mesh rotation={[0, Math.PI, 0]} position={[0, 0, -treadWidth / 2 - 0.0005]} receiveShadow>
 							<planeGeometry args={[t.run, treadThickness, 8, 8]} />
 							{(() => {
@@ -2000,7 +2092,7 @@ function LivePageInner() {
 	const qShape = (search.get('shape') as 'straight' | 'L' | 'U') || 'straight';
 	const qSteps = parseInt(search.get('steps') || '', 10);
 	const qTex = search.get('tex') || '';
-	const qBox = (search.get('box') as 'thick' | 'thin' | 'wedge' | 'shadow' | 'waterfall') || 'thick';
+	const qBox = (search.get('box') as 'thick' | 'thin' | 'wedge' | 'ridge') || 'thick';
 	const qPath = search.get('path') || '';
 
 	const [records, setRecords] = React.useState<MaterialRecord[]>([]);
@@ -2011,7 +2103,7 @@ function LivePageInner() {
 	// מזהים ייעודיים לכל קטגוריה כדי לשמר בחירה בין מעברים
 	const [activeMetalTexId, setActiveMetalTexId] = React.useState<string | null>(activeMaterial === 'metal' ? (qTex || null) : null);
 	const [activeStoneTexId, setActiveStoneTexId] = React.useState<string | null>(activeMaterial === 'stone' ? (qTex || null) : null);
-	const [box, setBox] = React.useState<'thick' | 'thin' | 'wedge' | 'shadow' | 'waterfall'>(qBox);
+	const [box, setBox] = React.useState<'thick' | 'thin' | 'wedge' | 'ridge'>(qBox);
 	const [railing, setRailing] = React.useState<'none' | 'glass' | 'metal' | 'cable'>('none');
 	const [glassTone, setGlassTone] = React.useState<'extra' | 'smoked' | 'bronze'>('extra');
 	const [stepRailing, setStepRailing] = React.useState<boolean[]>([]);
@@ -2798,9 +2890,7 @@ function LivePageInner() {
 			? 'תיבה דקה‑דופן'
 			: box === 'wedge'
 			? 'דגם אלכסוני'
-			: box === 'shadow'
-			? 'דגם קו צל'
-			: 'דגם חזית נופלת';
+			: 'דגם רכס מרכזי';
 		const totalText = `₪${total.toLocaleString('he-IL')}`;
 		// הכרחת כיוון LTR עבור ה‑URL באמצעות LRI/PDI (איסולציה) למניעת שבירה RTL
 		const ltrUrl = `\u2066${shareUrl}\u2069`;
@@ -2890,9 +2980,7 @@ function LivePageInner() {
 			? 'תיבה דקה‑דופן'
 			: box === 'wedge'
 			? 'דגם אלכסוני'
-			: box === 'shadow'
-			? 'דגם קו צל'
-			: 'דגם חזית נופלת';
+			: 'דגם רכס מרכזי';
 		const totalText = `₪${total.toLocaleString('he-IL')}`;
 		const leadId = generateLeadId();
 		const timeLabel = preferredTime || '-';
@@ -3020,13 +3108,12 @@ function LivePageInner() {
 												{ id: 'thick', label: 'תיבה עבה‑דופן' as const },
 												{ id: 'thin', label: 'תיבה דקה‑דופן' as const },
 												{ id: 'wedge', label: 'דגם אלכסוני' as const },
-												{ id: 'shadow', label: 'קו צל' as const },
-												{ id: 'waterfall', label: 'חזית נופלת' as const },
+												{ id: 'ridge', label: 'דגם רכס מרכזי' as const },
 											] as const).map(opt => (
 												<div key={opt.id} className="flex flex-col items-center">
 													<button
-														aria-label={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : opt.id === 'wedge' ? 'דגם אלכסוני' : opt.id === 'shadow' ? 'קו צל' : 'חזית נופלת'}
-														title={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : opt.id === 'wedge' ? 'דגם אלכסוני' : opt.id === 'shadow' ? 'קו צל' : 'חזית נופלת'}
+														aria-label={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : opt.id === 'wedge' ? 'דגם אלכסוני' : 'דגם רכס מרכזי'}
+														title={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : opt.id === 'wedge' ? 'דגם אלכסוני' : 'דגם רכס מרכזי'}
 														className={`w-[52px] h-[52px] inline-flex items-center justify-center bg-transparent border-0 ${box === opt.id ? 'text-[#1a1a2e]' : 'text-gray-500 hover:text-gray-700'}`}
 														onClick={() => setBox(opt.id)}
 													>
@@ -3053,21 +3140,18 @@ function LivePageInner() {
 																	strokeWidth="2"
 																/>
 															</svg>
-														) : opt.id === 'shadow' ? (
-															<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
-																<rect x="6" y="16" width="40" height="20" fill="none" stroke="currentColor" strokeWidth="2" />
-																<rect x="6" y="34" width="40" height="4" fill={box === opt.id ? '#111' : '#888'} />
-															</svg>
 														) : (
 															<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
-																<rect x="6" y="12" width="40" height="16" fill="none" stroke="currentColor" strokeWidth="2" />
-																<rect x="6" y="28" width="40" height="10" fill={box === opt.id ? '#B08968' : '#c0c0c0'} />
+																{/* מלבן עם "רכס" אלכסוני באמצע */}
+																<rect x="1" y="16" width="50" height="20" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
+																<rect x="1" y="16" width="50" height="20" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
+																<path d="M2 26 L26 18 L50 26" stroke="currentColor" strokeWidth="2" fill="none" />
 															</svg>
 														)}
 														<span className="sr-only">{opt.label}</span>
 													</button>
 													<span className="mt-1 text-xs text-gray-600">
-														{opt.id === 'thick' ? 'עבה' : opt.id === 'thin' ? 'דק' : opt.id === 'wedge' ? 'אלכסוני' : opt.id === 'shadow' ? 'קו צל' : 'חזית נופלת'}
+														{opt.id === 'thick' ? 'עבה' : opt.id === 'thin' ? 'דק' : opt.id === 'wedge' ? 'אלכסוני' : 'רכס'}
 													</span>
 												</div>
 											))}
@@ -3246,11 +3330,11 @@ function LivePageInner() {
 									cableSpanMode={cableSpanMode}
 									stepCableSpanModes={stepCableSpanMode}
 									landingCableSpanModes={landingCableSpanMode}
-									treadThicknessOverride={box === 'thick' ? 0.11 : box === 'wedge' ? 0.11 : 0.07}
-									boxModel={box === 'wedge' ? 'wedge' : 'rect'}
+									treadThicknessOverride={box === 'thick' ? 0.11 : (box === 'wedge' || box === 'ridge') ? 0.11 : 0.07}
+									boxModel={box === 'wedge' ? 'wedge' : (box === 'ridge' ? 'ridge' : 'rect')}
 									wedgeFrontThicknessM={0.035}
-									shadowGapHeightM={box === 'shadow' ? 0.008 : undefined}
-									waterfallDropM={box === 'waterfall' ? 0.04 : undefined}
+									ridgeFrontCenterThicknessM={0.09}
+									ridgeFrontEdgeThicknessM={0.03}
 									pathSegments={pathSegments}
 									glassTone={glassTone}
 									stepRailingStates={stepRailing}
@@ -3893,7 +3977,7 @@ function LivePageInner() {
 											aria-expanded={mobileOpenCat === 'box'}
 										>
 											<span className="font-medium">דגם תיבה</span>
-											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : 'דגם אלכסוני'}</span>
+											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : box === 'wedge' ? 'דגם אלכסוני' : 'דגם רכס מרכזי'}</span>
 										</button>
 										)}
 										{mobileOpenCat === 'box' && (
@@ -4475,7 +4559,7 @@ function LivePageInner() {
 								aria-expanded={desktopOpenCat === 'box'}
 							>
 								<span className="text-sm font-medium">דגם תיבה</span>
-											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : 'דגם אלכסוני'}</span>
+											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : box === 'wedge' ? 'דגם אלכסוני' : 'דגם רכס מרכזי'}</span>
 							</button>
 							{desktopOpenCat === 'box' && (
 								<div className="p-3 bg-white border border-t-0 rounded-b-md">
@@ -5095,4 +5179,3 @@ class LiveErrorBoundary extends React.Component<{ children: React.ReactNode }, {
 		return this.props.children as any;
 	}
 }
-

@@ -673,11 +673,11 @@ function Staircase3D({
 								return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />;
 							};
 
-							// FRONT split לשתי מחציות (שמאל/ימין) בגלל גבהים שונים בקצה החזית
+							// FRONT split לשתי מחציות (שמאל/ימין) עם V במרכז: מרכז 90 מ״מ, אגפים 30 מ״מ
 							const frontLeft = (() => {
 								const geom = new BufferGeometry();
 								geom.setAttribute('position', new Float32BufferAttribute([
-									xFront, yBottomFrontEdge, 0,      // מרכז‑שמאל יתאחה עם המרכז
+									xFront, yBottomFrontCenter, 0,      // מרכז גבוה
 									xFront, yBottomFrontEdge, zLeft,
 									xFront, yTop, 0,
 									xFront, yTop, zLeft,
@@ -695,7 +695,7 @@ function Staircase3D({
 								const geom = new BufferGeometry();
 								geom.setAttribute('position', new Float32BufferAttribute([
 									xFront, yBottomFrontEdge, zRight,
-									xFront, yBottomFrontEdge, 0,
+									xFront, yBottomFrontCenter, 0,
 									xFront, yTop, zRight,
 									xFront, yTop, 0,
 								], 3));
@@ -709,11 +709,11 @@ function Staircase3D({
 								);
 							})();
 
-							// BOTTOM split לשמאל/ימין – החזית גבוהה יותר במרכז
+							// BOTTOM split לשמאל/ימין – החזית גבוהה יותר במרכז (V)
 							const bottomLeft = (() => {
 								const geom = new BufferGeometry();
 								geom.setAttribute('position', new Float32BufferAttribute([
-									xFront, yBottomFrontEdge, 0,
+									xFront, yBottomFrontCenter, 0,
 									xBack,  yBottomBack,      0,
 									xFront, yBottomFrontEdge, zLeft,
 									xBack,  yBottomBack,      zLeft,
@@ -728,7 +728,7 @@ function Staircase3D({
 								geom.setAttribute('position', new Float32BufferAttribute([
 									xFront, yBottomFrontEdge, zRight,
 									xBack,  yBottomBack,      zRight,
-									xFront, yBottomFrontEdge, 0,
+									xFront, yBottomFrontCenter, 0,
 									xBack,  yBottomBack,      0,
 								], 3));
 								geom.setIndex([0,1,2,2,1,3]);
@@ -736,24 +736,7 @@ function Staircase3D({
 								geom.computeVertexNormals();
 								return <mesh geometry={geom}>{faceMat(t.run, (frontEdgeTh+backTh)/2)}</mesh>;
 							})();
-
-							// RIDGE central “web” משולש קדמי‑מרכז (לייצר הפרש גובה), נייצר פס צר במרכז
-							const ridge = (() => {
-								const width = Math.min(0.06, treadWidth * 0.08);
-								const z0 = -width/2;
-								const z1 = width/2;
-								const geom = new BufferGeometry();
-								geom.setAttribute('position', new Float32BufferAttribute([
-									xFront, yBottomFrontCenter, z0,
-									xBack,  yBottomBack,        z0,
-									xFront, yBottomFrontCenter, z1,
-									xBack,  yBottomBack,        z1,
-								], 3));
-								geom.setIndex([0,1,2,2,1,3]);
-								geom.setAttribute('uv', new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2));
-								geom.computeVertexNormals();
-								return <mesh geometry={geom}>{faceMat(t.run, (frontCenterTh+backTh)/2)}</mesh>;
-							})();
+							// אין צורך ברצועת "רכס" נוספת – שני חצאי התחתית כבר נפגשים במרכז
 
 							// BACK + SIDES (קבועים)
 							const back = (
@@ -775,7 +758,7 @@ function Staircase3D({
 								</mesh>
 							);
 
-							return <group>{frontLeft}{frontRight}{bottomLeft}{bottomRight}{ridge}{back}{sideRight}{sideLeft}</group>;
+							return <group>{frontLeft}{frontRight}{bottomLeft}{bottomRight}{back}{sideRight}{sideLeft}</group>;
 						})()
 					) : (
 						<mesh castShadow receiveShadow>

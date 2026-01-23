@@ -652,11 +652,10 @@ function Staircase3D({
 						})()
 					) : boxModel === 'ridge' ? (
 						(() => {
-							// אלכסוני עם רכס מרכזי: חזית גבוהה במרכז (ridge) ונמוכה באגפים.
+							// אלכסוני עם רכס מרכזי: שני קווי שבירה לאורך מהמרכז בגב לשתי פינות החזית.
 							const topY = treadThickness / 2;
 							const backTh = treadThickness;
-							const frontCenterTh = Math.max(0.01, Math.min(treadThickness - 0.005, typeof ridgeFrontCenterThicknessM === 'number' ? ridgeFrontCenterThicknessM : 0.09));
-							const frontEdgeTh = Math.max(0.005, Math.min(frontCenterTh - 0.005, typeof ridgeFrontEdgeThicknessM === 'number' ? ridgeFrontEdgeThicknessM : 0.03));
+							const frontEdgeTh = backTh; // חזית אחידה (אין C)
 							const seam = 0.001;
 							const xBack = t.run / 2;
 							const xFront = -t.run / 2;
@@ -664,7 +663,6 @@ function Staircase3D({
 							const zRight = treadWidth / 2 + seam;
 							const yTop = topY;
 							const yBottomBack = yTop - backTh - seam;
-							const yBottomFrontCenter = yTop - frontCenterTh - seam;
 							const yBottomFrontEdge = yTop - frontEdgeTh - seam;
 
 							const faceMat = (dimU: number, dimV: number) => {
@@ -673,85 +671,68 @@ function Staircase3D({
 								return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />;
 							};
 
-							// FRONT split לשתי מחציות (שמאל/ימין) עם V במרכז: מרכז 90 מ״מ, אגפים 30 מ״מ
-							const frontLeft = (() => {
-								const geom = new BufferGeometry();
-								geom.setAttribute('position', new Float32BufferAttribute([
-									xFront, yBottomFrontCenter, 0,      // מרכז גבוה
-									xFront, yBottomFrontEdge, zLeft,
-									xFront, yTop, 0,
-									xFront, yTop, zLeft,
-								], 3));
-								geom.setIndex([0,1,2,2,1,3]);
-								geom.setAttribute('uv', new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2));
-								geom.computeVertexNormals();
-								return (
-									<mesh geometry={geom}>
-										{faceMat(treadWidth/2, frontEdgeTh)}
-									</mesh>
-								);
-							})();
-							const frontRight = (() => {
-								const geom = new BufferGeometry();
-								geom.setAttribute('position', new Float32BufferAttribute([
-									xFront, yBottomFrontEdge, zRight,
-									xFront, yBottomFrontCenter, 0,
-									xFront, yTop, zRight,
-									xFront, yTop, 0,
-								], 3));
-								geom.setIndex([0,1,2,2,1,3]);
-								geom.setAttribute('uv', new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2));
-								geom.computeVertexNormals();
-								return (
-									<mesh geometry={geom}>
-										{faceMat(treadWidth/2, frontEdgeTh)}
-									</mesh>
-								);
-							})();
+							// FRONT אחיד
+							const front = (
+								<mesh rotation={[0, Math.PI / 2, 0]} position={[xFront - 0.0005, (yTop + yBottomFrontEdge)/2, 0]} receiveShadow>
+									<planeGeometry args={[treadWidth + seam * 2, frontEdgeTh + seam * 2, 8, 2]} />
+									{faceMat(treadWidth, frontEdgeTh)}
+								</mesh>
+							);
 
 							// BOTTOM – שלושה משולשים לאורך: קווי שבירה ממרכז החזית אל שתי פינות הגב
 							const bottom = (() => {
-								// נקודות: A,B בחזית; C = מרכז חזית (גבוה); D,E בגב
+								// נקודות: A,B בחזית; D,E בגב; קווי שבירה יתחילו במרכז הגב (F) – מיוצג ע״י חלוקת D/E
 								const A = [xFront, yBottomFrontEdge, zLeft] as const;
 								const B = [xFront, yBottomFrontEdge, zRight] as const;
-								const C = [xFront, yBottomFrontCenter, 0] as const;
 								const D = [xBack,  yBottomBack,       zLeft] as const;
 								const E = [xBack,  yBottomBack,       zRight] as const;
 								const geom = new BufferGeometry();
 								geom.setAttribute('position', new Float32BufferAttribute([
-									...A, ...B, ...C, ...D, ...E
+									...A, ...B, ...D, ...E
 								], 3));
-								// משולשים לאורך: A-D-C, C-D-E, C-E-B
-								geom.setIndex([0,3,2, 2,3,4, 2,4,1]);
-								// UV: xFront→0, xBack→1; zLeft→0, zCenter→0.5, zRight→1
+								// משולשים לאורך עם אפקס בגב‑מרכז: A‑(D/E‑אמצע)‑B + שני משולשים אל הפינות האחוריות
+								// נפרק ל: A‑D‑mid, mid‑D‑E, mid‑E‑B (mid = מרכז בין D ל‑E)
+								const mid = [(D[0]+E[0])/2, (D[1]+E[1])/2, (D[2]+E[2])/2] as const;
+								// נצטרך לבנות מערך עמדות חדש עם mid
+								const pos = new Float32Array([
+									...A, ...D, ...mid,
+									...mid, ...D, ...E,
+									...mid, ...E, ...B,
+								]);
+								const g2 = new BufferGeometry();
+								g2.setAttribute('position', new Float32BufferAttribute(pos, 3));
+								// UV בקירוב
 								const uA = 0, vA = 0;
 								const uB = 0, vB = 1;
-								const uC = 0, vC = 0.5;
 								const uD = 1, vD = 0;
 								const uE = 1, vE = 1;
-								geom.setAttribute('uv', new Float32BufferAttribute([
-									uA, vA,  uB, vB,  uC, vC,  uD, vD,  uE, vE
-								], 2));
-								geom.computeVertexNormals();
-								return <mesh geometry={geom} receiveShadow>{faceMat(t.run, treadWidth)}</mesh>;
+								const uM = 1, vM = 0.5;
+								const uv = new Float32Array([
+									uA,vA, uD,vD, uM,vM,
+									uM,vM, uD,vD, uE,vE,
+									uM,vM, uE,vE, uB,vB,
+								]);
+								g2.setAttribute('uv', new Float32BufferAttribute(uv, 2));
+								g2.computeVertexNormals();
+								return <mesh geometry={g2} receiveShadow>{faceMat(t.run, treadWidth)}</mesh>;
 							})();
 							// אין צורך ברצועת "רכס" נוספת – שני חצאי התחתית כבר נפגשים במרכז
 
-							// DEBUG: קווי עזר ותוויות לקודקודים (A,B,C,D,E) של התחתית
+							// DEBUG: קווי עזר ותוויות לקודקודים (A,B,D,E,mid) של התחתית
 							const showDebug = true;
 							const debugBottom = showDebug ? (() => {
 								const A: [number, number, number] = [xFront, yBottomFrontEdge, zLeft];
 								const B: [number, number, number] = [xFront, yBottomFrontEdge, zRight];
-								const C: [number, number, number] = [xFront, yBottomFrontCenter, 0];
 								const D: [number, number, number] = [xBack,  yBottomBack,       zLeft];
 								const E: [number, number, number] = [xBack,  yBottomBack,       zRight];
+								const M: [number, number, number] = [(D[0]+E[0])/2, (D[1]+E[1])/2, (D[2]+E[2])/2];
 								const edges = new Float32Array([
-									// A-D, D-C, C-A
-									...A, ...D,  ...D, ...C,  ...C, ...A,
-									// C-D, D-E, E-C
-									...C, ...D,  ...D, ...E,  ...E, ...C,
-									// C-E, E-B, B-C
-									...C, ...E,  ...E, ...B,  ...B, ...C,
+									// A-M, M-D, D-A
+									...A, ...M,  ...M, ...D,  ...D, ...A,
+									// M-D, D-E, E-M
+									...M, ...D,  ...D, ...E,  ...E, ...M,
+									// M-E, E-B, B-M
+									...M, ...E,  ...E, ...B,  ...B, ...M,
 								]);
 								return (
 									<group>
@@ -763,9 +744,9 @@ function Staircase3D({
 										</lineSegments>
 										<Text position={[A[0], A[1]-0.005, A[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">A</Text>
 										<Text position={[B[0], B[1]-0.005, B[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">B</Text>
-										<Text position={[C[0], C[1]-0.005, C[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">C</Text>
 										<Text position={[D[0], D[1]-0.005, D[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">D</Text>
 										<Text position={[E[0], E[1]-0.005, E[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">E</Text>
+										<Text position={[M[0], M[1]-0.005, M[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">M</Text>
 									</group>
 								);
 							})() : null;
@@ -790,7 +771,7 @@ function Staircase3D({
 								</mesh>
 							);
 
-							return <group>{frontLeft}{frontRight}{bottom}{debugBottom}{back}{sideRight}{sideLeft}</group>;
+							return <group>{front}{bottom}{debugBottom}{back}{sideRight}{sideLeft}</group>;
 						})()
 					) : (
 						<mesh castShadow receiveShadow>

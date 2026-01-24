@@ -955,12 +955,9 @@ function Staircase3D({
 											const verticalWidth = 0.15; // 150 מ״מ
 											const frontEdgeX = (t.run / 2) + (verticalWidth / 2);
 											const vYCenter = (topYLocal - plateHeight) - (riser / 2); // ממורכז על הרום; החפיפה מגיעה מה-seam
-											// בפודסט: כוון את המחברים לפי כיוון המקטע הבא (יציאה מהפודסט)
-											const currYaw = t.rotation[1];
-											const nextYaw = (treads[idx + 1]?.rotation?.[1] ?? currYaw) as number;
-											const relYaw = t.isLanding ? (nextYaw - currYaw) : 0;
+											// עיגון קשיח לחזית – תמיד בולט החוצה; ללא סיבוב לפי פודסט
 											return (
-												<group rotation={[0, relYaw, 0]}>
+												<group>
 													<mesh position={[frontEdgeX, vYCenter, treadWidth / 2 + plateThickness / 2]} castShadow receiveShadow>
 														<boxGeometry args={[verticalWidth, verticalGap, plateThickness]} />
 														<meshBasicMaterial color={plateColor} />

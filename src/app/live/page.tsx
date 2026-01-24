@@ -746,7 +746,8 @@ function Staircase3D({
 										<Text position={[B[0], B[1]-0.005, B[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">B</Text>
 										<Text position={[D[0], D[1]-0.005, D[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">D</Text>
 										<Text position={[E[0], E[1]-0.005, E[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">E</Text>
-										<Text position={[M[0], M[1]-0.005, M[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">M</Text>
+										<Text position={[((A[0]+D[0])/2), ((A[1]+D[1])/2)-0.005, ((A[2]+D[2])/2)]} fontSize={0.035} color="#111111" anchorX="center" anchorY="top">1</Text>
+										<Text position={[((B[0]+E[0])/2), ((B[1]+E[1])/2)-0.005, ((B[2]+E[2])/2)]} fontSize={0.035} color="#111111" anchorX="center" anchorY="top">2</Text>
 									</group>
 								);
 							})() : null;

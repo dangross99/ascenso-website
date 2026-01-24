@@ -930,14 +930,15 @@ function Staircase3D({
 											const topYLocal = treadThickness / 2;
 											const frontEdgeX = xCenter + lengthX / 2;
 											const vYCenter = (topYLocal - plateHeight) - verticalGap / 2;
+											const verticalWidth = 0.13; // 130 מ״מ
 											return (
 												<group>
 													<mesh position={[frontEdgeX, vYCenter, treadWidth / 2 + plateThickness / 2]} castShadow receiveShadow>
-														<boxGeometry args={[plateThickness, verticalGap, plateThickness]} />
+														<boxGeometry args={[verticalWidth, verticalGap, plateThickness]} />
 														<meshBasicMaterial color={plateColor} />
 													</mesh>
 													<mesh position={[frontEdgeX, vYCenter, -treadWidth / 2 - plateThickness / 2]} castShadow receiveShadow>
-														<boxGeometry args={[plateThickness, verticalGap, plateThickness]} />
+														<boxGeometry args={[verticalWidth, verticalGap, plateThickness]} />
 														<meshBasicMaterial color={plateColor} />
 													</mesh>
 												</group>

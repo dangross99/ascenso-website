@@ -19,7 +19,7 @@ function CanvasLoadingOverlay() {
 		</div>
 	);
 }
-import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, BufferGeometry, Float32BufferAttribute, Cache, NoToneMapping } from 'three';
+import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, BufferGeometry, Float32BufferAttribute, Cache, NoToneMapping, Vector3 } from 'three';
 
 // הפעלת קאש של three עבור טעינות חלקות
 Cache.enabled = true;
@@ -910,12 +910,30 @@ function Staircase3D({
 								const yCenter = (treadThickness / 2) - (plateHeight / 2);
 								// הארכה קדימה לכיוון המדרגה הבאה: 140 מ״מ
 								const nextIsLanding = Boolean(treads[idx + 1]?.isLanding);
-								// פלטה תמיד בקצה הקדמי של המדרגה: אורך 300+150=450 מ״מ
-								// ההארכה (150 מ״מ) תמיד קדימה (כיוון ההתקדמות המקומי).
+								// פלטה תמיד בקצה הקדמי של המדרגה: אורך 300+150=450 מ״מ.
+								// נקבע את כיוון "קדימה" באופן חכם לפי המיקום של השלב הבא ביחס לכיוון המקומי.
 								// בפודסט עצמו אין הארכה.
-								const extendForward = t.isLanding ? 0 : 0.15;
-								const lengthX = t.run + extendForward;
-								const xCenter = t.isLanding ? 0 : (extendForward / 2);
+								let xCenter = 0;
+								const lengthX = t.isLanding ? t.run : (t.run + 0.15);
+								if (!t.isLanding) {
+									const yaw = t.rotation[1] as number;
+									const forwardWorld = new Vector3(1, 0, 0).applyAxisAngle(new Vector3(0, 1, 0), yaw);
+									const next = treads[idx + 1];
+									// ברירת מחדל: קדימה
+									let sign = 1;
+									if (next) {
+										const delta = new Vector3(
+											next.position[0] - t.position[0],
+											0,
+											next.position[2] - t.position[2],
+										);
+										// אם ה"ווקטור קדימה" והדלתא הבאה בניגוד סימן – נהפוך את הכיוון
+										if (delta.dot(forwardWorld) < 0) {
+											sign = -1;
+										}
+									}
+									xCenter = sign * (0.15 / 2);
+								}
 								const plateColor = '#2b2b2b';
 								return (
 									<group>

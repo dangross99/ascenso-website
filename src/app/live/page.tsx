@@ -937,13 +937,13 @@ function Staircase3D({
 											<boxGeometry args={[lengthX, plateHeight, plateThickness]} />
 											<meshBasicMaterial color={plateColor} />
 										</mesh>
-										{/* מחבר אנכי קדמי – מבוטל */}
-										{false && (() => {
+										{/* מחברים אנכיים בשני הצדדים – תמיד בקצה הקדמי של כל מדרגה (לא בפודסט) */}
+										{!t.isLanding && (() => {
 											const riser = 0.18;
 											const seam = 0.001;
 											const verticalGap = riser + seam * 2; // כיסוי מלא + חפיפה זעירה למניעת גאפ
 											const topYLocal = treadThickness / 2;
-											// למקם את המחבר כך שיתחיל בדיוק מקצה המדרגה (חזית) ויתארך קדימה
+											// למקם את המחבר כך שיישב בדיוק בקצה המדרגה (חזית)
 											const verticalWidth = 0.15; // 150 מ״מ
 											const frontEdgeX = (t.run / 2) + (verticalWidth / 2);
 											const vYCenter = (topYLocal - plateHeight) - (riser / 2); // ממורכז על הרום; החפיפה מגיעה מה-seam
@@ -961,29 +961,7 @@ function Staircase3D({
 											);
 										})()}
 
-										{/* מחברים אנכיים בשני הצדדים – תמיד בקצה האחורי של כל מדרגה */}
-										{!t.isLanding && (() => {
-											const riser = 0.18;
-											const seam = 0.001;
-											const verticalGap = riser + seam * 2;
-											const topYLocal = treadThickness / 2;
-											const verticalWidth = 0.15; // 150 מ״מ
-											// מאחורי המדרגה בציר המקומי (x=-run/2), שני הצדדים ב‑z
-											const backEdgeX = (-t.run / 2) + (verticalWidth / 2);
-											const vYCenter = (topYLocal - plateHeight) - (riser / 2);
-											return (
-												<group>
-													<mesh position={[backEdgeX, vYCenter, treadWidth / 2 + plateThickness / 2]} castShadow receiveShadow>
-														<boxGeometry args={[verticalWidth, verticalGap, plateThickness]} />
-														<meshBasicMaterial color={plateColor} />
-													</mesh>
-													<mesh position={[backEdgeX, vYCenter, -treadWidth / 2 - plateThickness / 2]} castShadow receiveShadow>
-														<boxGeometry args={[verticalWidth, verticalGap, plateThickness]} />
-														<meshBasicMaterial color={plateColor} />
-													</mesh>
-												</group>
-											);
-										})()}
+										{/* אין מחברים אחוריים */}
 
 										{/* מחברים דקים ליד פודסט – מבוטל */}
 									</group>

@@ -727,8 +727,8 @@ function Staircase3D({
 							})();
 							// אין צורך ברצועת "רכס" נוספת – שני חצאי התחתית כבר נפגשים במרכז
 
-							// DEBUG: קווי עזר ותוויות לקודקודים (A,B,D,E) בלבד + מספרים 1/2 במרכזי AD/BE (ללא קווים)
-							const showDebug = true;
+							// DEBUG: כבוי – ללא סימוני עזר
+							const showDebug = false;
 							const debugBottom = showDebug ? (() => {
 								const A: [number, number, number] = [xFront, yBottomFrontEdge, zLeft];
 								const B: [number, number, number] = [xFront, yBottomFrontEdge, zRight];

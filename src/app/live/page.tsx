@@ -910,9 +910,8 @@ function Staircase3D({
 								const yCenter = (treadThickness / 2) - (plateHeight / 2);
 								// הארכה קדימה לכיוון המדרגה הבאה: 140 מ״מ
 								const extendForward = 0.14;
-								// כדי ליצור חיבור רציף, נרחיב גם לאחור באותו ערך (ככה שתי פלטות שכנות חופפות ב‑140 מ״מ)
-								const lengthX = t.run + (t.isLanding ? 0 : extendForward * 2);
-								const xCenter = 0;
+								const lengthX = t.run + (t.isLanding ? 0 : extendForward);
+								const xCenter = (t.isLanding ? 0 : extendForward / 2);
 								const plateColor = '#2b2b2b';
 								return (
 									<group>

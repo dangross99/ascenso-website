@@ -151,6 +151,7 @@ function Staircase3D({
 	cableSpanMode,
 	stepCableSpanModes,
 	landingCableSpanModes,
+	withSidePlates,
 }: {
 	shape: 'straight' | 'L' | 'U';
 	steps: number;
@@ -186,6 +187,7 @@ function Staircase3D({
 	cableSpanMode?: 'floor' | 'tread';
 	stepCableSpanModes?: Array<'floor' | 'tread'>;
 	landingCableSpanModes?: Array<'floor' | 'tread'>;
+	withSidePlates?: boolean;
 }) {
 	// יחידות סצנה: מטרים בקירוב
 	const treadThickness = typeof treadThicknessOverride === 'number' ? treadThicknessOverride : 0.04;
@@ -896,6 +898,30 @@ function Staircase3D({
 								return (<meshBasicMaterial map={ft.color} />);
 							})()}
 						</mesh>
+					)}
+
+					{/* Side plates (optional) */}
+					{withSidePlates && (
+						<>
+							{(() => {
+								const plateThickness = 0.006;
+								const plateHeight = 0.20;
+								const yCenter = -treadThickness / 2 - plateHeight / 2;
+								const plateColor = '#2b2b2b';
+								return (
+									<group>
+										<mesh position={[0, yCenter, treadWidth / 2 + plateThickness / 2]} castShadow receiveShadow>
+											<boxGeometry args={[t.run, plateHeight, plateThickness]} />
+											<meshBasicMaterial color={plateColor} />
+										</mesh>
+										<mesh position={[0, yCenter, -treadWidth / 2 - plateThickness / 2]} castShadow receiveShadow>
+											<boxGeometry args={[t.run, plateHeight, plateThickness]} />
+											<meshBasicMaterial color={plateColor} />
+										</mesh>
+									</group>
+								);
+							})()}
+						</>
 					)}
 
 					{/* מעקה זכוכית פר-מדרגה מבוטל למען פאנל רציף */}
@@ -2098,7 +2124,7 @@ function LivePageInner() {
 	const qShape = (search.get('shape') as 'straight' | 'L' | 'U') || 'straight';
 	const qSteps = parseInt(search.get('steps') || '', 10);
 	const qTex = search.get('tex') || '';
-	const qBox = (search.get('box') as 'thick' | 'thin' | 'wedge' | 'ridge') || 'thick';
+	const qBox = (search.get('box') as 'thick' | 'thin' | 'wedge' | 'ridge' | 'plates') || 'thick';
 	const qPath = search.get('path') || '';
 
 	const [records, setRecords] = React.useState<MaterialRecord[]>([]);
@@ -2109,7 +2135,7 @@ function LivePageInner() {
 	// מזהים ייעודיים לכל קטגוריה כדי לשמר בחירה בין מעברים
 	const [activeMetalTexId, setActiveMetalTexId] = React.useState<string | null>(activeMaterial === 'metal' ? (qTex || null) : null);
 	const [activeStoneTexId, setActiveStoneTexId] = React.useState<string | null>(activeMaterial === 'stone' ? (qTex || null) : null);
-	const [box, setBox] = React.useState<'thick' | 'thin' | 'wedge' | 'ridge'>(qBox);
+	const [box, setBox] = React.useState<'thick' | 'thin' | 'wedge' | 'ridge' | 'plates'>(qBox);
 	const [railing, setRailing] = React.useState<'none' | 'glass' | 'metal' | 'cable'>('none');
 	const [glassTone, setGlassTone] = React.useState<'extra' | 'smoked' | 'bronze'>('extra');
 	const [stepRailing, setStepRailing] = React.useState<boolean[]>([]);
@@ -2896,7 +2922,9 @@ function LivePageInner() {
 			? 'תיבה דקה‑דופן'
 			: box === 'wedge'
 			? 'דגם אלכסוני'
-			: 'דגם רכס מרכזי';
+			: box === 'ridge'
+			? 'דגם רכס מרכזי'
+			: 'פלטות צד';
 		const totalText = `₪${total.toLocaleString('he-IL')}`;
 		// הכרחת כיוון LTR עבור ה‑URL באמצעות LRI/PDI (איסולציה) למניעת שבירה RTL
 		const ltrUrl = `\u2066${shareUrl}\u2069`;
@@ -2986,7 +3014,9 @@ function LivePageInner() {
 			? 'תיבה דקה‑דופן'
 			: box === 'wedge'
 			? 'דגם אלכסוני'
-			: 'דגם רכס מרכזי';
+			: box === 'ridge'
+			? 'דגם רכס מרכזי'
+			: 'פלטות צד';
 		const totalText = `₪${total.toLocaleString('he-IL')}`;
 		const leadId = generateLeadId();
 		const timeLabel = preferredTime || '-';
@@ -3115,11 +3145,12 @@ function LivePageInner() {
 												{ id: 'thin', label: 'תיבה דקה‑דופן' as const },
 												{ id: 'wedge', label: 'דגם אלכסוני' as const },
 												{ id: 'ridge', label: 'דגם רכס מרכזי' as const },
+												{ id: 'plates', label: 'פלטות צד' as const },
 											] as const).map(opt => (
 												<div key={opt.id} className="flex flex-col items-center">
 													<button
-														aria-label={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : opt.id === 'wedge' ? 'דגם אלכסוני' : 'דגם רכס מרכזי'}
-														title={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : opt.id === 'wedge' ? 'דגם אלכסוני' : 'דגם רכס מרכזי'}
+														aria-label={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : opt.id === 'wedge' ? 'דגם אלכסוני' : opt.id === 'ridge' ? 'דגם רכס מרכזי' : 'פלטות צד'}
+														title={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : opt.id === 'wedge' ? 'דגם אלכסוני' : opt.id === 'ridge' ? 'דגם רכס מרכזי' : 'פלטות צד'}
 														className={`w-[52px] h-[52px] inline-flex items-center justify-center bg-transparent border-0 ${box === opt.id ? 'text-[#1a1a2e]' : 'text-gray-500 hover:text-gray-700'}`}
 														onClick={() => setBox(opt.id)}
 													>
@@ -3146,18 +3177,25 @@ function LivePageInner() {
 																	strokeWidth="2"
 																/>
 															</svg>
-														) : (
+														) : opt.id === 'ridge' ? (
 															<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
 																{/* מלבן עם "רכס" אלכסוני באמצע */}
 																<rect x="1" y="16" width="50" height="20" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
 																<rect x="1" y="16" width="50" height="20" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
 																<path d="M2 26 L26 18 L50 26" stroke="currentColor" strokeWidth="2" fill="none" />
 															</svg>
+														) : (
+															<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
+																{/* פלטות צד – שני פסים אנכיים */}
+																<rect x="1" y="16" width="50" height="20" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
+																<rect x="3" y="16" width="4" height="20" fill="currentColor" />
+																<rect x="45" y="16" width="4" height="20" fill="currentColor" />
+															</svg>
 														)}
 														<span className="sr-only">{opt.label}</span>
 													</button>
 													<span className="mt-1 text-xs text-gray-600">
-														{opt.id === 'thick' ? 'עבה' : opt.id === 'thin' ? 'דק' : opt.id === 'wedge' ? 'אלכסוני' : 'רכס'}
+														{opt.id === 'thick' ? 'עבה' : opt.id === 'thin' ? 'דק' : opt.id === 'wedge' ? 'אלכסוני' : opt.id === 'ridge' ? 'רכס' : 'פלטות'}
 													</span>
 												</div>
 											))}
@@ -3338,6 +3376,7 @@ function LivePageInner() {
 									landingCableSpanModes={landingCableSpanMode}
 									treadThicknessOverride={box === 'thick' ? 0.11 : (box === 'wedge' ? 0.11 : (box === 'ridge' ? 0.02 : 0.07))}
 									boxModel={box === 'wedge' ? 'wedge' : (box === 'ridge' ? 'ridge' : 'rect')}
+									withSidePlates={box === 'plates'}
 									wedgeFrontThicknessM={0.035}
 									ridgeFrontCenterThicknessM={0.09}
 									ridgeFrontEdgeThicknessM={0.03}
@@ -3983,7 +4022,7 @@ function LivePageInner() {
 											aria-expanded={mobileOpenCat === 'box'}
 										>
 											<span className="font-medium">דגם תיבה</span>
-											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : box === 'wedge' ? 'דגם אלכסוני' : 'דגם רכס מרכזי'}</span>
+											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : box === 'wedge' ? 'דגם אלכסוני' : box === 'ridge' ? 'דגם רכס מרכזי' : 'פלטות צד'}</span>
 										</button>
 										)}
 										{mobileOpenCat === 'box' && (
@@ -4565,7 +4604,7 @@ function LivePageInner() {
 								aria-expanded={desktopOpenCat === 'box'}
 							>
 								<span className="text-sm font-medium">דגם תיבה</span>
-											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : box === 'wedge' ? 'דגם אלכסוני' : 'דגם רכס מרכזי'}</span>
+											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : box === 'wedge' ? 'דגם אלכסוני' : box === 'ridge' ? 'דגם רכס מרכזי' : 'פלטות צד'}</span>
 							</button>
 							{desktopOpenCat === 'box' && (
 								<div className="p-3 bg-white border border-t-0 rounded-b-md">

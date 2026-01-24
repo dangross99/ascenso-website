@@ -937,8 +937,8 @@ function Staircase3D({
 											<boxGeometry args={[lengthX, plateHeight, plateThickness]} />
 											<meshBasicMaterial color={plateColor} />
 										</mesh>
-										{/* מחבר אנכי בקצה הקדמי רק אם המדרגה הבאה אינה פודסט */}
-										{!t.isLanding && !nextIsLanding && !Boolean(treads[idx - 1]?.isLanding) && (() => {
+										{/* מחבר אנכי קדמי – מבוטל */}
+										{false && (() => {
 											const riser = 0.18;
 											const seam = 0.001;
 											const verticalGap = riser + seam * 2; // כיסוי מלא + חפיפה זעירה למניעת גאפ
@@ -961,10 +961,30 @@ function Staircase3D({
 											);
 										})()}
 
-										{/* מחבר דק לצד פודסט – מבוטל לפי בקשה */}
+										{/* מחברים אנכיים בשני הצדדים – תמיד בקצה האחורי של כל מדרגה */}
+										{!t.isLanding && (() => {
+											const riser = 0.18;
+											const seam = 0.001;
+											const verticalGap = riser + seam * 2;
+											const topYLocal = treadThickness / 2;
+											const verticalWidth = 0.15; // 150 מ״מ אחורי
+											const backEdgeX = (-t.run / 2) + (verticalWidth / 2);
+											const vYCenter = (topYLocal - plateHeight) - (riser / 2);
+											return (
+												<group>
+													<mesh position={[backEdgeX, vYCenter, treadWidth / 2 + plateThickness / 2]} castShadow receiveShadow>
+														<boxGeometry args={[verticalWidth, verticalGap, plateThickness]} />
+														<meshBasicMaterial color={plateColor} />
+													</mesh>
+													<mesh position={[backEdgeX, vYCenter, -treadWidth / 2 - plateThickness / 2]} castShadow receiveShadow>
+														<boxGeometry args={[verticalWidth, verticalGap, plateThickness]} />
+														<meshBasicMaterial color={plateColor} />
+													</mesh>
+												</group>
+											);
+										})()}
 
-										{/* מחבר אנכי בקצה האחורי אם לפניי יש פודסט – ברוחב עובי החומר ובצד הפודסט בלבד */}
-										{/* מבוטל */}
+										{/* מחברים דקים ליד פודסט – מבוטל */}
 									</group>
 								);
 							})()}

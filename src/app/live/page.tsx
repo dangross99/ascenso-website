@@ -681,21 +681,25 @@ function Staircase3D({
 
 							// BOTTOM – שלושה משולשים לאורך: קווי שבירה ממרכז החזית אל שתי פינות הגב
 							const bottom = (() => {
-								// נקודות: A,B בחזית; D,E בגב; קווי שבירה יתחילו במרכז הגב (F) – מיוצג ע״י חלוקת D/E
+								// נקודות: A,B בחזית; D,E בגב; נקודה 1 = אמצע AD אך בעומק 90 מ״מ מהטופ
 								const A = [xFront, yBottomFrontEdge, zLeft] as const;
 								const B = [xFront, yBottomFrontEdge, zRight] as const;
 								const D = [xBack,  yBottomBack,       zLeft] as const;
 								const E = [xBack,  yBottomBack,       zRight] as const;
-								const mid = [(D[0]+E[0])/2, (D[1]+E[1])/2, (D[2]+E[2])/2] as const; // M – מרכז הגב
+								// 1: אמצע AD במישור XZ, אך עם עומק 90 מ״מ מהטופ
+								const oneX = (A[0] + D[0]) / 2;
+								const oneZ = (A[2] + D[2]) / 2;
+								const oneY = yTop - 0.09 - seam;
+								const one = [oneX, oneY, oneZ] as const;
 
-								// שלושה משולשים: A‑D‑M, A‑M‑B, B‑M‑E
+								// שלושה משולשים: A‑D‑1, A‑1‑B, B‑1‑E
 								const pos = new Float32Array([
-									// A-D-M
-									...A, ...D, ...mid,
-									// A-M-B
-									...A, ...mid, ...B,
-									// B-M-E
-									...B, ...mid, ...E,
+									// A-D-1
+									...A, ...D, ...one,
+									// A-1-B
+									...A, ...one, ...B,
+									// B-1-E
+									...B, ...one, ...E,
 								]);
 								const g2 = new BufferGeometry();
 								g2.setAttribute('position', new Float32BufferAttribute(pos, 3));
@@ -704,14 +708,14 @@ function Staircase3D({
 								const uB = 0, vB = 1;
 								const uD = 1, vD = 0;
 								const uE = 1, vE = 1;
-								const uM = 1, vM = 0.5;
+								const u1 = 0.5, v1 = 0.5;
 								const uv = new Float32Array([
-									// A-D-M
-									uA,vA, uD,vD, uM,vM,
-									// A-M-B
-									uA,vA, uM,vM, uB,vB,
-									// B-M-E
-									uB,vB, uM,vM, uE,vE,
+									// A-D-1
+									uA,vA, uD,vD, u1,v1,
+									// A-1-B
+									uA,vA, u1,v1, uB,vB,
+									// B-1-E
+									uB,vB, u1,v1, uE,vE,
 								]);
 								g2.setAttribute('uv', new Float32BufferAttribute(uv, 2));
 								g2.computeVertexNormals();
@@ -726,12 +730,14 @@ function Staircase3D({
 								const B: [number, number, number] = [xFront, yBottomFrontEdge, zRight];
 								const D: [number, number, number] = [xBack,  yBottomBack,       zLeft];
 								const E: [number, number, number] = [xBack,  yBottomBack,       zRight];
-								const midAD: [number, number, number] = [(A[0]+D[0])/2, (A[1]+D[1])/2, (A[2]+D[2])/2];
+								const midADflat: [number, number, number] = [(A[0]+D[0])/2, (A[1]+D[1])/2, (A[2]+D[2])/2];
 								const midBE: [number, number, number] = [(B[0]+E[0])/2, (B[1]+E[1])/2, (B[2]+E[2])/2];
+								// נקודה 1 (עמוקה): אותה מיקום XZ כמו midAD, אך בעומק 90 מ״מ מהטופ
+								const one: [number, number, number] = [midADflat[0], (yTop - 0.09 - 0.001), midADflat[2]];
 								// קווים מבוקשים: E→(1=midAD) וגם B→(1=midAD)
 								const edgesToOne = new Float32Array([
-									...E, ...midAD,
-									...B, ...midAD,
+									...E, ...one,
+									...B, ...one,
 								]);
 								return (
 									<group>
@@ -745,7 +751,7 @@ function Staircase3D({
 										<Text position={[B[0], B[1]-0.005, B[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">B</Text>
 										<Text position={[D[0], D[1]-0.005, D[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">D</Text>
 										<Text position={[E[0], E[1]-0.005, E[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">E</Text>
-										<Text position={[midAD[0], midAD[1]-0.005, midAD[2]]} fontSize={0.035} color="#111111" anchorX="center" anchorY="top">1</Text>
+										<Text position={[one[0], one[1]-0.005, one[2]]} fontSize={0.035} color="#111111" anchorX="center" anchorY="top">1</Text>
 										<Text position={[midBE[0], midBE[1]-0.005, midBE[2]]} fontSize={0.035} color="#111111" anchorX="center" anchorY="top">2</Text>
 									</group>
 								);

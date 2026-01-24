@@ -905,18 +905,22 @@ function Staircase3D({
 						<>
 							{(() => {
 								const plateThickness = 0.006;
-								const plateHeight = 0.26;
-								// הפלטה מתחילה מגג המדרך (top) ויורדת 200 מ״מ
+								const plateHeight = 0.13; // 130 מ״מ
+								// הפלטה מתחילה מגג המדרך (top) ויורדת 130 מ״מ
 								const yCenter = (treadThickness / 2) - (plateHeight / 2);
+								// הארכה קדימה לכיוון המדרגה הבאה: 140 מ״מ
+								const extendForward = 0.14;
+								const lengthX = t.run + (t.isLanding ? 0 : extendForward);
+								const xCenter = (t.isLanding ? 0 : extendForward / 2);
 								const plateColor = '#2b2b2b';
 								return (
 									<group>
-										<mesh position={[0, yCenter, treadWidth / 2 + plateThickness / 2]} castShadow receiveShadow>
-											<boxGeometry args={[t.run, plateHeight, plateThickness]} />
+										<mesh position={[xCenter, yCenter, treadWidth / 2 + plateThickness / 2]} castShadow receiveShadow>
+											<boxGeometry args={[lengthX, plateHeight, plateThickness]} />
 											<meshBasicMaterial color={plateColor} />
 										</mesh>
-										<mesh position={[0, yCenter, -treadWidth / 2 - plateThickness / 2]} castShadow receiveShadow>
-											<boxGeometry args={[t.run, plateHeight, plateThickness]} />
+										<mesh position={[xCenter, yCenter, -treadWidth / 2 - plateThickness / 2]} castShadow receiveShadow>
+											<boxGeometry args={[lengthX, plateHeight, plateThickness]} />
 											<meshBasicMaterial color={plateColor} />
 										</mesh>
 									</group>

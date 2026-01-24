@@ -906,7 +906,8 @@ function Staircase3D({
 							{(() => {
 								const plateThickness = 0.006;
 								const plateHeight = 0.20;
-								const yCenter = -treadThickness / 2 - plateHeight / 2;
+								// הפלטה מתחילה מגג המדרך (top) ויורדת 200 מ״מ
+								const yCenter = (treadThickness / 2) - (plateHeight / 2);
 								const plateColor = '#2b2b2b';
 								return (
 									<group>
@@ -3374,7 +3375,7 @@ function LivePageInner() {
 									cableSpanMode={cableSpanMode}
 									stepCableSpanModes={stepCableSpanMode}
 									landingCableSpanModes={landingCableSpanMode}
-									treadThicknessOverride={box === 'thick' ? 0.11 : (box === 'wedge' ? 0.11 : (box === 'ridge' ? 0.02 : 0.07))}
+									treadThicknessOverride={box === 'thick' ? 0.11 : (box === 'wedge' ? 0.11 : (box === 'ridge' ? 0.02 : (box === 'plates' ? 0.08 : 0.07)))}
 									boxModel={box === 'wedge' ? 'wedge' : (box === 'ridge' ? 'ridge' : 'rect')}
 									withSidePlates={box === 'plates'}
 									wedgeFrontThicknessM={0.035}

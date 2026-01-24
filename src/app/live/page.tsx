@@ -728,8 +728,19 @@ function Staircase3D({
 								const E: [number, number, number] = [xBack,  yBottomBack,       zRight];
 								const midAD: [number, number, number] = [(A[0]+D[0])/2, (A[1]+D[1])/2, (A[2]+D[2])/2];
 								const midBE: [number, number, number] = [(B[0]+E[0])/2, (B[1]+E[1])/2, (B[2]+E[2])/2];
+								// קווים מבוקשים: E→(1=midAD) וגם B→(1=midAD)
+								const edgesToOne = new Float32Array([
+									...E, ...midAD,
+									...B, ...midAD,
+								]);
 								return (
 									<group>
+										<lineSegments>
+											<bufferGeometry attach="geometry">
+												<bufferAttribute attach="attributes-position" args={[edgesToOne, 3]} />
+											</bufferGeometry>
+											<lineBasicMaterial attach="material" color="#ff3366" />
+										</lineSegments>
 										<Text position={[A[0], A[1]-0.005, A[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">A</Text>
 										<Text position={[B[0], B[1]-0.005, B[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">B</Text>
 										<Text position={[D[0], D[1]-0.005, D[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">D</Text>

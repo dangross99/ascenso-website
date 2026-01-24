@@ -926,12 +926,13 @@ function Staircase3D({
 										{/* מחבר אנכי בקצה הקדמי אל המדרגה הבאה */}
 										{!t.isLanding && (() => {
 											const riser = 0.18;
-											const verticalGap = riser; // כיסוי מלא של החפיפה האנכית בין המדרגות
+											const seam = 0.001;
+											const verticalGap = riser + seam * 2; // כיסוי מלא + חפיפה זעירה למניעת גאפ
 											const topYLocal = treadThickness / 2;
 											// למקם את המחבר כך שיתחיל בדיוק מקצה המדרגה (חזית) ויתארך קדימה
 											const verticalWidth = 0.13; // 130 מ״מ
 											const frontEdgeX = (t.run / 2) + (verticalWidth / 2);
-											const vYCenter = (topYLocal - plateHeight) - verticalGap / 2;
+											const vYCenter = (topYLocal - plateHeight) - (riser / 2); // ממורכז על הרום; החפיפה מגיעה מה-seam
 											return (
 												<group>
 													<mesh position={[frontEdgeX, vYCenter, treadWidth / 2 + plateThickness / 2]} castShadow receiveShadow>

@@ -923,6 +923,27 @@ function Staircase3D({
 											<boxGeometry args={[lengthX, plateHeight, plateThickness]} />
 											<meshBasicMaterial color={plateColor} />
 										</mesh>
+										{/* מחבר אנכי בקצה הקדמי אל המדרגה הבאה */}
+										{!t.isLanding && (() => {
+											const riser = 0.18;
+											const verticalGap = Math.max(0, riser - plateHeight);
+											if (verticalGap <= 0.0001) return null;
+											const topYLocal = treadThickness / 2;
+											const frontEdgeX = xCenter + lengthX / 2;
+											const vYCenter = (topYLocal - plateHeight) - verticalGap / 2;
+											return (
+												<group>
+													<mesh position={[frontEdgeX, vYCenter, treadWidth / 2 + plateThickness / 2]} castShadow receiveShadow>
+														<boxGeometry args={[plateThickness, verticalGap, plateThickness]} />
+														<meshBasicMaterial color={plateColor} />
+													</mesh>
+													<mesh position={[frontEdgeX, vYCenter, -treadWidth / 2 - plateThickness / 2]} castShadow receiveShadow>
+														<boxGeometry args={[plateThickness, verticalGap, plateThickness]} />
+														<meshBasicMaterial color={plateColor} />
+													</mesh>
+												</group>
+											);
+										})()}
 									</group>
 								);
 							})()}

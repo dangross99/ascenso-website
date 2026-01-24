@@ -696,6 +696,8 @@ function Staircase3D({
 								const pos = new Float32Array([
 									// A-D-1
 									...A, ...D, ...one,
+									// A-1-B (מוסיף כדי לקבל 4 משולשים כולל חזית מרכזית)
+									...A, ...one, ...B,
 									// 1-D-E
 									...one, ...D, ...E,
 									// 1-E-B
@@ -712,6 +714,8 @@ function Staircase3D({
 								const uv = new Float32Array([
 									// A-D-1
 									uA,vA, uD,vD, u1,v1,
+									// A-1-B
+									uA,vA, u1,v1, uB,vB,
 									// 1-D-E
 									u1,v1, uD,vD, uE,vE,
 									// 1-E-B

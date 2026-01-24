@@ -909,7 +909,8 @@ function Staircase3D({
 								// הפלטה מתחילה מגג המדרך (top) ויורדת 130 מ״מ
 								const yCenter = (treadThickness / 2) - (plateHeight / 2);
 								// הארכה קדימה לכיוון המדרגה הבאה: 140 מ״מ
-								const extendForward = 0.15;
+								const nextIsLanding = Boolean(treads[idx + 1]?.isLanding);
+								const extendForward = nextIsLanding ? 0 : 0.15;
 								const lengthX = t.run + (t.isLanding ? 0 : extendForward);
 								const xCenter = (t.isLanding ? 0 : extendForward / 2);
 								const plateColor = '#2b2b2b';
@@ -923,8 +924,8 @@ function Staircase3D({
 											<boxGeometry args={[lengthX, plateHeight, plateThickness]} />
 											<meshBasicMaterial color={plateColor} />
 										</mesh>
-										{/* מחבר אנכי בקצה הקדמי אל המדרגה הבאה */}
-										{!t.isLanding && (() => {
+										{/* מחבר אנכי בקצה הקדמי רק אם המדרגה הבאה אינה פודסט */}
+										{!t.isLanding && !nextIsLanding && (() => {
 											const riser = 0.18;
 											const seam = 0.001;
 											const verticalGap = riser + seam * 2; // כיסוי מלא + חפיפה זעירה למניעת גאפ

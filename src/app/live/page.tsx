@@ -719,35 +719,23 @@ function Staircase3D({
 							})();
 							// אין צורך ברצועת "רכס" נוספת – שני חצאי התחתית כבר נפגשים במרכז
 
-							// DEBUG: קווי עזר ותוויות לקודקודים (A,B,D,E,mid) של התחתית
+							// DEBUG: קווי עזר ותוויות לקודקודים (A,B,D,E) בלבד + מספרים 1/2 במרכזי AD/BE (ללא קווים)
 							const showDebug = true;
 							const debugBottom = showDebug ? (() => {
 								const A: [number, number, number] = [xFront, yBottomFrontEdge, zLeft];
 								const B: [number, number, number] = [xFront, yBottomFrontEdge, zRight];
 								const D: [number, number, number] = [xBack,  yBottomBack,       zLeft];
 								const E: [number, number, number] = [xBack,  yBottomBack,       zRight];
-								const M: [number, number, number] = [(D[0]+E[0])/2, (D[1]+E[1])/2, (D[2]+E[2])/2];
-								const edges = new Float32Array([
-									// קווי שבירה לאורך בלבד: M→A ו‑M→B
-									...M, ...A,
-									...M, ...B,
-									// מתאר קצה אחורי A-D-E-B (אופציונלי להקשר)
-									...A, ...D,  ...D, ...E,  ...E, ...B,
-								]);
+								const midAD: [number, number, number] = [(A[0]+D[0])/2, (A[1]+D[1])/2, (A[2]+D[2])/2];
+								const midBE: [number, number, number] = [(B[0]+E[0])/2, (B[1]+E[1])/2, (B[2]+E[2])/2];
 								return (
 									<group>
-										<lineSegments>
-											<bufferGeometry attach="geometry">
-												<bufferAttribute attach="attributes-position" args={[edges, 3]} />
-											</bufferGeometry>
-											<lineBasicMaterial attach="material" color="#ff3366" />
-										</lineSegments>
 										<Text position={[A[0], A[1]-0.005, A[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">A</Text>
 										<Text position={[B[0], B[1]-0.005, B[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">B</Text>
 										<Text position={[D[0], D[1]-0.005, D[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">D</Text>
 										<Text position={[E[0], E[1]-0.005, E[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">E</Text>
-										<Text position={[((A[0]+D[0])/2), ((A[1]+D[1])/2)-0.005, ((A[2]+D[2])/2)]} fontSize={0.035} color="#111111" anchorX="center" anchorY="top">1</Text>
-										<Text position={[((B[0]+E[0])/2), ((B[1]+E[1])/2)-0.005, ((B[2]+E[2])/2)]} fontSize={0.035} color="#111111" anchorX="center" anchorY="top">2</Text>
+										<Text position={[midAD[0], midAD[1]-0.005, midAD[2]]} fontSize={0.035} color="#111111" anchorX="center" anchorY="top">1</Text>
+										<Text position={[midBE[0], midBE[1]-0.005, midBE[2]]} fontSize={0.035} color="#111111" anchorX="center" anchorY="top">2</Text>
 									</group>
 								);
 							})() : null;

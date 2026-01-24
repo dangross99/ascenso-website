@@ -926,8 +926,7 @@ function Staircase3D({
 										{/* מחבר אנכי בקצה הקדמי אל המדרגה הבאה */}
 										{!t.isLanding && (() => {
 											const riser = 0.18;
-											const verticalGap = Math.max(0, riser - plateHeight);
-											if (verticalGap <= 0.0001) return null;
+											const verticalGap = riser; // כיסוי מלא של החפיפה האנכית בין המדרגות
 											const topYLocal = treadThickness / 2;
 											const frontEdgeX = xCenter + lengthX / 2;
 											const vYCenter = (topYLocal - plateHeight) - verticalGap / 2;

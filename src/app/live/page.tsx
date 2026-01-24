@@ -689,7 +689,7 @@ function Staircase3D({
 								// 1: אמצע AD במישור XZ, אך עם עומק 90 מ״מ מהטופ
 								const oneX = (A[0] + D[0]) / 2;
 								const oneZ = (A[2] + D[2]) / 2;
-								const oneY = yTop - 0.09 - seam;
+								const oneY = yTop - 0.11 - seam;
 								const one = [oneX, oneY, oneZ] as const;
 
 								// שלושה משולשים: A‑D‑1, A‑1‑B, B‑1‑E
@@ -732,8 +732,8 @@ function Staircase3D({
 								const E: [number, number, number] = [xBack,  yBottomBack,       zRight];
 								const midADflat: [number, number, number] = [(A[0]+D[0])/2, (A[1]+D[1])/2, (A[2]+D[2])/2];
 								const midBE: [number, number, number] = [(B[0]+E[0])/2, (B[1]+E[1])/2, (B[2]+E[2])/2];
-								// נקודה 1 (עמוקה): אותה מיקום XZ כמו midAD, אך בעומק 90 מ״מ מהטופ
-								const one: [number, number, number] = [midADflat[0], (yTop - 0.09 - 0.001), midADflat[2]];
+								// נקודה 1 (עמוקה): אותה מיקום XZ כמו midAD, אך בעומק 110 מ״מ מהטופ
+								const one: [number, number, number] = [midADflat[0], (yTop - 0.11 - 0.001), midADflat[2]];
 								// קווים מבוקשים: E→(1=midAD) וגם B→(1=midAD)
 								const edgesToOne = new Float32Array([
 									...E, ...one,
@@ -3332,7 +3332,7 @@ function LivePageInner() {
 									cableSpanMode={cableSpanMode}
 									stepCableSpanModes={stepCableSpanMode}
 									landingCableSpanModes={landingCableSpanMode}
-									treadThicknessOverride={box === 'thick' ? 0.11 : (box === 'wedge' ? 0.11 : (box === 'ridge' ? 0.025 : 0.07))}
+									treadThicknessOverride={box === 'thick' ? 0.11 : (box === 'wedge' ? 0.11 : (box === 'ridge' ? 0.02 : 0.07))}
 									boxModel={box === 'wedge' ? 'wedge' : (box === 'ridge' ? 'ridge' : 'rect')}
 									wedgeFrontThicknessM={0.035}
 									ridgeFrontCenterThicknessM={0.09}

@@ -937,8 +937,8 @@ function Staircase3D({
 											<boxGeometry args={[lengthX, plateHeight, plateThickness]} />
 											<meshBasicMaterial color={plateColor} />
 										</mesh>
-										{/* מחברים אנכיים בשני הצדדים – תמיד בקצה הקדמי של כל מדרגה (לא בפודסט) */}
-										{!t.isLanding && (() => {
+										{/* מחברים אנכיים בשני הצדדים – תמיד בקצה הקדמי של כל שלב (כולל פודסט) */}
+										{(() => {
 											const riser = 0.18;
 											const seam = 0.001;
 											const verticalGap = riser + seam * 2; // כיסוי מלא + חפיפה זעירה למניעת גאפ

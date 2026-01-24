@@ -728,12 +728,11 @@ function Staircase3D({
 								const E: [number, number, number] = [xBack,  yBottomBack,       zRight];
 								const M: [number, number, number] = [(D[0]+E[0])/2, (D[1]+E[1])/2, (D[2]+E[2])/2];
 								const edges = new Float32Array([
-									// A-M, M-D, D-A
-									...A, ...M,  ...M, ...D,  ...D, ...A,
-									// M-D, D-E, E-M
-									...M, ...D,  ...D, ...E,  ...E, ...M,
-									// M-E, E-B, B-M
-									...M, ...E,  ...E, ...B,  ...B, ...M,
+									// קווי שבירה לאורך בלבד: M→A ו‑M→B
+									...M, ...A,
+									...M, ...B,
+									// מתאר קצה אחורי A-D-E-B (אופציונלי להקשר)
+									...A, ...D,  ...D, ...E,  ...E, ...B,
 								]);
 								return (
 									<group>

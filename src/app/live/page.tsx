@@ -925,7 +925,7 @@ function Staircase3D({
 											<meshBasicMaterial color={plateColor} />
 										</mesh>
 										{/* מחבר אנכי בקצה הקדמי רק אם המדרגה הבאה אינה פודסט */}
-										{!t.isLanding && !nextIsLanding && (() => {
+										{!t.isLanding && !nextIsLanding && !Boolean(treads[idx - 1]?.isLanding) && (() => {
 											const riser = 0.18;
 											const seam = 0.001;
 											const verticalGap = riser + seam * 2; // כיסוי מלא + חפיפה זעירה למניעת גאפ

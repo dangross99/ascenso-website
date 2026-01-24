@@ -909,7 +909,7 @@ function Staircase3D({
 								// הפלטה מתחילה מגג המדרך (top) ויורדת 130 מ״מ
 								const yCenter = (treadThickness / 2) - (plateHeight / 2);
 								// הארכה קדימה לכיוון המדרגה הבאה: 140 מ״מ
-								const extendForward = 0.14;
+								const extendForward = 0.15;
 								const lengthX = t.run + (t.isLanding ? 0 : extendForward);
 								const xCenter = (t.isLanding ? 0 : extendForward / 2);
 								const plateColor = '#2b2b2b';
@@ -930,7 +930,7 @@ function Staircase3D({
 											const verticalGap = riser + seam * 2; // כיסוי מלא + חפיפה זעירה למניעת גאפ
 											const topYLocal = treadThickness / 2;
 											// למקם את המחבר כך שיתחיל בדיוק מקצה המדרגה (חזית) ויתארך קדימה
-											const verticalWidth = 0.13; // 130 מ״מ
+											const verticalWidth = 0.15; // 150 מ״מ
 											const frontEdgeX = (t.run / 2) + (verticalWidth / 2);
 											const vYCenter = (topYLocal - plateHeight) - (riser / 2); // ממורכז על הרום; החפיפה מגיעה מה-seam
 											return (

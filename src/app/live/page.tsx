@@ -967,7 +967,8 @@ function Staircase3D({
 											const seam = 0.001;
 											const verticalGap = riser + seam * 2;
 											const topYLocal = treadThickness / 2;
-											const verticalWidth = 0.15; // 150 מ״מ אחורי
+											const verticalWidth = 0.15; // 150 מ״מ
+											// מאחורי המדרגה בציר המקומי (x=-run/2), שני הצדדים ב‑z
 											const backEdgeX = (-t.run / 2) + (verticalWidth / 2);
 											const vYCenter = (topYLocal - plateHeight) - (riser / 2);
 											return (

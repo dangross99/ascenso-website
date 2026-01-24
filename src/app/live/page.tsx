@@ -910,9 +910,9 @@ function Staircase3D({
 								const yCenter = (treadThickness / 2) - (plateHeight / 2);
 								// הארכה קדימה לכיוון המדרגה הבאה: 140 מ״מ
 								const nextIsLanding = Boolean(treads[idx + 1]?.isLanding);
-								const extendForward = nextIsLanding ? 0 : 0.15;
-								const lengthX = t.run + (t.isLanding ? 0 : extendForward);
-								const xCenter = (t.isLanding ? 0 : extendForward / 2);
+								// ללא הארכה אופקית כלל
+								const lengthX = t.run;
+								const xCenter = 0;
 								const plateColor = '#2b2b2b';
 								return (
 									<group>
@@ -934,6 +934,28 @@ function Staircase3D({
 											const verticalWidth = 0.15; // 150 מ״מ
 											const frontEdgeX = (t.run / 2) + (verticalWidth / 2);
 											const vYCenter = (topYLocal - plateHeight) - (riser / 2); // ממורכז על הרום; החפיפה מגיעה מה-seam
+											return (
+												<group>
+													<mesh position={[frontEdgeX, vYCenter, treadWidth / 2 + plateThickness / 2]} castShadow receiveShadow>
+														<boxGeometry args={[verticalWidth, verticalGap, plateThickness]} />
+														<meshBasicMaterial color={plateColor} />
+													</mesh>
+													<mesh position={[frontEdgeX, vYCenter, -treadWidth / 2 - plateThickness / 2]} castShadow receiveShadow>
+														<boxGeometry args={[verticalWidth, verticalGap, plateThickness]} />
+														<meshBasicMaterial color={plateColor} />
+													</mesh>
+												</group>
+											);
+										})()}
+										{/* במקרה שהמדרגה הבאה היא פודסט – מחבר אנכי ברוחב עובי החומר בלבד */}
+										{!t.isLanding && nextIsLanding && (() => {
+											const riser = 0.18;
+											const seam = 0.001;
+											const verticalGap = riser + seam * 2;
+											const topYLocal = treadThickness / 2;
+											const verticalWidth = plateThickness; // 6 מ״מ
+											const frontEdgeX = (t.run / 2) + (verticalWidth / 2);
+											const vYCenter = (topYLocal - plateHeight) - (riser / 2);
 											return (
 												<group>
 													<mesh position={[frontEdgeX, vYCenter, treadWidth / 2 + plateThickness / 2]} castShadow receiveShadow>

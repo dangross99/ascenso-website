@@ -961,52 +961,10 @@ function Staircase3D({
 											);
 										})()}
 
-										{/* מחבר אנכי דק בצד הפודסט אם המדרגה הבאה היא פודסט */}
-										{!t.isLanding && nextIsLanding && (() => {
-											const riser = 0.18;
-											const seam = 0.001;
-											const verticalGap = riser + seam * 2;
-											const topYLocal = treadThickness / 2;
-											const verticalWidth = plateThickness; // 6 מ״מ
-											const frontEdgeX = (t.run / 2) + (verticalWidth / 2);
-											const next = treads[idx + 1] as any;
-											const turn: 'left' | 'right' | undefined = next?.turn;
-											if (!turn) return null;
-											const zPos = turn === 'left'
-												? (-treadWidth / 2 - plateThickness / 2)
-												: (treadWidth / 2 + plateThickness / 2);
-											const vYCenter = (topYLocal - plateHeight) - (riser / 2);
-											return (
-												<mesh position={[frontEdgeX, vYCenter, zPos]} castShadow receiveShadow>
-													<boxGeometry args={[verticalWidth, verticalGap, plateThickness]} />
-													<meshBasicMaterial color={plateColor} />
-												</mesh>
-											);
-										})()}
+										{/* מחבר דק לצד פודסט – מבוטל לפי בקשה */}
 
 										{/* מחבר אנכי בקצה האחורי אם לפניי יש פודסט – ברוחב עובי החומר ובצד הפודסט בלבד */}
-										{!t.isLanding && Boolean(treads[idx - 1]?.isLanding) && (() => {
-											const riser = 0.18;
-											const seam = 0.001;
-											const verticalGap = riser + seam * 2;
-											const topYLocal = treadThickness / 2;
-											const verticalWidth = plateThickness; // 6 מ״מ
-											const backEdgeX = (-t.run / 2) + (verticalWidth / 2);
-											const vYCenter = (topYLocal - plateHeight) - (riser / 2);
-											const prev = treads[idx - 1] as any;
-											const turn: 'left' | 'right' | undefined = prev?.turn;
-											// אם לא ידוע כיוון – נוותר (לא נוסיף) כדי לא לטעות
-											if (!turn) return null;
-											const zPos = turn === 'left'
-												? (-treadWidth / 2 - plateThickness / 2)
-												: (treadWidth / 2 + plateThickness / 2);
-											return (
-												<mesh position={[backEdgeX, vYCenter, zPos]} castShadow receiveShadow>
-													<boxGeometry args={[verticalWidth, verticalGap, plateThickness]} />
-													<meshBasicMaterial color={plateColor} />
-												</mesh>
-											);
-										})()}
+										{/* מבוטל */}
 									</group>
 								);
 							})()}

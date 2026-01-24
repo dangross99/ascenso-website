@@ -910,9 +910,22 @@ function Staircase3D({
 								const yCenter = (treadThickness / 2) - (plateHeight / 2);
 								// הארכה קדימה לכיוון המדרגה הבאה: 140 מ״מ
 								const nextIsLanding = Boolean(treads[idx + 1]?.isLanding);
-								const extendForward = (!t.isLanding && !nextIsLanding) ? 0.15 : 0;
-								const lengthX = t.run + extendForward;
-								const xCenter = extendForward / 2;
+								let extendForward = 0;
+								let xCenter = 0;
+								let lengthX = t.run;
+								if (!t.isLanding) {
+									if (!nextIsLanding && !Boolean(treads[idx - 1]?.isLanding)) {
+										// מדרגה רגילה בין מדרגות – הארכה 150 מ״מ קדימה
+										extendForward = 0.15;
+										lengthX = t.run + extendForward;
+										xCenter = extendForward / 2;
+									} else if (Boolean(treads[idx - 1]?.isLanding)) {
+										// מיד אחרי פודסט – ללא הארכה, אבל נרחיב חפיפה אחורה 1 מ״מ לסגירה ויזואלית
+										const seam = 0.001;
+										lengthX = t.run + seam;
+										xCenter = -seam / 2;
+									}
+								}
 								const plateColor = '#2b2b2b';
 								return (
 									<group>

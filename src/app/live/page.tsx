@@ -692,14 +692,14 @@ function Staircase3D({
 								const oneY = yTop - 0.11 - seam;
 								const one = [oneX, oneY, oneZ] as const;
 
-								// שלושה משולשים: A‑D‑1, A‑1‑B, B‑1‑E
+								// שלושה משולשים: A‑D‑1, 1‑D‑E, 1‑E‑B
 								const pos = new Float32Array([
 									// A-D-1
 									...A, ...D, ...one,
-									// A-1-B
-									...A, ...one, ...B,
-									// B-1-E
-									...B, ...one, ...E,
+									// 1-D-E
+									...one, ...D, ...E,
+									// 1-E-B
+									...one, ...E, ...B,
 								]);
 								const g2 = new BufferGeometry();
 								g2.setAttribute('position', new Float32BufferAttribute(pos, 3));
@@ -712,10 +712,10 @@ function Staircase3D({
 								const uv = new Float32Array([
 									// A-D-1
 									uA,vA, uD,vD, u1,v1,
-									// A-1-B
-									uA,vA, u1,v1, uB,vB,
-									// B-1-E
-									uB,vB, u1,v1, uE,vE,
+									// 1-D-E
+									u1,v1, uD,vD, uE,vE,
+									// 1-E-B
+									u1,v1, uE,vE, uB,vB,
 								]);
 								g2.setAttribute('uv', new Float32BufferAttribute(uv, 2));
 								g2.computeVertexNormals();

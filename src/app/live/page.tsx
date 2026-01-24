@@ -928,9 +928,10 @@ function Staircase3D({
 											const riser = 0.18;
 											const verticalGap = riser; // כיסוי מלא של החפיפה האנכית בין המדרגות
 											const topYLocal = treadThickness / 2;
-											const frontEdgeX = xCenter + lengthX / 2;
-											const vYCenter = (topYLocal - plateHeight) - verticalGap / 2;
+											// למקם את המחבר כך שיתחיל בדיוק מקצה המדרגה (חזית) ויתארך קדימה
 											const verticalWidth = 0.13; // 130 מ״מ
+											const frontEdgeX = (t.run / 2) + (verticalWidth / 2);
+											const vYCenter = (topYLocal - plateHeight) - verticalGap / 2;
 											return (
 												<group>
 													<mesh position={[frontEdgeX, vYCenter, treadWidth / 2 + plateThickness / 2]} castShadow receiveShadow>

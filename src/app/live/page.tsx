@@ -602,6 +602,10 @@ function Staircase3D({
 									{faceMat(treadWidth, frontTh)}
 								</mesh>
 							);
+							// סימון חזית – ספרה 1
+							const frontMark = (
+								<Text position={[xFront + forwardSign * 0.004, yCenterFront, 0]} rotation={[0, forwardSign > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">1</Text>
+							);
 							// BACK at xBack
 							const back = (
 								<mesh key="back" rotation={[0, forwardSign > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} position={[xBack - forwardSign * 0.0005, yCenterBack, 0]} receiveShadow>
@@ -658,7 +662,7 @@ function Staircase3D({
 									{faceMat(t.run, treadWidth)}
 								</mesh>
 							);
-							return <group>{front}{back}{right}{left}{bottom}</group>;
+							return <group>{front}{frontMark}{back}{right}{left}{bottom}</group>;
 						})()
 					) : boxModel === 'ridge' ? (
 						(() => {
@@ -696,6 +700,10 @@ function Staircase3D({
 									<planeGeometry args={[treadWidth + seam * 2, frontEdgeTh + seam * 2, 8, 2]} />
 									{faceMat(treadWidth, frontEdgeTh)}
 								</mesh>
+							);
+							// סימון חזית – ספרה 1
+							const frontMark = (
+								<Text position={[xFront + forwardSign * 0.004, (yTop + yBottomFrontEdge)/2, 0]} rotation={[0, forwardSign > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">1</Text>
 							);
 
 							// BOTTOM – שלושה משולשים לאורך: קווי שבירה ממרכז החזית אל שתי פינות הגב
@@ -800,7 +808,7 @@ function Staircase3D({
 								</mesh>
 							);
 
-							return <group>{front}{bottom}{debugBottom}{back}{sideRight}{sideLeft}</group>;
+							return <group>{front}{frontMark}{bottom}{debugBottom}{back}{sideRight}{sideLeft}</group>;
 						})()
 					) : (
 						<mesh castShadow receiveShadow>
@@ -893,6 +901,7 @@ function Staircase3D({
 										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
 										{matFrontBack}
 									</mesh>
+									<Text position={[frontX + forwardSign * 0.004, 0, 0]} rotation={[0, frontRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">1</Text>
 									<mesh rotation={[0, backRotY, 0]} position={[backX, 0, 0]} receiveShadow>
 										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
 										{matFrontBack}
@@ -920,6 +929,7 @@ function Staircase3D({
 										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
 										{matFrontBack}
 									</mesh>
+									<Text position={[0, 0, frontZ + forwardSign * 0.004]} rotation={[0, frontRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">1</Text>
 									<mesh rotation={[0, backRotY, 0]} position={[0, 0, backZ]} receiveShadow>
 										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
 										{matFrontBack}

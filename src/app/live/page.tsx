@@ -842,61 +842,77 @@ function Staircase3D({
 						</mesh>
 					)}
 
-					{/* FRONT (+X) */}
-					{boxModel === 'rect' && (
-						<mesh rotation={[0, Math.PI / 2, 0]} position={[t.run / 2 + 0.0005, 0, 0]} receiveShadow>
-							<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
-							{(() => {
-								if (useSolidMat) {
-									return (<meshBasicMaterial color={solidSideColor} />);
-								}
-								const ft = buildFaceTextures(treadWidth, treadThickness);
-								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
-							})()}
-						</mesh>
-					)}
-
-					{/* BACK (-X) */}
-					{boxModel === 'rect' && (
-						<mesh rotation={[0, -Math.PI / 2, 0]} position={[-t.run / 2 - 0.0005, 0, 0]} receiveShadow>
-							<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
-							{(() => {
-								if (useSolidMat) {
-									return (<meshBasicMaterial color={solidSideColor} />);
-								}
-								const ft = buildFaceTextures(treadWidth, treadThickness);
-								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
-							})()}
-						</mesh>
-					)}
-
-					{/* RIGHT (+Z) */}
-					{boxModel === 'rect' && (
-						<mesh rotation={[0, 0, 0]} position={[0, 0, treadWidth / 2 + 0.0005]} receiveShadow>
-							<planeGeometry args={[t.run, treadThickness, 8, 8]} />
-							{(() => {
-								if (useSolidMat) {
-									return (<meshBasicMaterial color={solidSideColor} />);
-								}
-								const ft = buildFaceTextures(t.run, treadThickness);
-								return (<meshBasicMaterial map={ft.color} />);
-							})()}
-						</mesh>
-					)}
-
-					{/* LEFT (-Z) */}
-					{boxModel === 'rect' && (
-						<mesh rotation={[0, Math.PI, 0]} position={[0, 0, -treadWidth / 2 - 0.0005]} receiveShadow>
-							<planeGeometry args={[t.run, treadThickness, 8, 8]} />
-							{(() => {
-								if (useSolidMat) {
-									return (<meshBasicMaterial color={solidSideColor} />);
-								}
-								const ft = buildFaceTextures(t.run, treadThickness);
-								return (<meshBasicMaterial map={ft.color} />);
-							})()}
-						</mesh>
-					)}
+					{/* FRONT/BACK and SIDES – align with local run axis (fix alternating front/back across flights) */}
+					{boxModel === 'rect' && (() => {
+						const yaw = t.rotation[1] as number;
+						const axis: 'x' | 'z' = Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z';
+						const forwardSign = axis === 'x' ? (Math.cos(yaw) >= 0 ? 1 : -1) : (Math.sin(yaw) >= 0 ? 1 : -1);
+						const matFrontBack = (() => {
+							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} />);
+							const ft = buildFaceTextures(treadWidth, treadThickness);
+							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
+						})();
+						const matSides = (() => {
+							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} />);
+							const ft = buildFaceTextures(t.run, treadThickness);
+							return (<meshBasicMaterial map={ft.color} />);
+						})();
+						if (axis === 'x') {
+							// run לאורך X (קדימה/אחורה); כוון חזית לפי הסימן של cos(yaw)
+							const frontRotY = forwardSign > 0 ? Math.PI / 2 : -Math.PI / 2;
+							const backRotY = -frontRotY;
+							const frontX = forwardSign * (t.run / 2) + forwardSign * 0.0005;
+							const backX = -forwardSign * (t.run / 2) - forwardSign * 0.0005;
+							return (
+								<>
+									<mesh rotation={[0, frontRotY, 0]} position={[frontX, 0, 0]} receiveShadow>
+										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
+										{matFrontBack}
+									</mesh>
+									<mesh rotation={[0, backRotY, 0]} position={[backX, 0, 0]} receiveShadow>
+										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
+										{matFrontBack}
+									</mesh>
+									{/* צדדים לאורך Z */}
+									<mesh rotation={[0, 0, 0]} position={[0, 0, treadWidth / 2 + 0.0005]} receiveShadow>
+										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
+										{matSides}
+									</mesh>
+									<mesh rotation={[0, Math.PI, 0]} position={[0, 0, -treadWidth / 2 - 0.0005]} receiveShadow>
+										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
+										{matSides}
+									</mesh>
+								</>
+							);
+						} else {
+							// run לאורך Z; כוון חזית לפי הסימן של sin(yaw)
+							const frontRotY = forwardSign > 0 ? 0 : Math.PI;
+							const backRotY = forwardSign > 0 ? Math.PI : 0;
+							const frontZ = forwardSign * (t.run / 2) + forwardSign * 0.0005;
+							const backZ = -forwardSign * (t.run / 2) - forwardSign * 0.0005;
+							return (
+								<>
+									<mesh rotation={[0, frontRotY, 0]} position={[0, 0, frontZ]} receiveShadow>
+										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
+										{matFrontBack}
+									</mesh>
+									<mesh rotation={[0, backRotY, 0]} position={[0, 0, backZ]} receiveShadow>
+										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
+										{matFrontBack}
+									</mesh>
+									{/* צדדים לאורך X */}
+									<mesh rotation={[0, Math.PI / 2, 0]} position={[treadWidth / 2 + 0.0005, 0, 0]} receiveShadow>
+										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
+										{matSides}
+									</mesh>
+									<mesh rotation={[0, -Math.PI / 2, 0]} position={[-treadWidth / 2 - 0.0005, 0, 0]} receiveShadow>
+										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
+										{matSides}
+									</mesh>
+								</>
+							);
+						}
+					})()}
 
 					{/* דגם 'פלטות אלכסוניות' בוטל */}
 

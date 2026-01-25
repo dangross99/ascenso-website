@@ -571,8 +571,9 @@ function Staircase3D({
 							const desiredFront = typeof wedgeFrontThicknessM === 'number' ? wedgeFrontThicknessM : (treadThickness * frontFrac);
 							const frontTh = Math.max(0.01, Math.min(treadThickness - 0.005, desiredFront));
 							const seam = 0.001; // הרחבה זעירה לסגירת חיבורים
-							const xBack = t.run / 2;
-							const xFront = -t.run / 2;
+							// הגדרה עקבית: חזית תמיד בצד +X המקומי, גב בצד -X המקומי
+							const xFront = t.run / 2;
+							const xBack = -t.run / 2;
 							const zLeft = -treadWidth / 2 - seam;
 							const zRight = treadWidth / 2 + seam;
 							const yTop = topY;
@@ -673,7 +674,7 @@ function Staircase3D({
 
 							// FRONT אחיד
 							const front = (
-								<mesh rotation={[0, Math.PI / 2, 0]} position={[xFront - 0.0005, (yTop + yBottomFrontEdge)/2, 0]} receiveShadow>
+								<mesh rotation={[0, -Math.PI / 2, 0]} position={[xFront + 0.0005, (yTop + yBottomFrontEdge)/2, 0]} receiveShadow>
 									<planeGeometry args={[treadWidth + seam * 2, frontEdgeTh + seam * 2, 8, 2]} />
 									{faceMat(treadWidth, frontEdgeTh)}
 								</mesh>
@@ -763,7 +764,7 @@ function Staircase3D({
 
 							// BACK + SIDES (קבועים)
 							const back = (
-								<mesh rotation={[0, -Math.PI / 2, 0]} position={[xBack + 0.0005, (yTop + yBottomBack)/2, 0]} receiveShadow>
+								<mesh rotation={[0, Math.PI / 2, 0]} position={[xBack - 0.0005, (yTop + yBottomBack)/2, 0]} receiveShadow>
 									<planeGeometry args={[treadWidth + seam * 2, backTh + seam * 2, 8, 2]} />
 									{faceMat(treadWidth, backTh)}
 								</mesh>

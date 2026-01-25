@@ -900,7 +900,7 @@ function Staircase3D({
 						</mesh>
 					)}
 
-					{/* Side plates (optional) */}
+					{/* Side plates (optional) – הוחלפו לפלטות אלכסוניות */}
 					{withSidePlates && (
 						<>
 							{(() => {
@@ -931,13 +931,6 @@ function Staircase3D({
 									return geom;
 								};
 
-								// פלטה מלבנית fallback (למקטעים עם פודסט/פנייה)
-								const makeRectPlate = (lenX: number) => {
-									const xCenter = 0.15 / 2;
-									const yCenter = (treadThickness / 2) - (plateHeight / 2);
-									return { xCenter, yCenter, lenX };
-								};
-
 								// אם השלב הבא קיים, אינו פודסט, ובאותו כיוון – השתמש בפלטה אלכסונית המחברת בין חזיות
 								if (sameDirection) {
 									const dx = t.run;
@@ -956,23 +949,8 @@ function Staircase3D({
 									);
 								}
 
-								// אחרת – fallback פשוט למלבני בחזית השלב
-								{
-									const lenX = t.run + 0.15;
-									const { xCenter, yCenter } = makeRectPlate(lenX);
-									return (
-										<group>
-											<mesh position={[xCenter, yCenter, treadWidth / 2 + plateThickness / 2]} castShadow receiveShadow>
-												<boxGeometry args={[lenX, plateHeight, plateThickness]} />
-												<meshBasicMaterial color={plateColor} />
-											</mesh>
-											<mesh position={[xCenter, yCenter, -treadWidth / 2 - plateThickness / 2]} castShadow receiveShadow>
-												<boxGeometry args={[lenX, plateHeight, plateThickness]} />
-												<meshBasicMaterial color={plateColor} />
-											</mesh>
-										</group>
-									);
-								}
+								// אחרת (פודסט/פנייה) – לא מציג פלטות אלכסוניות
+								return null;
 							})()}
 						</>
 					)}
@@ -2977,7 +2955,7 @@ function LivePageInner() {
 			? 'דגם אלכסוני'
 			: box === 'ridge'
 			? 'דגם רכס מרכזי'
-			: 'פלטות צד';
+			: 'פלטות אלכסוניות';
 		const totalText = `₪${total.toLocaleString('he-IL')}`;
 		// הכרחת כיוון LTR עבור ה‑URL באמצעות LRI/PDI (איסולציה) למניעת שבירה RTL
 		const ltrUrl = `\u2066${shareUrl}\u2069`;
@@ -3069,7 +3047,7 @@ function LivePageInner() {
 			? 'דגם אלכסוני'
 			: box === 'ridge'
 			? 'דגם רכס מרכזי'
-			: 'פלטות צד';
+			: 'פלטות אלכסוניות';
 		const totalText = `₪${total.toLocaleString('he-IL')}`;
 		const leadId = generateLeadId();
 		const timeLabel = preferredTime || '-';
@@ -3198,12 +3176,12 @@ function LivePageInner() {
 												{ id: 'thin', label: 'תיבה דקה‑דופן' as const },
 												{ id: 'wedge', label: 'דגם אלכסוני' as const },
 												{ id: 'ridge', label: 'דגם רכס מרכזי' as const },
-												{ id: 'plates', label: 'פלטות צד' as const },
+												{ id: 'plates', label: 'פלטות אלכסוניות' as const },
 											] as const).map(opt => (
 												<div key={opt.id} className="flex flex-col items-center">
 													<button
-														aria-label={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : opt.id === 'wedge' ? 'דגם אלכסוני' : opt.id === 'ridge' ? 'דגם רכס מרכזי' : 'פלטות צד'}
-														title={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : opt.id === 'wedge' ? 'דגם אלכסוני' : opt.id === 'ridge' ? 'דגם רכס מרכזי' : 'פלטות צד'}
+														aria-label={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : opt.id === 'wedge' ? 'דגם אלכסוני' : opt.id === 'ridge' ? 'דגם רכס מרכזי' : 'פלטות אלכסוניות'}
+														title={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : opt.id === 'wedge' ? 'דגם אלכסוני' : opt.id === 'ridge' ? 'דגם רכס מרכזי' : 'פלטות אלכסוניות'}
 														className={`w-[52px] h-[52px] inline-flex items-center justify-center bg-transparent border-0 ${box === opt.id ? 'text-[#1a1a2e]' : 'text-gray-500 hover:text-gray-700'}`}
 														onClick={() => setBox(opt.id)}
 													>
@@ -3232,23 +3210,23 @@ function LivePageInner() {
 															</svg>
 														) : opt.id === 'ridge' ? (
 															<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
-																{/* מלבן עם "רכס" אלכסוני באמצע */}
+												{/* מלבן עם "רכס" אלכסוני באמצע */}
 																<rect x="1" y="16" width="50" height="20" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
 																<rect x="1" y="16" width="50" height="20" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
 																<path d="M2 26 L26 18 L50 26" stroke="currentColor" strokeWidth="2" fill="none" />
 															</svg>
 														) : (
 															<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
-																{/* פלטות צד – שני פסים אנכיים */}
-																<rect x="1" y="16" width="50" height="20" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
-																<rect x="3" y="16" width="4" height="20" fill="currentColor" />
-																<rect x="45" y="16" width="4" height="20" fill="currentColor" />
+												{/* פלטות אלכסוניות – שני פסים אלכסוניים */}
+												<rect x="1" y="16" width="50" height="20" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
+												<path d="M6 16 L24 36" stroke="currentColor" strokeWidth="4" />
+												<path d="M28 16 L46 36" stroke="currentColor" strokeWidth="4" />
 															</svg>
 														)}
 														<span className="sr-only">{opt.label}</span>
 													</button>
 													<span className="mt-1 text-xs text-gray-600">
-														{opt.id === 'thick' ? 'עבה' : opt.id === 'thin' ? 'דק' : opt.id === 'wedge' ? 'אלכסוני' : opt.id === 'ridge' ? 'רכס' : 'פלטות'}
+										{opt.id === 'thick' ? 'עבה' : opt.id === 'thin' ? 'דק' : opt.id === 'wedge' ? 'אלכסוני' : opt.id === 'ridge' ? 'רכס' : 'אלכסוניות'}
 													</span>
 												</div>
 											))}
@@ -4075,7 +4053,7 @@ function LivePageInner() {
 											aria-expanded={mobileOpenCat === 'box'}
 										>
 											<span className="font-medium">דגם תיבה</span>
-											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : box === 'wedge' ? 'דגם אלכסוני' : box === 'ridge' ? 'דגם רכס מרכזי' : 'פלטות צד'}</span>
+											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : box === 'wedge' ? 'דגם אלכסוני' : box === 'ridge' ? 'דגם רכס מרכזי' : 'פלטות אלכסוניות'}</span>
 										</button>
 										)}
 										{mobileOpenCat === 'box' && (
@@ -4657,7 +4635,7 @@ function LivePageInner() {
 								aria-expanded={desktopOpenCat === 'box'}
 							>
 								<span className="text-sm font-medium">דגם תיבה</span>
-											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : box === 'wedge' ? 'דגם אלכסוני' : box === 'ridge' ? 'דגם רכס מרכזי' : 'פלטות צד'}</span>
+											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : box === 'wedge' ? 'דגם אלכסוני' : box === 'ridge' ? 'דגם רכס מרכזי' : 'פלטות אלכסוניות'}</span>
 							</button>
 							{desktopOpenCat === 'box' && (
 								<div className="p-3 bg-white border border-t-0 rounded-b-md">

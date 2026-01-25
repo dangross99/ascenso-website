@@ -3446,6 +3446,60 @@ function LivePageInner() {
 											))}
 										</div>
 
+										{/* צבעים/גוונים לפי סוג המעקה הנבחר – מוצג בטאב העליון */}
+										<div className="mb-3">
+											{railing === 'glass' && (
+												<div className="flex items-center justify-center gap-3">
+													{([
+														{ id: 'extra' as const, label: 'אקסטרה', color: '#aee7ff', border: '#81b1cc' },
+														{ id: 'smoked' as const, label: 'מושחר', color: '#4a5568', border: '#2d3748' },
+														{ id: 'bronze' as const, label: 'ברונזה', color: '#b08d57', border: '#8a6a3a' },
+													]).map(sw => (
+														<button
+															key={sw.id}
+															title={sw.label}
+															aria-label={sw.label}
+															onClick={() => setGlassTone(sw.id)}
+															className={`w-[22px] h-[22px] rounded-full border-2 cursor-pointer ${glassTone === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+															style={{ backgroundColor: sw.color, borderColor: sw.border }}
+														/>
+													))}
+												</div>
+											)}
+											{railing === 'metal' && (
+												<div className="flex items-center justify-center gap-3">
+													<button
+														title="שחור"
+														aria-label="שחור"
+														onClick={() => { setRailingMetalSolid('#111111'); setRailingMetalId(null); }}
+														className={`w-[22px] h-[22px] rounded-full border-2 cursor-pointer ${railingMetalSolid === '#111111' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+														style={{ backgroundColor: '#111111', borderColor: '#333' }}
+													/>
+													<button
+														title="לבן"
+														aria-label="לבן"
+														onClick={() => { setRailingMetalSolid('#F5F5F5'); setRailingMetalId(null); }}
+														className={`w-[22px] h-[22px] rounded-full border-2 cursor-pointer ${railingMetalSolid === '#F5F5F5' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+														style={{ backgroundColor: '#F5F5F5', borderColor: '#ddd' }}
+													/>
+												</div>
+											)}
+											{railing === 'cable' && (
+												<div className="flex items-center justify-center gap-3 flex-wrap">
+													{cableOptions.map(opt => (
+														<button
+															key={opt.id}
+															title={opt.name}
+															aria-label={opt.name}
+															onClick={() => { setCableId(opt.id); setCableColor(opt.color || '#c7ccd1'); }}
+															className={`w-[22px] h-[22px] rounded-full border-2 bg-center bg-cover cursor-pointer ${cableId === opt.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+															style={{ backgroundImage: opt.image ? `url("${encodeURI(opt.image)}")` : undefined, borderColor: '#ddd' }}
+														/>
+													))}
+												</div>
+											)}
+										</div>
+
 										{(() => {
 											// עורך מתקדם כמו ב"מסלול": עמודות לכל גרם (בלי בחירת צד – תמיד פנימי)
 											// מפה את ריצות הישר לאינדקסי מדרגות במערכי המעקה

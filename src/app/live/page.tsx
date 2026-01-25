@@ -571,9 +571,12 @@ function Staircase3D({
 							const desiredFront = typeof wedgeFrontThicknessM === 'number' ? wedgeFrontThicknessM : (treadThickness * frontFrac);
 							const frontTh = Math.max(0.01, Math.min(treadThickness - 0.005, desiredFront));
 							const seam = 0.001; // הרחבה זעירה לסגירת חיבורים
-							// הגדרה עקבית: חזית תמיד בצד +X המקומי, גב בצד -X המקומי
-							const xFront = t.run / 2;
-							const xBack = -t.run / 2;
+							// כוון חזית/גב לפי כיוון הריצה המקומי (בהתאם למעקות)
+							const yaw = t.rotation[1] as number;
+							const axis: 'x' | 'z' = Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z';
+							const forwardSign = axis === 'x' ? (Math.cos(yaw) >= 0 ? 1 : -1) : (Math.sin(yaw) >= 0 ? 1 : -1);
+							const xFront = forwardSign * (t.run / 2);
+							const xBack = -forwardSign * (t.run / 2);
 							const zLeft = -treadWidth / 2 - seam;
 							const zRight = treadWidth / 2 + seam;
 							const yTop = topY;
@@ -588,14 +591,14 @@ function Staircase3D({
 							const yCenterBack = (yTop + yBottomBack) / 2;
 							// FRONT at xFront
 							const front = (
-								<mesh key="front" rotation={[0, Math.PI / 2, 0]} position={[xFront - 0.0005, yCenterFront, 0]} receiveShadow>
+								<mesh key="front" rotation={[0, forwardSign > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} position={[xFront + forwardSign * 0.0005, yCenterFront, 0]} receiveShadow>
 									<planeGeometry args={[treadWidth + seam * 2, frontTh + seam * 2, 8, 2]} />
 									{faceMat(treadWidth, frontTh)}
 								</mesh>
 							);
 							// BACK at xBack
 							const back = (
-								<mesh key="back" rotation={[0, -Math.PI / 2, 0]} position={[xBack + 0.0005, yCenterBack, 0]} receiveShadow>
+								<mesh key="back" rotation={[0, forwardSign > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} position={[xBack - forwardSign * 0.0005, yCenterBack, 0]} receiveShadow>
 									<planeGeometry args={[treadWidth + seam * 2, treadThickness + seam * 2, 8, 2]} />
 									{faceMat(treadWidth, treadThickness)}
 								</mesh>
@@ -658,11 +661,17 @@ function Staircase3D({
 							const backTh = treadThickness;
 							const frontEdgeTh = backTh; // חזית אחידה (אין C)
 							const seam = 0.001;
+							// כוון חזית/גב לפי כיוון הריצה המקומי (בהתאם למעקות)
+							const yaw = t.rotation[1] as number;
+							const axis: 'x' | 'z' = Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z';
+							const forwardSign = axis === 'x' ? (Math.cos(yaw) >= 0 ? 1 : -1) : (Math.sin(yaw) >= 0 ? 1 : -1);
+							const xFront = forwardSign * (t.run / 2);
+							const xBack = -forwardSign * (t.run / 2);
+							const zLeft = -treadWidth / 2 - seam;
+							const zRight = treadWidth / 2 + seam;
 							const yTop = topY;
 							const yBottomBack = yTop - backTh - seam;
 							const yBottomFrontEdge = yTop - frontEdgeTh - seam;
-							const yaw = t.rotation[1] as number;
-							const axis: 'x' | 'z' = Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z';
 
 							const faceMat = (dimU: number, dimV: number) => {
 								if (useSolidMat) return <meshBasicMaterial color={solidSideColor} side={2} />;
@@ -670,127 +679,117 @@ function Staircase3D({
 								return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />;
 							};
 
-							if (axis === 'x') {
-								// ריצה לאורך X
-								const xFront = t.run / 2, xBack = -t.run / 2;
-								const zLeft = -treadWidth / 2 - seam, zRight = treadWidth / 2 + seam;
+							// FRONT אחיד
+							const front = (
+								<mesh rotation={[0, forwardSign > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} position={[xFront + forwardSign * 0.0005, (yTop + yBottomFrontEdge)/2, 0]} receiveShadow>
+									<planeGeometry args={[treadWidth + seam * 2, frontEdgeTh + seam * 2, 8, 2]} />
+									{faceMat(treadWidth, frontEdgeTh)}
+								</mesh>
+							);
 
-								const front = (
-									<mesh rotation={[0, -Math.PI / 2, 0]} position={[xFront + 0.0005, (yTop + yBottomFrontEdge)/2, 0]} receiveShadow>
-										<planeGeometry args={[treadWidth + seam * 2, frontEdgeTh + seam * 2, 8, 2]} />
-										{faceMat(treadWidth, frontEdgeTh)}
-									</mesh>
-								);
+							// BOTTOM – שלושה משולשים לאורך: קווי שבירה ממרכז החזית אל שתי פינות הגב
+							const bottom = (() => {
+								// נקודות: A,B בחזית; D,E בגב; נקודה 1 = אמצע AD אך בעומק 90 מ״מ מהטופ
+								const A = [xFront, yBottomFrontEdge, zLeft] as const;
+								const B = [xFront, yBottomFrontEdge, zRight] as const;
+								const D = [xBack,  yBottomBack,       zLeft] as const;
+								const E = [xBack,  yBottomBack,       zRight] as const;
+								// 1: אמצע AD במישור XZ, אך עם עומק 90 מ״מ מהטופ
+								const oneX = (A[0] + D[0]) / 2;
+								const oneZ = (A[2] + D[2]) / 2;
+								const oneY = yTop - 0.11 - seam;
+								const one = [oneX, oneY, oneZ] as const;
 
-								const bottom = (() => {
-									const A = [xFront, yBottomFrontEdge, zLeft] as const;
-									const B = [xFront, yBottomFrontEdge, zRight] as const;
-									const D = [xBack,  yBottomBack,       zLeft] as const;
-									const E = [xBack,  yBottomBack,       zRight] as const;
-									const oneX = (A[0] + D[0]) / 2;
-									const oneZ = (A[2] + D[2]) / 2;
-									const oneY = yTop - 0.11 - seam;
-									const one = [oneX, oneY, oneZ] as const;
+								// שלושה משולשים: A‑D‑1, 1‑D‑E, 1‑E‑B
+								const pos = new Float32Array([
+									// A-D-1
+									...A, ...D, ...one,
+									// A-1-B (מוסיף כדי לקבל 4 משולשים כולל חזית מרכזית)
+									...A, ...one, ...B,
+									// 1-D-E
+									...one, ...D, ...E,
+									// 1-E-B
+									...one, ...E, ...B,
+								]);
+								const g2 = new BufferGeometry();
+								g2.setAttribute('position', new Float32BufferAttribute(pos, 3));
+								// UV בקירוב
+								const uA = 0, vA = 0;
+								const uB = 0, vB = 1;
+								const uD = 1, vD = 0;
+								const uE = 1, vE = 1;
+								const u1 = 0.5, v1 = 0.5;
+								const uv = new Float32Array([
+									// A-D-1
+									uA,vA, uD,vD, u1,v1,
+									// A-1-B
+									uA,vA, u1,v1, uB,vB,
+									// 1-D-E
+									u1,v1, uD,vD, uE,vE,
+									// 1-E-B
+									u1,v1, uE,vE, uB,vB,
+								]);
+								g2.setAttribute('uv', new Float32BufferAttribute(uv, 2));
+								g2.computeVertexNormals();
+								return <mesh geometry={g2} receiveShadow>{faceMat(t.run, treadWidth)}</mesh>;
+							})();
+							// אין צורך ברצועת "רכס" נוספת – שני חצאי התחתית כבר נפגשים במרכז
 
-									const pos = new Float32Array([
-										...A, ...D, ...one,
-										...A, ...one, ...B,
-										...one, ...D, ...E,
-										...one, ...E, ...B,
-									]);
-									const g2 = new BufferGeometry();
-									g2.setAttribute('position', new Float32BufferAttribute(pos, 3));
-									const uv = new Float32Array([
-										0,0, 1,0, .5,.5,
-										0,0, .5,.5, 0,1,
-										.5,.5, 1,0, 1,1,
-										.5,.5, 1,1, 0,1,
-									]);
-									g2.setAttribute('uv', new Float32BufferAttribute(uv, 2));
-									g2.computeVertexNormals();
-									return <mesh geometry={g2} receiveShadow>{faceMat(t.run, treadWidth)}</mesh>;
-								})();
+							// DEBUG: כבוי – ללא סימוני עזר
+							const showDebug = false;
+							const debugBottom = showDebug ? (() => {
+								const A: [number, number, number] = [xFront, yBottomFrontEdge, zLeft];
+								const B: [number, number, number] = [xFront, yBottomFrontEdge, zRight];
+								const D: [number, number, number] = [xBack,  yBottomBack,       zLeft];
+								const E: [number, number, number] = [xBack,  yBottomBack,       zRight];
+								const midADflat: [number, number, number] = [(A[0]+D[0])/2, (A[1]+D[1])/2, (A[2]+D[2])/2];
+								const midBE: [number, number, number] = [(B[0]+E[0])/2, (B[1]+E[1])/2, (B[2]+E[2])/2];
+								// נקודה 1 (עמוקה): אותה מיקום XZ כמו midAD, אך בעומק 110 מ״מ מהטופ
+								const one: [number, number, number] = [midADflat[0], (yTop - 0.11 - 0.001), midADflat[2]];
+								// קווים מבוקשים: E→(1=midAD) וגם B→(1=midAD)
+								const edgesToOne = new Float32Array([
+									...E, ...one,
+									...B, ...one,
+								]);
+								return (
+									<group>
+										<lineSegments>
+											<bufferGeometry attach="geometry">
+												<bufferAttribute attach="attributes-position" args={[edgesToOne, 3]} />
+											</bufferGeometry>
+											<lineBasicMaterial attach="material" color="#ff3366" />
+										</lineSegments>
+										<Text position={[A[0], A[1]-0.005, A[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">A</Text>
+										<Text position={[B[0], B[1]-0.005, B[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">B</Text>
+										<Text position={[D[0], D[1]-0.005, D[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">D</Text>
+										<Text position={[E[0], E[1]-0.005, E[2]]} fontSize={0.03} color="#ff3366" anchorX="center" anchorY="top">E</Text>
+										<Text position={[one[0], one[1]-0.005, one[2]]} fontSize={0.035} color="#111111" anchorX="center" anchorY="top">1</Text>
+										<Text position={[midBE[0], midBE[1]-0.005, midBE[2]]} fontSize={0.035} color="#111111" anchorX="center" anchorY="top">2</Text>
+									</group>
+								);
+							})() : null;
 
-								const back = (
-									<mesh rotation={[0, Math.PI / 2, 0]} position={[xBack - 0.0005, (yTop + yBottomBack)/2, 0]} receiveShadow>
-										<planeGeometry args={[treadWidth + seam * 2, backTh + seam * 2, 8, 2]} />
-										{faceMat(treadWidth, backTh)}
-									</mesh>
-								);
-								const sideRight = (
-									<mesh rotation={[0, 0, 0]} position={[0, 0, zRight]} receiveShadow>
-										<planeGeometry args={[t.run, backTh, 8, 2]} />
-										{faceMat(t.run, backTh)}
-									</mesh>
-								);
-								const sideLeft = (
-									<mesh rotation={[0, Math.PI, 0]} position={[0, 0, zLeft]} receiveShadow>
-										<planeGeometry args={[t.run, backTh, 8, 2]} />
-										{faceMat(t.run, backTh)}
-									</mesh>
-								);
-								return <group>{front}{bottom}{back}{sideRight}{sideLeft}</group>;
-							} else {
-								// ריצה לאורך Z
-								const zFront = t.run / 2, zBack = -t.run / 2;
-								const xLeft = -treadWidth / 2 - seam, xRight = treadWidth / 2 + seam;
+							// BACK + SIDES (קבועים)
+							const back = (
+								<mesh rotation={[0, forwardSign > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} position={[xBack - forwardSign * 0.0005, (yTop + yBottomBack)/2, 0]} receiveShadow>
+									<planeGeometry args={[treadWidth + seam * 2, backTh + seam * 2, 8, 2]} />
+									{faceMat(treadWidth, backTh)}
+								</mesh>
+							);
+							const sideRight = (
+								<mesh rotation={[0, 0, 0]} position={[0, 0, zRight]} receiveShadow>
+									<planeGeometry args={[t.run, backTh, 8, 2]} />
+									{faceMat(t.run, backTh)}
+								</mesh>
+							);
+							const sideLeft = (
+								<mesh rotation={[0, Math.PI, 0]} position={[0, 0, zLeft]} receiveShadow>
+									<planeGeometry args={[t.run, backTh, 8, 2]} />
+									{faceMat(t.run, backTh)}
+								</mesh>
+							);
 
-								const front = (
-									<mesh rotation={[0, 0, 0]} position={[0, (yTop + yBottomFrontEdge)/2, zFront + 0.0005]} receiveShadow>
-										<planeGeometry args={[treadWidth + seam * 2, frontEdgeTh + seam * 2, 8, 2]} />
-										{faceMat(treadWidth, frontEdgeTh)}
-									</mesh>
-								);
-
-								const bottom = (() => {
-									const A = [xLeft,  yBottomFrontEdge, zFront] as const;
-									const B = [xRight, yBottomFrontEdge, zFront] as const;
-									const D = [xLeft,  yBottomBack,      zBack ] as const;
-									const E = [xRight, yBottomBack,      zBack ] as const;
-									const oneX = (A[0] + B[0]) / 2;
-									const oneZ = (A[2] + D[2]) / 2;
-									const oneY = yTop - 0.11 - seam;
-									const one = [oneX, oneY, oneZ] as const;
-
-									const pos = new Float32Array([
-										...A, ...D, ...one,
-										...A, ...one, ...B,
-										...one, ...D, ...E,
-										...one, ...E, ...B,
-									]);
-									const g2 = new BufferGeometry();
-									g2.setAttribute('position', new Float32BufferAttribute(pos, 3));
-									const uv = new Float32Array([
-										0,0, 1,0, .5,.5,
-										0,0, .5,.5, 0,1,
-										.5,.5, 1,0, 1,1,
-										.5,.5, 1,1, 0,1,
-									]);
-									g2.setAttribute('uv', new Float32BufferAttribute(uv, 2));
-									g2.computeVertexNormals();
-									return <mesh geometry={g2} receiveShadow>{faceMat(t.run, treadWidth)}</mesh>;
-								})();
-
-								const back = (
-									<mesh rotation={[0, Math.PI, 0]} position={[0, (yTop + yBottomBack)/2, zBack - 0.0005]} receiveShadow>
-										<planeGeometry args={[treadWidth + seam * 2, backTh + seam * 2, 8, 2]} />
-										{faceMat(treadWidth, backTh)}
-									</mesh>
-								);
-								const sideRight = (
-									<mesh rotation={[0, Math.PI / 2, 0]} position={[xRight, 0, 0]} receiveShadow>
-										<planeGeometry args={[t.run, backTh, 8, 2]} />
-										{faceMat(t.run, backTh)}
-									</mesh>
-								);
-								const sideLeft = (
-									<mesh rotation={[0, -Math.PI / 2, 0]} position={[xLeft, 0, 0]} receiveShadow>
-										<planeGeometry args={[t.run, backTh, 8, 2]} />
-										{faceMat(t.run, backTh)}
-									</mesh>
-								);
-								return <group>{front}{bottom}{back}{sideRight}{sideLeft}</group>;
-							}
+							return <group>{front}{bottom}{debugBottom}{back}{sideRight}{sideLeft}</group>;
 						})()
 					) : (
 						<mesh castShadow receiveShadow>

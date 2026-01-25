@@ -19,7 +19,7 @@ function CanvasLoadingOverlay() {
 		</div>
 	);
 }
-import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, BufferGeometry, Float32BufferAttribute, Cache, NoToneMapping, Vector3 } from 'three';
+import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, BufferGeometry, Float32BufferAttribute, Cache, NoToneMapping, Vector3, Shape, ExtrudeGeometry } from 'three';
 
 // הפעלת קאש של three עבור טעינות חלקות
 Cache.enabled = true;
@@ -906,54 +906,73 @@ function Staircase3D({
 							{(() => {
 								const plateThickness = 0.006;
 								const plateHeight = 0.13; // 130 מ״מ
-								// הפלטה מתחילה מגג המדרך (top) ויורדת 130 מ״מ
-								const yCenter = (treadThickness / 2) - (plateHeight / 2);
-								// הארכה קדימה לכיוון המדרגה הבאה: 140 מ״מ
-								const nextIsLanding = Boolean(treads[idx + 1]?.isLanding);
-								// פלטה תמיד בקצה הקדמי של כל שלב: אורך 300+150=450 מ״מ (גם בפודסט).
-								const lengthX = t.run + 0.15;
-								const xCenter = 0.15 / 2;
 								const plateColor = '#2b2b2b';
-								return (
-									<group>
-										<mesh position={[xCenter, yCenter, treadWidth / 2 + plateThickness / 2]} castShadow receiveShadow>
-											<boxGeometry args={[lengthX, plateHeight, plateThickness]} />
-											<meshBasicMaterial color={plateColor} />
-										</mesh>
-										<mesh position={[xCenter, yCenter, -treadWidth / 2 - plateThickness / 2]} castShadow receiveShadow>
-											<boxGeometry args={[lengthX, plateHeight, plateThickness]} />
-											<meshBasicMaterial color={plateColor} />
-										</mesh>
-										{/* מחברים אנכיים בשני הצדדים – תמיד בקצה הקדמי של כל שלב (כולל פודסט) */}
-										{(() => {
-											const riser = 0.18;
-											const seam = 0.001;
-											const verticalGap = riser + seam * 2; // כיסוי מלא + חפיפה זעירה למניעת גאפ
-											const topYLocal = treadThickness / 2;
-											// למקם את המחבר כך שיישב בדיוק בקצה המדרגה (חזית)
-											const verticalWidth = 0.15; // 150 מ״מ
-											const frontEdgeX = (t.run / 2) + (verticalWidth / 2);
-											const vYCenter = (topYLocal - plateHeight) - (riser / 2); // ממורכז על הרום; החפיפה מגיעה מה-seam
-											// עיגון קשיח לחזית – תמיד בולט החוצה; ללא סיבוב לפי פודסט
-											return (
-												<group>
-													<mesh position={[frontEdgeX, vYCenter, treadWidth / 2 + plateThickness / 2]} castShadow receiveShadow>
-														<boxGeometry args={[verticalWidth, verticalGap, plateThickness]} />
-														<meshBasicMaterial color={plateColor} />
-													</mesh>
-													<mesh position={[frontEdgeX, vYCenter, -treadWidth / 2 - plateThickness / 2]} castShadow receiveShadow>
-														<boxGeometry args={[verticalWidth, verticalGap, plateThickness]} />
-														<meshBasicMaterial color={plateColor} />
-													</mesh>
-												</group>
-											);
-										})()}
 
-										{/* אין מחברים אחוריים */}
+								// פרמטרים כלליים
+								const riser = 0.18; // גובה רום משוער למדרגות ישרות
+								const topYLocal = treadThickness / 2;
+								const next = treads[idx + 1];
+								const currYaw = (t.rotation[1] as number) || 0;
+								const nextYaw = ((next?.rotation?.[1] as number) ?? currYaw);
+								const sameDirection = !!next && !next.isLanding && Math.abs(nextYaw - currYaw) < 1e-4;
 
-										{/* מחברים דקים ליד פודסט – מבוטל */}
-									</group>
-								);
+								// יוצר גאומטריית פלטה אלכסונית (במישור X-Y) ומוציא אקסטרוזיה לאורך Z (עובי הפלטה)
+								const makeDiagonalPlate = (dx: number, drop: number) => {
+									const s = new Shape();
+									const x0 = t.run / 2;
+									const y0 = topYLocal;
+									// A -> B -> C -> D -> close
+									s.moveTo(x0, y0);
+									s.lineTo(x0, y0 - plateHeight);
+									s.lineTo(x0 + dx, y0 - drop - plateHeight);
+									s.lineTo(x0 + dx, y0 - drop);
+									s.closePath();
+									const geom = new ExtrudeGeometry(s, { depth: plateThickness, bevelEnabled: false });
+									return geom;
+								};
+
+								// פלטה מלבנית fallback (למקטעים עם פודסט/פנייה)
+								const makeRectPlate = (lenX: number) => {
+									const xCenter = 0.15 / 2;
+									const yCenter = (treadThickness / 2) - (plateHeight / 2);
+									return { xCenter, yCenter, lenX };
+								};
+
+								// אם השלב הבא קיים, אינו פודסט, ובאותו כיוון – השתמש בפלטה אלכסונית המחברת בין חזיות
+								if (sameDirection) {
+									const dx = t.run;
+									const drop = riser;
+									const rightGeom = makeDiagonalPlate(dx, drop);
+									const leftGeom = makeDiagonalPlate(dx, drop);
+									return (
+										<group>
+											<mesh geometry={rightGeom} position={[0, 0, treadWidth / 2 + plateThickness / 2]} castShadow receiveShadow>
+												<meshBasicMaterial color={plateColor} />
+											</mesh>
+											<mesh geometry={leftGeom} position={[0, 0, -treadWidth / 2 - plateThickness / 2]} castShadow receiveShadow>
+												<meshBasicMaterial color={plateColor} />
+											</mesh>
+										</group>
+									);
+								}
+
+								// אחרת – fallback פשוט למלבני בחזית השלב
+								{
+									const lenX = t.run + 0.15;
+									const { xCenter, yCenter } = makeRectPlate(lenX);
+									return (
+										<group>
+											<mesh position={[xCenter, yCenter, treadWidth / 2 + plateThickness / 2]} castShadow receiveShadow>
+												<boxGeometry args={[lenX, plateHeight, plateThickness]} />
+												<meshBasicMaterial color={plateColor} />
+											</mesh>
+											<mesh position={[xCenter, yCenter, -treadWidth / 2 - plateThickness / 2]} castShadow receiveShadow>
+												<boxGeometry args={[lenX, plateHeight, plateThickness]} />
+												<meshBasicMaterial color={plateColor} />
+											</mesh>
+										</group>
+									);
+								}
 							})()}
 						</>
 					)}

@@ -900,57 +900,141 @@ function Staircase3D({
 						</mesh>
 					)}
 
-					{/* Side plates (optional) – הוחלפו לפלטות אלכסוניות */}
+					{/* פלטות אלכסוניות – זרימה כמו מעקה הזכוכית (שכפול התנהגות) */}
 					{withSidePlates && (
 						<>
 							{(() => {
 								const plateThickness = 0.006;
 								const plateHeight = 0.13; // 130 מ״מ
 								const plateColor = '#2b2b2b';
+								const riser = 0.18; // גובה רום משוער
 
-								// פרמטרים כלליים
-								const riser = 0.18; // גובה רום משוער למדרגות ישרות
-								const topYLocal = treadThickness / 2;
-								const next = treads[idx + 1];
-								const currYaw = (t.rotation[1] as number) || 0;
-								const nextYaw = ((next?.rotation?.[1] as number) ?? currYaw);
-								const sameDirection = !!next && !next.isLanding && Math.abs(nextYaw - currYaw) < 1e-4;
+								const yaw = t.rotation[1];
+								const axis: 'x' | 'z' = Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z';
+								const bottomY = t.position[1] - treadThickness / 2;
+								const topY = t.position[1] + treadThickness / 2;
 
-								// יוצר גאומטריית פלטה אלכסונית (במישור X-Y) ומוציא אקסטרוזיה לאורך Z (עובי הפלטה)
-								const makeDiagonalPlate = (dx: number, drop: number) => {
-									const s = new Shape();
-									const x0 = t.run / 2;
-									const y0 = topYLocal;
-									// A -> B -> C -> D -> close
-									s.moveTo(x0, y0);
-									s.lineTo(x0, y0 - plateHeight);
-									s.lineTo(x0 + dx, y0 - drop - plateHeight);
-									s.lineTo(x0 + dx, y0 - drop);
-									s.closePath();
-									const geom = new ExtrudeGeometry(s, { depth: plateThickness, bevelEnabled: false });
-									return geom;
+								// בניית גאומטריה מלבנית מוטה לציר האלכסון (בדומה למעקה זכוכית),
+								// אך גובה קבוע של plateHeight כלפי מטה מהקצה העליון.
+								const buildGeomAlongX = () => {
+									const x0 = t.position[0] - t.run / 2;
+									const x1 = t.position[0] + t.run / 2;
+									// מדרגה או פודסט ישר
+									const dirAxis = (Math.cos(yaw) >= 0 ? 1 : -1);
+									const k = t.isLanding ? 0 : (riser / t.run) * dirAxis;
+									const bTop = topY - k * t.position[0];
+									// ערכי Y לפי קו עליון ולמטה plateHeight
+									const yTop0 = k * x0 + bTop;
+									const yTop1 = k * x1 + bTop;
+									const yBot0 = yTop0 - plateHeight;
+									const yBot1 = yTop1 - plateHeight;
+
+									// שני הצדדים: +Z ו- -Z
+									const zRight = t.position[2] + (treadWidth / 2 + plateThickness / 2);
+									const zLeft = t.position[2] - (treadWidth / 2 + plateThickness / 2);
+
+									// ימין
+									{
+										const geom = new BufferGeometry();
+										const positions = new Float32BufferAttribute([
+											x0, yBot0, zRight,
+											x1, yBot1, zRight,
+											x0, yTop0, zRight,
+											x1, yTop1, zRight,
+										], 3);
+										geom.setAttribute('position', positions);
+										geom.setIndex([0, 1, 2, 2, 1, 3]);
+										geom.computeVertexNormals();
+										panels.push(
+											<mesh key={`plate-x-R-${idx}`} castShadow receiveShadow>
+												<primitive object={geom} attach="geometry" />
+												<meshBasicMaterial color={plateColor} side={2} />
+											</mesh>
+										);
+									}
+									// שמאל
+									{
+										const geom = new BufferGeometry();
+										const positions = new Float32BufferAttribute([
+											x0, yBot0, zLeft,
+											x1, yBot1, zLeft,
+											x0, yTop0, zLeft,
+											x1, yTop1, zLeft,
+										], 3);
+										geom.setAttribute('position', positions);
+										geom.setIndex([0, 1, 2, 2, 1, 3]);
+										geom.computeVertexNormals();
+										panels.push(
+											<mesh key={`plate-x-L-${idx}`} castShadow receiveShadow>
+												<primitive object={geom} attach="geometry" />
+												<meshBasicMaterial color={plateColor} side={2} />
+											</mesh>
+										);
+									}
 								};
 
-								// אם השלב הבא קיים, אינו פודסט, ובאותו כיוון – השתמש בפלטה אלכסונית המחברת בין חזיות
-								if (sameDirection) {
-									const dx = t.run;
-									const drop = riser;
-									const rightGeom = makeDiagonalPlate(dx, drop);
-									const leftGeom = makeDiagonalPlate(dx, drop);
-									return (
-										<group>
-											<mesh geometry={rightGeom} position={[0, 0, treadWidth / 2 + plateThickness / 2]} castShadow receiveShadow>
-												<meshBasicMaterial color={plateColor} />
-											</mesh>
-											<mesh geometry={leftGeom} position={[0, 0, -treadWidth / 2 - plateThickness / 2]} castShadow receiveShadow>
-												<meshBasicMaterial color={plateColor} />
-											</mesh>
-										</group>
-									);
-								}
+								const buildGeomAlongZ = () => {
+									const z0 = t.position[2] - t.run / 2;
+									const z1 = t.position[2] + t.run / 2;
+									const dirAxis = (Math.sin(yaw) >= 0 ? 1 : -1);
+									const k = t.isLanding ? 0 : (riser / t.run) * dirAxis;
+									const bTop = topY - k * t.position[2];
+									const yTop0 = k * z0 + bTop;
+									const yTop1 = k * z1 + bTop;
+									const yBot0 = yTop0 - plateHeight;
+									const yBot1 = yTop1 - plateHeight;
 
-								// אחרת (פודסט/פנייה) – לא מציג פלטות אלכסוניות
-								return null;
+									const xRight = t.position[0] + (treadWidth / 2 + plateThickness / 2);
+									const xLeft = t.position[0] - (treadWidth / 2 + plateThickness / 2);
+
+									// ימין
+									{
+										const geom = new BufferGeometry();
+										const positions = new Float32BufferAttribute([
+											xRight, yBot0, z0,
+											xRight, yBot1, z1,
+											xRight, yTop0, z0,
+											xRight, yTop1, z1,
+										], 3);
+										geom.setAttribute('position', positions);
+										geom.setIndex([0, 1, 2, 2, 1, 3]);
+										geom.computeVertexNormals();
+										panels.push(
+											<mesh key={`plate-z-R-${idx}`} castShadow receiveShadow>
+												<primitive object={geom} attach="geometry" />
+												<meshBasicMaterial color={plateColor} side={2} />
+											</mesh>
+										);
+									}
+									// שמאל
+									{
+										const geom = new BufferGeometry();
+										const positions = new Float32BufferAttribute([
+											xLeft, yBot0, z0,
+											xLeft, yBot1, z1,
+											xLeft, yTop0, z0,
+											xLeft, yTop1, z1,
+										], 3);
+										geom.setAttribute('position', positions);
+										geom.setIndex([0, 1, 2, 2, 1, 3]);
+										geom.computeVertexNormals();
+										panels.push(
+											<mesh key={`plate-z-L-${idx}`} castShadow receiveShadow>
+												<primitive object={geom} attach="geometry" />
+												<meshBasicMaterial color={plateColor} side={2} />
+											</mesh>
+										);
+									}
+								};
+
+								// אוסף פאנלים לכל שלב (ימין+שמאל) כדי ליצור זרימה רציפה כמו הזכוכית
+								const panels: React.ReactElement[] = [];
+								if (axis === 'x') {
+									buildGeomAlongX();
+								} else {
+									buildGeomAlongZ();
+								}
+								return <group>{panels}</group>;
 							})()}
 						</>
 					)}

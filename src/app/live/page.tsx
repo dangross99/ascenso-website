@@ -910,30 +910,9 @@ function Staircase3D({
 								const yCenter = (treadThickness / 2) - (plateHeight / 2);
 								// הארכה קדימה לכיוון המדרגה הבאה: 140 מ״מ
 								const nextIsLanding = Boolean(treads[idx + 1]?.isLanding);
-								// פלטה תמיד בקצה הקדמי של המדרגה: אורך 300+150=450 מ״מ.
-								// נקבע את כיוון "קדימה" באופן חכם לפי המיקום של השלב הבא ביחס לכיוון המקומי.
-								// בפודסט עצמו אין הארכה.
-								let xCenter = 0;
-								const lengthX = t.isLanding ? t.run : (t.run + 0.15);
-								if (!t.isLanding) {
-									const yaw = t.rotation[1] as number;
-									const forwardWorld = new Vector3(1, 0, 0).applyAxisAngle(new Vector3(0, 1, 0), yaw);
-									const next = treads[idx + 1];
-									// ברירת מחדל: קדימה
-									let sign = 1;
-									if (next) {
-										const delta = new Vector3(
-											next.position[0] - t.position[0],
-											0,
-											next.position[2] - t.position[2],
-										);
-										// אם ה"ווקטור קדימה" והדלתא הבאה בניגוד סימן – נהפוך את הכיוון
-										if (delta.dot(forwardWorld) < 0) {
-											sign = -1;
-										}
-									}
-									xCenter = sign * (0.15 / 2);
-								}
+								// פלטה תמיד בקצה הקדמי של כל שלב: אורך 300+150=450 מ״מ (גם בפודסט).
+								const lengthX = t.run + 0.15;
+								const xCenter = 0.15 / 2;
 								const plateColor = '#2b2b2b';
 								return (
 									<group>

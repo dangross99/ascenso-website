@@ -3405,6 +3405,149 @@ function LivePageInner() {
 												</button>
 											))}
 										</div>
+
+										{(() => {
+											// עורך מתקדם כמו ב"מסלול": עמודות לכל גרם + מראה לצדדים
+											// מפה את ריצות הישר לאינדקסי מדרגות במערכי המעקה
+											const flights: Array<{ segIndex: number; start: number; count: number }> = [];
+											let cursor = 0;
+											for (let i = 0; i < pathSegments.length; i++) {
+												const seg = pathSegments[i];
+												if (seg.kind === 'straight') {
+													const count = Math.max(0, (seg as any).steps || 0);
+													flights.push({ segIndex: i, start: cursor, count });
+													cursor += count;
+												} else {
+													// פודסט אינו מוסיף מדרגות
+												}
+											}
+											const cols = Math.max(1, flights.length);
+
+											const toggleFlight = (f: { start: number; count: number }, value: boolean) => {
+												setStepRailing(prev => {
+													const out = prev.slice(0, Math.max(prev.length, f.start + f.count));
+													for (let i = f.start; i < f.start + f.count; i++) out[i] = value;
+													return out;
+												});
+											};
+											const setFlightSide = (f: { start: number; count: number }, side: 'right' | 'left') => {
+												setStepRailingSide(prev => {
+													const out = prev.slice(0, Math.max(prev.length, f.start + f.count));
+													for (let i = f.start; i < f.start + f.count; i++) out[i] = side;
+													return out as Array<'right' | 'left'>;
+												});
+											};
+
+											return (
+												<>
+													<div className="flex items-center justify-center gap-2 mb-3">
+														<button
+															className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100"
+															title="מראה צד המעקה לכל הרצף"
+															aria-label="מראה צד המעקה"
+															onClick={() => {
+																setStepRailingSide(prev => prev.map(s => (s === 'left' ? 'right' : 'left')));
+																setLandingRailingSide(prev => prev.map(s => (s === 'left' ? 'right' : 'left')));
+															}}
+														>
+															מראה
+														</button>
+													</div>
+
+													<div className="grid gap-3 mb-3" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
+														{flights.map((f, idx) => {
+															const enabledCount = stepRailing.slice(f.start, f.start + f.count).filter(Boolean).length;
+															const allOn = enabledCount === f.count && f.count > 0;
+															const anyOn = enabledCount > 0;
+															// רוב צדדים בגרם
+															let left = 0, right = 0;
+															for (let i = f.start; i < f.start + f.count; i++) {
+																if ((stepRailing[i] ?? (railing !== 'none')) !== true) continue;
+																(stepRailingSide[i] === 'left') ? left++ : right++;
+															}
+															const sideMajor: 'right' | 'left' = right >= left ? 'right' : 'left';
+															return (
+																<div key={idx} className="border rounded-md p-2 text-center">
+																	<div className="text-sm text-gray-600 mb-1">גרם {idx + 1}</div>
+																	<div className="flex items-center justify-center gap-2 mb-2">
+																		<button
+																			className={`px-3 py-1 text-sm rounded-full border ${allOn ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
+																			onClick={() => toggleFlight(f, true)}
+																		>
+																			עם מעקה
+																		</button>
+																		<button
+																			className={`px-3 py-1 text-sm rounded-full border ${!anyOn ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
+																			onClick={() => toggleFlight(f, false)}
+																		>
+																			ללא
+																		</button>
+																	</div>
+																	<div className="inline-flex rounded-full border overflow-hidden">
+																		<button
+																			className={`px-3 py-1 text-sm ${sideMajor === 'left' ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
+																			onClick={() => setFlightSide(f, 'left')}
+																		>
+																			צד שמאל
+																		</button>
+																		<button
+																			className={`px-3 py-1 text-sm border-l ${sideMajor === 'right' ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
+																			onClick={() => setFlightSide(f, 'right')}
+																		>
+																			צד ימין
+																		</button>
+																	</div>
+																</div>
+															);
+														})}
+													</div>
+
+													{/* פודסטים ללא פנייה – הפעלה וצד */}
+													{landingMeta.some(t => !t) && (
+														<div className="flex items-center justify-center gap-2 flex-wrap">
+															{landingMeta.map((turn, i) => {
+																if (turn) return null;
+																const on = landingRailing[i] ?? (railing !== 'none');
+																const side = landingRailingSide[i] ?? 'right';
+																return (
+																	<div key={i} className="border rounded-md p-2 text-center">
+																		<div className="text-sm text-gray-600 mb-1">פודסט {i + 1}</div>
+																		<div className="flex items-center justify-center gap-2 mb-2">
+																			<button
+																				className={`px-3 py-1 text-sm rounded-full border ${on ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
+																				onClick={() => setLandingRailing(prev => prev.map((v, idx) => idx === i ? true : v))}
+																			>
+																				עם מעקה
+																			</button>
+																			<button
+																				className={`px-3 py-1 text-sm rounded-full border ${!on ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
+																				onClick={() => setLandingRailing(prev => prev.map((v, idx) => idx === i ? false : v))}
+																			>
+																				ללא
+																			</button>
+																		</div>
+																		<div className="inline-flex rounded-full border overflow-hidden">
+																			<button
+																				className={`px-3 py-1 text-sm ${side === 'left' ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
+																				onClick={() => setLandingRailingSide(prev => prev.map((v, idx) => idx === i ? 'left' : v))}
+																			>
+																				שמאל
+																			</button>
+																			<button
+																				className={`px-3 py-1 text-sm border-l ${side === 'right' ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
+																				onClick={() => setLandingRailingSide(prev => prev.map((v, idx) => idx === i ? 'right' : v))}
+																			>
+																				ימין
+																			</button>
+																		</div>
+																	</div>
+																);
+															})}
+														</div>
+													)}
+												</>
+											);
+										})()}
 									</div>
 								),
 							});

@@ -19,7 +19,7 @@ function CanvasLoadingOverlay() {
 		</div>
 	);
 }
-import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, BufferGeometry, Float32BufferAttribute, Cache, NoToneMapping, Vector3 } from 'three';
+import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, BufferGeometry, Float32BufferAttribute, Cache, NoToneMapping, Vector3, Shape, ExtrudeGeometry } from 'three';
 
 // הפעלת קאש של three עבור טעינות חלקות
 Cache.enabled = true;
@@ -131,6 +131,8 @@ function Staircase3D({
 	railingUvInset = 0,
 	treadThicknessOverride,
 	boxModel = 'rect',
+	wedgeFrontFraction,
+	wedgeFrontThicknessM,
 	ridgeFrontCenterThicknessM,
 	ridgeFrontEdgeThicknessM,
 	pathSegments,
@@ -149,7 +151,6 @@ function Staircase3D({
 	cableSpanMode,
 	stepCableSpanModes,
 	landingCableSpanModes,
-	withSidePlates,
 }: {
 	shape: 'straight' | 'L' | 'U';
 	steps: number;
@@ -164,7 +165,9 @@ function Staircase3D({
 	uvInset?: number;
 	railingUvInset?: number;
 	treadThicknessOverride?: number;
-	boxModel?: 'rect' | 'ridge';
+	boxModel?: 'rect' | 'wedge' | 'ridge';
+	wedgeFrontFraction?: number;
+	wedgeFrontThicknessM?: number;
 	ridgeFrontCenterThicknessM?: number;
 	ridgeFrontEdgeThicknessM?: number;
 	pathSegments?: PathSegment[] | null;
@@ -183,7 +186,6 @@ function Staircase3D({
 	cableSpanMode?: 'floor' | 'tread';
 	stepCableSpanModes?: Array<'floor' | 'tread'>;
 	landingCableSpanModes?: Array<'floor' | 'tread'>;
-	withSidePlates?: boolean;
 }) {
 	// יחידות סצנה: מטרים בקירוב
 	const treadThickness = typeof treadThicknessOverride === 'number' ? treadThicknessOverride : 0.04;
@@ -562,7 +564,93 @@ function Staircase3D({
 			{(() => { let sIdx = 0; let lIdx = 0; return treads.map((t, idx) => (
 				<group key={idx} position={t.position} rotation={t.rotation}>
 					{/* גוף המדרך */}
-					{boxModel === 'ridge' ? (
+					{boxModel === 'wedge' ? (
+						(() => {
+							const topY = treadThickness / 2;
+							const frontFrac = Math.max(0.1, Math.min(0.9, typeof wedgeFrontFraction === 'number' ? wedgeFrontFraction : 0.35));
+							const desiredFront = typeof wedgeFrontThicknessM === 'number' ? wedgeFrontThicknessM : (treadThickness * frontFrac);
+							const frontTh = Math.max(0.01, Math.min(treadThickness - 0.005, desiredFront));
+							const seam = 0.001; // הרחבה זעירה לסגירת חיבורים
+							const xBack = t.run / 2;
+							const xFront = -t.run / 2;
+							const zLeft = -treadWidth / 2 - seam;
+							const zRight = treadWidth / 2 + seam;
+							const yTop = topY;
+							const yBottomBack = yTop - treadThickness - seam;
+							const yBottomFront = yTop - frontTh - seam;
+							const faceMat = (dimU: number, dimV: number) => {
+								if (useSolidMat) return <meshBasicMaterial color={solidSideColor} side={2} />;
+								const ft = buildFaceTextures(dimU, dimV);
+								return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />;
+							};
+							const yCenterFront = (yTop + yBottomFront) / 2;
+							const yCenterBack = (yTop + yBottomBack) / 2;
+							// FRONT at xFront
+							const front = (
+								<mesh key="front" rotation={[0, Math.PI / 2, 0]} position={[xFront - 0.0005, yCenterFront, 0]} receiveShadow>
+									<planeGeometry args={[treadWidth + seam * 2, frontTh + seam * 2, 8, 2]} />
+									{faceMat(treadWidth, frontTh)}
+								</mesh>
+							);
+							// BACK at xBack
+							const back = (
+								<mesh key="back" rotation={[0, -Math.PI / 2, 0]} position={[xBack + 0.0005, yCenterBack, 0]} receiveShadow>
+									<planeGeometry args={[treadWidth + seam * 2, treadThickness + seam * 2, 8, 2]} />
+									{faceMat(treadWidth, treadThickness)}
+								</mesh>
+							);
+							// RIGHT side (trapezoid)
+							const rightGeom = new BufferGeometry();
+							rightGeom.setAttribute('position', new Float32BufferAttribute([
+								xFront, yBottomFront, zRight,
+								xBack,  yBottomBack,  zRight,
+								xFront, yTop + seam,  zRight,
+								xBack,  yTop + seam,  zRight,
+							], 3));
+							rightGeom.setIndex([0,1,2,2,1,3]);
+							// simple rectangular UVs
+							rightGeom.setAttribute('uv', new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2));
+							rightGeom.computeVertexNormals();
+							const right = (
+								<mesh key="right" geometry={rightGeom} receiveShadow>
+									{faceMat(t.run, (treadThickness + frontTh) / 2)}
+								</mesh>
+							);
+							// LEFT side (trapezoid)
+							const leftGeom = new BufferGeometry();
+							leftGeom.setAttribute('position', new Float32BufferAttribute([
+								xBack,  yBottomBack,  zLeft,
+								xFront, yBottomFront, zLeft,
+								xBack,  yTop + seam,  zLeft,
+								xFront, yTop + seam,  zLeft,
+							], 3));
+							leftGeom.setIndex([0,1,2,2,1,3]);
+							leftGeom.setAttribute('uv', new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2));
+							leftGeom.computeVertexNormals();
+							const left = (
+								<mesh key="left" geometry={leftGeom} receiveShadow>
+									{faceMat(t.run, (treadThickness + frontTh) / 2)}
+								</mesh>
+							);
+							// BOTTOM slanted
+							const bottomGeom = new BufferGeometry();
+							bottomGeom.setAttribute('position', new Float32BufferAttribute([
+								xFront, yBottomFront - seam, zLeft,
+								xBack,  yBottomBack - seam,  zLeft,
+								xFront, yBottomFront - seam, zRight,
+								xBack,  yBottomBack - seam,  zRight,
+							], 3));
+							bottomGeom.setIndex([0,1,2,2,1,3]);
+							bottomGeom.setAttribute('uv', new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2));
+							bottomGeom.computeVertexNormals();
+							const bottom = (
+								<mesh key="bottom" geometry={bottomGeom} rotation={[0,0,0]} receiveShadow>
+									{faceMat(t.run, treadWidth)}
+								</mesh>
+							);
+							return <group>{front}{back}{right}{left}{bottom}</group>;
+						})()
+					) : boxModel === 'ridge' ? (
 						(() => {
 							// אלכסוני עם רכס מרכזי: שני קווי שבירה לאורך מהמרכז בגב לשתי פינות החזית.
 							const topY = treadThickness / 2;
@@ -810,144 +898,7 @@ function Staircase3D({
 						</mesh>
 					)}
 
-					{/* פלטות אלכסוניות – זרימה כמו מעקה הזכוכית (שכפול התנהגות) */}
-					{withSidePlates && (
-						<>
-							{(() => {
-								const plateThickness = 0.006;
-								const plateHeight = 0.13; // 130 מ״מ
-								const plateColor = '#2b2b2b';
-								const riser = 0.18; // גובה רום משוער
-
-								const yaw = t.rotation[1];
-								const axis: 'x' | 'z' = Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z';
-								const bottomY = t.position[1] - treadThickness / 2;
-								const topY = t.position[1] + treadThickness / 2;
-
-								// בניית גאומטריה מלבנית מוטה לציר האלכסון (בדומה למעקה זכוכית),
-								// אך גובה קבוע של plateHeight כלפי מטה מהקצה העליון.
-								const buildGeomAlongX = () => {
-									const x0 = t.position[0] - t.run / 2;
-									const x1 = t.position[0] + t.run / 2;
-									// מדרגה או פודסט ישר
-									const dirAxis = (Math.cos(yaw) >= 0 ? 1 : -1);
-									const k = t.isLanding ? 0 : (riser / t.run) * dirAxis;
-									const bTop = topY - k * t.position[0];
-									// ערכי Y לפי קו עליון ולמטה plateHeight
-									const yTop0 = k * x0 + bTop;
-									const yTop1 = k * x1 + bTop;
-									const yBot0 = yTop0 - plateHeight;
-									const yBot1 = yTop1 - plateHeight;
-
-									// שני הצדדים: +Z ו- -Z
-									const zRight = t.position[2] + (treadWidth / 2 + plateThickness / 2);
-									const zLeft = t.position[2] - (treadWidth / 2 + plateThickness / 2);
-
-									// ימין
-									{
-										const geom = new BufferGeometry();
-										const positions = new Float32BufferAttribute([
-											x0, yBot0, zRight,
-											x1, yBot1, zRight,
-											x0, yTop0, zRight,
-											x1, yTop1, zRight,
-										], 3);
-										geom.setAttribute('position', positions);
-										geom.setIndex([0, 1, 2, 2, 1, 3]);
-										geom.computeVertexNormals();
-										panels.push(
-											<mesh key={`plate-x-R-${idx}`} castShadow receiveShadow>
-												<primitive object={geom} attach="geometry" />
-												<meshBasicMaterial color={plateColor} side={2} />
-											</mesh>
-										);
-									}
-									// שמאל
-									{
-										const geom = new BufferGeometry();
-										const positions = new Float32BufferAttribute([
-											x0, yBot0, zLeft,
-											x1, yBot1, zLeft,
-											x0, yTop0, zLeft,
-											x1, yTop1, zLeft,
-										], 3);
-										geom.setAttribute('position', positions);
-										geom.setIndex([0, 1, 2, 2, 1, 3]);
-										geom.computeVertexNormals();
-										panels.push(
-											<mesh key={`plate-x-L-${idx}`} castShadow receiveShadow>
-												<primitive object={geom} attach="geometry" />
-												<meshBasicMaterial color={plateColor} side={2} />
-											</mesh>
-										);
-									}
-								};
-
-								const buildGeomAlongZ = () => {
-									const z0 = t.position[2] - t.run / 2;
-									const z1 = t.position[2] + t.run / 2;
-									const dirAxis = (Math.sin(yaw) >= 0 ? 1 : -1);
-									const k = t.isLanding ? 0 : (riser / t.run) * dirAxis;
-									const bTop = topY - k * t.position[2];
-									const yTop0 = k * z0 + bTop;
-									const yTop1 = k * z1 + bTop;
-									const yBot0 = yTop0 - plateHeight;
-									const yBot1 = yTop1 - plateHeight;
-
-									const xRight = t.position[0] + (treadWidth / 2 + plateThickness / 2);
-									const xLeft = t.position[0] - (treadWidth / 2 + plateThickness / 2);
-
-									// ימין
-									{
-										const geom = new BufferGeometry();
-										const positions = new Float32BufferAttribute([
-											xRight, yBot0, z0,
-											xRight, yBot1, z1,
-											xRight, yTop0, z0,
-											xRight, yTop1, z1,
-										], 3);
-										geom.setAttribute('position', positions);
-										geom.setIndex([0, 1, 2, 2, 1, 3]);
-										geom.computeVertexNormals();
-										panels.push(
-											<mesh key={`plate-z-R-${idx}`} castShadow receiveShadow>
-												<primitive object={geom} attach="geometry" />
-												<meshBasicMaterial color={plateColor} side={2} />
-											</mesh>
-										);
-									}
-									// שמאל
-									{
-										const geom = new BufferGeometry();
-										const positions = new Float32BufferAttribute([
-											xLeft, yBot0, z0,
-											xLeft, yBot1, z1,
-											xLeft, yTop0, z0,
-											xLeft, yTop1, z1,
-										], 3);
-										geom.setAttribute('position', positions);
-										geom.setIndex([0, 1, 2, 2, 1, 3]);
-										geom.computeVertexNormals();
-										panels.push(
-											<mesh key={`plate-z-L-${idx}`} castShadow receiveShadow>
-												<primitive object={geom} attach="geometry" />
-												<meshBasicMaterial color={plateColor} side={2} />
-											</mesh>
-										);
-									}
-								};
-
-								// אוסף פאנלים לכל שלב (ימין+שמאל) כדי ליצור זרימה רציפה כמו הזכוכית
-								const panels: React.ReactElement[] = [];
-								if (axis === 'x') {
-									buildGeomAlongX();
-								} else {
-									buildGeomAlongZ();
-								}
-								return <group>{panels}</group>;
-							})()}
-						</>
-					)}
+					{/* דגם 'פלטות אלכסוניות' בוטל */}
 
 					{/* מעקה זכוכית פר-מדרגה מבוטל למען פאנל רציף */}
 					{null}
@@ -2149,8 +2100,8 @@ function LivePageInner() {
 	const qShape = (search.get('shape') as 'straight' | 'L' | 'U') || 'straight';
 	const qSteps = parseInt(search.get('steps') || '', 10);
 	const qTex = search.get('tex') || '';
-	let qBox = (search.get('box') as 'thick' | 'thin' | 'ridge' | 'plates' | 'wedge') || 'thick';
-	if (qBox === 'wedge') { qBox = 'thick'; }
+	let qBox = (search.get('box') as 'thick' | 'thin' | 'wedge' | 'ridge' | 'plates') || 'thick';
+	if (qBox === 'plates') { qBox = 'thick'; }
 	const qPath = search.get('path') || '';
 
 	const [records, setRecords] = React.useState<MaterialRecord[]>([]);
@@ -2161,7 +2112,7 @@ function LivePageInner() {
 	// מזהים ייעודיים לכל קטגוריה כדי לשמר בחירה בין מעברים
 	const [activeMetalTexId, setActiveMetalTexId] = React.useState<string | null>(activeMaterial === 'metal' ? (qTex || null) : null);
 	const [activeStoneTexId, setActiveStoneTexId] = React.useState<string | null>(activeMaterial === 'stone' ? (qTex || null) : null);
-	const [box, setBox] = React.useState<'thick' | 'thin' | 'ridge' | 'plates'>(qBox as any);
+	const [box, setBox] = React.useState<'thick' | 'thin' | 'wedge' | 'ridge'>(qBox as any);
 	const [railing, setRailing] = React.useState<'none' | 'glass' | 'metal' | 'cable'>('none');
 	const [glassTone, setGlassTone] = React.useState<'extra' | 'smoked' | 'bronze'>('extra');
 	const [stepRailing, setStepRailing] = React.useState<boolean[]>([]);
@@ -2946,9 +2897,11 @@ function LivePageInner() {
 			? 'תיבה עבה‑דופן'
 			: box === 'thin'
 			? 'תיבה דקה‑דופן'
+			: box === 'wedge'
+			? 'דגם אלכסוני'
 			: box === 'ridge'
 			? 'דגם רכס מרכזי'
-			: 'פלטות אלכסוניות';
+			: '';
 		const totalText = `₪${total.toLocaleString('he-IL')}`;
 		// הכרחת כיוון LTR עבור ה‑URL באמצעות LRI/PDI (איסולציה) למניעת שבירה RTL
 		const ltrUrl = `\u2066${shareUrl}\u2069`;
@@ -3036,9 +2989,11 @@ function LivePageInner() {
 			? 'תיבה עבה‑דופן'
 			: box === 'thin'
 			? 'תיבה דקה‑דופן'
+			: box === 'wedge'
+			? 'דגם אלכסוני'
 			: box === 'ridge'
 			? 'דגם רכס מרכזי'
-			: 'פלטות אלכסוניות';
+			: '';
 		const totalText = `₪${total.toLocaleString('he-IL')}`;
 		const leadId = generateLeadId();
 		const timeLabel = preferredTime || '-';
@@ -3162,16 +3117,16 @@ function LivePageInner() {
 								el: (
 									<div className="p-2 pt-1">
 										<div className="flex flex-wrap justify-center gap-6">
-												{([
+											{([
 												{ id: 'thick', label: 'תיבה עבה‑דופן' as const },
 												{ id: 'thin', label: 'תיבה דקה‑דופן' as const },
+												{ id: 'wedge', label: 'דגם אלכסוני' as const },
 												{ id: 'ridge', label: 'דגם רכס מרכזי' as const },
-												{ id: 'plates', label: 'פלטות אלכסוניות' as const },
 											] as const).map(opt => (
 												<div key={opt.id} className="flex flex-col items-center">
 													<button
-														aria-label={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : opt.id === 'ridge' ? 'דגם רכס מרכזי' : 'פלטות אלכסוניות'}
-														title={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : opt.id === 'ridge' ? 'דגם רכס מרכזי' : 'פלטות אלכסוניות'}
+														aria-label={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : opt.id === 'wedge' ? 'דגם אלכסוני' : 'דגם רכס מרכזי'}
+														title={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : opt.id === 'wedge' ? 'דגם אלכסוני' : 'דגם רכס מרכזי'}
 														className={`w-[52px] h-[52px] inline-flex items-center justify-center bg-transparent border-0 ${box === opt.id ? 'text-[#1a1a2e]' : 'text-gray-500 hover:text-gray-700'}`}
 														onClick={() => setBox(opt.id)}
 													>
@@ -3184,6 +3139,19 @@ function LivePageInner() {
 															<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
 																<rect x="1" y="20" width="50" height="12" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
 																<rect x="1" y="20" width="50" height="12" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
+															</svg>
+														) : opt.id === 'wedge' ? (
+															<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
+																<polygon
+																	points="6,36 46,30 46,22 6,16"
+																	fill={box === opt.id ? '#F2E9E3' : 'none'}
+																/>
+																<polygon
+																	points="6,36 46,30 46,22 6,16"
+																	fill="none"
+																	stroke="currentColor"
+																	strokeWidth="2"
+																/>
 															</svg>
 														) : opt.id === 'ridge' ? (
 															<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
@@ -3203,7 +3171,7 @@ function LivePageInner() {
 														<span className="sr-only">{opt.label}</span>
 													</button>
 													<span className="mt-1 text-xs text-gray-600">
-														{opt.id === 'thick' ? 'עבה' : opt.id === 'thin' ? 'דק' : opt.id === 'ridge' ? 'רכס' : 'אלכסוניות'}
+										{opt.id === 'thick' ? 'עבה' : opt.id === 'thin' ? 'דק' : opt.id === 'wedge' ? 'אלכסוני' : 'רכס'}
 													</span>
 												</div>
 											))}
@@ -3382,9 +3350,9 @@ function LivePageInner() {
 									cableSpanMode={cableSpanMode}
 									stepCableSpanModes={stepCableSpanMode}
 									landingCableSpanModes={landingCableSpanMode}
-									treadThicknessOverride={box === 'thick' ? 0.11 : (box === 'ridge' ? 0.02 : (box === 'plates' ? 0.08 : 0.07))}
-									boxModel={box === 'ridge' ? 'ridge' : 'rect'}
-									withSidePlates={box === 'plates'}
+									treadThicknessOverride={box === 'thick' ? 0.11 : (box === 'wedge' ? 0.11 : (box === 'ridge' ? 0.02 : 0.07))}
+									boxModel={box === 'wedge' ? 'wedge' : (box === 'ridge' ? 'ridge' : 'rect')}
+									wedgeFrontThicknessM={0.035}
 									ridgeFrontCenterThicknessM={0.09}
 									ridgeFrontEdgeThicknessM={0.03}
 									pathSegments={pathSegments}
@@ -4029,7 +3997,7 @@ function LivePageInner() {
 											aria-expanded={mobileOpenCat === 'box'}
 										>
 											<span className="font-medium">דגם תיבה</span>
-											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : box === 'ridge' ? 'דגם רכס מרכזי' : 'פלטות אלכסוניות'}</span>
+											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : box === 'wedge' ? 'דגם אלכסוני' : 'דגם רכס מרכזי'}</span>
 										</button>
 										)}
 										{mobileOpenCat === 'box' && (
@@ -4611,7 +4579,7 @@ function LivePageInner() {
 								aria-expanded={desktopOpenCat === 'box'}
 							>
 								<span className="text-sm font-medium">דגם תיבה</span>
-											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : box === 'ridge' ? 'דגם רכס מרכזי' : 'פלטות אלכסוניות'}</span>
+											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : box === 'wedge' ? 'דגם אלכסוני' : 'דגם רכס מרכזי'}</span>
 							</button>
 							{desktopOpenCat === 'box' && (
 								<div className="p-3 bg-white border border-t-0 rounded-b-md">

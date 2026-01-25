@@ -2278,9 +2278,10 @@ function LivePageInner() {
 			return out;
 		});
 
-		setStepRailingSide(prev => {
+		// צד המעקה תמיד בצד הפנימי של המדרגות
+		setStepRailingSide(() => {
 			const out = new Array<'right' | 'left'>(nextLen);
-			for (let i = 0; i < nextLen; i++) out[i] = prev[i] ?? (stepSides[i] ?? 'right');
+			for (let i = 0; i < nextLen; i++) out[i] = stepSides[i] ?? 'right';
 			return out;
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -2290,11 +2291,10 @@ function LivePageInner() {
 		const out = landingMeta.map(turn => (turn ? false : railing !== 'none'));
 		setLandingRailing(out);
 		const { landingSides } = computeInnerDefaultSides();
-		setLandingRailingSide(prev => {
+		// צד המעקה בפודסטים: תמיד פנימי
+		setLandingRailingSide(() => {
 			const outSides = new Array<'right' | 'left'>(landingMeta.length);
-			for (let i = 0; i < outSides.length; i++) {
-				outSides[i] = prev[i] ?? (landingSides[i] ?? 'right');
-			}
+			for (let i = 0; i < outSides.length; i++) outSides[i] = landingSides[i] ?? 'right';
 			return outSides;
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -3407,7 +3407,7 @@ function LivePageInner() {
 										</div>
 
 										{(() => {
-											// עורך מתקדם כמו ב"מסלול": עמודות לכל גרם + מראה לצדדים
+											// עורך מתקדם כמו ב"מסלול": עמודות לכל גרם (בלי בחירת צד – תמיד פנימי)
 											// מפה את ריצות הישר לאינדקסי מדרגות במערכי המעקה
 											const flights: Array<{ segIndex: number; start: number; count: number }> = [];
 											let cursor = 0;
@@ -3430,42 +3430,17 @@ function LivePageInner() {
 													return out;
 												});
 											};
-											const setFlightSide = (f: { start: number; count: number }, side: 'right' | 'left') => {
-												setStepRailingSide(prev => {
-													const out = prev.slice(0, Math.max(prev.length, f.start + f.count));
-													for (let i = f.start; i < f.start + f.count; i++) out[i] = side;
-													return out as Array<'right' | 'left'>;
-												});
-											};
+											// ללא בחירת צד – הצד תמיד פנימי לפי computeInnerDefaultSides
 
 											return (
 												<>
-													<div className="flex items-center justify-center gap-2 mb-3">
-														<button
-															className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100"
-															title="מראה צד המעקה לכל הרצף"
-															aria-label="מראה צד המעקה"
-															onClick={() => {
-																setStepRailingSide(prev => prev.map(s => (s === 'left' ? 'right' : 'left')));
-																setLandingRailingSide(prev => prev.map(s => (s === 'left' ? 'right' : 'left')));
-															}}
-														>
-															מראה
-														</button>
-													</div>
+													{/* ללא "מראה" – הצד נקבע אוטומטית */}
 
 													<div className="grid gap-3 mb-3" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
 														{flights.map((f, idx) => {
 															const enabledCount = stepRailing.slice(f.start, f.start + f.count).filter(Boolean).length;
 															const allOn = enabledCount === f.count && f.count > 0;
 															const anyOn = enabledCount > 0;
-															// רוב צדדים בגרם
-															let left = 0, right = 0;
-															for (let i = f.start; i < f.start + f.count; i++) {
-																if ((stepRailing[i] ?? (railing !== 'none')) !== true) continue;
-																(stepRailingSide[i] === 'left') ? left++ : right++;
-															}
-															const sideMajor: 'right' | 'left' = right >= left ? 'right' : 'left';
 															return (
 																<div key={idx} className="border rounded-md p-2 text-center">
 																	<div className="text-sm text-gray-600 mb-1">גרם {idx + 1}</div>
@@ -3483,32 +3458,18 @@ function LivePageInner() {
 																			ללא
 																		</button>
 																	</div>
-																	<div className="inline-flex rounded-full border overflow-hidden">
-																		<button
-																			className={`px-3 py-1 text-sm ${sideMajor === 'left' ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
-																			onClick={() => setFlightSide(f, 'left')}
-																		>
-																			צד שמאל
-																		</button>
-																		<button
-																			className={`px-3 py-1 text-sm border-l ${sideMajor === 'right' ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
-																			onClick={() => setFlightSide(f, 'right')}
-																		>
-																			צד ימין
-																		</button>
-																	</div>
+																	{/* ללא בחירת צד */}
 																</div>
 															);
 														})}
 													</div>
 
-													{/* פודסטים ללא פנייה – הפעלה וצד */}
+													{/* פודסטים ללא פנייה – הפעלה בלבד (צד אוטומטי פנימי) */}
 													{landingMeta.some(t => !t) && (
 														<div className="flex items-center justify-center gap-2 flex-wrap">
 															{landingMeta.map((turn, i) => {
 																if (turn) return null;
 																const on = landingRailing[i] ?? (railing !== 'none');
-																const side = landingRailingSide[i] ?? 'right';
 																return (
 																	<div key={i} className="border rounded-md p-2 text-center">
 																		<div className="text-sm text-gray-600 mb-1">פודסט {i + 1}</div>
@@ -3526,20 +3487,7 @@ function LivePageInner() {
 																				ללא
 																			</button>
 																		</div>
-																		<div className="inline-flex rounded-full border overflow-hidden">
-																			<button
-																				className={`px-3 py-1 text-sm ${side === 'left' ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
-																				onClick={() => setLandingRailingSide(prev => prev.map((v, idx) => idx === i ? 'left' : v))}
-																			>
-																				שמאל
-																			</button>
-																			<button
-																				className={`px-3 py-1 text-sm border-l ${side === 'right' ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
-																				onClick={() => setLandingRailingSide(prev => prev.map((v, idx) => idx === i ? 'right' : v))}
-																			>
-																				ימין
-																			</button>
-																		</div>
+																		{/* ללא בחירת צד */}
 																	</div>
 																);
 															})}

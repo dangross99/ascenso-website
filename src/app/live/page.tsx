@@ -864,8 +864,13 @@ function Staircase3D({
 					{/* FRONT/BACK and SIDES – align with local run axis (fix alternating front/back across flights) */}
 					{boxModel === 'rect' && (() => {
 						const yaw = t.rotation[1] as number;
-						const axis: 'x' | 'z' = Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z';
-						const forwardSign = axis === 'x' ? (Math.cos(yaw) >= 0 ? 1 : -1) : (Math.sin(yaw) >= 0 ? 1 : -1);
+						// כיוון בפועל בין מדרגה נוכחית לבאה (או קודמת בסוף מקטע)
+						const next = treads[idx + 1] && !treads[idx + 1].isLanding ? treads[idx + 1] : (idx > 0 ? treads[idx - 1] : null);
+						const dx = next ? (next.position[0] - t.position[0]) : Math.cos(yaw);
+						const dz = next ? (next.position[2] - t.position[2]) : Math.sin(yaw);
+						// קבע ציר ריצה ע"פ רכיב דומיננטי
+						const axis: 'x' | 'z' = Math.abs(dx) >= Math.abs(dz) ? 'x' : 'z';
+						const forwardSign = axis === 'x' ? (dx >= 0 ? 1 : -1) : (dz >= 0 ? 1 : -1);
 						const matFrontBack = (() => {
 							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} />);
 							const ft = buildFaceTextures(treadWidth, treadThickness);

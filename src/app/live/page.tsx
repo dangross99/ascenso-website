@@ -571,10 +571,16 @@ function Staircase3D({
 							const desiredFront = typeof wedgeFrontThicknessM === 'number' ? wedgeFrontThicknessM : (treadThickness * frontFrac);
 							const frontTh = Math.max(0.01, Math.min(treadThickness - 0.005, desiredFront));
 							const seam = 0.001; // הרחבה זעירה לסגירת חיבורים
-							// כוון חזית/גב לפי כיוון הריצה המקומי (בהתאם למעקות)
+							// כיוון החזית לפי הכיוון בין מדרגה נוכחית לבאה (מקטע מקומי בפועל)
 							const yaw = t.rotation[1] as number;
-							const axis: 'x' | 'z' = Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z';
-							const forwardSign = axis === 'x' ? (Math.cos(yaw) >= 0 ? 1 : -1) : (Math.sin(yaw) >= 0 ? 1 : -1);
+							const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
+							const next = treads[idx + 1] && !treads[idx + 1].isLanding ? treads[idx + 1] : (idx > 0 ? treads[idx - 1] : null);
+							const dx = next ? (next.position[0] - t.position[0]) : (cosY >= 0 ? 1 : -1);
+							const dz = next ? (next.position[2] - t.position[2]) : (sinY >= 0 ? 1 : -1);
+							// וקטור +X המקומי של המדרך במערכת עולמית
+							const localXx = cosY, localXz = sinY;
+							const dot = localXx * dx + localXz * dz;
+							const forwardSign = dot >= 0 ? 1 : -1;
 							const xFront = forwardSign * (t.run / 2);
 							const xBack = -forwardSign * (t.run / 2);
 							const zLeft = -treadWidth / 2 - seam;
@@ -661,10 +667,15 @@ function Staircase3D({
 							const backTh = treadThickness;
 							const frontEdgeTh = backTh; // חזית אחידה (אין C)
 							const seam = 0.001;
-							// כוון חזית/גב לפי כיוון הריצה המקומי (בהתאם למעקות)
+							// כיוון החזית לפי הכיוון בין מדרגה נוכחית לבאה (מקטע מקומי בפועל)
 							const yaw = t.rotation[1] as number;
-							const axis: 'x' | 'z' = Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z';
-							const forwardSign = axis === 'x' ? (Math.cos(yaw) >= 0 ? 1 : -1) : (Math.sin(yaw) >= 0 ? 1 : -1);
+							const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
+							const next = treads[idx + 1] && !treads[idx + 1].isLanding ? treads[idx + 1] : (idx > 0 ? treads[idx - 1] : null);
+							const dx = next ? (next.position[0] - t.position[0]) : (cosY >= 0 ? 1 : -1);
+							const dz = next ? (next.position[2] - t.position[2]) : (sinY >= 0 ? 1 : -1);
+							const localXx = cosY, localXz = sinY;
+							const dot = localXx * dx + localXz * dz;
+							const forwardSign = dot >= 0 ? 1 : -1;
 							const xFront = forwardSign * (t.run / 2);
 							const xBack = -forwardSign * (t.run / 2);
 							const zLeft = -treadWidth / 2 - seam;

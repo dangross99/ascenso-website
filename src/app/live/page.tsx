@@ -583,8 +583,11 @@ function Staircase3D({
 							const forwardSign = dot >= 0 ? 1 : -1;
 							const xFront = forwardSign * (t.run / 2);
 							const xBack = -forwardSign * (t.run / 2);
-							const zLeft = -treadWidth / 2 - seam;
-							const zRight = treadWidth / 2 + seam;
+							// צד פנימי תמיד יהיה "ימין" (2) – מיישר את local +Z לצד הפנימי בהתאם לכיוון המקטע
+							const axisX = Math.abs(Math.cos(yaw)) > 0.5;
+							const innerSignLocal = axisX ? ((-Math.cos(yaw)) >= 0 ? 1 : -1) : ((Math.sin(yaw)) >= 0 ? 1 : -1);
+							const zRight = innerSignLocal * (treadWidth / 2 + seam);
+							const zLeft = -zRight;
 							const yTop = topY;
 							const yBottomBack = yTop - treadThickness - seam;
 							const yBottomFront = yTop - frontTh - seam;
@@ -612,26 +615,12 @@ function Staircase3D({
 							);
 							// סימון צדדים – 2 לימין (Z+), 3 לשמאל (Z-)
 							const sideCenterY = (yTop + Math.min(yBottomBack, yBottomFront)) / 2;
-							const axisX = Math.abs(Math.cos(yaw)) > 0.5;
-							const rightSide = (() => {
-								if (axisX) {
-									// ריצה על X: כיוון ימין נקבע לפי rZ
-									const rZ = -Math.cos(yaw);
-									const innerZSign = (rZ >= 0 ? 1 : -1);
-									return innerZSign;
-								} else {
-									// ריצה על Z: כיוון ימין נקבע לפי rX
-									const rX = Math.sin(yaw);
-									const innerXSign = (rX >= 0 ? 1 : -1);
-									return innerXSign;
-								}
-							})();
-							const rightMark = axisX
-								? (<Text position={[0, sideCenterY, (rightSide > 0 ? zRight : zLeft) + (rightSide > 0 ? 0.004 : -0.004)]} rotation={[0, rightSide > 0 ? 0 : Math.PI, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>)
-								: (<Text position={[(rightSide > 0 ? treadWidth / 2 : -treadWidth / 2) + (rightSide > 0 ? 0.004 : -0.004), sideCenterY, 0]} rotation={[0, rightSide > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>);
-							const leftMark = axisX
-								? (<Text position={[0, sideCenterY, (rightSide > 0 ? zLeft : zRight) - (rightSide > 0 ? 0.004 : -0.004)]} rotation={[0, rightSide > 0 ? Math.PI : 0, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>)
-								: (<Text position={[(-rightSide > 0 ? treadWidth / 2 : -treadWidth / 2) - (-rightSide > 0 ? 0.004 : -0.004), sideCenterY, 0]} rotation={[0, rightSide > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>);
+							const rightMark = (
+								<Text position={[0, sideCenterY, zRight + 0.004]} rotation={[0, 0, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
+							);
+							const leftMark = (
+								<Text position={[0, sideCenterY, zLeft - 0.004]} rotation={[0, Math.PI, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>
+							);
 							// BACK at xBack
 							const back = (
 								<mesh key="back" rotation={[0, forwardSign > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} position={[xBack - forwardSign * 0.0005, yCenterBack, 0]} receiveShadow>
@@ -708,8 +697,11 @@ function Staircase3D({
 							const forwardSign = dot >= 0 ? 1 : -1;
 							const xFront = forwardSign * (t.run / 2);
 							const xBack = -forwardSign * (t.run / 2);
-							const zLeft = -treadWidth / 2 - seam;
-							const zRight = treadWidth / 2 + seam;
+							// צד פנימי תמיד ייחשב "ימין": מיישרים local +Z לצד הפנימי
+							const axisX = Math.abs(Math.cos(yaw)) > 0.5;
+							const innerSignLocal = axisX ? ((-Math.cos(yaw)) >= 0 ? 1 : -1) : ((Math.sin(yaw)) >= 0 ? 1 : -1);
+							const zRight = innerSignLocal * (treadWidth / 2 + seam);
+							const zLeft = -zRight;
 							const yTop = topY;
 							const yBottomBack = yTop - backTh - seam;
 							const yBottomFrontEdge = yTop - frontEdgeTh - seam;
@@ -737,22 +729,12 @@ function Staircase3D({
 							);
 							// סימון צדדים – 2 לימין (Z+), 3 לשמאל (Z-)
 							const sideCenterY = (yTop + yBottomBack) / 2;
-							const axisX2 = Math.abs(Math.cos(yaw)) > 0.5;
-							const rightSide2 = (() => {
-								if (axisX2) {
-									const rZ = -Math.cos(yaw);
-									return (rZ >= 0 ? 1 : -1);
-								} else {
-									const rX = Math.sin(yaw);
-									return (rX >= 0 ? 1 : -1);
-								}
-							})();
-							const rightMark = axisX2
-								? (<Text position={[0, sideCenterY, (rightSide2 > 0 ? zRight : zLeft) + (rightSide2 > 0 ? 0.004 : -0.004)]} rotation={[0, rightSide2 > 0 ? 0 : Math.PI, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>)
-								: (<Text position={[(rightSide2 > 0 ? treadWidth / 2 : -treadWidth / 2) + (rightSide2 > 0 ? 0.004 : -0.004), sideCenterY, 0]} rotation={[0, rightSide2 > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>);
-							const leftMark = axisX2
-								? (<Text position={[0, sideCenterY, (rightSide2 > 0 ? zLeft : zRight) - (rightSide2 > 0 ? 0.004 : -0.004)]} rotation={[0, rightSide2 > 0 ? Math.PI : 0, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>)
-								: (<Text position={[(-rightSide2 > 0 ? treadWidth / 2 : -treadWidth / 2) - (-rightSide2 > 0 ? 0.004 : -0.004), sideCenterY, 0]} rotation={[0, rightSide2 > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>);
+							const rightMark = (
+								<Text position={[0, sideCenterY, zRight + 0.004]} rotation={[0, 0, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
+							);
+							const leftMark = (
+								<Text position={[0, sideCenterY, zLeft - 0.004]} rotation={[0, Math.PI, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>
+							);
 
 							// BOTTOM – שלושה משולשים לאורך: קווי שבירה ממרכז החזית אל שתי פינות הגב
 							const bottom = (() => {
@@ -964,16 +946,8 @@ function Staircase3D({
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
 										{matSides}
 									</mesh>
-									{(() => {
-										const rZ = -Math.cos(yaw);
-										const innerZ = rZ >= 0 ? 1 : -1;
-										return (
-											<>
-												<Text position={[0, 0, innerZ * (treadWidth / 2 + 0.004)]} rotation={[0, innerZ > 0 ? 0 : Math.PI, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
-												<Text position={[0, 0, -innerZ * (treadWidth / 2 + 0.004)]} rotation={[0, innerZ > 0 ? Math.PI : 0, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>
-											</>
-										);
-									})()}
+									<Text position={[0, 0, treadWidth / 2 + 0.004]} rotation={[0, 0, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
+									<Text position={[0, 0, -treadWidth / 2 - 0.004]} rotation={[0, Math.PI, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>
 								</>
 							);
 						} else {
@@ -1003,16 +977,8 @@ function Staircase3D({
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
 										{matSides}
 									</mesh>
-									{(() => {
-										const rX = Math.sin(yaw);
-										const innerX = rX >= 0 ? 1 : -1;
-										return (
-											<>
-												<Text position={[innerX * (treadWidth / 2 + 0.004), 0, 0]} rotation={[0, innerX > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
-												<Text position={[-innerX * (treadWidth / 2 + 0.004), 0, 0]} rotation={[0, innerX > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>
-											</>
-										);
-									})()}
+									<Text position={[treadWidth / 2 + 0.004, 0, 0]} rotation={[0, Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
+									<Text position={[-treadWidth / 2 - 0.004, 0, 0]} rotation={[0, -Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>
 								</>
 							);
 						}

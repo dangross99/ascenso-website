@@ -307,7 +307,7 @@ function Staircase3D({
 			for (let i = 0; i < steps - half - 1; i++) {
 				treads.push({
 					position: [lxStart + runL, (half + 1 + i) * riser, -(i * treadDepth + treadDepth / 2)],
-					rotation: [0, Math.PI / 2, 0],
+					rotation: [0, -Math.PI / 2, 0],
 					run: treadDepth,
 					isLanding: false,
 				});
@@ -331,7 +331,7 @@ function Staircase3D({
 			for (let i = 0; i < third; i++) {
 				treads.push({
 					position: [l1xStart + runL1, (third + 1 + i) * riser, -(i * treadDepth + treadDepth / 2)],
-					rotation: [0, Math.PI / 2, 0],
+					rotation: [0, -Math.PI / 2, 0],
 					run: treadDepth,
 					isLanding: false,
 				});

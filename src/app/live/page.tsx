@@ -572,11 +572,14 @@ function Staircase3D({
 							const desiredFront = typeof wedgeFrontThicknessM === 'number' ? wedgeFrontThicknessM : (treadThickness * frontFrac);
 							const frontTh = Math.max(0.01, Math.min(treadThickness - 0.005, desiredFront));
 							const seam = 0.001; // הרחבה זעירה לסגירת חיבורים
-							// כיוון החזית לפי כיוון המקטע (עלייה) ע"פ yaw של המדרגה
+							// כיוון החזית לפי כיוון ההליכה בפועל בין מדרגות (מבוסס שכן קרוב)
 							const yaw = t.rotation[1] as number;
 							const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
-							const axisX = Math.abs(cosY) > 0.5;
-							const forwardSign = axisX ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
+							const next = treads[idx + 1] && !treads[idx + 1].isLanding ? treads[idx + 1] : (idx > 0 ? treads[idx - 1] : null);
+							const dx = next ? (next.position[0] - t.position[0]) : cosY;
+							const dz = next ? (next.position[2] - t.position[2]) : sinY;
+							const dot = cosY * dx + sinY * dz;
+							const forwardSign = dot >= 0 ? 1 : -1;
 							const xFront = forwardSign * (t.run / 2);
 							const xBack = -forwardSign * (t.run / 2);
 							// צד פנימי לפי stepRailingSides (תלוי מסלול), לא לפי yaw בלבד
@@ -896,10 +899,14 @@ function Staircase3D({
 					{boxModel === 'rect' && (() => {
 						const curStepIdx = !t.isLanding ? (sIdx++) : -1;
 						const yaw = t.rotation[1] as number;
-						// כיוון המקטע (עלייה) לפי yaw בלבד – עקבי בכל המדרגות באותו מקטע
+						// כיוון החזית לפי כיוון ההליכה בפועל בין מדרגות (מבוסס שכן קרוב)
 						const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
 						const axis: 'x' | 'z' = Math.abs(cosY) > 0.5 ? 'x' : 'z';
-						const forwardSign = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
+						const next = treads[idx + 1] && !treads[idx + 1].isLanding ? treads[idx + 1] : (idx > 0 ? treads[idx - 1] : null);
+						const dx = next ? (next.position[0] - t.position[0]) : cosY;
+						const dz = next ? (next.position[2] - t.position[2]) : sinY;
+						const dot = cosY * dx + sinY * dz;
+						const forwardSign = dot >= 0 ? 1 : -1;
 						// צד פנימי לפי stepRailingSides – לא לפי yaw: 2=Right, 3=Left
 						const innerIsRight = (typeof stepRailingSides !== 'undefined' ? ((curStepIdx >= 0 ? stepRailingSides[curStepIdx] : 'right') ?? 'right') : 'right') === 'right';
 						const innerSignLocal = innerIsRight ? 1 : -1;

@@ -910,9 +910,10 @@ function Staircase3D({
 						const dz = next ? (next.position[2] - t.position[2]) : sinY;
 						const dot = cosY * dx + sinY * dz;
 						const forwardSign = dot >= 0 ? 1 : -1;
-						// צד פנימי לפי stepRailingSides – לא לפי yaw: 2=Right, 3=Left
+						// צד פנימי לפי stepRailingSides, עם מיפוי 'ימין' לציר המקומי הנכון (Z כאשר axis='x', או X כאשר axis='z')
 						const innerIsRight = (typeof stepRailingSides !== 'undefined' ? ((curStepIdx >= 0 ? stepRailingSides[curStepIdx] : 'right') ?? 'right') : 'right') === 'right';
-						const innerSignLocal = innerIsRight ? 1 : -1;
+						const rightLocalSign = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
+						const innerSignLocal = innerIsRight ? rightLocalSign : -rightLocalSign;
 						const matFrontBack = (() => {
 							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} />);
 							const ft = buildFaceTextures(treadWidth, treadThickness);

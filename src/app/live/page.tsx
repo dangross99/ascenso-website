@@ -572,19 +572,16 @@ function Staircase3D({
 							const desiredFront = typeof wedgeFrontThicknessM === 'number' ? wedgeFrontThicknessM : (treadThickness * frontFrac);
 							const frontTh = Math.max(0.01, Math.min(treadThickness - 0.005, desiredFront));
 							const seam = 0.001; // הרחבה זעירה לסגירת חיבורים
-							// כיוון החזית לפי כיוון ההליכה בפועל בין מדרגות (מבוסס שכן קרוב)
+							// כיוון החזית לפי yaw של המקטע: +X המקומי תמיד חזית
 							const yaw = t.rotation[1] as number;
 							const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
-							const next = treads[idx + 1] && !treads[idx + 1].isLanding ? treads[idx + 1] : (idx > 0 ? treads[idx - 1] : null);
-							const dx = next ? (next.position[0] - t.position[0]) : cosY;
-							const dz = next ? (next.position[2] - t.position[2]) : sinY;
-							const dot = cosY * dx + sinY * dz;
-							const forwardSign = dot >= 0 ? 1 : -1;
+							const axisX = Math.abs(cosY) > 0.5;
+							const forwardSign = axisX ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
 							const xFront = forwardSign * (t.run / 2);
 							const xBack = -forwardSign * (t.run / 2);
 							// צד פנימי לפי stepRailingSides, עם מיפוי 'ימין' לציר +Z המקומי בהתאם ל‑yaw
 							const innerIsRight = (typeof stepRailingSides !== 'undefined' ? ((curStepIdx >= 0 ? stepRailingSides[curStepIdx] : 'right') ?? 'right') : 'right') === 'right';
-							const axisX = Math.abs(cosY) > 0.5;
+							// axisX כבר הוגדר למעלה
 							const rightLocalZSign = axisX ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
 							const innerSignLocal = innerIsRight ? rightLocalZSign : -rightLocalZSign;
 							const zRight = innerSignLocal * (treadWidth / 2 + seam);
@@ -688,7 +685,7 @@ function Staircase3D({
 							const backTh = treadThickness;
 							const frontEdgeTh = backTh; // חזית אחידה (אין C)
 							const seam = 0.001;
-							// כיוון החזית לפי כיוון המקטע (עלייה) ע"פ yaw של המדרגה
+							// כיוון החזית לפי yaw של המקטע: +X המקומי תמיד חזית
 							const yaw = t.rotation[1] as number;
 							const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
 							const axisX = Math.abs(cosY) > 0.5;
@@ -902,14 +899,10 @@ function Staircase3D({
 					{boxModel === 'rect' && (() => {
 						const curStepIdx = !t.isLanding ? (sIdx++) : -1;
 						const yaw = t.rotation[1] as number;
-						// כיוון החזית לפי כיוון ההליכה בפועל בין מדרגות (מבוסס שכן קרוב)
+						// כיוון החזית לפי yaw של המקטע: +X המקומי תמיד חזית
 						const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
 						const axis: 'x' | 'z' = Math.abs(cosY) > 0.5 ? 'x' : 'z';
-						const next = treads[idx + 1] && !treads[idx + 1].isLanding ? treads[idx + 1] : (idx > 0 ? treads[idx - 1] : null);
-						const dx = next ? (next.position[0] - t.position[0]) : cosY;
-						const dz = next ? (next.position[2] - t.position[2]) : sinY;
-						const dot = cosY * dx + sinY * dz;
-						const forwardSign = dot >= 0 ? 1 : -1;
+						const forwardSign = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
 						// צד פנימי לפי stepRailingSides, עם מיפוי 'ימין' לציר המקומי הנכון (Z כאשר axis='x', או X כאשר axis='z')
 						const innerIsRight = (typeof stepRailingSides !== 'undefined' ? ((curStepIdx >= 0 ? stepRailingSides[curStepIdx] : 'right') ?? 'right') : 'right') === 'right';
 						const rightLocalSign = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);

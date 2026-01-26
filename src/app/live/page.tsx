@@ -697,7 +697,6 @@ function Staircase3D({
 							const xBack = -forwardSign * (t.run / 2);
 							// צד פנימי לפי stepRailingSides, עם מיפוי 'ימין' לציר +Z המקומי בהתאם ל‑yaw
 							const innerIsRight = (typeof stepRailingSides !== 'undefined' ? ((curStepIdx >= 0 ? stepRailingSides[curStepIdx] : 'right') ?? 'right') : 'right') === 'right';
-							const axisX = Math.abs(cosY) > 0.5;
 							const rightLocalZSign = axisX ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
 							const innerSignLocal = innerIsRight ? rightLocalZSign : -rightLocalZSign;
 							const zRight = innerSignLocal * (treadWidth / 2 + seam);

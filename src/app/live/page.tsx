@@ -2308,30 +2308,36 @@ function LivePageInner() {
 		const stepSides: Array<'right' | 'left'> = [];
 		const landingSides: Array<'right' | 'left'> = [];
 		if (!pathSegments || !pathSegments.length) return { stepSides, landingSides };
-		let prevTurn: 'left' | 'right' | undefined = undefined;
+
+		const flip = (s: 'right' | 'left'): 'right' | 'left' => (s === 'right' ? 'left' : 'right');
+
+		// 'inner' מציין את הצד הפנימי הרציף לכל מקטעי הישר עד לפנייה הבאה
+		let initialized = false;
+		let inner: 'right' | 'left' = 'right';
+
 		for (let i = 0; i < pathSegments.length; i++) {
 			const seg = pathSegments[i];
+
+			// אתחול חד-פעמי: קבע את הצד הפנימי ההתחלתי לפי הפנייה הקרובה הראשונה (אם קיימת)
+			if (!initialized) {
+				for (let j = i; j < pathSegments.length; j++) {
+					const nxt = pathSegments[j];
+					if (nxt.kind === 'landing' && typeof nxt.turn !== 'undefined') {
+						inner = nxt.turn === 'right' ? 'right' : 'left';
+						break;
+					}
+				}
+				initialized = true;
+			}
+
 			if (seg.kind === 'straight') {
-				let nextTurn: 'left' | 'right' | undefined = undefined;
-				if (i + 1 < pathSegments.length && pathSegments[i + 1].kind === 'landing') {
-					const nxt = pathSegments[i + 1] as Extract<PathSegment, { kind: 'landing' }>;
-					nextTurn = nxt.turn;
-				}
-				const inner: 'right' | 'left' =
-					nextTurn ? (nextTurn === 'right' ? 'right' : 'left') :
-						(prevTurn ? (prevTurn === 'right' ? 'right' : 'left') : 'right');
-				// החזר את הצד הפנימי עצמו (לא ההפוך)
-				if (seg.steps > 0) {
-					for (let s = 0; s < seg.steps; s++) stepSides.push(inner);
-				}
+				for (let s = 0; s < seg.steps; s++) stepSides.push(inner);
 			} else {
-				// פודסט: אם יש פנייה – עדכן הפנייה האחרונה; אם אין – שמור את הצד של הריצה האחרונה
-				if (typeof seg.turn === 'undefined') {
-					const innerFromPrev: 'right' | 'left' = prevTurn ? (prevTurn === 'right' ? 'right' : 'left') : 'right';
-					landingSides.push(innerFromPrev);
-				} else {
-					prevTurn = seg.turn;
-					landingSides.push(seg.turn === 'right' ? 'right' : 'left');
+				// פודסט ללא פנייה: שמור את הצד הנוכחי; עם פנייה: הצד של הפודסט הוא הפנייה
+				landingSides.push(typeof seg.turn === 'undefined' ? inner : (seg.turn === 'right' ? 'right' : 'left'));
+				// לאחר פודסט עם פנייה – הפוך צד פנימי לגרם הבא
+				if (typeof seg.turn !== 'undefined') {
+					inner = flip(inner);
 				}
 			}
 		}

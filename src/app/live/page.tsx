@@ -194,7 +194,7 @@ function Staircase3D({
 	const riser = 0.18;
 
 	function getTreads() {
-		const treads: Array<{ position: [number, number, number]; rotation: [number, number, number]; run: number; isLanding: boolean; turn?: 'left' | 'right' }> = [];
+		const treads: Array<{ position: [number, number, number]; rotation: [number, number, number]; run: number; isLanding: boolean; turn?: 'left' | 'right'; flight: number }> = [];
 		if (pathSegments && pathSegments.length) {
 			// כיוון התחלתי: +X
 			let dirIndex = 0; // 0:+X, 1:+Z, 2:-X, 3:-Z
@@ -208,6 +208,7 @@ function Staircase3D({
 			// נקודת התחלה על הציר, נזיז קדימה לפי אורך כל שלב
 			let sx = 0, sz = 0;
 			let stepIndex = 0;
+			let flightIdx = 0;
 			for (const seg of pathSegments) {
 				if (seg.kind === 'straight') {
 					const [dx, dz] = dirs[dirIndex];
@@ -217,9 +218,10 @@ function Staircase3D({
 						const cz = sz + dz * (run / 2);
 						treads.push({
 							position: [cx, stepIndex * riser, cz],
-							rotation: [0, yaws[dirIndex], 0],
+							rotation: [0, yaws[dirIndex] + (flightIdx === 2 ? Math.PI : 0), 0],
 							run,
 							isLanding: false,
+							flight: flightIdx,
 						});
 						// התקדמות לנקודת התחלה הבאה
 						sx += dx * run;
@@ -238,6 +240,7 @@ function Staircase3D({
 						run,
 						isLanding: true,
 						turn: seg.turn,
+						flight: flightIdx,
 					});
 					// עדכון נקודת עיגון למסלול הבא:
 					// אם אין פנייה – התקדמות לקצה הפודסט בכיוון הנוכחי
@@ -252,6 +255,10 @@ function Staircase3D({
 					// מיפוי מתוקן: 'right' = +90°, 'left' = -90°
 					if (seg.turn === 'right') dirIndex = (dirIndex + 1) & 3;
 					if (seg.turn === 'left') dirIndex = (dirIndex + 3) & 3;
+					// סיום טיסה – לאחר פנייה מתחיל גרם חדש
+					if (seg.turn === 'left' || seg.turn === 'right') {
+						flightIdx += 1;
+					}
 					// אם יש פנייה, קבע נקודת עיגון חדשה כך שהמקטע הבא
 					// יתחיל בדיוק מהקודקוד ועל אותו קו התחלה של הפודסט:
 					// העוגן מוגדר כך שמרכז המדרגה הבאה יהיה בעומק half‑treadDepth קדימה,
@@ -286,12 +293,13 @@ function Staircase3D({
 					rotation: [0, 0, 0],
 					run: treadDepth,
 					isLanding: false,
+					flight: 0,
 				});
 			}
 		} else if (shape === 'L') {
 			const half = Math.floor(steps / 2);
 			for (let i = 0; i < half; i++) {
-				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, 0, 0], run: treadDepth, isLanding: false });
+				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, 0, 0], run: treadDepth, isLanding: false, flight: 0 });
 			}
 			// פודסט עם "שלח" באורך המדרגה (ריבוע 1x1מ׳) + פנייה ימינה
 			const runL = treadWidth;
@@ -302,6 +310,7 @@ function Staircase3D({
 				run: runL,
 				isLanding: true,
 				turn: 'right',
+				flight: 0,
 			});
 			// המשך בכיוון חדש
 			for (let i = 0; i < steps - half - 1; i++) {
@@ -310,13 +319,14 @@ function Staircase3D({
 					rotation: [0, -Math.PI / 2, 0],
 					run: treadDepth,
 					isLanding: false,
+					flight: 1,
 				});
 			}
 		} else {
 			// U
 			const third = Math.floor(steps / 3);
 			for (let i = 0; i < third; i++) {
-				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, 0, 0], run: treadDepth, isLanding: false });
+				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, 0, 0], run: treadDepth, isLanding: false, flight: 0 });
 			}
 			// פודסט 1x1מ׳ + פנייה ראשונה
 			const runL1 = treadWidth;
@@ -327,6 +337,7 @@ function Staircase3D({
 				run: runL1,
 				isLanding: true,
 				turn: 'right',
+				flight: 0,
 			});
 			for (let i = 0; i < third; i++) {
 				treads.push({
@@ -334,6 +345,7 @@ function Staircase3D({
 					rotation: [0, -Math.PI / 2, 0],
 					run: treadDepth,
 					isLanding: false,
+					flight: 1,
 				});
 			}
 			// פודסט שני 1x1מ׳ + פנייה שנייה
@@ -346,13 +358,15 @@ function Staircase3D({
 				run: runL2,
 				isLanding: true,
 				turn: 'right',
+				flight: 1,
 			});
 			for (let i = 0; i < steps - third * 2 - 1; i++) {
 				treads.push({
 					position: [rStartX + runL2 + i * treadDepth + treadDepth / 2, (third * 2 + 2 + i) * riser, rStartZ],
-					rotation: [0, 0, 0],
+					rotation: [0, Math.PI, 0],
 					run: treadDepth,
 					isLanding: false,
+					flight: 2,
 				});
 			}
 		}

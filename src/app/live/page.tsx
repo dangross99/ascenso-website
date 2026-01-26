@@ -566,6 +566,7 @@ function Staircase3D({
 					{/* גוף המדרך */}
 					{boxModel === 'wedge' ? (
 						(() => {
+							const curStepIdx = !t.isLanding ? (sIdx++) : -1;
 							const topY = treadThickness / 2;
 							const frontFrac = Math.max(0.1, Math.min(0.9, typeof wedgeFrontFraction === 'number' ? wedgeFrontFraction : 0.35));
 							const desiredFront = typeof wedgeFrontThicknessM === 'number' ? wedgeFrontThicknessM : (treadThickness * frontFrac);
@@ -578,8 +579,9 @@ function Staircase3D({
 							const forwardSign = axisX ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
 							const xFront = forwardSign * (t.run / 2);
 							const xBack = -forwardSign * (t.run / 2);
-							// צד פנימי תמיד יהיה "ימין" (2) – מיישר את local +Z לצד הפנימי בהתאם לכיוון המקטע
-							const innerSignLocal = axisX ? ((-cosY) >= 0 ? 1 : -1) : ((sinY) >= 0 ? 1 : -1);
+							// צד פנימי לפי stepRailingSides (תלוי מסלול), לא לפי yaw בלבד
+							const innerIsRight = (typeof stepRailingSides !== 'undefined' ? ((curStepIdx >= 0 ? stepRailingSides[curStepIdx] : 'right') ?? 'right') : 'right') === 'right';
+							const innerSignLocal = innerIsRight ? 1 : -1;
 							const zRight = innerSignLocal * (treadWidth / 2 + seam);
 							const zLeft = -zRight;
 							const yTop = topY;
@@ -675,25 +677,22 @@ function Staircase3D({
 						})()
 					) : boxModel === 'ridge' ? (
 						(() => {
+							const curStepIdx = !t.isLanding ? (sIdx++) : -1;
 							// אלכסוני עם רכס מרכזי: שני קווי שבירה לאורך מהמרכז בגב לשתי פינות החזית.
 							const topY = treadThickness / 2;
 							const backTh = treadThickness;
 							const frontEdgeTh = backTh; // חזית אחידה (אין C)
 							const seam = 0.001;
-							// כיוון החזית לפי הכיוון בין מדרגה נוכחית לבאה (מקטע מקומי בפועל)
+							// כיוון החזית לפי כיוון המקטע (עלייה) ע"פ yaw של המדרגה
 							const yaw = t.rotation[1] as number;
 							const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
-							const next = treads[idx + 1] && !treads[idx + 1].isLanding ? treads[idx + 1] : (idx > 0 ? treads[idx - 1] : null);
-							const dx = next ? (next.position[0] - t.position[0]) : (cosY >= 0 ? 1 : -1);
-							const dz = next ? (next.position[2] - t.position[2]) : (sinY >= 0 ? 1 : -1);
-							const localXx = cosY, localXz = sinY;
-							const dot = localXx * dx + localXz * dz;
-							const forwardSign = dot >= 0 ? 1 : -1;
+							const axisX = Math.abs(cosY) > 0.5;
+							const forwardSign = axisX ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
 							const xFront = forwardSign * (t.run / 2);
 							const xBack = -forwardSign * (t.run / 2);
-							// צד פנימי תמיד ייחשב "ימין": מיישרים local +Z לצד הפנימי
-							const axisX = Math.abs(Math.cos(yaw)) > 0.5;
-							const innerSignLocal = axisX ? ((-Math.cos(yaw)) >= 0 ? 1 : -1) : ((Math.sin(yaw)) >= 0 ? 1 : -1);
+							// צד פנימי לפי stepRailingSides (תלוי מסלול), לא לפי yaw בלבד
+							const innerIsRight = (typeof stepRailingSides !== 'undefined' ? ((curStepIdx >= 0 ? stepRailingSides[curStepIdx] : 'right') ?? 'right') : 'right') === 'right';
+							const innerSignLocal = innerIsRight ? 1 : -1;
 							const zRight = innerSignLocal * (treadWidth / 2 + seam);
 							const zLeft = -zRight;
 							const yTop = topY;
@@ -895,13 +894,15 @@ function Staircase3D({
 
 					{/* FRONT/BACK and SIDES – align with local run axis (fix alternating front/back across flights) */}
 					{boxModel === 'rect' && (() => {
+						const curStepIdx = !t.isLanding ? (sIdx++) : -1;
 						const yaw = t.rotation[1] as number;
 						// כיוון המקטע (עלייה) לפי yaw בלבד – עקבי בכל המדרגות באותו מקטע
 						const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
 						const axis: 'x' | 'z' = Math.abs(cosY) > 0.5 ? 'x' : 'z';
 						const forwardSign = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
-						// צד פנימי: מיושר ל‑local +Z במקטע על X, או ל‑local +X במקטע על Z
-						const innerSignLocal = axis === 'x' ? ((-cosY) >= 0 ? 1 : -1) : ((sinY) >= 0 ? 1 : -1);
+						// צד פנימי לפי stepRailingSides – לא לפי yaw: 2=Right, 3=Left
+						const innerIsRight = (typeof stepRailingSides !== 'undefined' ? ((curStepIdx >= 0 ? stepRailingSides[curStepIdx] : 'right') ?? 'right') : 'right') === 'right';
+						const innerSignLocal = innerIsRight ? 1 : -1;
 						const matFrontBack = (() => {
 							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} />);
 							const ft = buildFaceTextures(treadWidth, treadThickness);

@@ -571,21 +571,15 @@ function Staircase3D({
 							const desiredFront = typeof wedgeFrontThicknessM === 'number' ? wedgeFrontThicknessM : (treadThickness * frontFrac);
 							const frontTh = Math.max(0.01, Math.min(treadThickness - 0.005, desiredFront));
 							const seam = 0.001; // הרחבה זעירה לסגירת חיבורים
-							// כיוון החזית לפי הכיוון בין מדרגה נוכחית לבאה (מקטע מקומי בפועל)
+							// כיוון החזית לפי כיוון המקטע (עלייה) ע"פ yaw של המדרגה
 							const yaw = t.rotation[1] as number;
 							const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
-							const next = treads[idx + 1] && !treads[idx + 1].isLanding ? treads[idx + 1] : (idx > 0 ? treads[idx - 1] : null);
-							const dx = next ? (next.position[0] - t.position[0]) : (cosY >= 0 ? 1 : -1);
-							const dz = next ? (next.position[2] - t.position[2]) : (sinY >= 0 ? 1 : -1);
-							// וקטור +X המקומי של המדרך במערכת עולמית
-							const localXx = cosY, localXz = sinY;
-							const dot = localXx * dx + localXz * dz;
-							const forwardSign = dot >= 0 ? 1 : -1;
+							const axisX = Math.abs(cosY) > 0.5;
+							const forwardSign = axisX ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
 							const xFront = forwardSign * (t.run / 2);
 							const xBack = -forwardSign * (t.run / 2);
 							// צד פנימי תמיד יהיה "ימין" (2) – מיישר את local +Z לצד הפנימי בהתאם לכיוון המקטע
-							const axisX = Math.abs(Math.cos(yaw)) > 0.5;
-							const innerSignLocal = axisX ? ((-Math.cos(yaw)) >= 0 ? 1 : -1) : ((Math.sin(yaw)) >= 0 ? 1 : -1);
+							const innerSignLocal = axisX ? ((-cosY) >= 0 ? 1 : -1) : ((sinY) >= 0 ? 1 : -1);
 							const zRight = innerSignLocal * (treadWidth / 2 + seam);
 							const zLeft = -zRight;
 							const yTop = topY;
@@ -902,13 +896,10 @@ function Staircase3D({
 					{/* FRONT/BACK and SIDES – align with local run axis (fix alternating front/back across flights) */}
 					{boxModel === 'rect' && (() => {
 						const yaw = t.rotation[1] as number;
-						// כיוון בפועל בין מדרגה נוכחית לבאה (או קודמת בסוף מקטע)
-						const next = treads[idx + 1] && !treads[idx + 1].isLanding ? treads[idx + 1] : (idx > 0 ? treads[idx - 1] : null);
-						const dx = next ? (next.position[0] - t.position[0]) : Math.cos(yaw);
-						const dz = next ? (next.position[2] - t.position[2]) : Math.sin(yaw);
-						// קבע ציר ריצה ע"פ רכיב דומיננטי
-						const axis: 'x' | 'z' = Math.abs(dx) >= Math.abs(dz) ? 'x' : 'z';
-						const forwardSign = axis === 'x' ? (dx >= 0 ? 1 : -1) : (dz >= 0 ? 1 : -1);
+						// כיוון המקטע (עלייה) לפי yaw בלבד – עקבי בכל המדרגות באותו מקטע
+						const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
+						const axis: 'x' | 'z' = Math.abs(cosY) > 0.5 ? 'x' : 'z';
+						const forwardSign = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
 						const matFrontBack = (() => {
 							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} />);
 							const ft = buildFaceTextures(treadWidth, treadThickness);

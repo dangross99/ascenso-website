@@ -895,18 +895,20 @@ function Staircase3D({
 						</mesh>
 					)}
 
-					{/* FRONT/BACK and SIDES – align with local run axis (fix alternating front/back across flights) */}
+					{/* FRONT/BACK and SIDES – תמיד ביחס לציר ה‑X המקומי של המדרך */}
 					{boxModel === 'rect' && (() => {
 						const curStepIdx = !t.isLanding ? (sIdx++) : -1;
 						const yaw = t.rotation[1] as number;
-						// כיוון החזית לפי yaw של המקטע: +X המקומי תמיד חזית
 						const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
-						const axis: 'x' | 'z' = Math.abs(cosY) > 0.5 ? 'x' : 'z';
-						const forwardSign = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
-						// צד פנימי לפי stepRailingSides, עם מיפוי 'ימין' לציר המקומי הנכון (Z כאשר axis='x', או X כאשר axis='z')
+						// חזית תמיד ב‑+X המקומי; גב ב‑‑X המקומי
+						const frontRotY = Math.PI / 2;
+						const backRotY = -Math.PI / 2;
+						const frontX = (t.run / 2) + 0.0005;
+						const backX = -(t.run / 2) - 0.0005;
+						// צד פנימי: מיפוי "ימין" לציר Z המקומי בהתאם ל‑yaw
 						const innerIsRight = (typeof stepRailingSides !== 'undefined' ? ((curStepIdx >= 0 ? stepRailingSides[curStepIdx] : 'right') ?? 'right') : 'right') === 'right';
-						const rightLocalSign = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
-						const innerSignLocal = innerIsRight ? rightLocalSign : -rightLocalSign;
+						const rightLocalZSign = (Math.abs(cosY) > 0.5) ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
+						const innerSignLocal = innerIsRight ? rightLocalZSign : -rightLocalZSign;
 						const matFrontBack = (() => {
 							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} />);
 							const ft = buildFaceTextures(treadWidth, treadThickness);
@@ -917,71 +919,32 @@ function Staircase3D({
 							const ft = buildFaceTextures(t.run, treadThickness);
 							return (<meshBasicMaterial map={ft.color} />);
 						})();
-						if (axis === 'x') {
-							// run לאורך X (קדימה/אחורה); כוון חזית לפי הסימן של cos(yaw)
-							const frontRotY = forwardSign > 0 ? Math.PI / 2 : -Math.PI / 2;
-							const backRotY = -frontRotY;
-							const frontX = forwardSign * (t.run / 2) + forwardSign * 0.0005;
-							const backX = -forwardSign * (t.run / 2) - forwardSign * 0.0005;
-							return (
-								<>
-									<mesh rotation={[0, frontRotY, 0]} position={[frontX, 0, 0]} receiveShadow>
-										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
-										{matFrontBack}
-									</mesh>
-									<Text position={[frontX + forwardSign * 0.004, 0, 0]} rotation={[0, frontRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">1</Text>
-									<mesh rotation={[0, backRotY, 0]} position={[backX, 0, 0]} receiveShadow>
-										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
-										{matFrontBack}
-									</mesh>
-									<Text position={[backX - forwardSign * 0.004, 0, 0]} rotation={[0, backRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">4</Text>
-									{/* צדדים לאורך Z */}
-									<mesh rotation={[0, 0, 0]} position={[0, 0, treadWidth / 2 + 0.0005]} receiveShadow>
-										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
-										{matSides}
-									</mesh>
-									<mesh rotation={[0, Math.PI, 0]} position={[0, 0, -treadWidth / 2 - 0.0005]} receiveShadow>
-										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
-										{matSides}
-									</mesh>
-									{/* תיוג 2=פנימי, 3=חיצוני */}
-									<Text position={[0, 0, innerSignLocal * (treadWidth / 2 + 0.004)]} rotation={[0, innerSignLocal > 0 ? 0 : Math.PI, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
-									<Text position={[0, 0, -innerSignLocal * (treadWidth / 2 + 0.004)]} rotation={[0, innerSignLocal > 0 ? Math.PI : 0, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>
-								</>
-							);
-						} else {
-							// run לאורך Z; כוון חזית לפי הסימן של sin(yaw)
-							const frontRotY = forwardSign > 0 ? 0 : Math.PI;
-							const backRotY = forwardSign > 0 ? Math.PI : 0;
-							const frontZ = forwardSign * (t.run / 2) + forwardSign * 0.0005;
-							const backZ = -forwardSign * (t.run / 2) - forwardSign * 0.0005;
-							return (
-								<>
-									<mesh rotation={[0, frontRotY, 0]} position={[0, 0, frontZ]} receiveShadow>
-										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
-										{matFrontBack}
-									</mesh>
-									<Text position={[0, 0, frontZ + forwardSign * 0.004]} rotation={[0, frontRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">1</Text>
-									<mesh rotation={[0, backRotY, 0]} position={[0, 0, backZ]} receiveShadow>
-										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
-										{matFrontBack}
-									</mesh>
-									<Text position={[0, 0, backZ - forwardSign * 0.004]} rotation={[0, backRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">4</Text>
-									{/* צדדים לאורך X */}
-									<mesh rotation={[0, Math.PI / 2, 0]} position={[treadWidth / 2 + 0.0005, 0, 0]} receiveShadow>
-										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
-										{matSides}
-									</mesh>
-									<mesh rotation={[0, -Math.PI / 2, 0]} position={[-treadWidth / 2 - 0.0005, 0, 0]} receiveShadow>
-										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
-										{matSides}
-									</mesh>
-									{/* תיוג 2=פנימי, 3=חיצוני */}
-									<Text position={[innerSignLocal * (treadWidth / 2 + 0.004), 0, 0]} rotation={[0, innerSignLocal > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
-									<Text position={[-innerSignLocal * (treadWidth / 2 + 0.004), 0, 0]} rotation={[0, innerSignLocal > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>
-								</>
-							);
-						}
+						return (
+							<>
+								<mesh rotation={[0, frontRotY, 0]} position={[frontX, 0, 0]} receiveShadow>
+									<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
+									{matFrontBack}
+								</mesh>
+								<Text position={[frontX + 0.004, 0, 0]} rotation={[0, frontRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">1</Text>
+								<mesh rotation={[0, backRotY, 0]} position={[backX, 0, 0]} receiveShadow>
+									<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
+									{matFrontBack}
+								</mesh>
+								<Text position={[backX - 0.004, 0, 0]} rotation={[0, backRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">4</Text>
+								{/* צדדים לאורך Z מקומי */}
+								<mesh rotation={[0, 0, 0]} position={[0, 0, treadWidth / 2 + 0.0005]} receiveShadow>
+									<planeGeometry args={[t.run, treadThickness, 8, 8]} />
+									{matSides}
+								</mesh>
+								<mesh rotation={[0, Math.PI, 0]} position={[0, 0, -treadWidth / 2 - 0.0005]} receiveShadow>
+									<planeGeometry args={[t.run, treadThickness, 8, 8]} />
+									{matSides}
+								</mesh>
+								{/* תיוג 2=פנימי, 3=חיצוני */}
+								<Text position={[0, 0, innerSignLocal * (treadWidth / 2 + 0.004)]} rotation={[0, innerSignLocal > 0 ? 0 : Math.PI, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
+								<Text position={[0, 0, -innerSignLocal * (treadWidth / 2 + 0.004)]} rotation={[0, innerSignLocal > 0 ? Math.PI : 0, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>
+							</>
+						);
 					})()}
 
 					{/* דגם 'פלטות אלכסוניות' בוטל */}

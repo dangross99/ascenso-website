@@ -593,10 +593,12 @@ function Staircase3D({
 							const forwardSign = axisX ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
 							const xFront = forwardSign * (t.run / 2);
 							const xBack = -forwardSign * (t.run / 2);
-							// צד פנימי לפי stepRailingSides, עם מיפוי 'ימין' לציר +Z המקומי בהתאם ל‑yaw
-							const innerIsRight = (typeof stepRailingSides !== 'undefined' ? ((curStepIdx >= 0 ? stepRailingSides[curStepIdx] : 'right') ?? 'right') : 'right') === 'right';
-							// axisX כבר הוגדר למעלה
-							const rightLocalZSign = axisX ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
+							// צד פנימי: למדרגות לפי stepRailingSides; לפודסטים לפי landingRailingSides
+							const innerIsRight = t.isLanding
+								? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))
+								: ((typeof stepRailingSides !== 'undefined' ? (stepRailingSides[curStepIdx] ?? 'right') : 'right') === 'right');
+							// מיפוי "ימין" למרחב המקומי: בציר X — ימין הוא -Z כאשר פונים +X, ו+Z כאשר פונים -X
+							const rightLocalZSign = axisX ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1);
 							const innerSignLocal = innerIsRight ? rightLocalZSign : -rightLocalZSign;
 							const zRight = innerSignLocal * (treadWidth / 2 + seam);
 							const zLeft = -zRight;
@@ -706,9 +708,12 @@ function Staircase3D({
 							const forwardSign = axisX ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
 							const xFront = forwardSign * (t.run / 2);
 							const xBack = -forwardSign * (t.run / 2);
-							// צד פנימי לפי stepRailingSides, עם מיפוי 'ימין' לציר +Z המקומי בהתאם ל‑yaw
-							const innerIsRight = (typeof stepRailingSides !== 'undefined' ? ((curStepIdx >= 0 ? stepRailingSides[curStepIdx] : 'right') ?? 'right') : 'right') === 'right';
-							const rightLocalZSign = axisX ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
+							// צד פנימי: למדרגות לפי stepRailingSides; לפודסטים לפי landingRailingSides
+							const innerIsRight = t.isLanding
+								? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))
+								: ((typeof stepRailingSides !== 'undefined' ? (stepRailingSides[curStepIdx] ?? 'right') : 'right') === 'right');
+							// בציר X — ימין הוא -Z כאשר פונים +X, ו+Z כאשר פונים -X
+							const rightLocalZSign = axisX ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1);
 							const innerSignLocal = innerIsRight ? rightLocalZSign : -rightLocalZSign;
 							const zRight = innerSignLocal * (treadWidth / 2 + seam);
 							const zLeft = -zRight;
@@ -916,9 +921,12 @@ function Staircase3D({
 						const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
 						const axis: 'x' | 'z' = Math.abs(cosY) > 0.5 ? 'x' : 'z';
 						const forwardSign = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
-						// צד פנימי: "ימין" ממופה לצד המקומי הנכון (Z כאשר axis='x', או X כאשר axis='z')
-						const innerIsRight = (typeof stepRailingSides !== 'undefined' ? ((curStepIdx >= 0 ? stepRailingSides[curStepIdx] : 'right') ?? 'right') : 'right') === 'right';
-						const rightLocalSign = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
+						// צד פנימי: למדרגות לפי stepRailingSides; לפודסטים לפי landingRailingSides
+						const innerIsRight = t.isLanding
+							? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))
+							: ((typeof stepRailingSides !== 'undefined' ? (stepRailingSides[curStepIdx] ?? 'right') : 'right') === 'right');
+						// מיפוי "ימין" למרחב: בציר X — ימין הוא -Z כשפונים +X, ו+Z כשפונים -X; בציר Z — לפי סימן sin
+						const rightLocalSign = axis === 'x' ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1);
 						const innerSignLocal = innerIsRight ? rightLocalSign : -rightLocalSign;
 						const matFrontBack = (() => {
 							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} />);

@@ -598,7 +598,9 @@ function Staircase3D({
 								? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))
 								: ((typeof stepRailingSides !== 'undefined' ? (stepRailingSides[curStepIdx] ?? 'right') : 'right') === 'right');
 							// מיפוי "ימין" למרחב המקומי: בציר X — ימין הוא -Z כאשר פונים +X, ו+Z כאשר פונים -X
-							const rightLocalZSign = axisX ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1);
+							let rightLocalZSign = axisX ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1);
+							// תיקון לפודסטים בציר Z: כיוון "ימין" המקומי מתהפך ביחס לרוחב כדי לשמור "פנימה"
+							if (t.isLanding && !axisX) rightLocalZSign = -rightLocalZSign;
 							const innerSignLocal = innerIsRight ? rightLocalZSign : -rightLocalZSign;
 							const zRight = innerSignLocal * (treadWidth / 2 + seam);
 							const zLeft = -zRight;
@@ -713,7 +715,8 @@ function Staircase3D({
 								? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))
 								: ((typeof stepRailingSides !== 'undefined' ? (stepRailingSides[curStepIdx] ?? 'right') : 'right') === 'right');
 							// בציר X — ימין הוא -Z כאשר פונים +X, ו+Z כאשר פונים -X
-							const rightLocalZSign = axisX ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1);
+							let rightLocalZSign = axisX ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1);
+							if (t.isLanding && !axisX) rightLocalZSign = -rightLocalZSign;
 							const innerSignLocal = innerIsRight ? rightLocalZSign : -rightLocalZSign;
 							const zRight = innerSignLocal * (treadWidth / 2 + seam);
 							const zLeft = -zRight;
@@ -926,7 +929,9 @@ function Staircase3D({
 							? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))
 							: ((typeof stepRailingSides !== 'undefined' ? (stepRailingSides[curStepIdx] ?? 'right') : 'right') === 'right');
 						// מיפוי "ימין" למרחב: בציר X — ימין הוא -Z כשפונים +X, ו+Z כשפונים -X; בציר Z — לפי סימן sin
-						const rightLocalSign = axis === 'x' ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1);
+						let rightLocalSign = axis === 'x' ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1);
+						// פודסטים בציר Z – היפוך כדי ליישר את "פנימה" בפודסט השני
+						if (t.isLanding && axis === 'z') rightLocalSign = -rightLocalSign;
 						const innerSignLocal = innerIsRight ? rightLocalSign : -rightLocalSign;
 						const matFrontBack = (() => {
 							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} />);

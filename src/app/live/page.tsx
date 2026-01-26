@@ -900,6 +900,8 @@ function Staircase3D({
 						const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
 						const axis: 'x' | 'z' = Math.abs(cosY) > 0.5 ? 'x' : 'z';
 						const forwardSign = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
+						// צד פנימי: מיושר ל‑local +Z במקטע על X, או ל‑local +X במקטע על Z
+						const innerSignLocal = axis === 'x' ? ((-cosY) >= 0 ? 1 : -1) : ((sinY) >= 0 ? 1 : -1);
 						const matFrontBack = (() => {
 							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} />);
 							const ft = buildFaceTextures(treadWidth, treadThickness);
@@ -937,8 +939,9 @@ function Staircase3D({
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
 										{matSides}
 									</mesh>
-									<Text position={[0, 0, treadWidth / 2 + 0.004]} rotation={[0, 0, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
-									<Text position={[0, 0, -treadWidth / 2 - 0.004]} rotation={[0, Math.PI, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>
+									{/* תיוג 2=פנימי, 3=חיצוני */}
+									<Text position={[0, 0, innerSignLocal * (treadWidth / 2 + 0.004)]} rotation={[0, innerSignLocal > 0 ? 0 : Math.PI, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
+									<Text position={[0, 0, -innerSignLocal * (treadWidth / 2 + 0.004)]} rotation={[0, innerSignLocal > 0 ? Math.PI : 0, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>
 								</>
 							);
 						} else {
@@ -968,8 +971,9 @@ function Staircase3D({
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
 										{matSides}
 									</mesh>
-									<Text position={[treadWidth / 2 + 0.004, 0, 0]} rotation={[0, Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
-									<Text position={[-treadWidth / 2 - 0.004, 0, 0]} rotation={[0, -Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>
+									{/* תיוג 2=פנימי, 3=חיצוני */}
+									<Text position={[innerSignLocal * (treadWidth / 2 + 0.004), 0, 0]} rotation={[0, innerSignLocal > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
+									<Text position={[-innerSignLocal * (treadWidth / 2 + 0.004), 0, 0]} rotation={[0, innerSignLocal > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>
 								</>
 							);
 						}
@@ -2300,19 +2304,18 @@ function LivePageInner() {
 				const inner: 'right' | 'left' =
 					nextTurn ? (nextTurn === 'right' ? 'right' : 'left') :
 						(prevTurn ? (prevTurn === 'right' ? 'right' : 'left') : 'right');
-				// ברירת מחדל מבוקשת: הצד ההפוך (לא פנימי)
-				const defaultSide: 'right' | 'left' = inner === 'right' ? 'left' : 'right';
+				// החזר את הצד הפנימי עצמו (לא ההפוך)
 				if (seg.steps > 0) {
-					for (let s = 0; s < seg.steps; s++) stepSides.push(defaultSide);
+					for (let s = 0; s < seg.steps; s++) stepSides.push(inner);
 				}
 			} else {
 				// פודסט: אם יש פנייה – עדכן הפנייה האחרונה; אם אין – שמור את הצד של הריצה האחרונה
 				if (typeof seg.turn === 'undefined') {
 					const innerFromPrev: 'right' | 'left' = prevTurn ? (prevTurn === 'right' ? 'right' : 'left') : 'right';
-					landingSides.push(innerFromPrev === 'right' ? 'left' : 'right');
+					landingSides.push(innerFromPrev);
 				} else {
 					prevTurn = seg.turn;
-					landingSides.push(seg.turn === 'right' ? 'left' : 'right');
+					landingSides.push(seg.turn === 'right' ? 'right' : 'left');
 				}
 			}
 		}

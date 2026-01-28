@@ -473,7 +473,8 @@ function Staircase3D({
 
 		const imgW = (map.image && (map.image as any).width) || 1024;
 		const imgH = (map.image && (map.image as any).height) || 1024;
-		const texAspect = imgW / imgH;
+		// אם מסובבים 90° – יחס המפה מתהפך
+		const texAspect = rotate90 ? (imgH / imgW) : (imgW / imgH);
 		const geoAspect = dimU / dimV;
 		let repU = 1, repV = 1;
 		if (geoAspect > texAspect) {

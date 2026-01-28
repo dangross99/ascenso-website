@@ -1006,9 +1006,8 @@ function Staircase3D({
 						const innerSignLocal = innerIsRight ? rightLocalSign : -rightLocalSign;
 						// יישור עקבי: חזית/גב מסובבים במקטעי X; צדדים מסובבים במקטעי Z
 						const rotateFrontBack = (axis === 'x');
-						// בכדי שצד 3 (שמאל) ירוץ לאורך המדרך גם בגרם השני,
-						// מיישרים את פאות הצד ללא סיבוב במקטעי Z, וסיבוב רק במקטעי X.
-						const rotateSides = (axis === 'x');
+						// בדגם rect – כמו אלכסוני/רכס: פאות הצד מסתובבות כאשר ציר הריצה הוא Z
+						const rotateSides = (axis === 'z');
 						const matFrontBack = (flipU: boolean = false) => {
 							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 							const ft = buildFaceTextures(treadWidth, treadThickness, rotateFrontBack, flipU);

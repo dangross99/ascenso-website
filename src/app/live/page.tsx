@@ -936,19 +936,19 @@ function Staircase3D({
 							</group>
 						))
 					)}
-					{/* שכבת פני השטח עם תבליט אמיתי לעץ; למתכת/אבן – כיסוי מרקם */}
+					{/* שכבת פני השטח: דק אך סולידי – סלאב דק מאוד כדי למנוע "טבעת" חלולה */}
 					<mesh
-						rotation={[-Math.PI / 2, 0, 0]}
 						position={[0, (boxModel !== 'rect' ? (treadThickness / 2 + 0.0005) : (treadThickness / 2 + 0.002)), 0]}
 						castShadow={materialKind !== 'metal'}
 						receiveShadow={materialKind !== 'metal'}
 					>
-						<planeGeometry args={[t.run, treadWidth, materialKind === 'wood' ? 48 : 32, materialKind === 'wood' ? 48 : 32]} />
+						{/* עובי זעיר כדי להבטיח אטימה וניצחון בזי-פייטינג מכל זווית תצפית */}
+						<boxGeometry args={[t.run, 0.004, treadWidth]} />
 						{materialKind === 'wood' ? (
 							(() => {
 								const axis = (t.axis as 'x' | 'z');
 								const ft = buildFaceTextures(t.run, treadWidth, axis === 'z');
-							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
+								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
 							})()
 						) : materialKind === 'metal' ? (
 							(() => {

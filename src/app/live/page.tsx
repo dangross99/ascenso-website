@@ -618,6 +618,7 @@ function Staircase3D({
 								? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))
 								: ((typeof stepRailingSides !== 'undefined' ? (stepRailingSides[curStepIdx] ?? 'right') : 'right') === 'right');
 							const axis = axisFromYaw(yaw);
+							const rotateForAxis = (axis === 'z');
 							const rightLocalZSign = rightLocalSignFor(yaw, axis, t.isLanding);
 							const innerSignLocal = innerIsRight ? rightLocalZSign : -rightLocalZSign;
 							const zRight = innerSignLocal * (treadWidth / 2 + seam);
@@ -627,7 +628,7 @@ function Staircase3D({
 							const yBottomFront = yTop - frontTh - seam;
 							const faceMat = (dimU: number, dimV: number) => {
 								if (useSolidMat) return <meshBasicMaterial color={solidSideColor} side={2} />;
-								const ft = buildFaceTextures(dimU, dimV);
+								const ft = buildFaceTextures(dimU, dimV, rotateForAxis);
 								return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />;
 							};
 							const yCenterFront = (yTop + yBottomFront) / 2;
@@ -739,6 +740,7 @@ function Staircase3D({
 								? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))
 								: ((typeof stepRailingSides !== 'undefined' ? (stepRailingSides[curStepIdx] ?? 'right') : 'right') === 'right');
 							const axis = axisFromYaw(yaw);
+							const rotateForAxis = (axis === 'z');
 							const rightLocalZSign = rightLocalSignFor(yaw, axis, t.isLanding);
 							const innerSignLocal = innerIsRight ? rightLocalZSign : -rightLocalZSign;
 							const zRight = innerSignLocal * (treadWidth / 2 + seam);
@@ -749,7 +751,7 @@ function Staircase3D({
 
 							const faceMat = (dimU: number, dimV: number) => {
 								if (useSolidMat) return <meshBasicMaterial color={solidSideColor} side={2} />;
-								const ft = buildFaceTextures(dimU, dimV);
+								const ft = buildFaceTextures(dimU, dimV, rotateForAxis);
 								return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />;
 							};
 

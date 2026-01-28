@@ -984,14 +984,14 @@ function Staircase3D({
 						const rotateFrontBack = false;
 						const rotateSides = false;
 						const matFrontBack = (flipU: boolean = false) => {
-							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} side={2} />);
+							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 							const ft = buildFaceTextures(treadWidth, treadThickness, rotateFrontBack, flipU);
-							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
+							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 						};
 						const matSides = (flipU: boolean = false) => {
-							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} side={2} />);
+							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 							const ft = buildFaceTextures(t.run, treadThickness, rotateSides, flipU);
-							return (<meshBasicMaterial map={ft.color} side={2} />);
+							return (<meshBasicMaterial map={ft.color} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 						};
 						if (axis === 'x') {
 							const frontRotY = forwardSign > 0 ? Math.PI / 2 : -Math.PI / 2;

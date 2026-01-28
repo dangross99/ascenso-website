@@ -618,7 +618,7 @@ function Staircase3D({
 								? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))
 								: ((typeof stepRailingSides !== 'undefined' ? (stepRailingSides[curStepIdx] ?? 'right') : 'right') === 'right');
 							const axis = axisFromYaw(yaw);
-							const rotateForAxis = (axis === 'z');
+							const rotateForAxis = (axis === 'x');
 							const rightLocalZSign = rightLocalSignFor(yaw, axis, t.isLanding);
 							const innerSignLocal = innerIsRight ? rightLocalZSign : -rightLocalZSign;
 							const zRight = innerSignLocal * (treadWidth / 2 + seam);
@@ -740,7 +740,7 @@ function Staircase3D({
 								? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))
 								: ((typeof stepRailingSides !== 'undefined' ? (stepRailingSides[curStepIdx] ?? 'right') : 'right') === 'right');
 							const axis = axisFromYaw(yaw);
-							const rotateForAxis = (axis === 'z');
+							const rotateForAxis = (axis === 'x');
 							const rightLocalZSign = rightLocalSignFor(yaw, axis, t.isLanding);
 							const innerSignLocal = innerIsRight ? rightLocalZSign : -rightLocalZSign;
 							const zRight = innerSignLocal * (treadWidth / 2 + seam);

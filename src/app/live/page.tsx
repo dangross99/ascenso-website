@@ -911,11 +911,8 @@ function Staircase3D({
 						<planeGeometry args={[t.run, treadWidth, materialKind === 'wood' ? 48 : 32, materialKind === 'wood' ? 48 : 32]} />
 						{materialKind === 'wood' ? (
 							(() => {
-								// ליישור עם כיוון המקטע: במקטעי Z נסובב 90°
-								const yaw = t.rotation[1] as number;
-								const axisX = Math.abs(Math.cos(yaw)) > 0.5;
-								const rotateTopForAxis = (!axisX);
-								const ft = buildFaceTextures(t.run, treadWidth, rotateTopForAxis);
+								// למשטח העליון אין צורך בסיבוב – מערכת הצירים המקומית של המדרך מיישרת את U עם כיוון הריצה
+								const ft = buildFaceTextures(t.run, treadWidth, false);
 							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
 							})()
 						) : materialKind === 'metal' ? (
@@ -923,10 +920,7 @@ function Staircase3D({
 								if (useSolidMat) {
 									return (<meshBasicMaterial color={solidTopColor} side={2} />);
 								}
-								const yaw = t.rotation[1] as number;
-								const axisX = Math.abs(Math.cos(yaw)) > 0.5;
-								const rotateTopForAxis = (!axisX);
-								const ft = buildFaceTextures(t.run, treadWidth, rotateTopForAxis);
+								const ft = buildFaceTextures(t.run, treadWidth, false);
 								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
 							})()
 						) : (
@@ -934,10 +928,7 @@ function Staircase3D({
 								if (useSolidMat) {
 									return (<meshBasicMaterial color={solidTopColor} side={2} />);
 								}
-								const yaw = t.rotation[1] as number;
-								const axisX = Math.abs(Math.cos(yaw)) > 0.5;
-								const rotateTopForAxis = (!axisX);
-								const ft = buildFaceTextures(t.run, treadWidth, rotateTopForAxis);
+								const ft = buildFaceTextures(t.run, treadWidth, false);
 								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
 							})()
 						)}
@@ -953,10 +944,7 @@ function Staircase3D({
 								if (useSolidMat) {
 									return (<meshBasicMaterial color={solidSideColor} />);
 								}
-								const yaw = t.rotation[1] as number;
-								const axisX = Math.abs(Math.cos(yaw)) > 0.5;
-								const rotateTopForAxis = (!axisX);
-								const ft = buildFaceTextures(t.run, treadWidth, rotateTopForAxis);
+								const ft = buildFaceTextures(t.run, treadWidth, false);
 								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
 							})()}
 						</mesh>

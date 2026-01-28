@@ -880,7 +880,7 @@ function Staircase3D({
 							return <group>{geomGroup}{frontMark}{backMark}{rightMark}{leftMark}</group>;
 						})()
 					) : (
-						<group rotation={[0, (t.flight === 0 ? Math.PI : 0), 0]}>
+						<group rotation={[0, ((boxModel === 'rect' && treadThickness <= 0.08) ? Math.PI : (t.flight === 0 ? Math.PI : 0)), 0]}>
 							<mesh castShadow receiveShadow>
 								<boxGeometry args={[t.run, treadThickness, treadWidth]} />
 								<meshBasicMaterial
@@ -946,8 +946,9 @@ function Staircase3D({
 						const yaw = t.rotation[1] as number;
 						const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
 						const axis: 'x' | 'z' = Math.abs(cosY) > 0.5 ? 'x' : 'z';
+						const isThin = (boxModel === 'rect' && treadThickness <= 0.08);
 						const forwardSignBase = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
-						const forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase);
+						const forwardSign = ((isThin || t.flight === 0) ? -forwardSignBase : forwardSignBase);
 						// צד פנימי: למדרגות לפי stepRailingSides; לפודסטים לפי landingRailingSides
 						const innerIsRight = t.isLanding
 							? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))

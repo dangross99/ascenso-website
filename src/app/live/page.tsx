@@ -979,22 +979,24 @@ function Staircase3D({
 						// מיפוי "ימין" למרחב באופן אחיד לכל הדגמים
 						let rightLocalSign = rightLocalSignFor(yaw, axis, t.isLanding);
 						const innerSignLocal = innerIsRight ? rightLocalSign : -rightLocalSign;
-						const rotateForAxis = (axis === 'z');
+						// סיבוב UV לפי פאה: חזית/גב מסובבים כאשר המקטע רץ על ציר X; צדדים מסובבים כאשר המקטע רץ על ציר Z
+						const rotateFrontBack = (axis === 'x');
+						const rotateSides = (axis === 'z');
 						const matFrontBack = (() => {
 							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
-							const ft = buildFaceTextures(treadWidth, treadThickness, rotateForAxis);
+							const ft = buildFaceTextures(treadWidth, treadThickness, rotateFrontBack);
 							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 						})();
 						const matSides = (() => {
 							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
-							const ft = buildFaceTextures(t.run, treadThickness, rotateForAxis);
+							const ft = buildFaceTextures(t.run, treadThickness, rotateSides);
 							return (<meshBasicMaterial map={ft.color} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 						})();
 						if (axis === 'x') {
 							const frontRotY = forwardSign > 0 ? Math.PI / 2 : -Math.PI / 2;
 							const backRotY = -frontRotY;
-							const frontX = forwardSign * (t.run / 2) + forwardSign * 0.0015;
-							const backX = -forwardSign * (t.run / 2) - forwardSign * 0.0015;
+							const frontX = forwardSign * (t.run / 2);
+							const backX = -forwardSign * (t.run / 2);
 							return (
 								<>
 									<mesh rotation={[0, frontRotY, 0]} position={[frontX, 0, 0]} receiveShadow>
@@ -1008,11 +1010,11 @@ function Staircase3D({
 									</mesh>
 									<Text position={[backX - forwardSign * 0.004, 0, 0]} rotation={[0, backRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">4</Text>
 									{/* צדדים לאורך Z */}
-									<mesh rotation={[0, 0, 0]} position={[0, 0, treadWidth / 2 + 0.0015]} receiveShadow>
+									<mesh rotation={[0, 0, 0]} position={[0, 0, treadWidth / 2]} receiveShadow>
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
 										{matSides}
 									</mesh>
-									<mesh rotation={[0, Math.PI, 0]} position={[0, 0, -treadWidth / 2 - 0.0015]} receiveShadow>
+									<mesh rotation={[0, Math.PI, 0]} position={[0, 0, -treadWidth / 2]} receiveShadow>
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
 										{matSides}
 									</mesh>
@@ -1026,8 +1028,8 @@ function Staircase3D({
 							const zForward = -forwardSign;
 							const frontRotY = zForward > 0 ? 0 : Math.PI;
 							const backRotY = zForward > 0 ? Math.PI : 0;
-							const frontZ = zForward * (t.run / 2) + zForward * 0.0015;
-							const backZ = -zForward * (t.run / 2) - zForward * 0.0015;
+							const frontZ = zForward * (t.run / 2);
+							const backZ = -zForward * (t.run / 2);
 							return (
 								<>
 									<mesh rotation={[0, frontRotY, 0]} position={[0, 0, frontZ]} receiveShadow>
@@ -1041,11 +1043,11 @@ function Staircase3D({
 									</mesh>
 									<Text position={[0, 0, backZ - zForward * 0.004]} rotation={[0, backRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">4</Text>
 									{/* צדדים לאורך X */}
-									<mesh rotation={[0, Math.PI / 2, 0]} position={[treadWidth / 2 + 0.0015, 0, 0]} receiveShadow>
+									<mesh rotation={[0, Math.PI / 2, 0]} position={[treadWidth / 2, 0, 0]} receiveShadow>
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
 										{matSides}
 									</mesh>
-									<mesh rotation={[0, -Math.PI / 2, 0]} position={[-treadWidth / 2 - 0.0015, 0, 0]} receiveShadow>
+									<mesh rotation={[0, -Math.PI / 2, 0]} position={[-treadWidth / 2, 0, 0]} receiveShadow>
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
 										{matSides}
 									</mesh>

@@ -1052,8 +1052,8 @@ function Staircase3D({
 							);
 						} else {
 							// במקטעי Z – כיוון החזית צריך לעקוב אחר כיוון ההליכה בפועל
-							// השתמש בהיפוך המבוקש – 1 במקום 4
-							const zForward = -forwardSign;
+							// כיוון הריצה האמיתי במקטעי Z לפי yaw (כדי שגרם 2 יקבל פנייה נכונה)
+							const zForward = (Math.sin(yaw) >= 0 ? 1 : -1);
 							const frontRotY = zForward > 0 ? 0 : Math.PI;
 							const backRotY = zForward > 0 ? Math.PI : 0;
 							const eps = 0.0008;

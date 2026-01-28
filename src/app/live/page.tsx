@@ -1050,8 +1050,8 @@ function Staircase3D({
 								</>
 							);
 						} else {
-							// במקטעי Z – הפאות הקדמיות/אחוריות נתפסו הפוך; נהפוך את הכיוון עבור Z בלבד
-							const zForward = -forwardSign;
+							// במקטעי Z – כיוון החזית צריך לעקוב אחר כיוון ההליכה בפועל
+							const zForward = forwardSign;
 							const frontRotY = zForward > 0 ? 0 : Math.PI;
 							const backRotY = zForward > 0 ? Math.PI : 0;
 							const eps = 0.0008;

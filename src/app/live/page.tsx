@@ -705,7 +705,7 @@ function Staircase3D({
 								</mesh>
 							);
 							const geomGroup = (
-								<group rotation={[0, (t.flight === 0 ? Math.PI : 0), 0]}>
+								<group rotation={[0, Math.PI, 0]}>
 									{front}{back}{right}{left}{bottom}
 								</group>
 							);

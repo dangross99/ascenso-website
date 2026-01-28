@@ -626,9 +626,12 @@ function Staircase3D({
 							const yTop = topY;
 							const yBottomBack = yTop - treadThickness - seam;
 							const yBottomFront = yTop - frontTh - seam;
-							const faceMat = (dimU: number, dimV: number) => {
+							// סיבוב נדרש תלוי בפאה:
+							// חזית/גב – לסובב כאשר המקטע רץ על ציר X (כדי שהגרעין ירוץ עם ה‑run)
+							// צדדים – לסובב כאשר המקטע רץ על ציר Z (כי ה‑U של ה‑UV מיושר ל‑X)
+							const faceMat = (dimU: number, dimV: number, rot: boolean) => {
 								if (useSolidMat) return <meshBasicMaterial color={solidSideColor} side={2} />;
-								const ft = buildFaceTextures(dimU, dimV, rotateForAxis);
+								const ft = buildFaceTextures(dimU, dimV, rot);
 								return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />;
 							};
 							const yCenterFront = (yTop + yBottomFront) / 2;
@@ -637,7 +640,7 @@ function Staircase3D({
 							const front = (
 								<mesh key="front" rotation={[0, forwardSign > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} position={[xFront + forwardSign * 0.0005, yCenterFront, 0]} receiveShadow>
 									<planeGeometry args={[treadWidth + seam * 2, frontTh + seam * 2, 8, 2]} />
-									{faceMat(treadWidth, frontTh)}
+									{faceMat(treadWidth, frontTh, axis === 'x')}
 								</mesh>
 							);
 							// סימון חזית – ספרה 1
@@ -660,7 +663,7 @@ function Staircase3D({
 							const back = (
 								<mesh key="back" rotation={[0, forwardSign > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} position={[xBack - forwardSign * 0.0005, yCenterBack, 0]} receiveShadow>
 									<planeGeometry args={[treadWidth + seam * 2, treadThickness + seam * 2, 8, 2]} />
-									{faceMat(treadWidth, treadThickness)}
+									{faceMat(treadWidth, treadThickness, axis === 'x')}
 								</mesh>
 							);
 							// RIGHT side (trapezoid)
@@ -677,7 +680,7 @@ function Staircase3D({
 							rightGeom.computeVertexNormals();
 							const right = (
 								<mesh key="right" geometry={rightGeom} receiveShadow>
-									{faceMat(t.run, (treadThickness + frontTh) / 2)}
+									{faceMat(t.run, (treadThickness + frontTh) / 2, axis === 'z')}
 								</mesh>
 							);
 							// LEFT side (trapezoid)
@@ -693,7 +696,7 @@ function Staircase3D({
 							leftGeom.computeVertexNormals();
 							const left = (
 								<mesh key="left" geometry={leftGeom} receiveShadow>
-									{faceMat(t.run, (treadThickness + frontTh) / 2)}
+									{faceMat(t.run, (treadThickness + frontTh) / 2, axis === 'z')}
 								</mesh>
 							);
 							// BOTTOM slanted
@@ -709,7 +712,7 @@ function Staircase3D({
 							bottomGeom.computeVertexNormals();
 							const bottom = (
 								<mesh key="bottom" geometry={bottomGeom} rotation={[0,0,0]} receiveShadow>
-									{faceMat(t.run, treadWidth)}
+									{faceMat(t.run, treadWidth, axis === 'z')}
 								</mesh>
 							);
 							const geomGroup = (
@@ -749,9 +752,10 @@ function Staircase3D({
 							const yBottomBack = yTop - backTh - seam;
 							const yBottomFrontEdge = yTop - frontEdgeTh - seam;
 
-							const faceMat = (dimU: number, dimV: number) => {
+							// בדגם ridge: חזית/גב – לסובב כאשר axis==='x'; צדדים/תחתית – כאשר axis==='z'
+							const faceMat = (dimU: number, dimV: number, rot: boolean) => {
 								if (useSolidMat) return <meshBasicMaterial color={solidSideColor} side={2} />;
-								const ft = buildFaceTextures(dimU, dimV, rotateForAxis);
+								const ft = buildFaceTextures(dimU, dimV, rot);
 								return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />;
 							};
 
@@ -759,7 +763,7 @@ function Staircase3D({
 							const front = (
 								<mesh rotation={[0, forwardSign > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} position={[xFront + forwardSign * 0.0005, (yTop + yBottomFrontEdge)/2, 0]} receiveShadow>
 									<planeGeometry args={[treadWidth + seam * 2, frontEdgeTh + seam * 2, 8, 2]} />
-									{faceMat(treadWidth, frontEdgeTh)}
+									{faceMat(treadWidth, frontEdgeTh, axis === 'x')}
 								</mesh>
 							);
 							// סימון חזית – ספרה 1
@@ -823,7 +827,7 @@ function Staircase3D({
 								]);
 								g2.setAttribute('uv', new Float32BufferAttribute(uv, 2));
 								g2.computeVertexNormals();
-								return <mesh geometry={g2} receiveShadow>{faceMat(t.run, treadWidth)}</mesh>;
+								return <mesh geometry={g2} receiveShadow>{faceMat(t.run, treadWidth, axis === 'z')}</mesh>;
 							})();
 							// אין צורך ברצועת "רכס" נוספת – שני חצאי התחתית כבר נפגשים במרכז
 
@@ -865,19 +869,19 @@ function Staircase3D({
 							const back = (
 								<mesh rotation={[0, forwardSign > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} position={[xBack - forwardSign * 0.0005, (yTop + yBottomBack)/2, 0]} receiveShadow>
 									<planeGeometry args={[treadWidth + seam * 2, backTh + seam * 2, 8, 2]} />
-									{faceMat(treadWidth, backTh)}
+									{faceMat(treadWidth, backTh, axis === 'x')}
 								</mesh>
 							);
 							const sideRight = (
 								<mesh rotation={[0, 0, 0]} position={[0, 0, zRight]} receiveShadow>
 									<planeGeometry args={[t.run, backTh, 8, 2]} />
-									{faceMat(t.run, backTh)}
+									{faceMat(t.run, backTh, axis === 'z')}
 								</mesh>
 							);
 							const sideLeft = (
 								<mesh rotation={[0, Math.PI, 0]} position={[0, 0, zLeft]} receiveShadow>
 									<planeGeometry args={[t.run, backTh, 8, 2]} />
-									{faceMat(t.run, backTh)}
+									{faceMat(t.run, backTh, axis === 'z')}
 								</mesh>
 							);
 

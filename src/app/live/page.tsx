@@ -946,8 +946,8 @@ function Staircase3D({
 						<planeGeometry args={[t.run, treadWidth, materialKind === 'wood' ? 48 : 32, materialKind === 'wood' ? 48 : 32]} />
 						{materialKind === 'wood' ? (
 							(() => {
-								// למשטח העליון אין צורך בסיבוב – מערכת הצירים המקומית של המדרך מיישרת את U עם כיוון הריצה
-								const ft = buildFaceTextures(t.run, treadWidth, false);
+								const axis = (t.axis as 'x' | 'z');
+								const ft = buildFaceTextures(t.run, treadWidth, axis === 'z');
 							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
 							})()
 						) : materialKind === 'metal' ? (
@@ -955,7 +955,8 @@ function Staircase3D({
 								if (useSolidMat) {
 									return (<meshBasicMaterial color={solidTopColor} side={2} />);
 								}
-								const ft = buildFaceTextures(t.run, treadWidth, false);
+								const axis = (t.axis as 'x' | 'z');
+								const ft = buildFaceTextures(t.run, treadWidth, axis === 'z');
 								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
 							})()
 						) : (
@@ -963,7 +964,8 @@ function Staircase3D({
 								if (useSolidMat) {
 									return (<meshBasicMaterial color={solidTopColor} side={2} />);
 								}
-								const ft = buildFaceTextures(t.run, treadWidth, false);
+								const axis = (t.axis as 'x' | 'z');
+								const ft = buildFaceTextures(t.run, treadWidth, axis === 'z');
 								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
 							})()
 						)}
@@ -979,7 +981,8 @@ function Staircase3D({
 								if (useSolidMat) {
 									return (<meshBasicMaterial color={solidSideColor} />);
 								}
-								const ft = buildFaceTextures(t.run, treadWidth, false);
+								const axis = (t.axis as 'x' | 'z');
+								const ft = buildFaceTextures(t.run, treadWidth, axis === 'z');
 								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
 							})()}
 						</mesh>

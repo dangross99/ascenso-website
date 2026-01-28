@@ -1038,11 +1038,11 @@ function Staircase3D({
 									{/* צדדים לאורך Z */}
 									<mesh rotation={[0, 0, 0]} position={[0, 0, treadWidth / 2 + eps]} receiveShadow>
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
-										{matSides()}
+									{matSides(forwardSign < 0)}
 									</mesh>
 									<mesh rotation={[0, Math.PI, 0]} position={[0, 0, -treadWidth / 2 - eps]} receiveShadow>
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
-										{matSides()}
+									{matSides(forwardSign > 0)}
 									</mesh>
 									{/* תיוג 2=פנימי, 3=חיצוני */}
 									<Text position={[0, 0, innerSignLocal * (treadWidth / 2 + 0.004)]} rotation={[0, innerSignLocal > 0 ? 0 : Math.PI, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
@@ -1072,11 +1072,11 @@ function Staircase3D({
 									{/* צדדים לאורך X */}
 									<mesh rotation={[0, Math.PI / 2, 0]} position={[treadWidth / 2 + eps, 0, 0]} receiveShadow>
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
-										{matSides()}
+									{matSides(forwardSign < 0)}
 									</mesh>
 									<mesh rotation={[0, -Math.PI / 2, 0]} position={[-treadWidth / 2 - eps, 0, 0]} receiveShadow>
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
-										{matSides()}
+									{matSides(forwardSign > 0)}
 									</mesh>
 									{/* תיוג 2=פנימי, 3=חיצוני */}
 									<Text position={[innerSignLocal * (treadWidth / 2 + 0.004), 0, 0]} rotation={[0, innerSignLocal > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>

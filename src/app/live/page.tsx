@@ -921,17 +921,20 @@ function Staircase3D({
 							return <group>{geomGroup}{frontMark}{backMark}{rightMark}{leftMark}</group>;
 						})()
 					) : (
-						<group rotation={[0, 0, 0]}>
-							<mesh castShadow receiveShadow>
-								<boxGeometry args={[t.run, treadThickness, treadWidth]} />
-								<meshBasicMaterial
-									color={(materialKind !== 'wood' && useSolidMat) ? (solidSideColor) : (materialKind === 'metal' ? '#8f8f8f' : '#b3a59a')}
-									polygonOffset
-									polygonOffsetFactor={1}
-									polygonOffsetUnits={1}
-								/>
-							</mesh>
-						</group>
+						// בדגם 'rect' מצוירות פאות בנפרד; אין ליצור קוביה בסיסית כדי להימנע מכפילות/זי-פייטינג
+						(boxModel === 'rect' ? null : (
+							<group rotation={[0, 0, 0]}>
+								<mesh castShadow receiveShadow>
+									<boxGeometry args={[t.run, treadThickness, treadWidth]} />
+									<meshBasicMaterial
+										color={(materialKind !== 'wood' && useSolidMat) ? (solidSideColor) : (materialKind === 'metal' ? '#8f8f8f' : '#b3a59a')}
+										polygonOffset
+										polygonOffsetFactor={1}
+										polygonOffsetUnits={1}
+									/>
+								</mesh>
+							</group>
+						))
 					)}
 					{/* שכבת פני השטח עם תבליט אמיתי לעץ; למתכת/אבן – כיסוי מרקם */}
 					<mesh

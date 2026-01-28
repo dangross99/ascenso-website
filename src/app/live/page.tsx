@@ -465,8 +465,9 @@ function Staircase3D({
 	}, [map?.image, bumpMap?.image, roughMap?.image, tileScale, bumpScaleOverride]);
 
 	// מחשב חזרת UV בשיטת "cover" לפי יחס ממדים של הפאה לעומת יחס תמונה, עם קאשינג
-	function buildFaceTextures(dimU: number, dimV: number) {
-		const key = `${dimU.toFixed(4)}|${dimV.toFixed(4)}|${textureUrl || 'na'}|${bumpUrl || 'na'}|${roughnessUrl || 'na'}|${tileScale}|${bumpScaleOverride ?? 'na'}`;
+	// rotate90: כאשר true – מסובב את הטקסטורה 90° כדי ליישר כיוון סיבים/גרעין עם כיוון המקטע
+	function buildFaceTextures(dimU: number, dimV: number, rotate90: boolean = false) {
+		const key = `${dimU.toFixed(4)}|${dimV.toFixed(4)}|${textureUrl || 'na'}|${bumpUrl || 'na'}|${roughnessUrl || 'na'}|${tileScale}|${bumpScaleOverride ?? 'na'}|rot:${rotate90 ? 1 : 0}`;
 		const cached = faceTexCacheRef.current.get(key);
 		if (cached) return cached;
 
@@ -502,6 +503,11 @@ function Staircase3D({
 			t.wrapS = t.wrapT = ClampToEdgeWrapping;
 			t.repeat.set(repU, repV);
 			t.offset.set(offU, offV);
+			// סיבוב אופציונלי של הטקסטורה סביב המרכז כדי ליישר כיוון
+			if (rotate90) {
+				t.center.set(0.5, 0.5);
+				t.rotation = Math.PI / 2;
+			}
 			// @ts-ignore
 			t.colorSpace = SRGBColorSpace;
 			t.generateMipmaps = false;
@@ -902,7 +908,9 @@ function Staircase3D({
 						<planeGeometry args={[t.run, treadWidth, materialKind === 'wood' ? 48 : 32, materialKind === 'wood' ? 48 : 32]} />
 						{materialKind === 'wood' ? (
 							(() => {
-								const ft = buildFaceTextures(t.run, treadWidth);
+								const yaw = t.rotation[1] as number;
+								const axisIsX = Math.abs(Math.cos(yaw)) > 0.5;
+								const ft = buildFaceTextures(t.run, treadWidth, !axisIsX);
 							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
 							})()
 						) : materialKind === 'metal' ? (
@@ -910,7 +918,9 @@ function Staircase3D({
 								if (useSolidMat) {
 									return (<meshBasicMaterial color={solidTopColor} side={2} />);
 								}
-								const ft = buildFaceTextures(t.run, treadWidth);
+								const yaw = t.rotation[1] as number;
+								const axisIsX = Math.abs(Math.cos(yaw)) > 0.5;
+								const ft = buildFaceTextures(t.run, treadWidth, !axisIsX);
 								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
 							})()
 						) : (
@@ -918,7 +928,9 @@ function Staircase3D({
 								if (useSolidMat) {
 									return (<meshBasicMaterial color={solidTopColor} side={2} />);
 								}
-								const ft = buildFaceTextures(t.run, treadWidth);
+								const yaw = t.rotation[1] as number;
+								const axisIsX = Math.abs(Math.cos(yaw)) > 0.5;
+								const ft = buildFaceTextures(t.run, treadWidth, !axisIsX);
 								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
 							})()
 						)}
@@ -934,7 +946,9 @@ function Staircase3D({
 								if (useSolidMat) {
 									return (<meshBasicMaterial color={solidSideColor} />);
 								}
-								const ft = buildFaceTextures(t.run, treadWidth);
+								const yaw = t.rotation[1] as number;
+								const axisIsX = Math.abs(Math.cos(yaw)) > 0.5;
+								const ft = buildFaceTextures(t.run, treadWidth, !axisIsX);
 								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
 							})()}
 						</mesh>

@@ -995,8 +995,8 @@ function Staircase3D({
 						const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
 						const axis = (Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z') as 'x' | 'z';
 						const forwardSignBase = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
-						// בדגם rect: אין היפוך בגרם הראשון – הספרה 1 תמיד בחזית בכיוון ההליכה
-						const forwardSign = forwardSignBase;
+						// היפוך כיוון כך ש‑1 יופיע במקום 4 ו‑2 במקום 3 (תואם אלכסוני/רכס)
+						const forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase);
 						// צד פנימי: למדרגות לפי stepRailingSides; לפודסטים לפי landingRailingSides
 						const innerIsRight = t.isLanding
 							? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))
@@ -1047,14 +1047,14 @@ function Staircase3D({
 									{matSides(forwardSign > 0)}
 									</mesh>
 									{/* תיוג 2=פנימי, 3=חיצוני */}
-									<Text position={[0, 0, innerSignLocal * (treadWidth / 2 + 0.004)]} rotation={[0, innerSignLocal > 0 ? 0 : Math.PI, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
-									<Text position={[0, 0, -innerSignLocal * (treadWidth / 2 + 0.004)]} rotation={[0, innerSignLocal > 0 ? Math.PI : 0, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>
+									<Text position={[0, 0, innerSignLocal * (treadWidth / 2 + 0.004)]} rotation={[0, innerSignLocal > 0 ? 0 : Math.PI, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>
+									<Text position={[0, 0, -innerSignLocal * (treadWidth / 2 + 0.004)]} rotation={[0, innerSignLocal > 0 ? Math.PI : 0, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
 								</>
 							);
 						} else {
 							// במקטעי Z – כיוון החזית צריך לעקוב אחר כיוון ההליכה בפועל
-							// שימוש בכיוון הנגזר מ‑yaw (sin) כדי למנוע היפוך לא רצוי בגרם 2
-							const zForward = (Math.sin(yaw) >= 0 ? 1 : -1);
+							// השתמש בהיפוך המבוקש – 1 במקום 4
+							const zForward = -forwardSign;
 							const frontRotY = zForward > 0 ? 0 : Math.PI;
 							const backRotY = zForward > 0 ? Math.PI : 0;
 							const eps = 0.0008;
@@ -1082,8 +1082,8 @@ function Staircase3D({
 									{matSides(zForward > 0)}
 									</mesh>
 									{/* תיוג 2=פנימי, 3=חיצוני */}
-									<Text position={[innerSignLocal * (treadWidth / 2 + 0.004), 0, 0]} rotation={[0, innerSignLocal > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
-									<Text position={[-innerSignLocal * (treadWidth / 2 + 0.004), 0, 0]} rotation={[0, innerSignLocal > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>
+									<Text position={[innerSignLocal * (treadWidth / 2 + 0.004), 0, 0]} rotation={[0, innerSignLocal > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>
+									<Text position={[-innerSignLocal * (treadWidth / 2 + 0.004), 0, 0]} rotation={[0, innerSignLocal > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
 								</>
 							);
 						}

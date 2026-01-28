@@ -194,7 +194,15 @@ function Staircase3D({
 	const riser = 0.18;
 
 	function getTreads() {
-		const treads: Array<{ position: [number, number, number]; rotation: [number, number, number]; run: number; isLanding: boolean; turn?: 'left' | 'right'; flight: number }> = [];
+		const treads: Array<{
+			position: [number, number, number];
+			rotation: [number, number, number];
+			run: number;
+			isLanding: boolean;
+			turn?: 'left' | 'right';
+			flight: number;
+			axis: 'x' | 'z';
+		}> = [];
 		if (pathSegments && pathSegments.length) {
 			// כיוון התחלתי: +X
 			let dirIndex = 0; // 0:+X, 1:+Z, 2:-X, 3:-Z
@@ -222,6 +230,7 @@ function Staircase3D({
 							run,
 							isLanding: false,
 							flight: flightIdx,
+							axis: (dirIndex & 1) === 0 ? 'x' : 'z',
 						});
 						// התקדמות לנקודת התחלה הבאה
 						sx += dx * run;
@@ -241,6 +250,7 @@ function Staircase3D({
 						isLanding: true,
 						turn: seg.turn,
 						flight: flightIdx,
+						axis: (dirIndex & 1) === 0 ? 'x' : 'z',
 					});
 					// עדכון נקודת עיגון למסלול הבא:
 					// אם אין פנייה – התקדמות לקצה הפודסט בכיוון הנוכחי
@@ -294,12 +304,13 @@ function Staircase3D({
 					run: treadDepth,
 					isLanding: false,
 					flight: 0,
+					axis: 'x',
 				});
 			}
 		} else if (shape === 'L') {
 			const half = Math.floor(steps / 2);
 			for (let i = 0; i < half; i++) {
-				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, 0, 0], run: treadDepth, isLanding: false, flight: 0 });
+				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, 0, 0], run: treadDepth, isLanding: false, flight: 0, axis: 'x' });
 			}
 			// פודסט עם "שלח" באורך המדרגה (ריבוע 1x1מ׳) + פנייה ימינה
 			const runL = treadWidth;
@@ -311,6 +322,7 @@ function Staircase3D({
 				isLanding: true,
 				turn: 'right',
 				flight: 0,
+				axis: 'x',
 			});
 			// המשך בכיוון חדש
 			for (let i = 0; i < steps - half - 1; i++) {
@@ -320,13 +332,14 @@ function Staircase3D({
 					run: treadDepth,
 					isLanding: false,
 					flight: 1,
+					axis: 'z',
 				});
 			}
 		} else {
 			// U
 			const third = Math.floor(steps / 3);
 			for (let i = 0; i < third; i++) {
-				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, 0, 0], run: treadDepth, isLanding: false, flight: 0 });
+				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, 0, 0], run: treadDepth, isLanding: false, flight: 0, axis: 'x' });
 			}
 			// פודסט 1x1מ׳ + פנייה ראשונה
 			const runL1 = treadWidth;
@@ -338,6 +351,7 @@ function Staircase3D({
 				isLanding: true,
 				turn: 'right',
 				flight: 0,
+				axis: 'x',
 			});
 			for (let i = 0; i < third; i++) {
 				treads.push({
@@ -346,6 +360,7 @@ function Staircase3D({
 					run: treadDepth,
 					isLanding: false,
 					flight: 1,
+					axis: 'z',
 				});
 			}
 			// פודסט שני 1x1מ׳ + פנייה שנייה
@@ -359,6 +374,7 @@ function Staircase3D({
 				isLanding: true,
 				turn: 'right',
 				flight: 1,
+				axis: 'z',
 			});
 			for (let i = 0; i < steps - third * 2 - 1; i++) {
 				treads.push({
@@ -367,6 +383,7 @@ function Staircase3D({
 					run: treadDepth,
 					isLanding: false,
 					flight: 2,
+					axis: 'x',
 				});
 			}
 		}
@@ -628,7 +645,7 @@ function Staircase3D({
 							const innerIsRight = t.isLanding
 								? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))
 								: ((typeof stepRailingSides !== 'undefined' ? (stepRailingSides[curStepIdx] ?? 'right') : 'right') === 'right');
-							const axis = axisFromYaw(yaw);
+							const axis = (t.axis as 'x' | 'z');
 							const rotateForAxis = (axis === 'x');
 							const rightLocalZSign = rightLocalSignFor(yaw, axis, t.isLanding);
 							const innerSignLocal = innerIsRight ? rightLocalZSign : -rightLocalZSign;
@@ -970,7 +987,7 @@ function Staircase3D({
 						const curStepIdx = !t.isLanding ? (sIdx++) : -1;
 						const yaw = t.rotation[1] as number;
 						const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
-						const axis: 'x' | 'z' = Math.abs(cosY) > 0.5 ? 'x' : 'z';
+						const axis = (t.axis as 'x' | 'z');
 						const forwardSign = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
 						// צד פנימי: למדרגות לפי stepRailingSides; לפודסטים לפי landingRailingSides
 						const innerIsRight = t.isLanding
@@ -1102,7 +1119,7 @@ function Staircase3D({
 				for (let i = 0; i < treads.length; i++) {
 					const t = treads[i];
 					const yaw = t.rotation[1];
-					const axis: 'x' | 'z' = Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z';
+							const axis = (t.axis as 'x' | 'z');
 					const bottomY = t.position[1] - treadThickness / 2;
 
 					// פודסטים

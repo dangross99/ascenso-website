@@ -615,8 +615,10 @@ function Staircase3D({
 				const axisFromYaw = (yaw: number): 'x' | 'z' => (Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z');
 				const rightLocalSignFor = (yaw: number, axis: 'x' | 'z', isLanding: boolean): 1 | -1 => {
 					const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
-					// הגדרה עקבית: "ימין" הוא הצד החיובי של ציר Z המקומי בכל מקטע, ללא היפוך מיוחד בפודסטים
-					return (axis === 'x' ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
+					let sign: 1 | -1 = (axis === 'x' ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
+					// פודסטים לאורך Z – היפוך כדי לשמור "פנימה" עקבי בין גרמים
+					if (isLanding && axis === 'z') sign = (sign === 1 ? -1 : 1) as 1 | -1;
+					return sign;
 				};
 				let sIdx = 0; let lIdx = 0; 
 				return treads.map((t, idx) => (

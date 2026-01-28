@@ -996,22 +996,24 @@ function Staircase3D({
 								</>
 							);
 						} else {
-							const frontRotY = forwardSign > 0 ? 0 : Math.PI;
-							const backRotY = forwardSign > 0 ? Math.PI : 0;
-							const frontZ = forwardSign * (t.run / 2) + forwardSign * 0.0015;
-							const backZ = -forwardSign * (t.run / 2) - forwardSign * 0.0015;
+							// במקטעי Z – הפאות הקדמיות/אחוריות נתפסו הפוך; נהפוך את הכיוון עבור Z בלבד
+							const zForward = -forwardSign;
+							const frontRotY = zForward > 0 ? 0 : Math.PI;
+							const backRotY = zForward > 0 ? Math.PI : 0;
+							const frontZ = zForward * (t.run / 2) + zForward * 0.0015;
+							const backZ = -zForward * (t.run / 2) - zForward * 0.0015;
 							return (
 								<>
 									<mesh rotation={[0, frontRotY, 0]} position={[0, 0, frontZ]} receiveShadow>
 										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
 										{matFrontBack}
 									</mesh>
-									<Text position={[0, 0, frontZ + forwardSign * 0.004]} rotation={[0, frontRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">1</Text>
+									<Text position={[0, 0, frontZ + zForward * 0.004]} rotation={[0, frontRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">1</Text>
 									<mesh rotation={[0, backRotY, 0]} position={[0, 0, backZ]} receiveShadow>
 										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
 										{matFrontBack}
 									</mesh>
-									<Text position={[0, 0, backZ - forwardSign * 0.004]} rotation={[0, backRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">4</Text>
+									<Text position={[0, 0, backZ - zForward * 0.004]} rotation={[0, backRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">4</Text>
 									{/* צדדים לאורך X */}
 									<mesh rotation={[0, Math.PI / 2, 0]} position={[treadWidth / 2 + 0.0015, 0, 0]} receiveShadow>
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />

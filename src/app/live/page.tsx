@@ -880,7 +880,7 @@ function Staircase3D({
 							return <group>{geomGroup}{frontMark}{backMark}{rightMark}{leftMark}</group>;
 						})()
 					) : (
-						<group rotation={[0, ((boxModel === 'rect' && treadThickness <= 0.08) ? Math.PI : (t.flight === 0 ? Math.PI : 0)), 0]}>
+						<group rotation={[0, 0, 0]}>
 							<mesh castShadow receiveShadow>
 								<boxGeometry args={[t.run, treadThickness, treadWidth]} />
 								<meshBasicMaterial

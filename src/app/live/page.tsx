@@ -968,14 +968,15 @@ function Staircase3D({
 						// מיפוי "ימין" למרחב באופן אחיד לכל הדגמים
 						let rightLocalSign = rightLocalSignFor(yaw, axis, t.isLanding);
 						const innerSignLocal = innerIsRight ? rightLocalSign : -rightLocalSign;
+						const rotateForAxis = (axis === 'z');
 						const matFrontBack = (() => {
 							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
-							const ft = buildFaceTextures(treadWidth, treadThickness);
+							const ft = buildFaceTextures(treadWidth, treadThickness, rotateForAxis);
 							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 						})();
 						const matSides = (() => {
 							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
-							const ft = buildFaceTextures(t.run, treadThickness);
+							const ft = buildFaceTextures(t.run, treadThickness, rotateForAxis);
 							return (<meshBasicMaterial map={ft.color} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 						})();
 						if (axis === 'x') {

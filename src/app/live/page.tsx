@@ -946,9 +946,7 @@ function Staircase3D({
 						const yaw = t.rotation[1] as number;
 						const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
 						const axis: 'x' | 'z' = Math.abs(cosY) > 0.5 ? 'x' : 'z';
-						const isThin = (boxModel === 'rect' && treadThickness <= 0.08);
-						const forwardSignBase = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
-						const forwardSign = ((isThin || t.flight === 0) ? -forwardSignBase : forwardSignBase);
+						const forwardSign = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
 						// צד פנימי: למדרגות לפי stepRailingSides; לפודסטים לפי landingRailingSides
 						const innerIsRight = t.isLanding
 							? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))

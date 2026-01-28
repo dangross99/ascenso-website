@@ -979,9 +979,10 @@ function Staircase3D({
 						// מיפוי "ימין" למרחב באופן אחיד לכל הדגמים
 						let rightLocalSign = rightLocalSignFor(yaw, axis, t.isLanding);
 						const innerSignLocal = innerIsRight ? rightLocalSign : -rightLocalSign;
-						// סיבוב UV לפי פאה: חזית/גב מסובבים כאשר המקטע רץ על ציר X; צדדים מסובבים כאשר המקטע רץ על ציר Z
-						const rotateFrontBack = (axis === 'x');
-						const rotateSides = (axis === 'z');
+						// בדגם rect אין צורך לסובב את הטקסטורה – כיוון ה‑U של ה‑plane כבר מיושר עם כיוון הפאה בעקבות סיבובי ה‑mesh
+						// סיבוב כאן יוצר "סיבוב כפול" במקטעים על ציר Z וגורם לפסים אנכיים בעובי המדרך
+						const rotateFrontBack = false;
+						const rotateSides = false;
 						const matFrontBack = (flipU: boolean = false) => {
 							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 							const ft = buildFaceTextures(treadWidth, treadThickness, rotateFrontBack, flipU);

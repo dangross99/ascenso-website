@@ -601,7 +601,9 @@ function Staircase3D({
 							const yaw = t.rotation[1] as number;
 							const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
 							const axisX = Math.abs(cosY) > 0.5;
-							const forwardSign = axisX ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
+							const forwardSignBase = axisX ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
+							// בגרם הראשון נהפוך את החזית/גב כדי שהמספר 1 ייראה בתחילת המסע
+							const forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase);
 							const xFront = forwardSign * (t.run / 2);
 							const xBack = -forwardSign * (t.run / 2);
 							// צד פנימי: למדרגות לפי stepRailingSides; לפודסטים לפי landingRailingSides
@@ -716,7 +718,8 @@ function Staircase3D({
 							const yaw = t.rotation[1] as number;
 							const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
 							const axisX = Math.abs(cosY) > 0.5;
-							const forwardSign = axisX ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
+							const forwardSignBase = axisX ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
+							const forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase);
 							const xFront = forwardSign * (t.run / 2);
 							const xBack = -forwardSign * (t.run / 2);
 							// צד פנימי: למדרגות לפי stepRailingSides; לפודסטים לפי landingRailingSides
@@ -931,7 +934,8 @@ function Staircase3D({
 						const yaw = t.rotation[1] as number;
 						const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
 						const axis: 'x' | 'z' = Math.abs(cosY) > 0.5 ? 'x' : 'z';
-						const forwardSign = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
+						const forwardSignBase = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
+						const forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase);
 						// צד פנימי: למדרגות לפי stepRailingSides; לפודסטים לפי landingRailingSides
 						const innerIsRight = t.isLanding
 							? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))

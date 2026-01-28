@@ -708,7 +708,7 @@ function Staircase3D({
 							rightGeom.computeVertexNormals();
 							const right = (
 								<mesh key="right" geometry={rightGeom} receiveShadow>
-									{faceMat(t.run, (treadThickness + frontTh) / 2, axisFromYawLocal === 'z', forwardSign < 0)}
+									{faceMat(t.run, (treadThickness + frontTh) / 2, axisFromYawLocal === 'x', forwardSign < 0)}
 								</mesh>
 							);
 							// LEFT side (trapezoid)
@@ -724,7 +724,7 @@ function Staircase3D({
 							leftGeom.computeVertexNormals();
 							const left = (
 								<mesh key="left" geometry={leftGeom} receiveShadow>
-									{faceMat(t.run, (treadThickness + frontTh) / 2, axisFromYawLocal === 'z', forwardSign > 0)}
+									{faceMat(t.run, (treadThickness + frontTh) / 2, axisFromYawLocal === 'x', forwardSign > 0)}
 								</mesh>
 							);
 							// BOTTOM slanted
@@ -903,13 +903,13 @@ function Staircase3D({
 							const sideRight = (
 								<mesh rotation={[0, 0, 0]} position={[0, 0, zRight]} receiveShadow>
 									<planeGeometry args={[t.run, backTh, 8, 2]} />
-									{faceMat(t.run, backTh, axis === 'z')}
+									{faceMat(t.run, backTh, axis === 'x')}
 								</mesh>
 							);
 							const sideLeft = (
 								<mesh rotation={[0, Math.PI, 0]} position={[0, 0, zLeft]} receiveShadow>
 									<planeGeometry args={[t.run, backTh, 8, 2]} />
-									{faceMat(t.run, backTh, axis === 'z')}
+									{faceMat(t.run, backTh, axis === 'x')}
 								</mesh>
 							);
 

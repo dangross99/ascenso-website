@@ -704,7 +704,12 @@ function Staircase3D({
 									{faceMat(t.run, treadWidth)}
 								</mesh>
 							);
-							return <group>{front}{frontMark}{back}{backMark}{right}{left}{rightMark}{leftMark}{bottom}</group>;
+							const geomGroup = (
+								<group rotation={[0, (t.flight === 0 ? Math.PI : 0), 0]}>
+									{front}{back}{right}{left}{bottom}
+								</group>
+							);
+							return <group>{geomGroup}{frontMark}{backMark}{rightMark}{leftMark}</group>;
 						})()
 					) : boxModel === 'ridge' ? (
 						(() => {
@@ -867,18 +872,25 @@ function Staircase3D({
 								</mesh>
 							);
 
-							return <group>{front}{frontMark}{bottom}{debugBottom}{back}{backMark}{sideRight}{sideLeft}{rightMark}{leftMark}</group>;
+							const geomGroup = (
+								<group rotation={[0, (t.flight === 0 ? Math.PI : 0), 0]}>
+									{front}{bottom}{debugBottom}{back}{sideRight}{sideLeft}
+								</group>
+							);
+							return <group>{geomGroup}{frontMark}{backMark}{rightMark}{leftMark}</group>;
 						})()
 					) : (
-						<mesh castShadow receiveShadow>
-							<boxGeometry args={[t.run, treadThickness, treadWidth]} />
-							<meshBasicMaterial
-								color={(materialKind !== 'wood' && useSolidMat) ? (solidSideColor) : (materialKind === 'metal' ? '#8f8f8f' : '#b3a59a')}
-								polygonOffset
-								polygonOffsetFactor={1}
-								polygonOffsetUnits={1}
-							/>
-						</mesh>
+						<group rotation={[0, (t.flight === 0 ? Math.PI : 0), 0]}>
+							<mesh castShadow receiveShadow>
+								<boxGeometry args={[t.run, treadThickness, treadWidth]} />
+								<meshBasicMaterial
+									color={(materialKind !== 'wood' && useSolidMat) ? (solidSideColor) : (materialKind === 'metal' ? '#8f8f8f' : '#b3a59a')}
+									polygonOffset
+									polygonOffsetFactor={1}
+									polygonOffsetUnits={1}
+								/>
+							</mesh>
+						</group>
 					)}
 					{/* שכבת פני השטח עם תבליט אמיתי לעץ; למתכת/אבן – כיסוי מרקם */}
 					<mesh

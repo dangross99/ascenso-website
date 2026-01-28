@@ -226,7 +226,7 @@ function Staircase3D({
 						const cz = sz + dz * (run / 2);
 						treads.push({
 							position: [cx, stepIndex * riser, cz],
-							rotation: [0, yaws[dirIndex] + (flightIdx === 2 ? Math.PI : 0), 0],
+							rotation: [0, yaws[dirIndex], 0],
 							run,
 							isLanding: false,
 							flight: flightIdx,
@@ -994,7 +994,9 @@ function Staircase3D({
 						const yaw = t.rotation[1] as number;
 						const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
 						const axis = (t.axis as 'x' | 'z');
-						const forwardSign = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
+						// שמירה על עקביות עם דגמי wedge/ridge: הופכים את החזית/גב בגרם הראשון בלבד כדי שהמספור יתחיל בתחילת המסע
+						const forwardSignBase = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
+						const forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase);
 						// צד פנימי: למדרגות לפי stepRailingSides; לפודסטים לפי landingRailingSides
 						const innerIsRight = t.isLanding
 							? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))

@@ -995,8 +995,9 @@ function Staircase3D({
 						if (axis === 'x') {
 							const frontRotY = forwardSign > 0 ? Math.PI / 2 : -Math.PI / 2;
 							const backRotY = -frontRotY;
-							const frontX = forwardSign * (t.run / 2);
-							const backX = -forwardSign * (t.run / 2);
+							const eps = 0.0008;
+							const frontX = forwardSign * (t.run / 2) + forwardSign * eps;
+							const backX = -forwardSign * (t.run / 2) - forwardSign * eps;
 							return (
 								<>
 									<mesh rotation={[0, frontRotY, 0]} position={[frontX, 0, 0]} receiveShadow>
@@ -1010,11 +1011,11 @@ function Staircase3D({
 									</mesh>
 									<Text position={[backX - forwardSign * 0.004, 0, 0]} rotation={[0, backRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">4</Text>
 									{/* צדדים לאורך Z */}
-									<mesh rotation={[0, 0, 0]} position={[0, 0, treadWidth / 2]} receiveShadow>
+									<mesh rotation={[0, 0, 0]} position={[0, 0, treadWidth / 2 + eps]} receiveShadow>
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
 										{matSides(forwardSign < 0)}
 									</mesh>
-									<mesh rotation={[0, Math.PI, 0]} position={[0, 0, -treadWidth / 2]} receiveShadow>
+									<mesh rotation={[0, Math.PI, 0]} position={[0, 0, -treadWidth / 2 - eps]} receiveShadow>
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
 										{matSides(forwardSign > 0)}
 									</mesh>
@@ -1028,8 +1029,9 @@ function Staircase3D({
 							const zForward = -forwardSign;
 							const frontRotY = zForward > 0 ? 0 : Math.PI;
 							const backRotY = zForward > 0 ? Math.PI : 0;
-							const frontZ = zForward * (t.run / 2);
-							const backZ = -zForward * (t.run / 2);
+							const eps = 0.0008;
+							const frontZ = zForward * (t.run / 2) + zForward * eps;
+							const backZ = -zForward * (t.run / 2) - zForward * eps;
 							return (
 								<>
 									<mesh rotation={[0, frontRotY, 0]} position={[0, 0, frontZ]} receiveShadow>
@@ -1043,11 +1045,11 @@ function Staircase3D({
 									</mesh>
 									<Text position={[0, 0, backZ - zForward * 0.004]} rotation={[0, backRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">4</Text>
 									{/* צדדים לאורך X */}
-									<mesh rotation={[0, Math.PI / 2, 0]} position={[treadWidth / 2, 0, 0]} receiveShadow>
+									<mesh rotation={[0, Math.PI / 2, 0]} position={[treadWidth / 2 + eps, 0, 0]} receiveShadow>
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
 										{matSides(zForward > 0)}
 									</mesh>
-									<mesh rotation={[0, -Math.PI / 2, 0]} position={[-treadWidth / 2, 0, 0]} receiveShadow>
+									<mesh rotation={[0, -Math.PI / 2, 0]} position={[-treadWidth / 2 - eps, 0, 0]} receiveShadow>
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
 										{matSides(zForward < 0)}
 									</mesh>

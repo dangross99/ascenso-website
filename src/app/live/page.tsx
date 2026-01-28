@@ -946,8 +946,8 @@ function Staircase3D({
 						<boxGeometry args={[t.run, 0.004, treadWidth]} />
 						{materialKind === 'wood' ? (
 							(() => {
-								const axis = (t.axis as 'x' | 'z');
-								const ft = buildFaceTextures(t.run, treadWidth, axis === 'z');
+								const axisTop = (Math.abs(Math.cos(t.rotation[1] as number)) > 0.5 ? 'x' : 'z') as 'x' | 'z';
+								const ft = buildFaceTextures(t.run, treadWidth, axisTop === 'z');
 								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
 							})()
 						) : materialKind === 'metal' ? (
@@ -1126,7 +1126,7 @@ function Staircase3D({
 				for (let i = 0; i < treads.length; i++) {
 					const t = treads[i];
 					const yaw = t.rotation[1];
-							const axis = (t.axis as 'x' | 'z');
+					const axis = (Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z') as 'x' | 'z';
 					const bottomY = t.position[1] - treadThickness / 2;
 
 					// פודסטים

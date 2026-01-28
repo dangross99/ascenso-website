@@ -1003,22 +1003,22 @@ function Staircase3D({
 								<>
 									<mesh rotation={[0, frontRotY, 0]} position={[frontX, 0, 0]} receiveShadow>
 										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
-										{matFrontBack(forwardSign < 0)}
+										{matFrontBack()}
 									</mesh>
 									<Text position={[frontX + forwardSign * 0.004, 0, 0]} rotation={[0, frontRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">1</Text>
 									<mesh rotation={[0, backRotY, 0]} position={[backX, 0, 0]} receiveShadow>
 										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
-										{matFrontBack(forwardSign > 0)}
+										{matFrontBack()}
 									</mesh>
 									<Text position={[backX - forwardSign * 0.004, 0, 0]} rotation={[0, backRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">4</Text>
 									{/* צדדים לאורך Z */}
 									<mesh rotation={[0, 0, 0]} position={[0, 0, treadWidth / 2 + eps]} receiveShadow>
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
-										{matSides(forwardSign < 0)}
+										{matSides()}
 									</mesh>
 									<mesh rotation={[0, Math.PI, 0]} position={[0, 0, -treadWidth / 2 - eps]} receiveShadow>
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
-										{matSides(forwardSign > 0)}
+										{matSides()}
 									</mesh>
 									{/* תיוג 2=פנימי, 3=חיצוני */}
 									<Text position={[0, 0, innerSignLocal * (treadWidth / 2 + 0.004)]} rotation={[0, innerSignLocal > 0 ? 0 : Math.PI, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
@@ -1037,22 +1037,22 @@ function Staircase3D({
 								<>
 									<mesh rotation={[0, frontRotY, 0]} position={[0, 0, frontZ]} receiveShadow>
 										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
-										{matFrontBack(zForward < 0)}
+										{matFrontBack()}
 									</mesh>
 									<Text position={[0, 0, frontZ + zForward * 0.004]} rotation={[0, frontRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">1</Text>
 									<mesh rotation={[0, backRotY, 0]} position={[0, 0, backZ]} receiveShadow>
 										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
-										{matFrontBack(zForward > 0)}
+										{matFrontBack()}
 									</mesh>
 									<Text position={[0, 0, backZ - zForward * 0.004]} rotation={[0, backRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">4</Text>
 									{/* צדדים לאורך X */}
 									<mesh rotation={[0, Math.PI / 2, 0]} position={[treadWidth / 2 + eps, 0, 0]} receiveShadow>
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
-										{matSides(zForward > 0)}
+										{matSides()}
 									</mesh>
 									<mesh rotation={[0, -Math.PI / 2, 0]} position={[-treadWidth / 2 - eps, 0, 0]} receiveShadow>
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
-										{matSides(zForward < 0)}
+										{matSides()}
 									</mesh>
 									{/* תיוג 2=פנימי, 3=חיצוני */}
 									<Text position={[innerSignLocal * (treadWidth / 2 + 0.004), 0, 0]} rotation={[0, innerSignLocal > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>

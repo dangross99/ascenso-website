@@ -999,10 +999,9 @@ function Staircase3D({
 						// מיפוי "ימין" למרחב באופן אחיד לכל הדגמים
 						let rightLocalSign = rightLocalSignFor(yaw, axis, t.isLanding);
 						const innerSignLocal = innerIsRight ? rightLocalSign : -rightLocalSign;
-						// שמירת כיוון טקסטורה אחיד לכל הפאות בדגם rect
-						// כדי שהטופ/בוטום והצדדים יראו אותו גרעין (ללא סיבוב נוסף)
-						const rotateFrontBack = false;
-						const rotateSides = false;
+						// יישור עקבי: חזית/גב מסובבים במקטעי X; צדדים מסובבים במקטעי Z
+						const rotateFrontBack = (axis === 'x');
+						const rotateSides = (axis === 'z');
 						const matFrontBack = (flipU: boolean = false) => {
 							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 							const ft = buildFaceTextures(treadWidth, treadThickness, rotateFrontBack, flipU);
@@ -1023,12 +1022,12 @@ function Staircase3D({
 								<>
 									<mesh rotation={[0, frontRotY, 0]} position={[frontX, 0, 0]} receiveShadow>
 										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
-										{matFrontBack()}
+										{matFrontBack(forwardSign < 0)}
 									</mesh>
 									<Text position={[frontX + forwardSign * 0.004, 0, 0]} rotation={[0, frontRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">1</Text>
 									<mesh rotation={[0, backRotY, 0]} position={[backX, 0, 0]} receiveShadow>
 										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
-										{matFrontBack()}
+										{matFrontBack(forwardSign > 0)}
 									</mesh>
 									<Text position={[backX - forwardSign * 0.004, 0, 0]} rotation={[0, backRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">4</Text>
 									{/* צדדים לאורך Z */}
@@ -1057,12 +1056,12 @@ function Staircase3D({
 								<>
 									<mesh rotation={[0, frontRotY, 0]} position={[0, 0, frontZ]} receiveShadow>
 										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
-										{matFrontBack()}
+										{matFrontBack(zForward < 0)}
 									</mesh>
 									<Text position={[0, 0, frontZ + zForward * 0.004]} rotation={[0, frontRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">1</Text>
 									<mesh rotation={[0, backRotY, 0]} position={[0, 0, backZ]} receiveShadow>
 										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
-										{matFrontBack()}
+										{matFrontBack(zForward > 0)}
 									</mesh>
 									<Text position={[0, 0, backZ - zForward * 0.004]} rotation={[0, backRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">4</Text>
 									{/* צדדים לאורך X */}

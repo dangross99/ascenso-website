@@ -165,7 +165,7 @@ function Staircase3D({
 	uvInset?: number;
 	railingUvInset?: number;
 	treadThicknessOverride?: number;
-	boxModel?: 'rect' | 'wedge' | 'ridge';
+	boxModel?: 'rect' | 'wedge' | 'ridge' | 'thin1';
 	wedgeFrontFraction?: number;
 	wedgeFrontThicknessM?: number;
 	ridgeFrontCenterThicknessM?: number;
@@ -919,7 +919,7 @@ function Staircase3D({
 					{/* שכבת פני השטח עם תבליט אמיתי לעץ; למתכת/אבן – כיסוי מרקם */}
 					<mesh
 						rotation={[-Math.PI / 2, 0, 0]}
-						position={[0, (boxModel !== 'rect' ? (treadThickness / 2 + 0.0005) : (treadThickness / 2 + 0.002)), 0]}
+						position={[0, ((boxModel === 'rect' || boxModel === 'thin1') ? (treadThickness / 2 + 0.002) : (treadThickness / 2 + 0.0005)), 0]}
 						castShadow={materialKind !== 'metal'}
 						receiveShadow={materialKind !== 'metal'}
 					>
@@ -952,7 +952,7 @@ function Staircase3D({
 					{/* דגמי קו צל/חזית נופלת הוסרו */}
 
 					{/* BOTTOM face */}
-					{boxModel === 'rect' && (
+					{(boxModel === 'rect' || boxModel === 'thin1') && (
 						<mesh rotation={[Math.PI / 2, 0, 0]} position={[0, -treadThickness / 2 - 0.0005, 0]} receiveShadow>
 							<planeGeometry args={[t.run, treadWidth, 8, 8]} />
 							{(() => {
@@ -966,7 +966,7 @@ function Staircase3D({
 					)}
 
 					{/* FRONT/BACK and SIDES – יישור לפי כיוון הריצה (axis) וה‑yaw של המדרגה */}
-					{boxModel === 'rect' && (() => {
+					{(boxModel === 'rect' || boxModel === 'thin1') && (() => {
 						const curStepIdx = !t.isLanding ? (sIdx++) : -1;
 						const yaw = t.rotation[1] as number;
 						const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
@@ -2259,7 +2259,7 @@ function LivePageInner() {
 	const qShape = (search.get('shape') as 'straight' | 'L' | 'U') || 'straight';
 	const qSteps = parseInt(search.get('steps') || '', 10);
 	const qTex = search.get('tex') || '';
-	let qBox = (search.get('box') as 'thick' | 'thin' | 'wedge' | 'ridge' | 'plates') || 'thick';
+	let qBox = (search.get('box') as 'thick' | 'thin' | 'thin1' | 'wedge' | 'ridge' | 'plates') || 'thick';
 	if (qBox === 'plates') { qBox = 'thick'; }
 	const qPath = search.get('path') || '';
 
@@ -2271,7 +2271,7 @@ function LivePageInner() {
 	// מזהים ייעודיים לכל קטגוריה כדי לשמר בחירה בין מעברים
 	const [activeMetalTexId, setActiveMetalTexId] = React.useState<string | null>(activeMaterial === 'metal' ? (qTex || null) : null);
 	const [activeStoneTexId, setActiveStoneTexId] = React.useState<string | null>(activeMaterial === 'stone' ? (qTex || null) : null);
-	const [box, setBox] = React.useState<'thick' | 'thin' | 'wedge' | 'ridge'>(qBox as any);
+	const [box, setBox] = React.useState<'thick' | 'thin' | 'thin1' | 'wedge' | 'ridge'>(qBox as any);
 	const [railing, setRailing] = React.useState<'none' | 'glass' | 'metal' | 'cable'>('none');
 	const [glassTone, setGlassTone] = React.useState<'extra' | 'smoked' | 'bronze'>('extra');
 	const [stepRailing, setStepRailing] = React.useState<boolean[]>([]);
@@ -3281,9 +3281,10 @@ function LivePageInner() {
 								el: (
 									<div className="p-2 pt-1">
 										<div className="flex flex-wrap justify-center gap-6">
-											{([
+									{([
 												{ id: 'thick', label: 'תיבה עבה‑דופן' as const },
 												{ id: 'thin', label: 'תיבה דקה‑דופן' as const },
+												{ id: 'thin1', label: 'תיבה דק1' as const },
 												{ id: 'wedge', label: 'דגם אלכסוני' as const },
 												{ id: 'ridge', label: 'דגם רכס מרכזי' as const },
 											] as const).map(opt => (
@@ -3303,6 +3304,11 @@ function LivePageInner() {
 															<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
 																<rect x="1" y="20" width="50" height="12" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
 																<rect x="1" y="20" width="50" height="12" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
+															</svg>
+														) : opt.id === 'thin1' ? (
+															<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
+																<rect x="1" y="21" width="50" height="10" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
+																<rect x="1" y="21" width="50" height="10" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
 															</svg>
 														) : opt.id === 'wedge' ? (
 															<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
@@ -3803,8 +3809,8 @@ function LivePageInner() {
 									cableSpanMode={cableSpanMode}
 									stepCableSpanModes={stepCableSpanMode}
 									landingCableSpanModes={landingCableSpanMode}
-									treadThicknessOverride={box === 'thick' ? 0.11 : (box === 'wedge' ? 0.11 : (box === 'ridge' ? 0.02 : 0.07))}
-									boxModel={box === 'wedge' ? 'wedge' : (box === 'ridge' ? 'ridge' : 'rect')}
+									treadThicknessOverride={box === 'thick' ? 0.11 : (box === 'wedge' ? 0.11 : (box === 'ridge' ? 0.02 : (box === 'thin1' ? 0.08 : 0.07)))}
+									boxModel={box === 'wedge' ? 'wedge' : (box === 'ridge' ? 'ridge' : (box === 'thin1' ? 'thin1' : 'rect'))}
 									wedgeFrontThicknessM={0.035}
 									ridgeFrontCenterThicknessM={0.09}
 									ridgeFrontEdgeThicknessM={0.03}
@@ -4110,6 +4116,18 @@ function LivePageInner() {
 								</svg>
 								קצר
 							</button>
+									<button
+										role="tab"
+										aria-selected={box === 'thin1'}
+										className={`flex items-center gap-2 px-3 py-2 rounded-full border text-sm whitespace-nowrap ${box === 'thin1' ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white hover:bg-gray-100'}`}
+										onClick={() => setBox('thin1')}
+									>
+										{/* Icon: thin1 profile */}
+										<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+											<rect x="4" y="10" width="16" height="3" rx="1" stroke="currentColor" fill="none" />
+										</svg>
+										דק1 (8 ס״מ)
+									</button>
 						</div>
 					</div>
 					{/* פירוט צבעים/מעקה – הוסר. מוצג רק בטאב העליון. */}
@@ -4176,7 +4194,7 @@ function LivePageInner() {
 											aria-expanded={mobileOpenCat === 'box'}
 										>
 											<span className="font-medium">דגם תיבה</span>
-											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : box === 'wedge' ? 'דגם אלכסוני' : 'דגם רכס מרכזי'}</span>
+											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : box === 'thin1' ? 'תיבה דק1' : box === 'wedge' ? 'דגם אלכסוני' : 'דגם רכס מרכזי'}</span>
 										</button>
 										)}
 										{mobileOpenCat === 'box' && (
@@ -4185,6 +4203,7 @@ function LivePageInner() {
 													{([
 														{ id: 'thick', label: 'תיבה עבה‑דופן' },
 														{ id: 'thin', label: 'תיבה דקה‑דופן' },
+														{ id: 'thin1', label: 'תיבה דק1 (8 ס״מ)' },
 													] as const).map(opt => (
 														<button
 															key={opt.id}

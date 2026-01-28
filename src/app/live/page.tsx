@@ -994,9 +994,9 @@ function Staircase3D({
 						const yaw = t.rotation[1] as number;
 						const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
 						const axis = (Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z') as 'x' | 'z';
-						// שמירה על עקביות עם דגמי wedge/ridge: הופכים את החזית/גב בגרם הראשון בלבד כדי שהמספור יתחיל בתחילת המסע
 						const forwardSignBase = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
-						const forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase);
+						// בדגם rect: אין היפוך בגרם הראשון – הספרה 1 תמיד בחזית בכיוון ההליכה
+						const forwardSign = forwardSignBase;
 						// צד פנימי: למדרגות לפי stepRailingSides; לפודסטים לפי landingRailingSides
 						const innerIsRight = t.isLanding
 							? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))

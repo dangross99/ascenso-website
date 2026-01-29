@@ -152,6 +152,11 @@ function Staircase3D({
 	cableSpanMode,
 	stepCableSpanModes,
 	landingCableSpanModes,
+	supportKind = 'dual-plate',
+	plateThickness = 0.012,
+	plateHeight = 0.18,
+	plateInsetFromEdge = 0.03,
+	plateTopGap = 0.015,
 }: {
 	shape: 'straight' | 'L' | 'U';
 	steps: number;
@@ -187,6 +192,11 @@ function Staircase3D({
 	cableSpanMode?: 'floor' | 'tread';
 	stepCableSpanModes?: Array<'floor' | 'tread'>;
 	landingCableSpanModes?: Array<'floor' | 'tread'>;
+	supportKind?: 'none' | 'dual-plate';
+	plateThickness?: number;
+	plateHeight?: number;
+	plateInsetFromEdge?: number;
+	plateTopGap?: number;
 }) {
 	// יחידות סצנה: מטרים בקירוב
 	const treadThickness = typeof treadThicknessOverride === 'number' ? treadThicknessOverride : 0.04;
@@ -1090,6 +1100,27 @@ function Staircase3D({
 
 					{/* מעקה זכוכית פר-מדרגה מבוטל למען פאנל רציף */}
 					{null}
+
+					{/* תמיכות: שני לוחות צד דקים (מצב ראשוני) */}
+					{!t.isLanding && supportKind === 'dual-plate' ? (() => {
+						// לוחות רציפים פר-מדרגה (נשפר לרציפות בין מדרגות בהמשך)
+						const undersideY = t.position[1] - treadThickness / 2;
+						const plateCenterY = undersideY - plateTopGap - plateHeight / 2;
+						const zOffset = (treadWidth / 2) - plateInsetFromEdge - plateThickness / 2;
+						const mat = <meshBasicMaterial color={'#e8e8e8'} />;
+						return (
+							<group>
+								<mesh position={[0, plateCenterY - t.position[1], zOffset]} castShadow receiveShadow>
+									<boxGeometry args={[t.run, plateHeight, plateThickness]} />
+									{mat}
+								</mesh>
+								<mesh position={[0, plateCenterY - t.position[1], -zOffset]} castShadow receiveShadow>
+									<boxGeometry args={[t.run, plateHeight, plateThickness]} />
+									{mat}
+								</mesh>
+							</group>
+						);
+					})() : null}
 				</group>
 			)); })()}
 
@@ -3838,6 +3869,11 @@ function LivePageInner() {
 									ridgeFrontCenterThicknessM={0.09}
 									ridgeFrontEdgeThicknessM={0.03}
 									pathSegments={pathSegments}
+									supportKind={'dual-plate'}
+									plateThickness={0.012}
+									plateHeight={0.18}
+									plateInsetFromEdge={0.03}
+									plateTopGap={0.015}
 									glassTone={glassTone}
 									stepRailingStates={stepRailing}
 									landingRailingStates={landingRailing}

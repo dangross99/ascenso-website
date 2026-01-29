@@ -1392,19 +1392,11 @@ function Staircase3D({
 
 						{/* פלטה A – רצועה מדויקת בין קווי האופסט (מילוי משולשים) */}
 						{bottomStepOff.length > 0 && topStepOff.length > 0 && (() => {
-							const topRail: Array<[number, number, number]> = closeP4 ? [...topStepOff, closeP4] : [...topStepOff];
-							// החלף את נקודת ההתחלה של הרייל העליון בהיסט הצידי כדי לבטל "שפיץ"
-							if (firstP4SideShift) {
-								topRail[0] = firstP4SideShift;
-								// כדי למנוע קיפול חד בתחילת הרייל – הזז גם את הנקודה הבאה באותו כיוון צדדי (ללא שינוי Y)
-								if (firstSideShiftVec && topRail.length > 1) {
-									topRail[1] = [
-										topRail[1][0] + firstSideShiftVec[0],
-										topRail[1][1], // שמור על Y המקורי
-										topRail[1][2] + firstSideShiftVec[2],
-									];
-								}
-							}
+							const baseTop: Array<[number, number, number]> = closeP4 ? [...topStepOff, closeP4] : [...topStepOff];
+							// הוסף קטע צדדי בתחילת הרייל: נקודת 4 המקורית ואז נקודת הסט הצידי
+							const topRail: Array<[number, number, number]> = firstP4SideShift
+								? [firstP4 as [number, number, number], firstP4SideShift, ...baseTop.slice(1)]
+								: baseTop;
 							const botRail: Array<[number, number, number]> = [...bottomStepOff];
 							// בחר אורך מקסימלי – אם מסילה אחת ארוכה יותר (למשל כוללת פודסט), נשכפל את הנקודה האחרונה של הקצרה
 							const count = Math.max(topRail.length, botRail.length);

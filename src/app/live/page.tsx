@@ -1423,13 +1423,83 @@ function Staircase3D({
 								idx.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
 								idx.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
 							}
+
+							// בניית נפח לפלטה A (גרם 1) – עובי לפי hitechPlateThickness (ברירת‑מחדל 12 מ״מ)
+							const thickness = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
+							// כיוון לאורך המסילה (u)
+							let ux = 1, uy = 0, uz = 0;
+							if (topRail.length >= 2) {
+								ux = topRail[1][0] - topRail[0][0];
+								uy = topRail[1][1] - topRail[0][1];
+								uz = topRail[1][2] - topRail[0][2];
+							}
+							const um = Math.hypot(ux, uy, uz) || 1; ux /= um; uy /= um; uz /= um;
+							// רוחב בין המסילות (w)
+							let wx = (firstP4 && firstP7) ? (firstP4[0] - firstP7[0]) : (topRail[0][0] - botRail[0][0]);
+							let wy = (firstP4 && firstP7) ? (firstP4[1] - firstP7[1]) : (topRail[0][1] - botRail[0][1]);
+							let wz = (firstP4 && firstP7) ? (firstP4[2] - firstP7[2]) : (topRail[0][2] - botRail[0][2]);
+							const nmX = uy * wz - uz * wy;
+							const nmY = uz * wx - ux * wz;
+							const nmZ = ux * wy - uy * wx;
+							const nmag = Math.hypot(nmX, nmY, nmZ) || 1;
+							const nxN = nmX / nmag, nyN = nmY / nmag, nzN = nmZ / nmag;
+							const offX = nxN * thickness, offY = nyN * thickness, offZ = nzN * thickness;
+
+							// שכבת גב: נעתיק את חזית הפלטה בהסט נורמל קבוע; יש לקבע אורכים לפני הרחבה
+							const frontVertexCount = pos.length / 3;
+							const backBase = frontVertexCount;
+							for (let i = 0; i < frontVertexCount * 3; i += 3) {
+								pos.push(pos[i] + offX, pos[i + 1] + offY, pos[i + 2] + offZ);
+							}
+							const frontIndexCount = idx.length;
+							for (let i = 0; i < frontIndexCount; i += 3) {
+								const a = idx[i], b = idx[i + 1], c = idx[i + 2];
+								idx.push(backBase + a, backBase + c, backBase + b);
+							}
+
+							// דפנות סביב: עליון, תחתון, התחלה, סיום
+							const addSideStrip = (rail: Array<[number, number, number]>) => {
+								if (rail.length < 2) return;
+								for (let i = 0; i < rail.length - 1; i++) {
+									const pA = rail[i];
+									const pB = rail[i + 1];
+									const pAe: [number, number, number] = [pA[0] + offX, pA[1] + offY, pA[2] + offZ];
+									const pBe: [number, number, number] = [pB[0] + offX, pB[1] + offY, pB[2] + offZ];
+									const bi = pos.length / 3;
+									pos.push(pA[0], pA[1], pA[2],  pB[0], pB[1], pB[2],  pBe[0], pBe[1], pBe[2],  pAe[0], pAe[1], pAe[2]);
+									idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+								}
+							};
+							addSideStrip(topRail);
+							addSideStrip(botRail);
+							// התחלה
+							{
+								const pT = (firstP4SideShift || topRail[0]);
+								const pB = (firstP7 || botRail[0]);
+								const pTe: [number, number, number] = [pT[0] + offX, pT[1] + offY, pT[2] + offZ];
+								const pBe: [number, number, number] = [pB[0] + offX, pB[1] + offY, pB[2] + offZ];
+								const bi = pos.length / 3;
+								pos.push(pT[0], pT[1], pT[2],  pB[0], pB[1], pB[2],  pBe[0], pBe[1], pBe[2],  pTe[0], pTe[1], pTe[2]);
+								idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+							}
+							// סיום
+							{
+								const lastT = topRail[topRail.length - 1];
+								const lastB = botRail[botRail.length - 1];
+								const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
+								const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
+								const bi = pos.length / 3;
+								pos.push(lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
+								idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+							}
+
 							return (
 								<mesh castShadow receiveShadow>
 									<bufferGeometry attach="geometry">
 										<bufferAttribute attach="attributes-position" args={[new Float32Array(pos), 3]} />
 										<bufferAttribute attach="index" args={[new Uint32Array(idx), 1]} />
 									</bufferGeometry>
-									<meshBasicMaterial color="#334155" side={2} />
+									<meshBasicMaterial color="#4b5563" side={2} />
 								</mesh>
 							);
 						})()}
@@ -1716,13 +1786,15 @@ function Staircase3D({
 							const nxN = nmX / nmag, nyN = nmY / nmag, nzN = nmZ / nmag;
 							const offX = nxN * thickness, offY = nyN * thickness, offZ = nzN * thickness;
 
-							// משטח אחורי (הזזה ב-n)
-							const backBase = pos.length / 3;
-							for (let i = 0; i < pos.length; i += 3) {
+							// משטח אחורי (הזזה ב-n) – יש ללכוד את אורך החזית לפני ההוספה כדי לא לגדול באותה לולאה
+							const frontVertexCount = pos.length / 3;
+							const backBase = frontVertexCount;
+							for (let i = 0; i < frontVertexCount * 3; i += 3) {
 								pos.push(pos[i] + offX, pos[i + 1] + offY, pos[i + 2] + offZ);
 							}
-							// אינדקסים למשטח האחורי בהיפוך כיוון
-							for (let i = 0; i < idx.length; i += 3) {
+							// אינדקסים למשטח האחורי בהיפוך כיוון – לולאה על האינדקסים המקוריים בלבד
+							const frontIndexCount = idx.length;
+							for (let i = 0; i < frontIndexCount; i += 3) {
 								const a = idx[i], b = idx[i + 1], c = idx[i + 2];
 								idx.push(backBase + a, backBase + c, backBase + b);
 							}

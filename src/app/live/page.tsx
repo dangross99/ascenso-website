@@ -1109,7 +1109,35 @@ function Staircase3D({
 						const topSurfaceY = t.position[1] + treadThickness / 2;
 						const plateCenterY = topSurfaceY - topOff - plateH / 2;
 						const zOffset = (treadWidth / 2) - inset - plateTh / 2;
-						const mat = <meshBasicMaterial color={'#e8e8e8'} />;
+						// צבע ברירת מחדל כהה למתכת; אם הוגדר materialSolidColor – ירושה ממנו
+						const plateColor = (materialKind === 'metal' && typeof materialSolidColor === 'string' && materialSolidColor)
+							? (materialSolidColor as string)
+							: '#4a4a4a';
+						const mat = <meshBasicMaterial color={plateColor} side={2} />;
+						// תושבת/אוזן אלכסונית – משולש מחוזק, מחובר לחלק העליון של הלוח אל תחתית המדרך
+						const bracketBase = 0.20;   // אורך לאורך ציר X
+						const bracketDrop = 0.10;   // ירידה אנכית מצמרת הלוח
+						const bracketReach = 0.08;  // התקרבות פנימה בציר Z
+						const buildBracket = (sideSign: 1 | -1) => {
+							const plateTopY = topSurfaceY - topOff;
+							const y0 = plateTopY;                 // נקודת חיבור עליונה בלוח
+							const y1 = plateTopY - bracketDrop;   // קצה תחתון של המשולש
+							const zPlateFace = sideSign * (zOffset + plateTh / 2);
+							const zIn = sideSign * (zOffset - bracketReach);
+							const tri = new Shape();
+							tri.moveTo(0, 0);           // יימופה ל(y0, zPlateFace)
+							tri.lineTo(0, y1 - y0);     // ירידה אנכית
+							tri.lineTo(zIn - zPlateFace, (t.position[1] - treadThickness / 2) - y0); // אל תחתית המדרך פנימה
+							tri.closePath();
+							const extrude = new ExtrudeGeometry(tri, { depth: bracketBase, bevelEnabled: false, steps: 1 });
+							// נמקם את המשולש כך שה‑depth (X) יישב באמצע המדרך
+							extrude.translate( -bracketBase / 2, y0, zPlateFace );
+							return (
+								<mesh geometry={extrude} position={[0, -t.position[1], 0]} castShadow receiveShadow>
+									{mat}
+								</mesh>
+							);
+						};
 						return (
 							<group>
 								<mesh position={[0, plateCenterY - t.position[1], zOffset]} castShadow receiveShadow>
@@ -1120,6 +1148,9 @@ function Staircase3D({
 									<boxGeometry args={[t.run, plateH, plateTh]} />
 									{mat}
 								</mesh>
+								{/* תושבות – אחת לכל צד, ממורכזות לאורך המדרך */}
+								{buildBracket(1)}
+								{buildBracket(-1)}
 							</group>
 						);
 					})() : null}

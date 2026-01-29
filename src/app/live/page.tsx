@@ -1254,6 +1254,25 @@ function Staircase3D({
 								<lineBasicMaterial attach="material" color="#10b981" linewidth={1} />
 							</line>
 						)}
+						{closeP4 && closeP7 && (() => {
+							const mx = (closeP4[0] + closeP7[0]) / 2;
+							const my = (closeP4[1] + closeP7[1]) / 2;
+							const mz = (closeP4[2] + closeP7[2]) / 2;
+							const dx = closeP7[0] - closeP4[0];
+							const dy = closeP7[1] - closeP4[1];
+							const dz = closeP7[2] - closeP4[2];
+							const len = Math.sqrt(dx*dx + dy*dy + dz*dz);
+							// המרחק בין קודקוד 4 המקורי (ללא אופסט) לבין קצה עליון של הקו הירוק
+							// שווה לאופסט (60 מ״מ) – מציגים גם אותו
+							const label = `${(len*1000).toFixed(0)} מ״מ`;
+							const label2 = `Δy=60 מ״מ`;
+							return (
+								<group>
+									<Text position={[mx, my + 0.04, mz]} fontSize={0.06} color="#0f766e" anchorX="center" anchorY="middle">{label}</Text>
+									<Text position={[closeP4[0], closeP4[1] + 0.05, closeP4[2]]} fontSize={0.05} color="#374151" anchorX="center" anchorY="middle">{label2}</Text>
+								</group>
+							);
+						})()}
 						{/* הארכה למטה עד הרצפה מהמדרגה הראשונה וסגירה ביניהן */}
 						{firstP4 && firstP7 && (
 							<group>

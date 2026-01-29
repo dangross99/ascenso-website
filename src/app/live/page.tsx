@@ -1175,14 +1175,13 @@ function Staircase3D({
 				const pitch = Math.atan(riser / treadDepth);
 				const epsL = 0.01; // תוספת קטנה לאורך כדי לסגור רווחים
 				const nodes: React.ReactNode[] = [];
-				byFlight.forEach((acc, flightIdx) => {
+				byFlight.forEach((acc) => {
 					const len = Math.max(0.001, (acc.max - acc.min) + epsL);
 					const centerAlong = (acc.min + acc.max) / 2;
 					const yaw = acc.yaw;
 					const axis = acc.axis;
 					const avgTopY = acc.count > 0 ? (acc.sumTopY / acc.count) : 0;
-					let constCoord = (typeof acc.refConst === 'number') ? acc.refConst : (acc.count > 0 ? (acc.sumConst / acc.count) : 0);
-					constCoord += Array.isArray(hitechOffsets) ? (hitechOffsets[flightIdx] || 0) : 0;
+					const constCoord = (typeof acc.refConst === 'number') ? acc.refConst : (acc.count > 0 ? (acc.sumConst / acc.count) : 0);
 					let plateCY: number;
 					if (typeof acc.refAlong === 'number' && typeof acc.refTopY === 'number') {
 						const slopePerM = riser / treadDepth;
@@ -2434,12 +2433,6 @@ function LivePageInner() {
 	const [cableSpanMode, setCableSpanMode] = React.useState<'floor' | 'tread'>('tread');
 	const [stepCableSpanMode, setStepCableSpanMode] = React.useState<Array<'floor' | 'tread'>>([]);
 	const [landingCableSpanMode, setLandingCableSpanMode] = React.useState<Array<'floor' | 'tread'>>([]);
-	// היסטים ללוחות דגם הייטק לפי גרם – ניתן להזריק דרך פרמטר 'ha' כ‑CSV במטרים, לדוגמה ha=0,0.005,-0.003
-	const qHa = (search.get('ha') || '').trim();
-	const [hitechOffsets, setHitechOffsets] = React.useState<number[]>(() => {
-		if (!qHa) return [];
-		return qHa.split(',').map(s => Number(s)).filter(n => Number.isFinite(n));
-	});
 	// זיכרון בחירה אחרונה לכל קטגוריה כדי לשחזר בעת חזרה
 	const lastWoodRef = React.useRef<{ modelId: string | null; color: string | null }>({ modelId: null, color: null });
 	const lastTexRef = React.useRef<{ metal: string | null; stone: string | null }>({ metal: null, stone: null });
@@ -3974,7 +3967,6 @@ function LivePageInner() {
 									hitechPlateHeight={0.27}
 									hitechPlateTopOffsetM={0.06}
 									hitechPlateInsetFromEdge={0.03}
-									hitechOffsets={hitechOffsets}
 									glassTone={glassTone}
 									stepRailingStates={stepRailing}
 									landingRailingStates={landingRailing}

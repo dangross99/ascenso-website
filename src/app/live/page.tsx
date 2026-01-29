@@ -1267,7 +1267,8 @@ function Staircase3D({
 					let sz = nxN * uy - nyN * ux;
 					const sm = Math.hypot(sx, sy, sz) || 1; sx /= sm; sy /= sm; sz /= sm;
 					const side = 0.03;
-					firstP4SideShift = [firstP4[0] + sx * side, firstP4[1] + sy * side, firstP4[2] + sz * side];
+					// אופסט צידי נטו (רק ב‑XZ), ללא שינוי בגובה Y
+					firstP4SideShift = [firstP4[0] + sx * side, firstP4[1], firstP4[2] + sz * side];
 				}
 
 				if (pts4Off.length === 0 && pts7Off.length === 0) return null;

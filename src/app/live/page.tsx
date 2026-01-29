@@ -1383,7 +1383,7 @@ function Staircase3D({
 													]), 3]} />
 													<bufferAttribute attach="index" args={[new Uint32Array([0,1,2, 2,1,3]), 1]} />
 												</bufferGeometry>
-												<meshBasicMaterial color="#4b5563" side={2} />
+												<meshBasicMaterial color="#16a34a" side={2} />
 											</mesh>
 										</group>
 									);

@@ -1186,7 +1186,7 @@ function Staircase3D({
 						const wy = t.position[1] + treadThickness / 2;
 						const wz = t.position[2] + rz;
 						pts4.push(wx, wy, wz);
-						pts4Off.push(wx, wy - offsetY, wz);
+						pts4Off.push(wx, wy + offsetY, wz);
 					}
 					// נקודה 7 – תחתונה ימין-קדימה: (+dx, +dz, yBot) – רק אם לא פודסט
 					if (!t.isLanding) {

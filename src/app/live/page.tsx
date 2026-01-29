@@ -1174,6 +1174,7 @@ function Staircase3D({
 				let firstP7: [number, number, number] | null = null;
 				let closeP4: [number, number, number] | null = null; // נקודת 4 (פודסט ראשון) באופסט
 				let closeP7: [number, number, number] | null = null; // נקודת 7 (מדרגה לפני הפודסט) באופסט
+				let closeP8: [number, number, number] | null = null; // נקודת 8 (מדרגה לפני הפודסט) באופסט
 				for (let i = 0; i < treads.length; i++) {
 					const t = treads[i];
 					if (t.flight !== flightIdx) continue;
@@ -1213,6 +1214,16 @@ function Staircase3D({
 						if (next && next.flight === flightIdx && next.isLanding) {
 							// קודקוד 7 הוא מהמדרגה הנוכחית (עם אופסט)
 							closeP7 = p7w;
+							// קודקוד 8 הוא מהמדרגה הנוכחית (עם אופסט) – אותו XZ כמו 4 של אותה מדרגה
+							{
+								const lx8 = -dx, lz8 = dz;
+								const rx8 = lx8 * c - lz8 * s;
+								const rz8 = lx8 * s + lz8 * c;
+								const wx8 = t.position[0] + rx8;
+								const wy8 = t.position[1] - treadThickness / 2 - offsetY;
+								const wz8 = t.position[2] + rz8;
+								closeP8 = [wx8, wy8, wz8];
+							}
 							// קודקוד 4 מהפודסט הבא (עם אופסט כלפי מעלה)
 							const yaw2 = next.rotation[1] as number;
 							const c2 = Math.cos(yaw2), s2 = Math.sin(yaw2);
@@ -1247,12 +1258,12 @@ function Staircase3D({
 							</line>
 						)}
 						{/* סגירה במדרגה לפני הפודסט: קו ישר בין אופסט 4 לאופסט 7 */}
-						{/* קו ירוק אנכי: מ‑7 (Y תחתון) אל 4 בפודסט (Y עליון) באותו XZ של נקודת 4 */}
-						{closeP4 && closeP7 && (
+						{/* קו ירוק אנכי: מ‑8‑offset (Y תחתון) אל 4‑offset בפודסט (Y עליון) באותו XZ של נקודת 4 */}
+						{closeP4 && closeP8 && (
 							<line>
 								<bufferGeometry attach="geometry">
 									<bufferAttribute attach="attributes-position" args={[new Float32Array([
-										closeP4[0], closeP7[1], closeP4[2],
+										closeP4[0], closeP8[1], closeP4[2],
 										closeP4[0], closeP4[1], closeP4[2],
 									]), 3]} />
 								</bufferGeometry>

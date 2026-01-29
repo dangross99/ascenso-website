@@ -1108,22 +1108,40 @@ function Staircase3D({
 			{/* דגם 'הייטק' – לוחות צד רציפים לכל flight */}
 			{hitech ? (() => {
 				// קיבוץ לפי flight רק למדרגות (ללא פודסטים)
-				type Acc = { axis: 'x' | 'z'; yaw: number; min: number; max: number; sumTopY: number; count: number };
+				type Acc = {
+					axis: 'x' | 'z';
+					yaw: number;
+					min: number;
+					max: number;
+					sumTopY: number;
+					sumConst: number; // X קבוע כאשר axis==='z', אחרת Z קבוע
+					count: number;
+				};
 				const byFlight = new Map<number, Acc>();
 				treads.forEach(t => {
 					if (t.isLanding) return;
-					const acc = byFlight.get(t.flight) || { axis: t.axis, yaw: t.rotation[1] as number, min: Infinity, max: -Infinity, sumTopY: 0, count: 0 };
+					const acc = byFlight.get(t.flight) || {
+						axis: t.axis,
+						yaw: t.rotation[1] as number,
+						min: Infinity,
+						max: -Infinity,
+						sumTopY: 0,
+						sumConst: 0,
+						count: 0
+					};
 					if (t.axis !== acc.axis) return; // שמירה פשוטה: מתעלם מאנומליות
 					if (t.axis === 'x') {
 						const s = t.position[0] - t.run / 2;
 						const e = t.position[0] + t.run / 2;
 						if (s < acc.min) acc.min = s;
 						if (e > acc.max) acc.max = e;
+						acc.sumConst += t.position[2]; // Z קבוע
 					} else {
 						const s = t.position[2] - t.run / 2;
 						const e = t.position[2] + t.run / 2;
 						if (s < acc.min) acc.min = s;
 						if (e > acc.max) acc.max = e;
+						acc.sumConst += t.position[0]; // X קבוע
 					}
 					acc.sumTopY += (t.position[1] + treadThickness / 2);
 					acc.count += 1;
@@ -1147,9 +1165,10 @@ function Staircase3D({
 					const yaw = acc.yaw;
 					const axis = acc.axis;
 					const avgTopY = acc.count > 0 ? (acc.sumTopY / acc.count) : 0;
+					const constCoord = acc.count > 0 ? (acc.sumConst / acc.count) : 0;
 					const plateCY = avgTopY - topOff - plateH / 2;
 					// קביעת מיקום מרכז לפי הציר
-					const pos: [number, number, number] = axis === 'x' ? [centerAlong, plateCY, 0] : [0, plateCY, centerAlong];
+					const pos: [number, number, number] = axis === 'x' ? [centerAlong, plateCY, constCoord] : [constCoord, plateCY, centerAlong];
 					nodes.push(
 						<group key={`pl-${axis}-${centerAlong.toFixed(3)}`} position={pos} rotation={[0, yaw, 0]}>
 							<mesh position={[0, 0, zOffsetAbs]} castShadow receiveShadow>

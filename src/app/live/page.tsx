@@ -1344,6 +1344,35 @@ function Staircase3D({
 									const f7x = firstP7[0];
 									const f7y = firstP7[1];
 									const f7z = firstP7[2];
+									// חישוב נפח לפאנל האנכי בגרם 1
+									const thicknessPanelA = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
+									const offXA = nxN * thicknessPanelA, offYA = nyN * thicknessPanelA, offZA = nzN * thicknessPanelA;
+									const v0A: [number, number, number] = [f4x, f4y, f4z];
+									const v1A: [number, number, number] = [f7x, f7y, f7z];
+									const v2A: [number, number, number] = [f4x, floorBounds.y, f4z];
+									const v3A: [number, number, number] = [f7x, floorBounds.y, f7z];
+									const v4A: [number, number, number] = [v0A[0] + offXA, v0A[1] + offYA, v0A[2] + offZA];
+									const v5A: [number, number, number] = [v1A[0] + offXA, v1A[1] + offYA, v1A[2] + offZA];
+									const v6A: [number, number, number] = [v2A[0] + offXA, v2A[1] + offYA, v2A[2] + offZA];
+									const v7A: [number, number, number] = [v3A[0] + offXA, v3A[1] + offYA, v3A[2] + offZA];
+									const panelPosA = new Float32Array([
+										v0A[0], v0A[1], v0A[2],
+										v1A[0], v1A[1], v1A[2],
+										v2A[0], v2A[1], v2A[2],
+										v3A[0], v3A[1], v3A[2],
+										v4A[0], v4A[1], v4A[2],
+										v5A[0], v5A[1], v5A[2],
+										v6A[0], v6A[1], v6A[2],
+										v7A[0], v7A[1], v7A[2],
+									]);
+									const panelIdxA = new Uint32Array([
+										0,1,2, 2,1,3,
+										4,6,5, 6,7,5,
+										0,1,5, 0,5,4,
+										1,3,7, 1,7,5,
+										3,2,6, 3,6,7,
+										2,0,4, 2,4,6,
+									]);
 									return (
 										<group>
 											<line>
@@ -1375,13 +1404,8 @@ function Staircase3D({
 											</line>
 											<mesh castShadow receiveShadow>
 												<bufferGeometry attach="geometry">
-													<bufferAttribute attach="attributes-position" args={[new Float32Array([
-														f4x, f4y, f4z,
-														f7x, f7y, f7z,
-														f4x, floorBounds.y, f4z,
-														f7x, floorBounds.y, f7z,
-													]), 3]} />
-													<bufferAttribute attach="index" args={[new Uint32Array([0,1,2, 2,1,3]), 1]} />
+													<bufferAttribute attach="attributes-position" args={[panelPosA, 3]} />
+													<bufferAttribute attach="index" args={[panelIdxA, 1]} />
 												</bufferGeometry>
 												<meshBasicMaterial color="#4b5563" side={2} />
 											</mesh>
@@ -1687,6 +1711,35 @@ function Staircase3D({
 									const f7x = firstP7[0];
 									const f7y = firstP7[1];
 									const f7z = firstP7[2];
+									// חישוב נפח לפאנל האנכי בגרם 2
+									const thicknessPanelB = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
+									const offXB = nxN * thicknessPanelB, offYB = nyN * thicknessPanelB, offZB = nzN * thicknessPanelB;
+									const v0B: [number, number, number] = [f4x, f4y, f4z];
+									const v1B: [number, number, number] = [f7x, f7y, f7z];
+									const v2B: [number, number, number] = [f4x, floorBounds.y, f4z];
+									const v3B: [number, number, number] = [f7x, floorBounds.y, f7z];
+									const v4B: [number, number, number] = [v0B[0] + offXB, v0B[1] + offYB, v0B[2] + offZB];
+									const v5B: [number, number, number] = [v1B[0] + offXB, v1B[1] + offYB, v1B[2] + offZB];
+									const v6B: [number, number, number] = [v2B[0] + offXB, v2B[1] + offYB, v2B[2] + offZB];
+									const v7B: [number, number, number] = [v3B[0] + offXB, v3B[1] + offYB, v3B[2] + offZB];
+									const panelPosB = new Float32Array([
+										v0B[0], v0B[1], v0B[2],
+										v1B[0], v1B[1], v1B[2],
+										v2B[0], v2B[1], v2B[2],
+										v3B[0], v3B[1], v3B[2],
+										v4B[0], v4B[1], v4B[2],
+										v5B[0], v5B[1], v5B[2],
+										v6B[0], v6B[1], v6B[2],
+										v7B[0], v7B[1], v7B[2],
+									]);
+									const panelIdxB = new Uint32Array([
+										0,1,2, 2,1,3,
+										4,6,5, 6,7,5,
+										0,1,5, 0,5,4,
+										1,3,7, 1,7,5,
+										3,2,6, 3,6,7,
+										2,0,4, 2,4,6,
+									]);
 									return (
 										<group>
 											<line>
@@ -1718,15 +1771,10 @@ function Staircase3D({
 											</line>
 											<mesh castShadow receiveShadow>
 												<bufferGeometry attach="geometry">
-													<bufferAttribute attach="attributes-position" args={[new Float32Array([
-														f4x, f4y, f4z,
-														f7x, f7y, f7z,
-														f4x, floorBounds.y, f4z,
-														f7x, floorBounds.y, f7z,
-													]), 3]} />
-													<bufferAttribute attach="index" args={[new Uint32Array([0,1,2, 2,1,3]), 1]} />
+													<bufferAttribute attach="attributes-position" args={[panelPosB, 3]} />
+													<bufferAttribute attach="index" args={[panelIdxB, 1]} />
 												</bufferGeometry>
-												<meshBasicMaterial color="#4b5563" side={2} />
+												<meshBasicMaterial color="#16a34a" side={2} />
 											</mesh>
 										</group>
 									);

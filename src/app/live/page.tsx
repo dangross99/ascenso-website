@@ -1393,11 +1393,8 @@ function Staircase3D({
 						{/* פלטה A – רצועה מדויקת בין קווי האופסט (מילוי משולשים) */}
 						{bottomStepOff.length > 0 && topStepOff.length > 0 && (() => {
 							const baseTop: Array<[number, number, number]> = closeP4 ? [...topStepOff, closeP4] : [...topStepOff];
-							// התחלה נקייה בשיפוע המקורי, עם נקודת פתיחה מוזחת בלבד (ללא נקודות ביניים נוספות)
-							const topRail: Array<[number, number, number]> = [...baseTop];
-							if (firstP4SideShift) {
-								topRail[0] = firstP4SideShift;
-							}
+							// שמור את הרייל העליון המקורי לשימור השיפוע
+							const topRail: Array<[number, number, number]> = baseTop;
 							const botRail: Array<[number, number, number]> = [...bottomStepOff];
 							// בחר אורך מקסימלי – אם מסילה אחת ארוכה יותר (למשל כוללת פודסט), נשכפל את הנקודה האחרונה של הקצרה
 							const count = Math.max(topRail.length, botRail.length);
@@ -1405,7 +1402,9 @@ function Staircase3D({
 							const pos: number[] = [];
 							const idx: number[] = [];
 							const pick = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
-							for (let i = 0; i < count - 1; i++) {
+							// דלג על המקטע הראשון כדי שלא ייווצר טריז ("שפיץ") בתחילת הפלטה כאשר קיימת הסט צידי
+							const startIdx = firstP4SideShift ? 1 : 0;
+							for (let i = startIdx; i < count - 1; i++) {
 								const t1 = pick(topRail, i), b1 = pick(botRail, i);
 								const t2 = pick(topRail, i + 1), b2 = pick(botRail, i + 1);
 								const baseIndex = pos.length / 3;

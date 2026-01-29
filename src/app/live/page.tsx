@@ -1304,9 +1304,10 @@ function Staircase3D({
 									const f4x = firstP4[0] + sxN * side;
 									const f4y = firstP4[1] + syN * side;
 									const f4z = firstP4[2] + szN * side;
-									const f7x = firstP7[0] + sxN * side;
-									const f7y = firstP7[1] + syN * side;
-									const f7z = firstP7[2] + szN * side;
+									// קודקוד 7 נשאר במקום (בלי אופסט צידי)
+									const f7x = firstP7[0];
+									const f7y = firstP7[1];
+									const f7z = firstP7[2];
 									return (
 										<group>
 											<line>

@@ -1115,6 +1115,8 @@ function Staircase3D({
 					max: number;
 					sumTopY: number;
 					sumConst: number; // X קבוע כאשר axis==='z', אחרת Z קבוע
+					refAlong?: number; // נקודת ייחוס לאורך (מרכז מדרגה)
+					refTopY?: number;  // גובה פני המדרך בנקודת הייחוס
 					count: number;
 				};
 				const byFlight = new Map<number, Acc>();
@@ -1136,12 +1138,20 @@ function Staircase3D({
 						if (s < acc.min) acc.min = s;
 						if (e > acc.max) acc.max = e;
 						acc.sumConst += t.position[2]; // Z קבוע
+						if (typeof acc.refAlong !== 'number') {
+							acc.refAlong = t.position[0];
+							acc.refTopY = t.position[1] + treadThickness / 2;
+						}
 					} else {
 						const s = t.position[2] - t.run / 2;
 						const e = t.position[2] + t.run / 2;
 						if (s < acc.min) acc.min = s;
 						if (e > acc.max) acc.max = e;
 						acc.sumConst += t.position[0]; // X קבוע
+						if (typeof acc.refAlong !== 'number') {
+							acc.refAlong = t.position[2];
+							acc.refTopY = t.position[1] + treadThickness / 2;
+						}
 					}
 					acc.sumTopY += (t.position[1] + treadThickness / 2);
 					acc.count += 1;
@@ -1157,6 +1167,7 @@ function Staircase3D({
 					? (materialSolidColor as string)
 					: '#4a4a4a';
 				const mats = <meshBasicMaterial color={plateColor} side={2} />;
+				const pitch = Math.atan(riser / treadDepth);
 				const epsL = 0.01; // תוספת קטנה לאורך כדי לסגור רווחים
 				const nodes: React.ReactNode[] = [];
 				byFlight.forEach((acc) => {
@@ -1166,11 +1177,19 @@ function Staircase3D({
 					const axis = acc.axis;
 					const avgTopY = acc.count > 0 ? (acc.sumTopY / acc.count) : 0;
 					const constCoord = acc.count > 0 ? (acc.sumConst / acc.count) : 0;
-					const plateCY = avgTopY - topOff - plateH / 2;
+					let plateCY: number;
+					if (typeof acc.refAlong === 'number' && typeof acc.refTopY === 'number') {
+						const slopePerM = riser / treadDepth;
+						const topAtCenter = acc.refTopY + slopePerM * (centerAlong - acc.refAlong);
+						plateCY = (topAtCenter - topOff) - (plateH / 2) * Math.cos(pitch);
+					} else {
+						plateCY = avgTopY - topOff - plateH / 2;
+					}
 					// קביעת מיקום מרכז לפי הציר
 					const pos: [number, number, number] = axis === 'x' ? [centerAlong, plateCY, constCoord] : [constCoord, plateCY, centerAlong];
 					nodes.push(
 						<group key={`pl-${axis}-${centerAlong.toFixed(3)}`} position={pos} rotation={[0, yaw, 0]}>
+							<group rotation={axis === 'x' ? [0, 0, pitch] : [pitch, 0, 0]}>
 							<mesh position={[0, 0, zOffsetAbs]} castShadow receiveShadow>
 								<boxGeometry args={[len, plateH, plateTh]} />
 								{mats}
@@ -1179,6 +1198,7 @@ function Staircase3D({
 								<boxGeometry args={[len, plateH, plateTh]} />
 								{mats}
 							</mesh>
+							</group>
 						</group>
 					);
 				});

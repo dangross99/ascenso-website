@@ -1165,11 +1165,13 @@ function Staircase3D({
 				// אסוף מדרגות של גרם ראשון (flight=0)
 				const flightIdx = 0;
 				const cosSin = (yaw: number) => ({ c: Math.cos(yaw), s: Math.sin(yaw) });
-				const pts4: number[] = [];
 				const pts4Off: number[] = [];
-				const pts7: number[] = [];
 				const pts7Off: number[] = [];
 				const offsetY = 0.06; // 60 מ״מ
+				let firstP4: [number, number, number] | null = null;
+				let firstP7: [number, number, number] | null = null;
+				let closeP4: [number, number, number] | null = null; // המדרגה לפני הפודסט
+				let closeP7: [number, number, number] | null = null;
 				for (let i = 0; i < treads.length; i++) {
 					const t = treads[i];
 					if (t.flight !== flightIdx) continue;
@@ -1178,6 +1180,8 @@ function Staircase3D({
 					const dx = t.run / 2;
 					const dz = treadWidth / 2;
 					// נקודה 4 – עליונה שמאל-קדימה: (-dx, +dz, yTop)
+					let p4w: [number, number, number] | null = null;
+					let p7w: [number, number, number] | null = null;
 					{
 						const lx = -dx, lz = dz;
 						const rx = lx * c - lz * s;
@@ -1185,8 +1189,9 @@ function Staircase3D({
 						const wx = t.position[0] + rx;
 						const wy = t.position[1] + treadThickness / 2;
 						const wz = t.position[2] + rz;
-						pts4.push(wx, wy, wz);
-						pts4Off.push(wx, wy + offsetY, wz);
+						p4w = [wx, wy + offsetY, wz];
+						pts4Off.push(p4w[0], p4w[1], p4w[2]);
+						if (!t.isLanding && !firstP4) firstP4 = p4w;
 					}
 					// נקודה 7 – תחתונה ימין-קדימה: (+dx, +dz, yBot) – רק אם לא פודסט
 					if (!t.isLanding) {
@@ -1196,35 +1201,26 @@ function Staircase3D({
 						const wx = t.position[0] + rx;
 						const wy = t.position[1] - treadThickness / 2;
 						const wz = t.position[2] + rz;
-						pts7.push(wx, wy, wz);
-						pts7Off.push(wx, wy - offsetY, wz);
+						p7w = [wx, wy - offsetY, wz];
+						pts7Off.push(p7w[0], p7w[1], p7w[2]);
+						if (!firstP7) firstP7 = p7w;
+						// אם המדרגה הבאה היא פודסט – זו המדרגה לפני הפודסט
+						const next = treads[i + 1];
+						if (next && next.flight === flightIdx && next.isLanding) {
+							closeP4 = p4w;
+							closeP7 = p7w;
+						}
 					}
 				}
-				if (pts4.length === 0 && pts7.length === 0) return null;
+				if (pts4Off.length === 0 && pts7Off.length === 0) return null;
 				return (
 					<group>
-						{pts4.length >= 6 && (
-							<line>
-								<bufferGeometry attach="geometry">
-									<bufferAttribute attach="attributes-position" args={[new Float32Array(pts4), 3]} />
-								</bufferGeometry>
-								<lineBasicMaterial attach="material" color="#1f2937" linewidth={1} />
-							</line>
-						)}
 						{pts4Off.length >= 6 && (
 							<line>
 								<bufferGeometry attach="geometry">
 									<bufferAttribute attach="attributes-position" args={[new Float32Array(pts4Off), 3]} />
 								</bufferGeometry>
 								<lineBasicMaterial attach="material" color="#6b7280" linewidth={1} />
-							</line>
-						)}
-						{pts7.length >= 6 && (
-							<line>
-								<bufferGeometry attach="geometry">
-									<bufferAttribute attach="attributes-position" args={[new Float32Array(pts7), 3]} />
-								</bufferGeometry>
-								<lineBasicMaterial attach="material" color="#ef4444" linewidth={1} />
 							</line>
 						)}
 						{pts7Off.length >= 6 && (
@@ -1234,6 +1230,50 @@ function Staircase3D({
 								</bufferGeometry>
 								<lineBasicMaterial attach="material" color="#f87171" linewidth={1} />
 							</line>
+						)}
+						{/* סגירה במדרגה לפני הפודסט: קו ישר בין אופסט 4 לאופסט 7 */}
+						{closeP4 && closeP7 && (
+							<line>
+								<bufferGeometry attach="geometry">
+									<bufferAttribute attach="attributes-position" args={[new Float32Array([
+										closeP4[0], closeP4[1], closeP4[2],
+										closeP7[0], closeP7[1], closeP7[2],
+									]), 3]} />
+								</bufferGeometry>
+								<lineBasicMaterial attach="material" color="#10b981" linewidth={1} />
+							</line>
+						)}
+						{/* הארכה למטה עד הרצפה מהמדרגה הראשונה וסגירה ביניהן */}
+						{firstP4 && firstP7 && (
+							<group>
+								<line>
+									<bufferGeometry attach="geometry">
+										<bufferAttribute attach="attributes-position" args={[new Float32Array([
+											firstP4[0], firstP4[1], firstP4[2],
+											firstP4[0], floorBounds.y, firstP4[2],
+										]), 3]} />
+									</bufferGeometry>
+									<lineBasicMaterial attach="material" color="#6b7280" linewidth={1} />
+								</line>
+								<line>
+									<bufferGeometry attach="geometry">
+										<bufferAttribute attach="attributes-position" args={[new Float32Array([
+											firstP7[0], firstP7[1], firstP7[2],
+											firstP7[0], floorBounds.y, firstP7[2],
+										]), 3]} />
+									</bufferGeometry>
+									<lineBasicMaterial attach="material" color="#f87171" linewidth={1} />
+								</line>
+								<line>
+									<bufferGeometry attach="geometry">
+										<bufferAttribute attach="attributes-position" args={[new Float32Array([
+											firstP4[0], floorBounds.y, firstP4[2],
+											firstP7[0], floorBounds.y, firstP7[2],
+										]), 3]} />
+									</bufferGeometry>
+									<lineBasicMaterial attach="material" color="#111827" linewidth={1} />
+								</line>
+							</group>
 						)}
 					</group>
 				);

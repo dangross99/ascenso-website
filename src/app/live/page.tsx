@@ -1408,23 +1408,10 @@ function Staircase3D({
 								let b1 = pick(botRail, i);
 								const t2 = pick(topRail, i + 1);
 								const b2 = pick(botRail, i + 1);
-								// חיתוך השפיץ: באיטרציה הראשונה מקרינים את נקודת ההסט על קטע הרייל העליון לשמירת השיפוע
-								if (firstP4SideShift && i === 0 && topRail.length >= 2) {
-									const ax = topRail[0][0], ay = topRail[0][1], az = topRail[0][2];
-									const bx = topRail[1][0], by = topRail[1][1], bz = topRail[1][2];
-									const vx = bx - ax, vy = by - ay, vz = bz - az;
-									const wx = firstP4SideShift[0] - ax, wy = firstP4SideShift[1] - ay, wz = firstP4SideShift[2] - az;
-									const vv = Math.max(1e-9, vx*vx + vy*vy + vz*vz);
-									let t = (wx*vx + wy*vy + wz*vz) / vv;
-									if (t < 0) t = 0; else if (t > 1) t = 1;
-									t1 = [ax + t*vx, ay + t*vy, az + t*vz];
-									// יישום אותה פרמטריזציה גם על המסילה התחתונה כדי למנוע "שפיץ"
-									if (botRail.length >= 2) {
-										const abx = botRail[0][0], aby = botRail[0][1], abz = botRail[0][2];
-										const bbx = botRail[1][0], bby = botRail[1][1], bbz = botRail[1][2];
-										const bvx = bbx - abx, bvy = bby - aby, bvz = bbz - abz;
-										b1 = [abx + t*bvx, aby + t*bvy, abz + t*bvz];
-									}
+								// התחלת הפלטה בדיוק מהנקודות f4/f7 (firstP4SideShift/firstP7) כדי למנוע משולש חסר בתחילת הרצועה
+								if (i === 0 && firstP4SideShift) {
+									t1 = firstP4SideShift;
+									if (firstP7) b1 = firstP7;
 								}
 								const baseIndex = pos.length / 3;
 								// סדר נקודות: t1,b1,t2,b2

@@ -1166,7 +1166,10 @@ function Staircase3D({
 				const flightIdx = 0;
 				const cosSin = (yaw: number) => ({ c: Math.cos(yaw), s: Math.sin(yaw) });
 				const pts4: number[] = [];
+				const pts4Off: number[] = [];
 				const pts7: number[] = [];
+				const pts7Off: number[] = [];
+				const offsetY = 0.06; // 60 מ״מ
 				for (let i = 0; i < treads.length; i++) {
 					const t = treads[i];
 					if (t.flight !== flightIdx) continue;
@@ -1183,6 +1186,7 @@ function Staircase3D({
 						const wy = t.position[1] + treadThickness / 2;
 						const wz = t.position[2] + rz;
 						pts4.push(wx, wy, wz);
+						pts4Off.push(wx, wy - offsetY, wz);
 					}
 					// נקודה 7 – תחתונה ימין-קדימה: (+dx, +dz, yBot) – רק אם לא פודסט
 					if (!t.isLanding) {
@@ -1193,6 +1197,7 @@ function Staircase3D({
 						const wy = t.position[1] - treadThickness / 2;
 						const wz = t.position[2] + rz;
 						pts7.push(wx, wy, wz);
+						pts7Off.push(wx, wy - offsetY, wz);
 					}
 				}
 				if (pts4.length === 0 && pts7.length === 0) return null;
@@ -1206,12 +1211,28 @@ function Staircase3D({
 								<lineBasicMaterial attach="material" color="#1f2937" linewidth={1} />
 							</line>
 						)}
+						{pts4Off.length >= 6 && (
+							<line>
+								<bufferGeometry attach="geometry">
+									<bufferAttribute attach="attributes-position" args={[new Float32Array(pts4Off), 3]} />
+								</bufferGeometry>
+								<lineBasicMaterial attach="material" color="#6b7280" linewidth={1} />
+							</line>
+						)}
 						{pts7.length >= 6 && (
 							<line>
 								<bufferGeometry attach="geometry">
 									<bufferAttribute attach="attributes-position" args={[new Float32Array(pts7), 3]} />
 								</bufferGeometry>
 								<lineBasicMaterial attach="material" color="#ef4444" linewidth={1} />
+							</line>
+						)}
+						{pts7Off.length >= 6 && (
+							<line>
+								<bufferGeometry attach="geometry">
+									<bufferAttribute attach="attributes-position" args={[new Float32Array(pts7Off), 3]} />
+								</bufferGeometry>
+								<lineBasicMaterial attach="material" color="#f87171" linewidth={1} />
 							</line>
 						)}
 					</group>

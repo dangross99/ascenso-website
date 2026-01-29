@@ -1100,62 +1100,71 @@ function Staircase3D({
 					{/* מעקה זכוכית פר-מדרגה מבוטל למען פאנל רציף */}
 					{null}
 
-					{/* דגם 'הייטק' – שני לוחות צד דקים לכל מדרגה (גרסה ראשונית, לא משפיע על דגמים אחרים) */}
-					{hitech && !t.isLanding ? (() => {
-						const plateTh = typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012;
-						const plateH = typeof hitechPlateHeight === 'number' ? hitechPlateHeight : 0.27;
-						const topOff = typeof hitechPlateTopOffsetM === 'number' ? hitechPlateTopOffsetM : 0.06;
-						const inset = typeof hitechPlateInsetFromEdge === 'number' ? hitechPlateInsetFromEdge : 0.03;
-						const topSurfaceY = t.position[1] + treadThickness / 2;
-						const plateCenterY = topSurfaceY - topOff - plateH / 2;
-						const zOffset = (treadWidth / 2) - inset - plateTh / 2;
-						// צבע ברירת מחדל כהה למתכת; אם הוגדר materialSolidColor – ירושה ממנו
-						const plateColor = (materialKind === 'metal' && typeof materialSolidColor === 'string' && materialSolidColor)
-							? (materialSolidColor as string)
-							: '#4a4a4a';
-						const mat = <meshBasicMaterial color={plateColor} side={2} />;
-						// תושבת/אוזן אלכסונית – משולש מחוזק, מחובר לחלק העליון של הלוח אל תחתית המדרך
-						const bracketBase = 0.20;   // אורך לאורך ציר X
-						const bracketDrop = 0.10;   // ירידה אנכית מצמרת הלוח
-						const bracketReach = 0.08;  // התקרבות פנימה בציר Z
-						const buildBracket = (sideSign: 1 | -1) => {
-							const plateTopY = topSurfaceY - topOff;
-							const y0 = plateTopY;                 // נקודת חיבור עליונה בלוח
-							const y1 = plateTopY - bracketDrop;   // קצה תחתון של המשולש
-							const zPlateFace = sideSign * (zOffset + plateTh / 2);
-							const zIn = sideSign * (zOffset - bracketReach);
-							const tri = new Shape();
-							tri.moveTo(0, 0);           // יימופה ל(y0, zPlateFace)
-							tri.lineTo(0, y1 - y0);     // ירידה אנכית
-							tri.lineTo(zIn - zPlateFace, (t.position[1] - treadThickness / 2) - y0); // אל תחתית המדרך פנימה
-							tri.closePath();
-							const extrude = new ExtrudeGeometry(tri, { depth: bracketBase, bevelEnabled: false, steps: 1 });
-							// נמקם את המשולש כך שה‑depth (X) יישב באמצע המדרך
-							extrude.translate( -bracketBase / 2, y0, zPlateFace );
-							return (
-								<mesh geometry={extrude} position={[0, -t.position[1], 0]} castShadow receiveShadow>
-									{mat}
-								</mesh>
-							);
-						};
-						return (
-							<group>
-								<mesh position={[0, plateCenterY - t.position[1], zOffset]} castShadow receiveShadow>
-									<boxGeometry args={[t.run, plateH, plateTh]} />
-									{mat}
-								</mesh>
-								<mesh position={[0, plateCenterY - t.position[1], -zOffset]} castShadow receiveShadow>
-									<boxGeometry args={[t.run, plateH, plateTh]} />
-									{mat}
-								</mesh>
-								{/* תושבות – אחת לכל צד, ממורכזות לאורך המדרך */}
-								{buildBracket(1)}
-								{buildBracket(-1)}
-							</group>
-						);
-					})() : null}
+					{/* דגם 'הייטק' – לוחות רציפים ינוצרו מחוץ ללולאת המדרגות */}
+					{null}
 				</group>
 			)); })()}
+
+			{/* דגם 'הייטק' – לוחות צד רציפים לכל flight */}
+			{hitech ? (() => {
+				// קיבוץ לפי flight רק למדרגות (ללא פודסטים)
+				type Acc = { axis: 'x' | 'z'; yaw: number; min: number; max: number; sumTopY: number; count: number };
+				const byFlight = new Map<number, Acc>();
+				treads.forEach(t => {
+					if (t.isLanding) return;
+					const acc = byFlight.get(t.flight) || { axis: t.axis, yaw: t.rotation[1] as number, min: Infinity, max: -Infinity, sumTopY: 0, count: 0 };
+					if (t.axis !== acc.axis) return; // שמירה פשוטה: מתעלם מאנומליות
+					if (t.axis === 'x') {
+						const s = t.position[0] - t.run / 2;
+						const e = t.position[0] + t.run / 2;
+						if (s < acc.min) acc.min = s;
+						if (e > acc.max) acc.max = e;
+					} else {
+						const s = t.position[2] - t.run / 2;
+						const e = t.position[2] + t.run / 2;
+						if (s < acc.min) acc.min = s;
+						if (e > acc.max) acc.max = e;
+					}
+					acc.sumTopY += (t.position[1] + treadThickness / 2);
+					acc.count += 1;
+					byFlight.set(t.flight, acc);
+				});
+				if (byFlight.size === 0) return null;
+				const plateTh = typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012;
+				const plateH = typeof hitechPlateHeight === 'number' ? hitechPlateHeight : 0.27;
+				const topOff = typeof hitechPlateTopOffsetM === 'number' ? hitechPlateTopOffsetM : 0.06;
+				const inset = typeof hitechPlateInsetFromEdge === 'number' ? hitechPlateInsetFromEdge : 0.03;
+				const zOffsetAbs = (treadWidth / 2) - inset - plateTh / 2;
+				const plateColor = (materialKind === 'metal' && typeof materialSolidColor === 'string' && materialSolidColor)
+					? (materialSolidColor as string)
+					: '#4a4a4a';
+				const mats = <meshBasicMaterial color={plateColor} side={2} />;
+				const epsL = 0.01; // תוספת קטנה לאורך כדי לסגור רווחים
+				const nodes: React.ReactNode[] = [];
+				byFlight.forEach((acc) => {
+					const len = Math.max(0.001, (acc.max - acc.min) + epsL);
+					const centerAlong = (acc.min + acc.max) / 2;
+					const yaw = acc.yaw;
+					const axis = acc.axis;
+					const avgTopY = acc.count > 0 ? (acc.sumTopY / acc.count) : 0;
+					const plateCY = avgTopY - topOff - plateH / 2;
+					// קביעת מיקום מרכז לפי הציר
+					const pos: [number, number, number] = axis === 'x' ? [centerAlong, plateCY, 0] : [0, plateCY, centerAlong];
+					nodes.push(
+						<group key={`pl-${axis}-${centerAlong.toFixed(3)}`} position={pos} rotation={[0, yaw, 0]}>
+							<mesh position={[0, 0, zOffsetAbs]} castShadow receiveShadow>
+								<boxGeometry args={[len, plateH, plateTh]} />
+								{mats}
+							</mesh>
+							<mesh position={[0, 0, -zOffsetAbs]} castShadow receiveShadow>
+								<boxGeometry args={[len, plateH, plateTh]} />
+								{mats}
+							</mesh>
+						</group>
+					);
+				});
+				return <group>{nodes}</group>;
+			})() : null}
 
 			{/* מעקה זכוכית – קטעים רציפים בקו אלכסוני */}
 			{(() => {

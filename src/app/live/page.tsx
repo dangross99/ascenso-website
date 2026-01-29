@@ -1393,24 +1393,8 @@ function Staircase3D({
 						{/* פלטה A – רצועה מדויקת בין קווי האופסט (מילוי משולשים) */}
 						{bottomStepOff.length > 0 && topStepOff.length > 0 && (() => {
 							const baseTop: Array<[number, number, number]> = closeP4 ? [...topStepOff, closeP4] : [...topStepOff];
-							// הוסף קטע צדדי בתחילת הרייל: נקודת 4 המקורית → נקודת הסט הצידי,
-							// ואז נקודה שלישית שממשיכה במדויק את שיפוע הרייל (וקטור מקביל ל‑baseTop[1]-baseTop[0])
-							let topRail: Array<[number, number, number]> = baseTop;
-							if (firstP4SideShift && firstP4 && baseTop.length >= 2) {
-								const dx = baseTop[1][0] - baseTop[0][0];
-								const dy = baseTop[1][1] - baseTop[0][1];
-								const dz = baseTop[1][2] - baseTop[0][2];
-								const len = Math.hypot(dx, dy, dz) || 1;
-								const dir: [number, number, number] = [dx / len, dy / len, dz / len];
-								const p2: [number, number, number] = [
-									firstP4SideShift[0] + dir[0] * len,
-									firstP4SideShift[1] + dir[1] * len,
-									firstP4SideShift[2] + dir[2] * len,
-								];
-								topRail = [firstP4 as [number, number, number], firstP4SideShift, p2, ...baseTop.slice(2)];
-							} else if (firstP4SideShift && firstP4) {
-								topRail = [firstP4 as [number, number, number], firstP4SideShift, ...baseTop.slice(1)];
-							}
+							// שמור את הרייל העליון בדיוק כפי שהוא – ללא נקודות הסט – כדי לשמר שיפוע אחיד
+							const topRail: Array<[number, number, number]> = baseTop;
 							const botRail: Array<[number, number, number]> = [...bottomStepOff];
 							// בחר אורך מקסימלי – אם מסילה אחת ארוכה יותר (למשל כוללת פודסט), נשכפל את הנקודה האחרונה של הקצרה
 							const count = Math.max(topRail.length, botRail.length);

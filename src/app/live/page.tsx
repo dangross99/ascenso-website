@@ -1717,8 +1717,10 @@ function Staircase3D({
 									const offXB = nxN * thicknessPanelB, offYB = nyN * thicknessPanelB, offZB = nzN * thicknessPanelB;
 									const v0B: [number, number, number] = [f4x, f4y, f4z];
 									const v1B: [number, number, number] = [f7x, f7y, f7z];
-									const v2B: [number, number, number] = [f4x, floorBounds.y, f4z];
-									const v3B: [number, number, number] = [f7x, floorBounds.y, f7z];
+									// תחתית הפאנל: קו האופסט של קודקוד 5 (אותו מפלס Y כמו 7‑offset)
+									const bottomY = firstP7[1];
+									const v2B: [number, number, number] = [f4x, bottomY, f4z];
+									const v3B: [number, number, number] = [f7x, bottomY, f7z];
 									const v4B: [number, number, number] = [v0B[0] + offXB, v0B[1] + offYB, v0B[2] + offZB];
 									const v5B: [number, number, number] = [v1B[0] + offXB, v1B[1] + offYB, v1B[2] + offZB];
 									const v6B: [number, number, number] = [v2B[0] + offXB, v2B[1] + offYB, v2B[2] + offZB];
@@ -1747,7 +1749,7 @@ function Staircase3D({
 												<bufferGeometry attach="geometry">
 													<bufferAttribute attach="attributes-position" args={[new Float32Array([
 														f4x, f4y, f4z,
-														f4x, floorBounds.y, f4z,
+														f4x, bottomY, f4z,
 													]), 3]} />
 												</bufferGeometry>
 												<lineBasicMaterial attach="material" color="#6b7280" linewidth={1} depthTest={false} depthWrite={false} />
@@ -1756,7 +1758,7 @@ function Staircase3D({
 												<bufferGeometry attach="geometry">
 													<bufferAttribute attach="attributes-position" args={[new Float32Array([
 														f7x, f7y, f7z,
-														f7x, floorBounds.y, f7z,
+														f7x, bottomY, f7z,
 													]), 3]} />
 												</bufferGeometry>
 												<lineBasicMaterial attach="material" color="#f87171" linewidth={1} depthTest={false} depthWrite={false} />
@@ -1764,8 +1766,8 @@ function Staircase3D({
 											<line>
 												<bufferGeometry attach="geometry">
 													<bufferAttribute attach="attributes-position" args={[new Float32Array([
-														f4x, floorBounds.y, f4z,
-														f7x, floorBounds.y, f7z,
+														f4x, bottomY, f4z,
+														f7x, bottomY, f7z,
 													]), 3]} />
 												</bufferGeometry>
 												<lineBasicMaterial attach="material" color="#111827" linewidth={1} depthTest={false} depthWrite={false} />

@@ -1169,7 +1169,7 @@ function Staircase3D({
 				const pts7Off: number[] = [];
 				const topStepOff: Array<[number, number, number]> = [];    // נקודות 4‑offset לכל מדרגה (ללא פודסט)
 				const bottomStepOff: Array<[number, number, number]> = []; // נקודות 7‑offset לכל מדרגה
-				const offsetY = 0.03; // 30 מ״מ
+				const offsetY = Math.max(0, (typeof hitechPlateTopOffsetM === 'number' ? hitechPlateTopOffsetM : 0.03)); // היסט אנכי מהמשטח
 				let firstP4: [number, number, number] | null = null;
 				let firstP7: [number, number, number] | null = null;
 				let firstYaw: number | null = null;
@@ -1267,7 +1267,7 @@ function Staircase3D({
 					let sy = nzN * ux - nxN * uz;
 					let sz = nxN * uy - nyN * ux;
 					const sm = Math.hypot(sx, sy, sz) || 1; sx /= sm; sy /= sm; sz /= sm;
-					const side = 0.03;
+					const side = Math.max(0, (typeof hitechPlateInsetFromEdge === 'number' ? hitechPlateInsetFromEdge : 0.03));
 					// אופסט צידי נטו (רק ב‑XZ), ללא שינוי בגובה Y
 					firstSideShiftVec = [sx * side, 0, sz * side];
 					firstP4SideShift = [firstP4[0] + firstSideShiftVec[0], firstP4[1], firstP4[2] + firstSideShiftVec[2]];
@@ -1335,7 +1335,7 @@ function Staircase3D({
 									const sz = nxN * uy - nyN * ux;
 									const smag = Math.hypot(sx, sy, sz) || 1;
 									const sxN = sx / smag, syN = sy / smag, szN = sz / smag;
-									const side = 0.03; // 30 מ״מ
+									const side = Math.max(0, (typeof hitechPlateInsetFromEdge === 'number' ? hitechPlateInsetFromEdge : 0.03)); // היסט אופקי מהקצה
 									const f4x = firstP4[0] + sxN * side;
 									const f4y = firstP4[1] + syN * side;
 									const f4z = firstP4[2] + szN * side;

@@ -1289,6 +1289,22 @@ function Staircase3D({
 									</bufferGeometry>
 									<lineBasicMaterial attach="material" color="#111827" linewidth={1} />
 								</line>
+								{/* סגירת פלטה לתחתית (משטח) */}
+								<mesh castShadow receiveShadow>
+									<bufferGeometry attach="geometry">
+										<bufferAttribute attach="attributes-position" args={[new Float32Array([
+											firstP4[0], firstP4[1], firstP4[2],              // נקודת 4‑offset הראשונה
+											firstP7[0], firstP7[1], firstP7[2],              // נקודת 7‑offset הראשונה
+											firstP4[0], floorBounds.y, firstP4[2],           // ירידה לרצפה מ‑4
+											firstP7[0], floorBounds.y, firstP7[2],           // ירידה לרצפה מ‑7
+										]), 3]} />
+										<bufferAttribute attach="index" args={[new Uint32Array([
+											0, 1, 2,   // משולש עליון
+											2, 1, 3,   // משולש תחתון
+										]), 1]} />
+									</bufferGeometry>
+									<meshBasicMaterial color="#4b5563" side={2} />
+								</mesh>
 							</group>
 						)}
 

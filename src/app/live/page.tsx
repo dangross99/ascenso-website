@@ -1281,7 +1281,7 @@ function Staircase3D({
 								<bufferGeometry attach="geometry">
 									<bufferAttribute attach="attributes-position" args={[new Float32Array(pts4Off), 3]} />
 								</bufferGeometry>
-								<lineBasicMaterial attach="material" color="#6b7280" linewidth={1} />
+								<lineBasicMaterial attach="material" color="#6b7280" linewidth={1} depthTest={false} depthWrite={false} />
 							</line>
 						)}
 						{pts7Off.length >= 6 && (
@@ -1289,7 +1289,7 @@ function Staircase3D({
 								<bufferGeometry attach="geometry">
 									<bufferAttribute attach="attributes-position" args={[new Float32Array(pts7Off), 3]} />
 								</bufferGeometry>
-								<lineBasicMaterial attach="material" color="#f87171" linewidth={1} />
+								<lineBasicMaterial attach="material" color="#f87171" linewidth={1} depthTest={false} depthWrite={false} />
 							</line>
 						)}
 						{/* סגירה במדרגה לפני הפודסט: קו ישר בין אופסט 4 לאופסט 7 */}
@@ -1302,7 +1302,7 @@ function Staircase3D({
 										closeP4[0], closeP4[1], closeP4[2],
 									]), 3]} />
 								</bufferGeometry>
-								<lineBasicMaterial attach="material" color="#10b981" linewidth={1} />
+								<lineBasicMaterial attach="material" color="#10b981" linewidth={1} depthTest={false} depthWrite={false} />
 							</line>
 						)}
 						{/* הארכה למטה עד הרצפה מהמדרגה הראשונה וסגירה ביניהן */}
@@ -1353,7 +1353,7 @@ function Staircase3D({
 														f4x, floorBounds.y, f4z,
 													]), 3]} />
 												</bufferGeometry>
-												<lineBasicMaterial attach="material" color="#6b7280" linewidth={1} />
+												<lineBasicMaterial attach="material" color="#6b7280" linewidth={1} depthTest={false} depthWrite={false} />
 											</line>
 											<line>
 												<bufferGeometry attach="geometry">
@@ -1362,7 +1362,7 @@ function Staircase3D({
 														f7x, floorBounds.y, f7z,
 													]), 3]} />
 												</bufferGeometry>
-												<lineBasicMaterial attach="material" color="#f87171" linewidth={1} />
+												<lineBasicMaterial attach="material" color="#f87171" linewidth={1} depthTest={false} depthWrite={false} />
 											</line>
 											<line>
 												<bufferGeometry attach="geometry">
@@ -1371,7 +1371,7 @@ function Staircase3D({
 														f7x, floorBounds.y, f7z,
 													]), 3]} />
 												</bufferGeometry>
-												<lineBasicMaterial attach="material" color="#111827" linewidth={1} />
+												<lineBasicMaterial attach="material" color="#111827" linewidth={1} depthTest={false} depthWrite={false} />
 											</line>
 											<mesh castShadow receiveShadow>
 												<bufferGeometry attach="geometry">

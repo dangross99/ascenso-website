@@ -1402,11 +1402,13 @@ function Staircase3D({
 							const pos: number[] = [];
 							const idx: number[] = [];
 							const pick = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
-							// דלג על המקטע הראשון כדי שלא ייווצר טריז ("שפיץ") בתחילת הפלטה כאשר קיימת הסט צידי
-							const startIdx = firstP4SideShift ? 1 : 0;
-							for (let i = startIdx; i < count - 1; i++) {
-								const t1 = pick(topRail, i), b1 = pick(botRail, i);
+							for (let i = 0; i < count - 1; i++) {
+								let t1 = pick(topRail, i), b1 = pick(botRail, i);
 								const t2 = pick(topRail, i + 1), b2 = pick(botRail, i + 1);
+								// במקרה של הסט צידי בתחתית: חתוך את המשולש הקטן ע״י הזזת נקודת t1 לפתיחה המוזחת בלבד באיטרציה הראשונה
+								if (firstP4SideShift && i === 0) {
+									t1 = firstP4SideShift;
+								}
 								const baseIndex = pos.length / 3;
 								// סדר נקודות: t1,b1,t2,b2
 								pos.push(t1[0], t1[1], t1[2]);

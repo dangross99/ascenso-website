@@ -701,7 +701,7 @@ function Staircase3D({
 							const front = (
 								<mesh key="front" rotation={[0, forwardSign > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} position={[xFront + forwardSign * 0.0005, yCenterFront, 0]} receiveShadow>
 									<planeGeometry args={[treadWidth + seam * 2, frontTh + seam * 2, 8, 2]} />
-									{faceMat(treadWidth, frontTh, axisFromYawLocal === 'x', forwardSign < 0)}
+									{faceMat(treadWidth, frontTh, axisFromYawLocal === 'x', materialKind === 'wood' ? (forwardSign < 0) : false)}
 								</mesh>
 							);
 							// סימון חזית – ספרה 1
@@ -724,7 +724,7 @@ function Staircase3D({
 							const back = (
 								<mesh key="back" rotation={[0, forwardSign > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} position={[xBack - forwardSign * 0.0005, yCenterBack, 0]} receiveShadow>
 									<planeGeometry args={[treadWidth + seam * 2, treadThickness + seam * 2, 8, 2]} />
-									{faceMat(treadWidth, treadThickness, axisFromYawLocal === 'x', forwardSign > 0)}
+									{faceMat(treadWidth, treadThickness, axisFromYawLocal === 'x', materialKind === 'wood' ? (forwardSign > 0) : false)}
 								</mesh>
 							);
 							// RIGHT side (trapezoid)
@@ -741,7 +741,7 @@ function Staircase3D({
 							rightGeom.computeVertexNormals();
 							const right = (
 								<mesh key="right" geometry={rightGeom} receiveShadow>
-									{faceMat(t.run, (treadThickness + frontTh) / 2, axisFromYawLocal === 'x', forwardSign < 0)}
+									{faceMat(t.run, (treadThickness + frontTh) / 2, axisFromYawLocal === 'x', materialKind === 'wood' ? (forwardSign < 0) : false)}
 								</mesh>
 							);
 							// LEFT side (trapezoid)
@@ -757,7 +757,7 @@ function Staircase3D({
 							leftGeom.computeVertexNormals();
 							const left = (
 								<mesh key="left" geometry={leftGeom} receiveShadow>
-									{faceMat(t.run, (treadThickness + frontTh) / 2, axisFromYawLocal === 'x', forwardSign > 0)}
+									{faceMat(t.run, (treadThickness + frontTh) / 2, axisFromYawLocal === 'x', materialKind === 'wood' ? (forwardSign > 0) : false)}
 								</mesh>
 							);
 							// BOTTOM slanted
@@ -824,7 +824,7 @@ function Staircase3D({
 							const front = (
 								<mesh rotation={[0, forwardSign > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} position={[xFront + forwardSign * 0.0005, (yTop + yBottomFrontEdge)/2, 0]} receiveShadow>
 									<planeGeometry args={[treadWidth + seam * 2, frontEdgeTh + seam * 2, 8, 2]} />
-									{faceMat(treadWidth, frontEdgeTh, axis === 'x', forwardSign < 0)}
+									{faceMat(treadWidth, frontEdgeTh, axis === 'x', materialKind === 'wood' ? (forwardSign < 0) : false)}
 								</mesh>
 							);
 							// סימון חזית – ספרה 1
@@ -888,7 +888,7 @@ function Staircase3D({
 								]);
 								g2.setAttribute('uv', new Float32BufferAttribute(uv, 2));
 								g2.computeVertexNormals();
-								return <mesh geometry={g2} receiveShadow>{faceMat(t.run, treadWidth, axis === 'z', forwardSign < 0)}</mesh>;
+								return <mesh geometry={g2} receiveShadow>{faceMat(t.run, treadWidth, axis === 'z', materialKind === 'wood' ? (forwardSign < 0) : false)}</mesh>;
 							})();
 							// אין צורך ברצועת "רכס" נוספת – שני חצאי התחתית כבר נפגשים במרכז
 
@@ -1059,22 +1059,22 @@ function Staircase3D({
 								<>
 									<mesh rotation={[0, frontRotY, 0]} position={[frontX, 0, 0]} receiveShadow>
 										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
-										{matFrontBack(forwardSign < 0)}
+										{matFrontBack(materialKind === 'wood' ? (forwardSign < 0) : false)}
 									</mesh>
 									{debugLabels ? <Text position={[frontX + forwardSign * 0.004, 0, 0]} rotation={[0, frontRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">1</Text> : null}
 									<mesh rotation={[0, backRotY, 0]} position={[backX, 0, 0]} receiveShadow>
 										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
-										{matFrontBack(forwardSign > 0)}
+										{matFrontBack(materialKind === 'wood' ? (forwardSign > 0) : false)}
 									</mesh>
 									{debugLabels ? <Text position={[backX - forwardSign * 0.004, 0, 0]} rotation={[0, backRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">4</Text> : null}
 									{/* צדדים לאורך Z */}
 									<mesh rotation={[0, 0, 0]} position={[0, 0, treadWidth / 2 + eps]} receiveShadow>
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
-									{matSides(forwardSign < 0)}
+									{matSides(materialKind === 'wood' ? (forwardSign < 0) : false)}
 									</mesh>
 									<mesh rotation={[0, Math.PI, 0]} position={[0, 0, -treadWidth / 2 - eps]} receiveShadow>
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
-									{matSides(forwardSign > 0)}
+									{matSides(materialKind === 'wood' ? (forwardSign > 0) : false)}
 									</mesh>
 									{/* תיוג 2=פנימי, 3=חיצוני */}
 									{debugLabels ? <Text position={[0, 0, innerSignLocal * (treadWidth / 2 + 0.004)]} rotation={[0, innerSignLocal > 0 ? 0 : Math.PI, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text> : null}

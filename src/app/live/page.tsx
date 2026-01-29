@@ -1001,9 +1001,11 @@ function Staircase3D({
 						const innerIsRight = t.isLanding
 							? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))
 							: ((typeof stepRailingSides !== 'undefined' ? (stepRailingSides[curStepIdx] ?? 'right') : 'right') === 'right');
-						// מיפוי "ימין" למרחב באופן אחיד לכל הדגמים
-						let rightLocalSign = rightLocalSignFor(yaw, axis, t.isLanding);
-						const innerSignLocal = innerIsRight ? rightLocalSign : -rightLocalSign;
+						// מיפוי "ימין" מקומי לדגם rect בלבד – ללא היפוך מיוחד בפודסטים (עקביות בין גרמים)
+						const rightLocalZSign = (axis === 'x'
+							? ((Math.cos(yaw) >= 0 ? -1 : 1) as 1 | -1)
+							: ((Math.sin(yaw) >= 0 ? 1 : -1) as 1 | -1));
+						const innerSignLocal = innerIsRight ? rightLocalZSign : -rightLocalZSign;
 						// יישור עקבי: חזית/גב מסובבים במקטעי X; צדדים מסובבים במקטעי Z
 						const rotateFrontBack = (axis === 'x');
 						// בדגם rect – כמו אלכסוני/רכס: פאות הצד מסתובבות כאשר ציר הריצה הוא Z

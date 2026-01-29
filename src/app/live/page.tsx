@@ -1335,7 +1335,7 @@ function Staircase3D({
 									const sz = nxN * uy - nyN * ux;
 									const smag = Math.hypot(sx, sy, sz) || 1;
 									const sxN = sx / smag, syN = sy / smag, szN = sz / smag;
-									const side = Math.max(0, (typeof hitechPlateInsetFromEdge === 'number' ? hitechPlateInsetFromEdge : 0.03)); // היסט אופקי מהקצה
+									const side = 0; // בגרם 2 אין אופסט אופקי בתחילה
 									const f4x = firstP4[0] + sxN * side;
 									// היסט צידי טהור במישור XZ (ללא שינוי בגובה Y) כדי למנוע "שפיץ" בתחילת הפלטה
 									const f4y = firstP4[1];
@@ -1799,11 +1799,7 @@ function Staircase3D({
 								let b1 = pick(botRail, i);
 								const t2 = pick(topRail, i + 1);
 								const b2 = pick(botRail, i + 1);
-								// התחלת הפלטה בדיוק מהנקודות f4/f7
-								if (i === 0 && firstP4SideShift) {
-									t1 = firstP4SideShift;
-									if (firstP7) b1 = firstP7;
-								}
+								// גרם 2: ללא אופסט אופקי בתחילה – לא משנים את נקודת ההתחלה
 								const baseIndex = pos.length / 3;
 								// סדר נקודות: t1,b1,t2,b2
 								pos.push(t1[0], t1[1], t1[2]);
@@ -1863,8 +1859,8 @@ function Staircase3D({
 								}
 							};
 							// דופן עליונה ותחתונה
-							const topRailForSideB = firstP4SideShift ? [firstP4SideShift, ...topRail] : topRail;
-							const botRailForSideB = firstP7 ? [firstP7, ...botRail] : botRail;
+							const topRailForSideB = topRail;
+							const botRailForSideB = botRail;
 							addSideStrip(topRailForSideB);
 							addSideStrip(botRailForSideB);
 							// דופן התחלה (קצה f4/f7)

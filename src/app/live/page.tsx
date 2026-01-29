@@ -152,11 +152,6 @@ function Staircase3D({
 	cableSpanMode,
 	stepCableSpanModes,
 	landingCableSpanModes,
-	supportKind = 'dual-plate',
-	plateThickness = 0.012,
-	plateHeight = 0.18,
-	plateInsetFromEdge = 0.03,
-	plateTopGap = 0.015,
 }: {
 	shape: 'straight' | 'L' | 'U';
 	steps: number;
@@ -192,11 +187,6 @@ function Staircase3D({
 	cableSpanMode?: 'floor' | 'tread';
 	stepCableSpanModes?: Array<'floor' | 'tread'>;
 	landingCableSpanModes?: Array<'floor' | 'tread'>;
-	supportKind?: 'none' | 'dual-plate';
-	plateThickness?: number;
-	plateHeight?: number;
-	plateInsetFromEdge?: number;
-	plateTopGap?: number;
 }) {
 	// יחידות סצנה: מטרים בקירוב
 	const treadThickness = typeof treadThicknessOverride === 'number' ? treadThicknessOverride : 0.04;
@@ -550,8 +540,6 @@ function Staircase3D({
 				t.repeat.y = -t.repeat.y;
 				t.offset.y = offV + repV;
 			}
-			// הקלה על "פס שחור" במפות עם אלפא שקופה בשוליים
-			t.premultiplyAlpha = true;
 			// מרחב צבע רק למפת צבע; מפות bump/rough נשארות לינאריות
 			// @ts-ignore
 			t.colorSpace = isColor ? SRGBColorSpace : undefined;
@@ -705,7 +693,7 @@ function Staircase3D({
 							const faceMat = (dimU: number, dimV: number, rot: boolean, flipU: boolean = false, flipV: boolean = false) => {
 								if (useSolidMat) return <meshBasicMaterial color={solidSideColor} side={2} />;
 								const ft = buildFaceTextures(dimU, dimV, rot, flipU, flipV);
-								return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} transparent alphaTest={0.01} />;
+								return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />;
 							};
 							const yCenterFront = (yTop + yBottomFront) / 2;
 							const yCenterBack = (yTop + yBottomBack) / 2;
@@ -713,7 +701,7 @@ function Staircase3D({
 							const front = (
 								<mesh key="front" rotation={[0, forwardSign > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} position={[xFront + forwardSign * 0.0005, yCenterFront, 0]} receiveShadow>
 									<planeGeometry args={[treadWidth + seam * 2, frontTh + seam * 2, 8, 2]} />
-									{faceMat(treadWidth, frontTh, axisFromYawLocal === 'x', materialKind === 'wood' ? (forwardSign < 0) : false)}
+									{faceMat(treadWidth, frontTh, axisFromYawLocal === 'x', forwardSign < 0)}
 								</mesh>
 							);
 							// סימון חזית – ספרה 1
@@ -736,7 +724,7 @@ function Staircase3D({
 							const back = (
 								<mesh key="back" rotation={[0, forwardSign > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} position={[xBack - forwardSign * 0.0005, yCenterBack, 0]} receiveShadow>
 									<planeGeometry args={[treadWidth + seam * 2, treadThickness + seam * 2, 8, 2]} />
-									{faceMat(treadWidth, treadThickness, axisFromYawLocal === 'x', materialKind === 'wood' ? (forwardSign > 0) : false)}
+									{faceMat(treadWidth, treadThickness, axisFromYawLocal === 'x', forwardSign > 0)}
 								</mesh>
 							);
 							// RIGHT side (trapezoid)
@@ -753,7 +741,7 @@ function Staircase3D({
 							rightGeom.computeVertexNormals();
 							const right = (
 								<mesh key="right" geometry={rightGeom} receiveShadow>
-									{faceMat(t.run, (treadThickness + frontTh) / 2, axisFromYawLocal === 'x', materialKind === 'wood' ? (forwardSign < 0) : false)}
+									{faceMat(t.run, (treadThickness + frontTh) / 2, axisFromYawLocal === 'x', forwardSign < 0)}
 								</mesh>
 							);
 							// LEFT side (trapezoid)
@@ -769,7 +757,7 @@ function Staircase3D({
 							leftGeom.computeVertexNormals();
 							const left = (
 								<mesh key="left" geometry={leftGeom} receiveShadow>
-									{faceMat(t.run, (treadThickness + frontTh) / 2, axisFromYawLocal === 'x', materialKind === 'wood' ? (forwardSign > 0) : false)}
+									{faceMat(t.run, (treadThickness + frontTh) / 2, axisFromYawLocal === 'x', forwardSign > 0)}
 								</mesh>
 							);
 							// BOTTOM slanted
@@ -829,14 +817,14 @@ function Staircase3D({
 							const faceMat = (dimU: number, dimV: number, rot: boolean, flipU: boolean = false, flipV: boolean = false) => {
 								if (useSolidMat) return <meshBasicMaterial color={solidSideColor} side={2} />;
 								const ft = buildFaceTextures(dimU, dimV, rot, flipU, flipV);
-								return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} transparent alphaTest={0.01} />;
+								return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />;
 							};
 
 							// FRONT אחיד
 							const front = (
 								<mesh rotation={[0, forwardSign > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} position={[xFront + forwardSign * 0.0005, (yTop + yBottomFrontEdge)/2, 0]} receiveShadow>
 									<planeGeometry args={[treadWidth + seam * 2, frontEdgeTh + seam * 2, 8, 2]} />
-									{faceMat(treadWidth, frontEdgeTh, axis === 'x', materialKind === 'wood' ? (forwardSign < 0) : false)}
+									{faceMat(treadWidth, frontEdgeTh, axis === 'x', forwardSign < 0)}
 								</mesh>
 							);
 							// סימון חזית – ספרה 1
@@ -900,7 +888,7 @@ function Staircase3D({
 								]);
 								g2.setAttribute('uv', new Float32BufferAttribute(uv, 2));
 								g2.computeVertexNormals();
-								return <mesh geometry={g2} receiveShadow>{faceMat(t.run, treadWidth, axis === 'z', materialKind === 'wood' ? (forwardSign < 0) : false)}</mesh>;
+								return <mesh geometry={g2} receiveShadow>{faceMat(t.run, treadWidth, axis === 'z', forwardSign < 0)}</mesh>;
 							})();
 							// אין צורך ברצועת "רכס" נוספת – שני חצאי התחתית כבר נפגשים במרכז
 
@@ -1071,22 +1059,22 @@ function Staircase3D({
 								<>
 									<mesh rotation={[0, frontRotY, 0]} position={[frontX, 0, 0]} receiveShadow>
 										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
-										{matFrontBack(materialKind === 'wood' ? (forwardSign < 0) : false)}
+										{matFrontBack(forwardSign < 0)}
 									</mesh>
 									{debugLabels ? <Text position={[frontX + forwardSign * 0.004, 0, 0]} rotation={[0, frontRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">1</Text> : null}
 									<mesh rotation={[0, backRotY, 0]} position={[backX, 0, 0]} receiveShadow>
 										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
-										{matFrontBack(materialKind === 'wood' ? (forwardSign > 0) : false)}
+										{matFrontBack(forwardSign > 0)}
 									</mesh>
 									{debugLabels ? <Text position={[backX - forwardSign * 0.004, 0, 0]} rotation={[0, backRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">4</Text> : null}
 									{/* צדדים לאורך Z */}
 									<mesh rotation={[0, 0, 0]} position={[0, 0, treadWidth / 2 + eps]} receiveShadow>
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
-									{matSides(materialKind === 'wood' ? (forwardSign < 0) : false)}
+									{matSides(forwardSign < 0)}
 									</mesh>
 									<mesh rotation={[0, Math.PI, 0]} position={[0, 0, -treadWidth / 2 - eps]} receiveShadow>
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
-									{matSides(materialKind === 'wood' ? (forwardSign > 0) : false)}
+									{matSides(forwardSign > 0)}
 									</mesh>
 									{/* תיוג 2=פנימי, 3=חיצוני */}
 									{debugLabels ? <Text position={[0, 0, innerSignLocal * (treadWidth / 2 + 0.004)]} rotation={[0, innerSignLocal > 0 ? 0 : Math.PI, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text> : null}
@@ -1100,27 +1088,6 @@ function Staircase3D({
 
 					{/* מעקה זכוכית פר-מדרגה מבוטל למען פאנל רציף */}
 					{null}
-
-					{/* תמיכות: שני לוחות צד דקים (מצב ראשוני) */}
-					{!t.isLanding && supportKind === 'dual-plate' ? (() => {
-						// לוחות רציפים פר-מדרגה (נשפר לרציפות בין מדרגות בהמשך)
-						const undersideY = t.position[1] - treadThickness / 2;
-						const plateCenterY = undersideY - plateTopGap - plateHeight / 2;
-						const zOffset = (treadWidth / 2) - plateInsetFromEdge - plateThickness / 2;
-						const mat = <meshBasicMaterial color={'#e8e8e8'} />;
-						return (
-							<group>
-								<mesh position={[0, plateCenterY - t.position[1], zOffset]} castShadow receiveShadow>
-									<boxGeometry args={[t.run, plateHeight, plateThickness]} />
-									{mat}
-								</mesh>
-								<mesh position={[0, plateCenterY - t.position[1], -zOffset]} castShadow receiveShadow>
-									<boxGeometry args={[t.run, plateHeight, plateThickness]} />
-									{mat}
-								</mesh>
-							</group>
-						);
-					})() : null}
 				</group>
 			)); })()}
 
@@ -3869,11 +3836,6 @@ function LivePageInner() {
 									ridgeFrontCenterThicknessM={0.09}
 									ridgeFrontEdgeThicknessM={0.03}
 									pathSegments={pathSegments}
-									supportKind={'dual-plate'}
-									plateThickness={0.012}
-									plateHeight={0.18}
-									plateInsetFromEdge={0.03}
-									plateTopGap={0.015}
 									glassTone={glassTone}
 									stepRailingStates={stepRailing}
 									landingRailingStates={landingRailing}

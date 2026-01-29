@@ -1172,6 +1172,7 @@ function Staircase3D({
 				const offsetY = 0.03; // 30 מ״מ
 				let firstP4: [number, number, number] | null = null;
 				let firstP7: [number, number, number] | null = null;
+				let firstYaw: number | null = null;
 				let closeP4: [number, number, number] | null = null; // נקודת 4 (פודסט ראשון) באופסט
 				let closeP7: [number, number, number] | null = null; // נקודת 7 (מדרגה לפני הפודסט) באופסט
 				let closeP8: [number, number, number] | null = null; // נקודת 8 (מדרגה לפני הפודסט) באופסט
@@ -1207,7 +1208,7 @@ function Staircase3D({
 						const wz = t.position[2] + rz;
 						p7w = [wx, wy - offsetY, wz];
 						pts7Off.push(p7w[0], p7w[1], p7w[2]);
-						if (!firstP7) firstP7 = p7w;
+						if (!firstP7) { firstP7 = p7w; firstYaw = yaw; }
 						bottomStepOff.push(p7w);
 						// אם המדרגה הבאה היא פודסט – זו המדרגה לפני הפודסט
 						const next = treads[i + 1];
@@ -1238,6 +1239,37 @@ function Staircase3D({
 						}
 					}
 				}
+				// אופסט צידי בתוך מישור הפלטה – מחושב רק עבור נקודת 4 של המדרגה הראשונה (מניעת "שפיץ")
+				let firstP4SideShift: [number, number, number] | null = null;
+				if (firstP4 && firstP7) {
+					// u: כיוון הרייל (ניחש מהמדרגה השנייה אם קיימת, אחרת מהyaw של הראשונה)
+					let ux = 1, uy = 0, uz = 0;
+					if (pts4Off.length >= 6) {
+						const x0 = firstP4[0], y0 = firstP4[1], z0 = firstP4[2];
+						const x1 = pts4Off[3], y1 = pts4Off[4], z1 = pts4Off[5];
+						ux = x1 - x0; uy = y1 - y0; uz = z1 - z0;
+					} else if (firstYaw !== null) {
+						ux = Math.cos(firstYaw); uy = 0; uz = Math.sin(firstYaw);
+					}
+					const um = Math.hypot(ux, uy, uz) || 1; ux /= um; uy /= um; uz /= um;
+					// נורמל למישור הפלטה: n = normalize(u × (firstP4-firstP7))
+					const wx = firstP4[0] - firstP7[0];
+					const wy = firstP4[1] - firstP7[1];
+					const wz = firstP4[2] - firstP7[2];
+					const nx = uy * wz - uz * wy;
+					const ny = uz * wx - ux * wz;
+					const nz = ux * wy - uy * wx;
+					const nm = Math.hypot(nx, ny, nz) || 1;
+					const nxN = nx / nm, nyN = ny / nm, nzN = nz / nm;
+					// כיוון צד במישור: s = normalize(n × u)
+					let sx = nyN * uz - nzN * uy;
+					let sy = nzN * ux - nxN * uz;
+					let sz = nxN * uy - nyN * ux;
+					const sm = Math.hypot(sx, sy, sz) || 1; sx /= sm; sy /= sm; sz /= sm;
+					const side = 0.03;
+					firstP4SideShift = [firstP4[0] + sx * side, firstP4[1] + sy * side, firstP4[2] + sz * side];
+				}
+
 				if (pts4Off.length === 0 && pts7Off.length === 0) return null;
 				return (
 					<group>
@@ -1358,6 +1390,8 @@ function Staircase3D({
 						{/* פלטה A – רצועה מדויקת בין קווי האופסט (מילוי משולשים) */}
 						{bottomStepOff.length > 0 && topStepOff.length > 0 && (() => {
 							const topRail: Array<[number, number, number]> = closeP4 ? [...topStepOff, closeP4] : [...topStepOff];
+							// החלף את נקודת ההתחלה של הרייל העליון בהיסט הצידי כדי לבטל "שפיץ"
+							if (firstP4SideShift) topRail[0] = firstP4SideShift;
 							const botRail: Array<[number, number, number]> = [...bottomStepOff];
 							// בחר אורך מקסימלי – אם מסילה אחת ארוכה יותר (למשל כוללת פודסט), נשכפל את הנקודה האחרונה של הקצרה
 							const count = Math.max(topRail.length, botRail.length);

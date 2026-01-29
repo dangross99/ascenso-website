@@ -1717,16 +1717,10 @@ function Staircase3D({
 									const offXB = nxN * thicknessPanelB, offYB = nyN * thicknessPanelB, offZB = nzN * thicknessPanelB;
 									const v0B: [number, number, number] = [f4x, f4y, f4z];
 									const v1B: [number, number, number] = [f7x, f7y, f7z];
-									// תחתית הפאנל: המשך קו אופסט 5 (botRail) במישור הפלטה עד המישור האנכי דרך 2/6
+									// תחתית הפאנל: קו האופסט של קודקוד 5 (אותו מפלס Y כמו 7‑offset)
 									const bottomY = firstP7[1];
-									const b4 = [f4x, bottomY, f4z] as [number, number, number];
-									const b7 = [f7x, bottomY, f7z] as [number, number, number];
-									// מישור אנכי דרך 2/6 מאופיין ע"י إسקלר u קבוע זהה לזה של 7
-									const dotU = (x: [number, number, number]) => (ux * x[0] + uz * x[2]);
-									const planeU = dotU(b7);
-									const tNeeded = planeU - dotU(b4); // u מנורמל
-									const v2B: [number, number, number] = [b4[0] + ux * tNeeded, b4[1], b4[2] + uz * tNeeded];
-									const v3B: [number, number, number] = b7;
+									const v2B: [number, number, number] = [f4x, bottomY, f4z];
+									const v3B: [number, number, number] = [f7x, bottomY, f7z];
 									const v4B: [number, number, number] = [v0B[0] + offXB, v0B[1] + offYB, v0B[2] + offZB];
 									const v5B: [number, number, number] = [v1B[0] + offXB, v1B[1] + offYB, v1B[2] + offZB];
 									const v6B: [number, number, number] = [v2B[0] + offXB, v2B[1] + offYB, v2B[2] + offZB];
@@ -1755,7 +1749,7 @@ function Staircase3D({
 												<bufferGeometry attach="geometry">
 													<bufferAttribute attach="attributes-position" args={[new Float32Array([
 														f4x, f4y, f4z,
-														v2B[0], v2B[1], v2B[2],
+														f4x, bottomY, f4z,
 													]), 3]} />
 												</bufferGeometry>
 												<lineBasicMaterial attach="material" color="#6b7280" linewidth={1} depthTest={false} depthWrite={false} />
@@ -1764,7 +1758,7 @@ function Staircase3D({
 												<bufferGeometry attach="geometry">
 													<bufferAttribute attach="attributes-position" args={[new Float32Array([
 														f7x, f7y, f7z,
-														v3B[0], v3B[1], v3B[2],
+														f7x, bottomY, f7z,
 													]), 3]} />
 												</bufferGeometry>
 												<lineBasicMaterial attach="material" color="#f87171" linewidth={1} depthTest={false} depthWrite={false} />
@@ -1772,8 +1766,8 @@ function Staircase3D({
 											<line>
 												<bufferGeometry attach="geometry">
 													<bufferAttribute attach="attributes-position" args={[new Float32Array([
-														v2B[0], v2B[1], v2B[2],
-														v3B[0], v3B[1], v3B[2],
+														f4x, bottomY, f4z,
+														f7x, bottomY, f7z,
 													]), 3]} />
 												</bufferGeometry>
 												<lineBasicMaterial attach="material" color="#111827" linewidth={1} depthTest={false} depthWrite={false} />

@@ -1393,8 +1393,11 @@ function Staircase3D({
 						{/* פלטה A – רצועה מדויקת בין קווי האופסט (מילוי משולשים) */}
 						{bottomStepOff.length > 0 && topStepOff.length > 0 && (() => {
 							const baseTop: Array<[number, number, number]> = closeP4 ? [...topStepOff, closeP4] : [...topStepOff];
-							// שמור את הרייל העליון בדיוק כפי שהוא – ללא נקודות הסט – כדי לשמר שיפוע אחיד
-							const topRail: Array<[number, number, number]> = baseTop;
+							// התחלה נקייה בשיפוע המקורי, עם נקודת פתיחה מוזחת בלבד (ללא נקודות ביניים נוספות)
+							const topRail: Array<[number, number, number]> = [...baseTop];
+							if (firstP4SideShift) {
+								topRail[0] = firstP4SideShift;
+							}
 							const botRail: Array<[number, number, number]> = [...bottomStepOff];
 							// בחר אורך מקסימלי – אם מסילה אחת ארוכה יותר (למשל כוללת פודסט), נשכפל את הנקודה האחרונה של הקצרה
 							const count = Math.max(topRail.length, botRail.length);

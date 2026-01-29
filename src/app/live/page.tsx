@@ -1429,7 +1429,7 @@ function Staircase3D({
 										<bufferAttribute attach="attributes-position" args={[new Float32Array(pos), 3]} />
 										<bufferAttribute attach="index" args={[new Uint32Array(idx), 1]} />
 									</bufferGeometry>
-									<meshBasicMaterial color="#4b5563" side={2} />
+									<meshBasicMaterial color="#334155" side={2} />
 								</mesh>
 							);
 						})()}

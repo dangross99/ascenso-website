@@ -1437,6 +1437,277 @@ function Staircase3D({
 				);
 			})() : null}
 
+			{/* דגם 'הייטק' – קווי עזר: גרם 2 */}
+			{hitech ? (() => {
+				// אסוף מדרגות של גרם שני (flight=1)
+				const flightIdx = 1;
+				const cosSin = (yaw: number) => ({ c: Math.cos(yaw), s: Math.sin(yaw) });
+				const pts4Off: number[] = [];
+				const pts7Off: number[] = [];
+				const topStepOff: Array<[number, number, number]> = [];    // נקודות 4‑offset לכל מדרגה (ללא פודסט)
+				const bottomStepOff: Array<[number, number, number]> = []; // נקודות 7‑offset לכל מדרגה
+				const offsetY = Math.max(0, (typeof hitechPlateTopOffsetM === 'number' ? hitechPlateTopOffsetM : 0.03)); // היסט אנכי מהמשטח
+				let firstP4: [number, number, number] | null = null;
+				let firstP7: [number, number, number] | null = null;
+				let firstYaw: number | null = null;
+				let closeP4: [number, number, number] | null = null; // נקודת 4 (פודסט ראשון) באופסט
+				let closeP7: [number, number, number] | null = null; // נקודת 7 (מדרגה לפני הפודסט) באופסט
+				let closeP8: [number, number, number] | null = null; // נקודת 8 (מדרגה לפני הפודסט) באופסט
+				for (let i = 0; i < treads.length; i++) {
+					const t = treads[i];
+					if (t.flight !== flightIdx) continue;
+					const yaw = t.rotation[1] as number;
+					const { c, s } = cosSin(yaw);
+					const dx = t.run / 2;
+					const dz = treadWidth / 2;
+					// נקודה 4 – עליונה שמאל-קדימה: (-dx, +dz, yTop)
+					let p4w: [number, number, number] | null = null;
+					let p7w: [number, number, number] | null = null;
+					{
+						const lx = -dx, lz = dz;
+						const rx = lx * c - lz * s;
+						const rz = lx * s + lz * c;
+						const wx = t.position[0] + rx;
+						const wy = t.position[1] + treadThickness / 2;
+						const wz = t.position[2] + rz;
+						p4w = [wx, wy + offsetY, wz];
+						pts4Off.push(p4w[0], p4w[1], p4w[2]);
+						if (!t.isLanding && !firstP4) firstP4 = p4w;
+						if (!t.isLanding) topStepOff.push(p4w);
+					}
+					// נקודה 7 – תחתונה ימין-קדימה: (+dx, +dz, yBot) – רק אם לא פודסט
+					if (!t.isLanding) {
+						const lx = dx, lz = dz;
+						const rx = lx * c - lz * s;
+						const rz = lx * s + lz * c;
+						const wx = t.position[0] + rx;
+						const wy = t.position[1] - treadThickness / 2;
+						const wz = t.position[2] + rz;
+						p7w = [wx, wy - offsetY, wz];
+						pts7Off.push(p7w[0], p7w[1], p7w[2]);
+						if (!firstP7) { firstP7 = p7w; firstYaw = yaw; }
+						bottomStepOff.push(p7w);
+						// אם המדרגה הבאה היא פודסט – זו המדרגה לפני הפודסט
+						const next = treads[i + 1];
+						if (next && next.flight === flightIdx && next.isLanding) {
+							// קודקוד 7 הוא מהמדרגה הנוכחית (עם אופסט)
+							closeP7 = p7w;
+							// קודקוד 8 הוא מהמדרגה הנוכחית (עם אופסט) – אותו XZ כמו 4 של אותה מדרגה
+							{
+								const lx8 = -dx, lz8 = dz;
+								const rx8 = lx8 * c - lz8 * s;
+								const rz8 = lx8 * s + lz8 * c;
+								const wx8 = t.position[0] + rx8;
+								const wy8 = t.position[1] - treadThickness / 2 - offsetY;
+								const wz8 = t.position[2] + rz8;
+								closeP8 = [wx8, wy8, wz8];
+							}
+							// קודקוד 4 מהפודסט הבא (עם אופסט כלפי מעלה)
+							const yaw2 = next.rotation[1] as number;
+							const c2 = Math.cos(yaw2), s2 = Math.sin(yaw2);
+							const dxL = next.run / 2, dzL = treadWidth / 2;
+							const lx2 = -dxL, lz2 = dzL;
+							const rx2 = lx2 * c2 - lz2 * s2;
+							const rz2 = lx2 * s2 + lz2 * c2;
+							const wx2 = next.position[0] + rx2;
+							const wy2 = next.position[1] + treadThickness / 2 + offsetY;
+							const wz2 = next.position[2] + rz2;
+							closeP4 = [wx2, wy2, wz2];
+						}
+					}
+				}
+				// אופסט צידי בתוך מישור הפלטה – מחושב רק עבור נקודת 4 של המדרגה הראשונה (מניעת "שפיץ")
+				let firstP4SideShift: [number, number, number] | null = null;
+				let firstSideShiftVec: [number, number, number] | null = null;
+				if (firstP4 && firstP7) {
+					// u: כיוון הרייל (ניחש מהמדרגה השנייה אם קיימת, אחרת מהyaw של הראשונה)
+					let ux = 1, uy = 0, uz = 0;
+					if (pts4Off.length >= 6) {
+						const x0 = firstP4[0], y0 = firstP4[1], z0 = firstP4[2];
+						const x1 = pts4Off[3], y1 = pts4Off[4], z1 = pts4Off[5];
+						ux = x1 - x0; uy = y1 - y0; uz = z1 - z0;
+					} else if (firstYaw !== null) {
+						ux = Math.cos(firstYaw); uy = 0; uz = Math.sin(firstYaw);
+					}
+					const um = Math.hypot(ux, uy, uz) || 1; ux /= um; uy /= um; uz /= um;
+					// נורמל למישור הפלטה: n = normalize(u × (firstP4-firstP7))
+					const wx = firstP4[0] - firstP7[0];
+					const wy = firstP4[1] - firstP7[1];
+					const wz = firstP4[2] - firstP7[2];
+					const nx = uy * wz - uz * wy;
+					const ny = uz * wx - ux * wz;
+					const nz = ux * wy - uy * wx;
+					const nm = Math.hypot(nx, ny, nz) || 1;
+					const nxN = nx / nm, nyN = ny / nm, nzN = nz / nm;
+					// כיוון צד במישור: s = normalize(n × u)
+					let sx = nyN * uz - nzN * uy;
+					let sy = nzN * ux - nxN * uz;
+					let sz = nxN * uy - nyN * ux;
+					const sm = Math.hypot(sx, sy, sz) || 1; sx /= sm; sy /= sm; sz /= sm;
+					const side = Math.max(0, (typeof hitechPlateInsetFromEdge === 'number' ? hitechPlateInsetFromEdge : 0.03));
+					// אופסט צידי נטו (רק ב‑XZ), ללא שינוי בגובה Y
+					firstSideShiftVec = [sx * side, 0, sz * side];
+					firstP4SideShift = [firstP4[0] + firstSideShiftVec[0], firstP4[1], firstP4[2] + firstSideShiftVec[2]];
+				}
+
+				if (pts4Off.length === 0 && pts7Off.length === 0) return null;
+				return (
+					<group>
+						{pts4Off.length >= 6 && (
+							<line>
+								<bufferGeometry attach="geometry">
+									<bufferAttribute attach="attributes-position" args={[new Float32Array(pts4Off), 3]} />
+								</bufferGeometry>
+								<lineBasicMaterial attach="material" color="#6b7280" linewidth={1} depthTest={false} depthWrite={false} />
+							</line>
+						)}
+						{pts7Off.length >= 6 && (
+							<line>
+								<bufferGeometry attach="geometry">
+									<bufferAttribute attach="attributes-position" args={[new Float32Array(pts7Off), 3]} />
+								</bufferGeometry>
+								<lineBasicMaterial attach="material" color="#f87171" linewidth={1} depthTest={false} depthWrite={false} />
+							</line>
+						)}
+						{/* סגירה במדרגה לפני הפודסט */}
+						{closeP4 && closeP8 && (
+							<line>
+								<bufferGeometry attach="geometry">
+									<bufferAttribute attach="attributes-position" args={[new Float32Array([
+										closeP4[0], closeP8[1], closeP4[2],
+										closeP4[0], closeP4[1], closeP4[2],
+									]), 3]} />
+								</bufferGeometry>
+								<lineBasicMaterial attach="material" color="#10b981" linewidth={1} depthTest={false} depthWrite={false} />
+							</line>
+						)}
+						{/* הארכה למטה עד הרצפה מהמדרגה הראשונה וסגירה ביניהן */}
+						{firstP4 && firstP7 && (
+							<group>
+								{(() => {
+									// אופסט צידי בתוך מישור הפלטה (רק בתחתית, מדרגה ראשונה)
+									let ux = 1, uy = 0, uz = 0;
+									if (pts4Off.length >= 6) {
+										const x0 = firstP4[0], y0 = firstP4[1], z0 = firstP4[2];
+										const x1 = pts4Off[3], y1 = pts4Off[4], z1 = pts4Off[5];
+										ux = x1 - x0; uy = y1 - y0; uz = z1 - z0;
+									}
+									const umag = Math.hypot(ux, uy, uz) || 1;
+									ux /= umag; uy /= umag; uz /= umag;
+									const wx = firstP4[0] - firstP7[0];
+									const wy = firstP4[1] - firstP7[1];
+									const wz = firstP4[2] - firstP7[2];
+									const nx = uy * wz - uz * wy;
+									const ny = uz * wx - ux * wz;
+									const nz = ux * wy - uy * wx;
+									const nmag = Math.hypot(nx, ny, nz) || 1;
+									const nxN = nx / nmag, nyN = ny / nmag, nzN = nz / nmag;
+									const sx = nyN * uz - nzN * uy;
+									const sy = nzN * ux - nxN * uz;
+									const sz = nxN * uy - nyN * ux;
+									const smag = Math.hypot(sx, sy, sz) || 1;
+									const sxN = sx / smag, szN = sz / smag;
+									const side = Math.max(0, (typeof hitechPlateInsetFromEdge === 'number' ? hitechPlateInsetFromEdge : 0.03)); // היסט אופקי מהקצה
+									const f4x = firstP4[0] + sxN * side;
+									// ללא שינוי בגובה Y כדי למנע שפיץ
+									const f4y = firstP4[1];
+									const f4z = firstP4[2] + szN * side;
+									const f7x = firstP7[0];
+									const f7y = firstP7[1];
+									const f7z = firstP7[2];
+									return (
+										<group>
+											<line>
+												<bufferGeometry attach="geometry">
+													<bufferAttribute attach="attributes-position" args={[new Float32Array([
+														f4x, f4y, f4z,
+														f4x, floorBounds.y, f4z,
+													]), 3]} />
+												</bufferGeometry>
+												<lineBasicMaterial attach="material" color="#6b7280" linewidth={1} depthTest={false} depthWrite={false} />
+											</line>
+											<line>
+												<bufferGeometry attach="geometry">
+													<bufferAttribute attach="attributes-position" args={[new Float32Array([
+														f7x, f7y, f7z,
+														f7x, floorBounds.y, f7z,
+													]), 3]} />
+												</bufferGeometry>
+												<lineBasicMaterial attach="material" color="#f87171" linewidth={1} depthTest={false} depthWrite={false} />
+											</line>
+											<line>
+												<bufferGeometry attach="geometry">
+													<bufferAttribute attach="attributes-position" args={[new Float32Array([
+														f4x, floorBounds.y, f4z,
+														f7x, floorBounds.y, f7z,
+													]), 3]} />
+												</bufferGeometry>
+												<lineBasicMaterial attach="material" color="#111827" linewidth={1} depthTest={false} depthWrite={false} />
+											</line>
+											<mesh castShadow receiveShadow>
+												<bufferGeometry attach="geometry">
+													<bufferAttribute attach="attributes-position" args={[new Float32Array([
+														f4x, f4y, f4z,
+														f7x, f7y, f7z,
+														f4x, floorBounds.y, f4z,
+														f7x, floorBounds.y, f7z,
+													]), 3]} />
+													<bufferAttribute attach="index" args={[new Uint32Array([0,1,2, 2,1,3]), 1]} />
+												</bufferGeometry>
+												<meshBasicMaterial color="#4b5563" side={2} />
+											</mesh>
+										</group>
+									);
+								})()}
+							</group>
+						)}
+
+						{/* פלטה A – רצועה מדויקת בין קווי האופסט (מילוי משולשים) */}
+						{bottomStepOff.length > 0 && topStepOff.length > 0 && (() => {
+							const baseTop: Array<[number, number, number]> = closeP4 ? [...topStepOff, closeP4] : [...topStepOff];
+							// שמור את הרייל העליון המקורי לשימור השיפוע
+							const topRail: Array<[number, number, number]> = baseTop;
+							const botRail: Array<[number, number, number]> = [...bottomStepOff];
+							// בחר אורך מקסימלי – אם מסילה אחת ארוכה יותר (למשל כוללת פודסט), נשכפל את הנקודה האחרונה של הקצרה
+							const count = Math.max(topRail.length, botRail.length);
+							if (count < 2) return null;
+							const pos: number[] = [];
+							const idx: number[] = [];
+							const pick = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
+							for (let i = 0; i < count - 1; i++) {
+								let t1 = pick(topRail, i);
+								let b1 = pick(botRail, i);
+								const t2 = pick(topRail, i + 1);
+								const b2 = pick(botRail, i + 1);
+								// התחלת הפלטה בדיוק מהנקודות f4/f7
+								if (i === 0 && firstP4SideShift) {
+									t1 = firstP4SideShift;
+									if (firstP7) b1 = firstP7;
+								}
+								const baseIndex = pos.length / 3;
+								// סדר נקודות: t1,b1,t2,b2
+								pos.push(t1[0], t1[1], t1[2]);
+								pos.push(b1[0], b1[1], b1[2]);
+								pos.push(t2[0], t2[1], t2[2]);
+								pos.push(b2[0], b2[1], b2[2]);
+								// שני משולשים לכיסוי הריבוע
+								idx.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
+								idx.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
+							}
+							return (
+								<mesh castShadow receiveShadow>
+									<bufferGeometry attach="geometry">
+										<bufferAttribute attach="attributes-position" args={[new Float32Array(pos), 3]} />
+										<bufferAttribute attach="index" args={[new Uint32Array(idx), 1]} />
+									</bufferGeometry>
+									<meshBasicMaterial color="#4b5563" side={2} />
+								</mesh>
+							);
+						})()}
+					</group>
+				);
+			})() : null}
+
 			{/* מעקה זכוכית – קטעים רציפים בקו אלכסוני */}
 			{(() => {
 				if (railingKind !== 'glass') return null;

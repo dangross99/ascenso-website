@@ -1337,7 +1337,8 @@ function Staircase3D({
 									const sxN = sx / smag, syN = sy / smag, szN = sz / smag;
 									const side = Math.max(0, (typeof hitechPlateInsetFromEdge === 'number' ? hitechPlateInsetFromEdge : 0.03)); // היסט אופקי מהקצה
 									const f4x = firstP4[0] + sxN * side;
-									const f4y = firstP4[1] + syN * side;
+									// היסט צידי טהור במישור XZ (ללא שינוי בגובה Y) כדי למנוע "שפיץ" בתחילת הפלטה
+									const f4y = firstP4[1];
 									const f4z = firstP4[2] + szN * side;
 									// קודקוד 7 נשאר במקום (בלי אופסט צידי)
 									const f7x = firstP7[0];

@@ -1404,7 +1404,7 @@ function Staircase3D({
 							const pick = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
 							for (let i = 0; i < count - 1; i++) {
 								let t1 = pick(topRail, i);
-								const b1 = pick(botRail, i);
+								let b1 = pick(botRail, i);
 								const t2 = pick(topRail, i + 1);
 								const b2 = pick(botRail, i + 1);
 								// חיתוך השפיץ: באיטרציה הראשונה מקרינים את נקודת ההסט על קטע הרייל העליון לשמירת השיפוע
@@ -1417,6 +1417,13 @@ function Staircase3D({
 									let t = (wx*vx + wy*vy + wz*vz) / vv;
 									if (t < 0) t = 0; else if (t > 1) t = 1;
 									t1 = [ax + t*vx, ay + t*vy, az + t*vz];
+									// יישום אותה פרמטריזציה גם על המסילה התחתונה כדי למנוע "שפיץ"
+									if (botRail.length >= 2) {
+										const abx = botRail[0][0], aby = botRail[0][1], abz = botRail[0][2];
+										const bbx = botRail[1][0], bby = botRail[1][1], bbz = botRail[1][2];
+										const bvx = bbx - abx, bvy = bby - aby, bvz = bbz - abz;
+										b1 = [abx + t*bvx, aby + t*bvy, abz + t*bvz];
+									}
 								}
 								const baseIndex = pos.length / 3;
 								// סדר נקודות: t1,b1,t2,b2

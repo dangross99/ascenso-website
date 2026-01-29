@@ -517,7 +517,7 @@ function Staircase3D({
 			if (cutV > 0) { repV -= cutV; offV += cutV / 2; }
 		}
 
-		const mk = (base: any) => {
+		const mk = (base: any, isColor: boolean) => {
 			const t = base.clone();
 			// כאשר יש היפוך בציר כלשהו, חייבים RepeatWrapping כדי למנוע "פסים" משוליים
 			const requiresRepeat = flipU || flipV;
@@ -539,18 +539,26 @@ function Staircase3D({
 				t.repeat.y = -t.repeat.y;
 				t.offset.y = offV + repV;
 			}
+			// מרחב צבע רק למפת צבע; מפות bump/rough נשארות לינאריות
 			// @ts-ignore
-			t.colorSpace = SRGBColorSpace;
-			t.generateMipmaps = false;
-			t.minFilter = LinearFilter;
+			t.colorSpace = isColor ? SRGBColorSpace : undefined;
+			// שימוש ב‑mipmaps כדי למנוע "פסים" וריצוד בטקסטורות קטנות/חוזרות
+			const useMipmaps = true;
+			t.generateMipmaps = useMipmaps;
+			// כאשר יש downscale – mipmap לינארי נותן תוצאה חלקה יותר
+			// @ts-ignore
+			t.minFilter = useMipmaps ? LinearMipmapLinearFilter : LinearFilter;
+			t.magFilter = LinearFilter;
+			// אנאיזוטרופי לשימור חדות בזווית
+			t.anisotropy = Math.max(8, (t.anisotropy || 0));
 			t.needsUpdate = true;
 			return t;
 		};
 
 		const out = {
-			color: mk(map),
-			bump: bumpUrl ? mk(bumpMap) : undefined,
-			rough: roughnessUrl ? mk(roughMap) : undefined,
+			color: mk(map, true),
+			bump: bumpUrl ? mk(bumpMap, false) : undefined,
+			rough: roughnessUrl ? mk(roughMap, false) : undefined,
 		};
 		faceTexCacheRef.current.set(key, out);
 		return out;

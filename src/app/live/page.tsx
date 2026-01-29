@@ -519,8 +519,8 @@ function Staircase3D({
 
 		const mk = (base: any, isColor: boolean) => {
 			const t = base.clone();
-			// כאשר יש היפוך בציר כלשהו, חייבים RepeatWrapping כדי למנוע "פסים" משוליים
-			const requiresRepeat = flipU || flipV;
+			// RepeatWrapping כאשר יש היפוך או חיתוך (rep<1) כדי למנוע מריחה מפיקסלי שוליים
+			const requiresRepeat = flipU || flipV || (repU < 0.999) || (repV < 0.999);
 			t.wrapS = t.wrapT = requiresRepeat ? RepeatWrapping : ClampToEdgeWrapping;
 			t.repeat.set(repU, repV);
 			t.offset.set(offU, offV);

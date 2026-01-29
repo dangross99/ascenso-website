@@ -1167,6 +1167,8 @@ function Staircase3D({
 				const cosSin = (yaw: number) => ({ c: Math.cos(yaw), s: Math.sin(yaw) });
 				const pts4Off: number[] = [];
 				const pts7Off: number[] = [];
+				const topStepOff: Array<[number, number, number]> = [];    // נקודות 4‑offset לכל מדרגה (ללא פודסט)
+				const bottomStepOff: Array<[number, number, number]> = []; // נקודות 7‑offset לכל מדרגה
 				const offsetY = 0.05; // 50 מ״מ
 				let firstP4: [number, number, number] | null = null;
 				let firstP7: [number, number, number] | null = null;
@@ -1192,6 +1194,7 @@ function Staircase3D({
 						p4w = [wx, wy + offsetY, wz];
 						pts4Off.push(p4w[0], p4w[1], p4w[2]);
 						if (!t.isLanding && !firstP4) firstP4 = p4w;
+						if (!t.isLanding) topStepOff.push(p4w);
 					}
 					// נקודה 7 – תחתונה ימין-קדימה: (+dx, +dz, yBot) – רק אם לא פודסט
 					if (!t.isLanding) {
@@ -1204,6 +1207,7 @@ function Staircase3D({
 						p7w = [wx, wy - offsetY, wz];
 						pts7Off.push(p7w[0], p7w[1], p7w[2]);
 						if (!firstP7) firstP7 = p7w;
+						bottomStepOff.push(p7w);
 						// אם המדרגה הבאה היא פודסט – זו המדרגה לפני הפודסט
 						const next = treads[i + 1];
 						if (next && next.flight === flightIdx && next.isLanding) {
@@ -1303,6 +1307,42 @@ function Staircase3D({
 									</bufferGeometry>
 									<lineBasicMaterial attach="material" color="#111827" linewidth={1} />
 								</line>
+							</group>
+						)}
+
+						{/* פלטה A – חיבור בין שני הקווים (רצועה) בעובי 12 מ״מ */}
+						{bottomStepOff.length > 0 && topStepOff.length > 0 && (
+							<group>
+								{bottomStepOff.map((b1, i) => {
+									const t1 = topStepOff[Math.min(i, topStepOff.length - 1)];
+									const isLast = (i === bottomStepOff.length - 1);
+									const t2 = isLast ? (closeP4 || t1) : topStepOff[Math.min(i + 1, topStepOff.length - 1)];
+									const b2 = isLast ? b1 : bottomStepOff[i + 1];
+									// מרכזים לכל קצה
+									const cm1: [number, number, number] = [(t1[0] + b1[0]) / 2, (t1[1] + b1[1]) / 2, (t1[2] + b1[2]) / 2];
+									const cm2: [number, number, number] = [(t2[0] + b2[0]) / 2, (t2[1] + b2[1]) / 2, (t2[2] + b2[2]) / 2];
+									const dx = cm2[0] - cm1[0];
+									const dy = cm2[1] - cm1[1];
+									const dz = cm2[2] - cm1[2];
+									const len = Math.max(0.001, Math.sqrt(dx*dx + dy*dy + dz*dz));
+									const height = Math.max(0.001, Math.hypot(t1[0] - b1[0], t1[1] - b1[1], t1[2] - b1[2]));
+									const thickness = 0.012;
+									// יאו לפי כיוון אופקי של הקטע
+									const yaw = Math.atan2(cm2[2] - cm1[2], cm2[0] - cm1[0]);
+									// פיץ' לפי שיפוע כללי של הגרם
+									const pitch = Math.atan(riser / treadDepth);
+									const cx = (cm1[0] + cm2[0]) / 2;
+									const cy = (cm1[1] + cm2[1]) / 2;
+									const cz = (cm1[2] + cm2[2]) / 2;
+									return (
+										<group key={`pa-${i}`} position={[cx, cy, cz]} rotation={[0, yaw, pitch]}>
+											<mesh castShadow receiveShadow>
+												<boxGeometry args={[len, height, thickness]} />
+												<meshBasicMaterial color="#4b5563" />
+											</mesh>
+										</group>
+									);
+								})}
 							</group>
 						)}
 					</group>

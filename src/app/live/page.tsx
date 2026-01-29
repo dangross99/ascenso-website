@@ -1126,118 +1126,37 @@ function Staircase3D({
 						);
 					})() : null}
 
+					{/* דיבוג "הייטק": מספרי קודקודים על פודסט */}
+					{hitech && t.isLanding ? (() => {
+						const yTop = treadThickness / 2 + 0.015;
+						const yBot = -treadThickness / 2 - 0.015;
+						const dx = t.run / 2;
+						const dz = treadWidth / 2;
+						const fontSize = 0.045;
+						const color = '#2563eb'; // כחול להבדיל ממדרגה
+						return (
+							<group>
+								{/* עליונים 1‑4 */}
+								<Text position={[-dx, yTop, -dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">1</Text>
+								<Text position={[ dx, yTop, -dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">2</Text>
+								<Text position={[ dx, yTop,  dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">3</Text>
+								<Text position={[-dx, yTop,  dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">4</Text>
+								{/* תחתונים 5‑8 */}
+								<Text position={[-dx, yBot, -dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">5</Text>
+								<Text position={[ dx, yBot, -dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">6</Text>
+								<Text position={[ dx, yBot,  dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">7</Text>
+								<Text position={[-dx, yBot,  dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">8</Text>
+							</group>
+						);
+					})() : null}
+
 					{/* דגם 'הייטק' – לוחות רציפים ינוצרו מחוץ ללולאת המדרגות */}
 					{null}
 				</group>
 			)); })()}
 
-			{/* דגם 'הייטק' – לוחות צד רציפים לכל flight */}
-			{hitech ? (() => {
-				// קיבוץ לפי flight רק למדרגות (ללא פודסטים)
-				type Acc = {
-					axis: 'x' | 'z';
-					yaw: number;
-					min: number;
-					max: number;
-					sumTopY: number;
-					sumConst: number; // X קבוע כאשר axis==='z', אחרת Z קבוע
-					refAlong?: number; // נקודת ייחוס לאורך (מרכז מדרגה)
-					refTopY?: number;  // גובה פני המדרך בנקודת הייחוס
-					refConst?: number; // קואורדינטה קבועה בנקודת הייחוס
-					count: number;
-				};
-				const byFlight = new Map<number, Acc>();
-				treads.forEach(t => {
-					// כולל פודסטים – הלוח רציף גם בהם
-					const acc = byFlight.get(t.flight) || {
-						axis: t.axis,
-						yaw: t.rotation[1] as number,
-						min: Infinity,
-						max: -Infinity,
-						sumTopY: 0,
-						sumConst: 0,
-						count: 0
-					};
-					if (t.axis !== acc.axis) return; // שמירה פשוטה: מתעלם מאנומליות
-					if (t.axis === 'x') {
-						const s = t.position[0] - t.run / 2;
-						const e = t.position[0] + t.run / 2;
-						if (s < acc.min) acc.min = s;
-						if (e > acc.max) acc.max = e;
-						acc.sumConst += t.position[2]; // Z קבוע
-						if (typeof acc.refAlong !== 'number') {
-							acc.refAlong = t.position[0];
-							acc.refTopY = t.position[1] + treadThickness / 2;
-							acc.refConst = t.position[2];
-						}
-					} else {
-						const s = t.position[2] - t.run / 2;
-						const e = t.position[2] + t.run / 2;
-						if (s < acc.min) acc.min = s;
-						if (e > acc.max) acc.max = e;
-						acc.sumConst += t.position[0]; // X קבוע
-						if (typeof acc.refAlong !== 'number') {
-							acc.refAlong = t.position[2];
-							acc.refTopY = t.position[1] + treadThickness / 2;
-							acc.refConst = t.position[0];
-						}
-					}
-					acc.sumTopY += (t.position[1] + treadThickness / 2);
-					acc.count += 1;
-					byFlight.set(t.flight, acc);
-				});
-				if (byFlight.size === 0) return null;
-				const plateTh = typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012;
-				const plateH = typeof hitechPlateHeight === 'number' ? hitechPlateHeight : 0.27;
-				const topOff = typeof hitechPlateTopOffsetM === 'number' ? hitechPlateTopOffsetM : 0.06;
-				const inset = typeof hitechPlateInsetFromEdge === 'number' ? hitechPlateInsetFromEdge : 0.0;
-				const zOffsetAbs = (treadWidth / 2) - inset - plateTh / 2; // הצמדה לפאה החיצונית
-				const plateColor = (materialKind === 'metal' && typeof materialSolidColor === 'string' && materialSolidColor)
-					? (materialSolidColor as string)
-					: '#4a4a4a';
-				const mats = <meshBasicMaterial color={plateColor} side={2} />;
-				const pitch = Math.atan(riser / treadDepth);
-				const epsL = 0.01; // תוספת קטנה לאורך כדי לסגור רווחים
-				const nodes: React.ReactNode[] = [];
-				const entries = Array.from(byFlight.entries());
-				entries.forEach(([flightIdx, acc]) => {
-					const len = Math.max(0.001, (acc.max - acc.min) + epsL);
-					const centerAlong = (acc.min + acc.max) / 2;
-					const yaw = acc.yaw;
-					const axis = acc.axis;
-					const avgTopY = acc.count > 0 ? (acc.sumTopY / acc.count) : 0;
-					const constCoord = (typeof acc.refConst === 'number') ? acc.refConst : (acc.count > 0 ? (acc.sumConst / acc.count) : 0);
-					let plateCY: number;
-					if (typeof acc.refAlong === 'number' && typeof acc.refTopY === 'number') {
-						const slopePerM = riser / treadDepth;
-						const topAtCenter = acc.refTopY + slopePerM * (centerAlong - acc.refAlong);
-						plateCY = (topAtCenter - topOff) - (plateH / 2) * Math.cos(pitch);
-					} else {
-						plateCY = avgTopY - topOff - plateH / 2;
-					}
-					// קביעת מיקום מרכז לפי הציר
-					const pos: [number, number, number] = axis === 'x' ? [centerAlong, plateCY, constCoord] : [constCoord, plateCY, centerAlong];
-					nodes.push(
-						<group key={`pl-${axis}-${centerAlong.toFixed(3)}`} position={pos} rotation={[0, yaw, 0]}>
-							{/* סיבוב שיפוע תמיד סביב הציר המקומי Z של הלוח */}
-							<group rotation={[0, 0, pitch]}>
-							<mesh position={[0, 0, zOffsetAbs]} castShadow receiveShadow>
-								<boxGeometry args={[len, plateH, plateTh]} />
-								{mats}
-							</mesh>
-							<mesh position={[0, 0, -zOffsetAbs]} castShadow receiveShadow>
-								<boxGeometry args={[len, plateH, plateTh]} />
-								{mats}
-							</mesh>
-							{/* תוויות זיהוי לפלטות: P{idx}‑R/L */}
-							<Text position={[0, plateH / 2 + 0.03, zOffsetAbs]} fontSize={0.06} color="#111111" anchorX="center" anchorY="middle">{`P${flightIdx + 1}‑R`}</Text>
-							<Text position={[0, plateH / 2 + 0.03, -zOffsetAbs]} fontSize={0.06} color="#111111" anchorX="center" anchorY="middle">{`P${flightIdx + 1}‑L`}</Text>
-							</group>
-						</group>
-					);
-				});
-				return <group>{nodes}</group>;
-			})() : null}
+			{/* דגם 'הייטק' – הלוחות הוסרו לפי בקשתך; נבנה מחדש בהמשך */}
+			{null}
 
 			{/* מעקה זכוכית – קטעים רציפים בקו אלכסוני */}
 			{(() => {

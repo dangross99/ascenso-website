@@ -620,6 +620,29 @@ function Staircase3D({
 					if (isLanding && axis === 'z') sign = (sign === 1 ? -1 : 1) as 1 | -1;
 					return sign;
 				};
+				// דגל תיוג דיבאג
+				const debugLabels = false;
+				// עזר מרוכז: חישוב מסגרת מקומית (axis/forwardSign/innerSignLocal וסיבובי פאות)
+				function computeLocalFrame(params: {
+					yaw: number;
+					isLanding: boolean;
+					flight: number;
+					axis?: 'x' | 'z';
+					innerIsRight: boolean;
+				}) {
+					const { yaw, isLanding, flight, innerIsRight } = params;
+					const axis = params.axis ?? axisFromYaw(yaw);
+					const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
+					const forwardSignBase = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
+					// היפוך חד-פעמי בגרם הראשון כדי להציג "1" בתחילת המסע
+					const forwardSign = (flight === 0 ? -forwardSignBase : forwardSignBase) as 1 | -1;
+					const rightLocal = rightLocalSignFor(yaw, axis, isLanding);
+					const innerSignLocal = (innerIsRight ? rightLocal : -rightLocal) as 1 | -1;
+					// כיווני סיבוב טקסטורות
+					const rotateFrontBack = (axis === 'x');
+					const rotateSides = (axis === 'z');
+					return { axis, forwardSign, innerSignLocal, rotateFrontBack, rotateSides } as const;
+				}
 				let sIdx = 0; let lIdx = 0; 
 				return treads.map((t, idx) => (
 				<group key={idx} position={t.position} rotation={t.rotation}>
@@ -632,23 +655,22 @@ function Staircase3D({
 							const desiredFront = typeof wedgeFrontThicknessM === 'number' ? wedgeFrontThicknessM : (treadThickness * frontFrac);
 							const frontTh = Math.max(0.01, Math.min(treadThickness - 0.005, desiredFront));
 							const seam = 0.001; // הרחבה זעירה לסגירת חיבורים
-							// כיוון החזית לפי yaw של המקטע: +X המקומי תמיד חזית
+							// כיוון החזית לפי yaw של המקטע
 							const yaw = t.rotation[1] as number;
-							const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
-							const axisX = Math.abs(cosY) > 0.5;
-							const forwardSignBase = axisX ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
-							// בגרם הראשון נהפוך את החזית/גב כדי שהמספר 1 ייראה בתחילת המסע
-							const forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase);
-							const xFront = forwardSign * (t.run / 2);
-							const xBack = -forwardSign * (t.run / 2);
 							// צד פנימי: למדרגות לפי stepRailingSides; לפודסטים לפי landingRailingSides
 							const innerIsRight = t.isLanding
 								? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))
 								: ((typeof stepRailingSides !== 'undefined' ? (stepRailingSides[curStepIdx] ?? 'right') : 'right') === 'right');
 							const axisFromYawLocal = (Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z') as 'x' | 'z';
-							const rotateForAxis = (axisFromYawLocal === 'x');
-							const rightLocalZSign = rightLocalSignFor(yaw, axisFromYawLocal, t.isLanding);
-							const innerSignLocal = innerIsRight ? rightLocalZSign : -rightLocalZSign;
+							const { forwardSign, innerSignLocal } = computeLocalFrame({
+								yaw,
+								isLanding: t.isLanding,
+								flight: t.flight,
+								axis: axisFromYawLocal,
+								innerIsRight,
+							});
+							const xFront = forwardSign * (t.run / 2);
+							const xBack = -forwardSign * (t.run / 2);
 							const zRight = innerSignLocal * (treadWidth / 2 + seam);
 							const zLeft = -zRight;
 							const yTop = topY;
@@ -672,21 +694,21 @@ function Staircase3D({
 								</mesh>
 							);
 							// סימון חזית – ספרה 1
-							const frontMark = (
+							const frontMark = debugLabels ? (
 								<Text position={[xFront + forwardSign * 0.004, yCenterFront, 0]} rotation={[0, forwardSign > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">1</Text>
-							);
+							) : null;
 							// סימון גב – ספרה 4
-							const backMark = (
+							const backMark = debugLabels ? (
 								<Text position={[xBack - forwardSign * 0.004, yCenterBack, 0]} rotation={[0, forwardSign > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">4</Text>
-							);
+							) : null;
 							// סימון צדדים – 2 לימין (Z+), 3 לשמאל (Z-)
 							const sideCenterY = (yTop + Math.min(yBottomBack, yBottomFront)) / 2;
-							const rightMark = (
+							const rightMark = debugLabels ? (
 								<Text position={[0, sideCenterY, zRight + 0.004]} rotation={[0, 0, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
-							);
-							const leftMark = (
+							) : null;
+							const leftMark = debugLabels ? (
 								<Text position={[0, sideCenterY, zLeft - 0.004]} rotation={[0, Math.PI, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>
-							);
+							) : null;
 							// BACK at xBack
 							const back = (
 								<mesh key="back" rotation={[0, forwardSign > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} position={[xBack - forwardSign * 0.0005, yCenterBack, 0]} receiveShadow>
@@ -758,22 +780,22 @@ function Staircase3D({
 							const backTh = treadThickness;
 							const frontEdgeTh = backTh; // חזית אחידה (אין C)
 							const seam = 0.001;
-							// כיוון החזית לפי yaw של המקטע: +X המקומי תמיד חזית
+							// כיוון החזית לפי yaw של המקטע
 							const yaw = t.rotation[1] as number;
-							const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
-							const axisX = Math.abs(cosY) > 0.5;
-							const forwardSignBase = axisX ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
-							const forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase);
-							const xFront = forwardSign * (t.run / 2);
-							const xBack = -forwardSign * (t.run / 2);
 							// צד פנימי: למדרגות לפי stepRailingSides; לפודסטים לפי landingRailingSides
 							const innerIsRight = t.isLanding
 								? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))
 								: ((typeof stepRailingSides !== 'undefined' ? (stepRailingSides[curStepIdx] ?? 'right') : 'right') === 'right');
 							const axis = axisFromYaw(yaw);
-							const rotateForAxis = (axis === 'x');
-							const rightLocalZSign = rightLocalSignFor(yaw, axis, t.isLanding);
-							const innerSignLocal = innerIsRight ? rightLocalZSign : -rightLocalZSign;
+							const { forwardSign, innerSignLocal } = computeLocalFrame({
+								yaw,
+								isLanding: t.isLanding,
+								flight: t.flight,
+								axis,
+								innerIsRight,
+							});
+							const xFront = forwardSign * (t.run / 2);
+							const xBack = -forwardSign * (t.run / 2);
 							const zRight = innerSignLocal * (treadWidth / 2 + seam);
 							const zLeft = -zRight;
 							const yTop = topY;
@@ -795,21 +817,21 @@ function Staircase3D({
 								</mesh>
 							);
 							// סימון חזית – ספרה 1
-							const frontMark = (
+							const frontMark = debugLabels ? (
 								<Text position={[xFront + forwardSign * 0.004, (yTop + yBottomFrontEdge)/2, 0]} rotation={[0, forwardSign > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">1</Text>
-							);
+							) : null;
 							// סימון גב – ספרה 4
-							const backMark = (
+							const backMark = debugLabels ? (
 								<Text position={[xBack - forwardSign * 0.004, (yTop + yBottomBack)/2, 0]} rotation={[0, forwardSign > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">4</Text>
-							);
+							) : null;
 							// סימון צדדים – 2 לימין (Z+), 3 לשמאל (Z-)
 							const sideCenterY = (yTop + yBottomBack) / 2;
-							const rightMark = (
+							const rightMark = debugLabels ? (
 								<Text position={[0, sideCenterY, zRight + 0.004]} rotation={[0, 0, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
-							);
-							const leftMark = (
+							) : null;
+							const leftMark = debugLabels ? (
 								<Text position={[0, sideCenterY, zLeft - 0.004]} rotation={[0, Math.PI, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>
-							);
+							) : null;
 
 							// BOTTOM – שלושה משולשים לאורך: קווי שבירה ממרכז החזית אל שתי פינות הגב
 							const bottom = (() => {
@@ -992,22 +1014,19 @@ function Staircase3D({
 					{boxModel === 'rect' && (() => {
 						const curStepIdx = !t.isLanding ? (sIdx++) : -1;
 						const yaw = t.rotation[1] as number;
-						const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
 						const axis = (Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z') as 'x' | 'z';
-						const forwardSignBase = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
-						// יישור להתנהגות דגמי wedge/ridge: היפוך חד‑פעמי בגרם הראשון כך ש"1" יופיע בתחילת המסע
-						const forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase);
 						// צד פנימי: למדרגות לפי stepRailingSides; לפודסטים לפי landingRailingSides
 						const innerIsRight = t.isLanding
 							? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))
 							: ((typeof stepRailingSides !== 'undefined' ? (stepRailingSides[curStepIdx] ?? 'right') : 'right') === 'right');
-						// מיפוי "ימין" אחיד באמצעות העזר הגנרי (כמו בדגמי wedge/ridge)
-						let rightLocalSign = rightLocalSignFor(yaw, axis, t.isLanding);
-						const innerSignLocal = innerIsRight ? rightLocalSign : -rightLocalSign;
-						// יישור עקבי: חזית/גב מסובבים במקטעי X; צדדים מסובבים במקטעי Z
-						const rotateFrontBack = (axis === 'x');
-						// בדגם rect – כמו אלכסוני/רכס: פאות הצד מסתובבות כאשר ציר הריצה הוא Z
-						const rotateSides = (axis === 'z');
+						// שימוש בעזר מרוכז למסגרת המקומית
+						const { forwardSign, innerSignLocal, rotateFrontBack, rotateSides } = computeLocalFrame({
+							yaw,
+							isLanding: t.isLanding,
+							flight: t.flight,
+							axis,
+							innerIsRight,
+						});
 						const matFrontBack = (flipU: boolean = false) => {
 							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 							const ft = buildFaceTextures(treadWidth, treadThickness, rotateFrontBack, flipU);
@@ -1031,12 +1050,12 @@ function Staircase3D({
 										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
 										{matFrontBack(forwardSign < 0)}
 									</mesh>
-									<Text position={[frontX + forwardSign * 0.004, 0, 0]} rotation={[0, frontRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">1</Text>
+									{debugLabels ? <Text position={[frontX + forwardSign * 0.004, 0, 0]} rotation={[0, frontRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">1</Text> : null}
 									<mesh rotation={[0, backRotY, 0]} position={[backX, 0, 0]} receiveShadow>
 										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
 										{matFrontBack(forwardSign > 0)}
 									</mesh>
-									<Text position={[backX - forwardSign * 0.004, 0, 0]} rotation={[0, backRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">4</Text>
+									{debugLabels ? <Text position={[backX - forwardSign * 0.004, 0, 0]} rotation={[0, backRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">4</Text> : null}
 									{/* צדדים לאורך Z */}
 									<mesh rotation={[0, 0, 0]} position={[0, 0, treadWidth / 2 + eps]} receiveShadow>
 										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
@@ -1047,8 +1066,8 @@ function Staircase3D({
 									{matSides(forwardSign > 0)}
 									</mesh>
 									{/* תיוג 2=פנימי, 3=חיצוני */}
-									<Text position={[0, 0, innerSignLocal * (treadWidth / 2 + 0.004)]} rotation={[0, innerSignLocal > 0 ? 0 : Math.PI, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
-									<Text position={[0, 0, -innerSignLocal * (treadWidth / 2 + 0.004)]} rotation={[0, innerSignLocal > 0 ? Math.PI : 0, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>
+									{debugLabels ? <Text position={[0, 0, innerSignLocal * (treadWidth / 2 + 0.004)]} rotation={[0, innerSignLocal > 0 ? 0 : Math.PI, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text> : null}
+									{debugLabels ? <Text position={[0, 0, -innerSignLocal * (treadWidth / 2 + 0.004)]} rotation={[0, innerSignLocal > 0 ? Math.PI : 0, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text> : null}
 								</>
 							);
 						}

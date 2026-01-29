@@ -4191,7 +4191,7 @@ function LivePageInner() {
 									hitech={box === 'hitech'}
 									hitechPlateThickness={0.012}
 									hitechPlateHeight={0.27}
-									hitechPlateTopOffsetM={0.06}
+									hitechPlateTopOffsetM={0.03}
 									hitechPlateInsetFromEdge={0.03}
 									glassTone={glassTone}
 									stepRailingStates={stepRailing}

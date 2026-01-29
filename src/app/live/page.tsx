@@ -1158,6 +1158,66 @@ function Staircase3D({
 			{/* דגם 'הייטק' – הלוחות הוסרו לפי בקשתך; נבנה מחדש בהמשך */}
 			{null}
 
+			{/* דגם 'הייטק' – קווי עזר: גרם 1 בלבד
+			    קו A: חיבור כל נקודות 4 (כולל פודסט ראשון)
+			    קו B: חיבור כל נקודות 7 (ללא פודסט ראשון) */}
+			{hitech ? (() => {
+				// אסוף מדרגות של גרם ראשון (flight=0)
+				const flightIdx = 0;
+				const cosSin = (yaw: number) => ({ c: Math.cos(yaw), s: Math.sin(yaw) });
+				const pts4: number[] = [];
+				const pts7: number[] = [];
+				for (let i = 0; i < treads.length; i++) {
+					const t = treads[i];
+					if (t.flight !== flightIdx) continue;
+					const yaw = t.rotation[1] as number;
+					const { c, s } = cosSin(yaw);
+					const dx = t.run / 2;
+					const dz = treadWidth / 2;
+					// נקודה 4 – עליונה שמאל-קדימה: (-dx, +dz, yTop)
+					{
+						const lx = -dx, lz = dz;
+						const rx = lx * c - lz * s;
+						const rz = lx * s + lz * c;
+						const wx = t.position[0] + rx;
+						const wy = t.position[1] + treadThickness / 2;
+						const wz = t.position[2] + rz;
+						pts4.push(wx, wy, wz);
+					}
+					// נקודה 7 – תחתונה ימין-קדימה: (+dx, +dz, yBot) – רק אם לא פודסט
+					if (!t.isLanding) {
+						const lx = dx, lz = dz;
+						const rx = lx * c - lz * s;
+						const rz = lx * s + lz * c;
+						const wx = t.position[0] + rx;
+						const wy = t.position[1] - treadThickness / 2;
+						const wz = t.position[2] + rz;
+						pts7.push(wx, wy, wz);
+					}
+				}
+				if (pts4.length === 0 && pts7.length === 0) return null;
+				return (
+					<group>
+						{pts4.length >= 6 && (
+							<line>
+								<bufferGeometry attach="geometry">
+									<bufferAttribute attach="attributes-position" args={[new Float32Array(pts4), 3]} />
+								</bufferGeometry>
+								<lineBasicMaterial attach="material" color="#1f2937" linewidth={1} />
+							</line>
+						)}
+						{pts7.length >= 6 && (
+							<line>
+								<bufferGeometry attach="geometry">
+									<bufferAttribute attach="attributes-position" args={[new Float32Array(pts7), 3]} />
+								</bufferGeometry>
+								<lineBasicMaterial attach="material" color="#ef4444" linewidth={1} />
+							</line>
+						)}
+					</group>
+				);
+			})() : null}
+
 			{/* מעקה זכוכית – קטעים רציפים בקו אלכסוני */}
 			{(() => {
 				if (railingKind !== 'glass') return null;

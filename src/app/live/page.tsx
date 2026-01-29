@@ -1122,7 +1122,7 @@ function Staircase3D({
 				};
 				const byFlight = new Map<number, Acc>();
 				treads.forEach(t => {
-					if (t.isLanding) return;
+					// כולל פודסטים – הלוח רציף גם בהם
 					const acc = byFlight.get(t.flight) || {
 						axis: t.axis,
 						yaw: t.rotation[1] as number,
@@ -1164,8 +1164,8 @@ function Staircase3D({
 				const plateTh = typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012;
 				const plateH = typeof hitechPlateHeight === 'number' ? hitechPlateHeight : 0.27;
 				const topOff = typeof hitechPlateTopOffsetM === 'number' ? hitechPlateTopOffsetM : 0.06;
-				const inset = typeof hitechPlateInsetFromEdge === 'number' ? hitechPlateInsetFromEdge : 0.03;
-				const zOffsetAbs = (treadWidth / 2) - inset - plateTh / 2;
+				const inset = typeof hitechPlateInsetFromEdge === 'number' ? hitechPlateInsetFromEdge : 0.0;
+				const zOffsetAbs = (treadWidth / 2) - inset - plateTh / 2; // הצמדה לפאה החיצונית
 				const plateColor = (materialKind === 'metal' && typeof materialSolidColor === 'string' && materialSolidColor)
 					? (materialSolidColor as string)
 					: '#4a4a4a';
@@ -1192,7 +1192,8 @@ function Staircase3D({
 					const pos: [number, number, number] = axis === 'x' ? [centerAlong, plateCY, constCoord] : [constCoord, plateCY, centerAlong];
 					nodes.push(
 						<group key={`pl-${axis}-${centerAlong.toFixed(3)}`} position={pos} rotation={[0, yaw, 0]}>
-							<group rotation={axis === 'x' ? [0, 0, pitch] : [pitch, 0, 0]}>
+							{/* סיבוב שיפוע תמיד סביב הציר המקומי Z של הלוח */}
+							<group rotation={[0, 0, pitch]}>
 							<mesh position={[0, 0, zOffsetAbs]} castShadow receiveShadow>
 								<boxGeometry args={[len, plateH, plateTh]} />
 								{mats}

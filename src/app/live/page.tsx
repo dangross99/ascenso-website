@@ -519,7 +519,9 @@ function Staircase3D({
 
 		const mk = (base: any) => {
 			const t = base.clone();
-			t.wrapS = t.wrapT = ClampToEdgeWrapping;
+			// כאשר יש היפוך בציר כלשהו, חייבים RepeatWrapping כדי למנוע "פסים" משוליים
+			const requiresRepeat = flipU || flipV;
+			t.wrapS = t.wrapT = requiresRepeat ? RepeatWrapping : ClampToEdgeWrapping;
 			t.repeat.set(repU, repV);
 			t.offset.set(offU, offV);
 			// סיבוב אופציונלי של הטקסטורה סביב המרכז כדי ליישר כיוון

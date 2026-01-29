@@ -1117,6 +1117,7 @@ function Staircase3D({
 					sumConst: number; // X קבוע כאשר axis==='z', אחרת Z קבוע
 					refAlong?: number; // נקודת ייחוס לאורך (מרכז מדרגה)
 					refTopY?: number;  // גובה פני המדרך בנקודת הייחוס
+					refConst?: number; // קואורדינטה קבועה בנקודת הייחוס
 					count: number;
 				};
 				const byFlight = new Map<number, Acc>();
@@ -1141,6 +1142,7 @@ function Staircase3D({
 						if (typeof acc.refAlong !== 'number') {
 							acc.refAlong = t.position[0];
 							acc.refTopY = t.position[1] + treadThickness / 2;
+							acc.refConst = t.position[2];
 						}
 					} else {
 						const s = t.position[2] - t.run / 2;
@@ -1151,6 +1153,7 @@ function Staircase3D({
 						if (typeof acc.refAlong !== 'number') {
 							acc.refAlong = t.position[2];
 							acc.refTopY = t.position[1] + treadThickness / 2;
+							acc.refConst = t.position[0];
 						}
 					}
 					acc.sumTopY += (t.position[1] + treadThickness / 2);
@@ -1176,7 +1179,7 @@ function Staircase3D({
 					const yaw = acc.yaw;
 					const axis = acc.axis;
 					const avgTopY = acc.count > 0 ? (acc.sumTopY / acc.count) : 0;
-					const constCoord = acc.count > 0 ? (acc.sumConst / acc.count) : 0;
+					const constCoord = (typeof acc.refConst === 'number') ? acc.refConst : (acc.count > 0 ? (acc.sumConst / acc.count) : 0);
 					let plateCY: number;
 					if (typeof acc.refAlong === 'number' && typeof acc.refTopY === 'number') {
 						const slopePerM = riser / treadDepth;

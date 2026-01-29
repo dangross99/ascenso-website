@@ -1393,10 +1393,24 @@ function Staircase3D({
 						{/* פלטה A – רצועה מדויקת בין קווי האופסט (מילוי משולשים) */}
 						{bottomStepOff.length > 0 && topStepOff.length > 0 && (() => {
 							const baseTop: Array<[number, number, number]> = closeP4 ? [...topStepOff, closeP4] : [...topStepOff];
-							// התחלת הרייל העליון מהנקודה המוזחת – גוזרים את החלק שאינו בין הקווים
-							const topRail: Array<[number, number, number]> = firstP4SideShift
-								? [firstP4SideShift, ...baseTop.slice(1)]
-								: baseTop;
+							// הוסף קטע צדדי בתחילת הרייל: נקודת 4 המקורית → נקודת הסט הצידי,
+							// ואז נקודה שלישית שממשיכה במדויק את שיפוע הרייל (וקטור מקביל ל‑baseTop[1]-baseTop[0])
+							let topRail: Array<[number, number, number]> = baseTop;
+							if (firstP4SideShift && firstP4 && baseTop.length >= 2) {
+								const dx = baseTop[1][0] - baseTop[0][0];
+								const dy = baseTop[1][1] - baseTop[0][1];
+								const dz = baseTop[1][2] - baseTop[0][2];
+								const len = Math.hypot(dx, dy, dz) || 1;
+								const dir: [number, number, number] = [dx / len, dy / len, dz / len];
+								const p2: [number, number, number] = [
+									firstP4SideShift[0] + dir[0] * len,
+									firstP4SideShift[1] + dir[1] * len,
+									firstP4SideShift[2] + dir[2] * len,
+								];
+								topRail = [firstP4 as [number, number, number], firstP4SideShift, p2, ...baseTop.slice(2)];
+							} else if (firstP4SideShift && firstP4) {
+								topRail = [firstP4 as [number, number, number], firstP4SideShift, ...baseTop.slice(1)];
+							}
 							const botRail: Array<[number, number, number]> = [...bottomStepOff];
 							// בחר אורך מקסימלי – אם מסילה אחת ארוכה יותר (למשל כוללת פודסט), נשכפל את הנקודה האחרונה של הקצרה
 							const count = Math.max(topRail.length, botRail.length);
@@ -1404,9 +1418,7 @@ function Staircase3D({
 							const pos: number[] = [];
 							const idx: number[] = [];
 							const pick = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
-							// ממלאים את כל המקטעים מהריילים המתואמים
-							const startIdx = 0;
-							for (let i = startIdx; i < count - 1; i++) {
+							for (let i = 0; i < count - 1; i++) {
 								const t1 = pick(topRail, i), b1 = pick(botRail, i);
 								const t2 = pick(topRail, i + 1), b2 = pick(botRail, i + 1);
 								const baseIndex = pos.length / 3;

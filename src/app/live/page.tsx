@@ -1172,7 +1172,6 @@ function Staircase3D({
 				const offsetY = 0.03; // 30 מ״מ
 				let firstP4: [number, number, number] | null = null;
 				let firstP7: [number, number, number] | null = null;
-				let firstYaw: number | null = null;
 				let closeP4: [number, number, number] | null = null; // נקודת 4 (פודסט ראשון) באופסט
 				let closeP7: [number, number, number] | null = null; // נקודת 7 (מדרגה לפני הפודסט) באופסט
 				let closeP8: [number, number, number] | null = null; // נקודת 8 (מדרגה לפני הפודסט) באופסט
@@ -1208,7 +1207,7 @@ function Staircase3D({
 						const wz = t.position[2] + rz;
 						p7w = [wx, wy - offsetY, wz];
 						pts7Off.push(p7w[0], p7w[1], p7w[2]);
-						if (!firstP7) { firstP7 = p7w; firstYaw = yaw; }
+						if (!firstP7) firstP7 = p7w;
 						bottomStepOff.push(p7w);
 						// אם המדרגה הבאה היא פודסט – זו המדרגה לפני הפודסט
 						const next = treads[i + 1];
@@ -1275,45 +1274,45 @@ function Staircase3D({
 						{firstP4 && firstP7 && (
 							<group>
 								{(() => {
-									// וקטור אופסט צדדי (30 מ״מ) – ניצב למסלול ההליכה, כלפי חוץ (לכיוון +dz המקומי)
-									const n = (() => {
-										const y = (firstYaw ?? 0);
-										const nx = -Math.sin(y);
-										const nz =  Math.cos(y);
-										const mag = Math.hypot(nx, nz) || 1;
-										return [nx / mag, nz / mag] as const;
-									})();
-									const sideOff = 0.03;
-									const f4x = firstP4[0] + n[0] * sideOff;
-									const f4z = firstP4[2] + n[1] * sideOff;
-									const f7x = firstP7[0] + n[0] * sideOff;
-									const f7z = firstP7[2] + n[1] * sideOff;
-									// קטעים אופקיים קצרים מהנקודות אל האופסט הצדדי
+									// אופסט צידי בתוך מישור הפלטה (רק בתחתית, מדרגה ראשונה)
+									// u: כיוון הגרם לפי הקטע הראשון (ניחוש טוב: וקטור בין firstP4 ל‑נקודה הבאה ברייל העליון, ואם לא קיים – לפי פער ל‑closeP4)
+									let ux = 1, uy = 0, uz = 0;
+									if (pts4Off.length >= 6) {
+										const x0 = firstP4[0], y0 = firstP4[1], z0 = firstP4[2];
+										const x1 = pts4Off[3], y1 = pts4Off[4], z1 = pts4Off[5];
+										ux = x1 - x0; uy = y1 - y0; uz = z1 - z0;
+									}
+									const umag = Math.hypot(ux, uy, uz) || 1;
+									ux /= umag; uy /= umag; uz /= umag;
+									// w: כיוון הרוחב (עליון-תחתון) במישור הפלטה
+									const wx = firstP4[0] - firstP7[0];
+									const wy = firstP4[1] - firstP7[1];
+									const wz = firstP4[2] - firstP7[2];
+									// נורמל למישור
+									const nx = uy * wz - uz * wy;
+									const ny = uz * wx - ux * wz;
+									const nz = ux * wy - uy * wx;
+									const nmag = Math.hypot(nx, ny, nz) || 1;
+									const nxN = nx / nmag, nyN = ny / nmag, nzN = nz / nmag;
+									// כיוון צד במישור הפלטה (ניצב ל‑u ושייך למישור): s = n × u
+									const sx = nyN * uz - nzN * uy;
+									const sy = nzN * ux - nxN * uz;
+									const sz = nxN * uy - nyN * ux;
+									const smag = Math.hypot(sx, sy, sz) || 1;
+									const sxN = sx / smag, syN = sy / smag, szN = sz / smag;
+									const side = 0.03; // 30 מ״מ
+									const f4x = firstP4[0] + sxN * side;
+									const f4y = firstP4[1] + syN * side;
+									const f4z = firstP4[2] + szN * side;
+									const f7x = firstP7[0] + sxN * side;
+									const f7y = firstP7[1] + syN * side;
+									const f7z = firstP7[2] + szN * side;
 									return (
 										<group>
 											<line>
 												<bufferGeometry attach="geometry">
 													<bufferAttribute attach="attributes-position" args={[new Float32Array([
-														firstP4[0], firstP4[1], firstP4[2],
-														f4x,        firstP4[1], f4z,
-													]), 3]} />
-												</bufferGeometry>
-												<lineBasicMaterial attach="material" color="#6b7280" linewidth={1} />
-											</line>
-											<line>
-												<bufferGeometry attach="geometry">
-													<bufferAttribute attach="attributes-position" args={[new Float32Array([
-														firstP7[0], firstP7[1], firstP7[2],
-														f7x,        firstP7[1], f7z,
-													]), 3]} />
-												</bufferGeometry>
-												<lineBasicMaterial attach="material" color="#f87171" linewidth={1} />
-											</line>
-											{/* ירידה אנכית מהרוחב הצדדי החדש */}
-											<line>
-												<bufferGeometry attach="geometry">
-													<bufferAttribute attach="attributes-position" args={[new Float32Array([
-														f4x, firstP4[1], f4z,
+														f4x, f4y, f4z,
 														f4x, floorBounds.y, f4z,
 													]), 3]} />
 												</bufferGeometry>
@@ -1322,13 +1321,12 @@ function Staircase3D({
 											<line>
 												<bufferGeometry attach="geometry">
 													<bufferAttribute attach="attributes-position" args={[new Float32Array([
-														f7x, firstP7[1], f7z,
+														f7x, f7y, f7z,
 														f7x, floorBounds.y, f7z,
 													]), 3]} />
 												</bufferGeometry>
 												<lineBasicMaterial attach="material" color="#f87171" linewidth={1} />
 											</line>
-											{/* חיבור על הרצפה בין שתי הנקודות בהיסט צדדי */}
 											<line>
 												<bufferGeometry attach="geometry">
 													<bufferAttribute attach="attributes-position" args={[new Float32Array([
@@ -1338,14 +1336,13 @@ function Staircase3D({
 												</bufferGeometry>
 												<lineBasicMaterial attach="material" color="#111827" linewidth={1} />
 											</line>
-											{/* סגירת משטח לתחתית לפי נקודות ההיסט הצדדי */}
 											<mesh castShadow receiveShadow>
 												<bufferGeometry attach="geometry">
 													<bufferAttribute attach="attributes-position" args={[new Float32Array([
-														firstP4[0], firstP4[1], firstP4[2],
-														firstP7[0], firstP7[1], firstP7[2],
-														f4x,        floorBounds.y, f4z,
-														f7x,        floorBounds.y, f7z,
+														f4x, f4y, f4z,
+														f7x, f7y, f7z,
+														f4x, floorBounds.y, f4z,
+														f7x, floorBounds.y, f7z,
 													]), 3]} />
 													<bufferAttribute attach="index" args={[new Uint32Array([0,1,2, 2,1,3]), 1]} />
 												</bufferGeometry>

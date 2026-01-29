@@ -1169,7 +1169,7 @@ function Staircase3D({
 				const pts7Off: number[] = [];
 				const topStepOff: Array<[number, number, number]> = [];    // נקודות 4‑offset לכל מדרגה (ללא פודסט)
 				const bottomStepOff: Array<[number, number, number]> = []; // נקודות 7‑offset לכל מדרגה
-				const offsetY = 0.05; // 50 מ״מ
+				const offsetY = 0.03; // 30 מ״מ
 				let firstP4: [number, number, number] | null = null;
 				let firstP7: [number, number, number] | null = null;
 				let closeP4: [number, number, number] | null = null; // נקודת 4 (פודסט ראשון) באופסט

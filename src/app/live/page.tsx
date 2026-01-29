@@ -995,17 +995,15 @@ function Staircase3D({
 						const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
 						const axis = (Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z') as 'x' | 'z';
 						const forwardSignBase = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
-						// כיוון חזית לפי כיוון ההליכה בפועל במקטע הנוכחי (ללא היפוך תלוי‑גרם)
-						const forwardSign = forwardSignBase;
+						// יישור להתנהגות דגמי wedge/ridge: היפוך חד‑פעמי בגרם הראשון כך ש"1" יופיע בתחילת המסע
+						const forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase);
 						// צד פנימי: למדרגות לפי stepRailingSides; לפודסטים לפי landingRailingSides
 						const innerIsRight = t.isLanding
 							? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))
 							: ((typeof stepRailingSides !== 'undefined' ? (stepRailingSides[curStepIdx] ?? 'right') : 'right') === 'right');
-						// מיפוי "ימין" מקומי לדגם rect בלבד – ללא היפוך מיוחד בפודסטים (עקביות בין גרמים)
-						const rightLocalZSign = (axis === 'x'
-							? ((Math.cos(yaw) >= 0 ? -1 : 1) as 1 | -1)
-							: ((Math.sin(yaw) >= 0 ? 1 : -1) as 1 | -1));
-						const innerSignLocal = innerIsRight ? rightLocalZSign : -rightLocalZSign;
+						// מיפוי "ימין" אחיד באמצעות העזר הגנרי (כמו בדגמי wedge/ridge)
+						let rightLocalSign = rightLocalSignFor(yaw, axis, t.isLanding);
+						const innerSignLocal = innerIsRight ? rightLocalSign : -rightLocalSign;
 						// יישור עקבי: חזית/גב מסובבים במקטעי X; צדדים מסובבים במקטעי Z
 						const rotateFrontBack = (axis === 'x');
 						// בדגם rect – כמו אלכסוני/רכס: פאות הצד מסתובבות כאשר ציר הריצה הוא Z
@@ -1020,7 +1018,8 @@ function Staircase3D({
 							const ft = buildFaceTextures(t.run, treadThickness, rotateSides, flipU);
 							return (<meshBasicMaterial map={ft.color} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 						};
-						if (axis === 'x') {
+						// ציור תמיד במערכת מקומית שבה כיוון הריצה הוא ציר X המקומי; ה‑yaw של הגרופ כבר מיישר לציר בפועל
+						{
 							const frontRotY = forwardSign > 0 ? Math.PI / 2 : -Math.PI / 2;
 							const backRotY = -frontRotY;
 							const eps = 0.0008;
@@ -1050,41 +1049,6 @@ function Staircase3D({
 									{/* תיוג 2=פנימי, 3=חיצוני */}
 									<Text position={[0, 0, innerSignLocal * (treadWidth / 2 + 0.004)]} rotation={[0, innerSignLocal > 0 ? 0 : Math.PI, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
 									<Text position={[0, 0, -innerSignLocal * (treadWidth / 2 + 0.004)]} rotation={[0, innerSignLocal > 0 ? Math.PI : 0, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>
-								</>
-							);
-						} else {
-							// במקטעי Z – כיוון החזית צריך לעקוב אחר כיוון ההליכה בפועל
-							// יישור עקבי לכל הדגמים: נשתמש ישירות ב‑forwardSign כדי ש"1" יופיע בתחילת המקטע
-							const zSign = forwardSign;
-							const frontRotY = zSign > 0 ? 0 : Math.PI;
-							const backRotY = zSign > 0 ? Math.PI : 0;
-							const eps = 0.0008;
-							const frontZ = zSign * (t.run / 2) + zSign * eps;
-							const backZ = -zSign * (t.run / 2) - zSign * eps;
-							return (
-								<>
-									<mesh rotation={[0, frontRotY, 0]} position={[0, 0, frontZ]} receiveShadow>
-										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
-										{matFrontBack(zSign < 0)}
-									</mesh>
-									<Text position={[0, 0, frontZ + zSign * 0.004]} rotation={[0, frontRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">1</Text>
-									<mesh rotation={[0, backRotY, 0]} position={[0, 0, backZ]} receiveShadow>
-										<planeGeometry args={[treadWidth, treadThickness, 8, 8]} />
-										{matFrontBack(zSign > 0)}
-									</mesh>
-									<Text position={[0, 0, backZ - zSign * 0.004]} rotation={[0, backRotY, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">4</Text>
-									{/* צדדים לאורך X */}
-									<mesh rotation={[0, Math.PI / 2, 0]} position={[treadWidth / 2 + eps, 0, 0]} receiveShadow>
-										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
-									{matSides(zSign < 0)}
-									</mesh>
-									<mesh rotation={[0, -Math.PI / 2, 0]} position={[-treadWidth / 2 - eps, 0, 0]} receiveShadow>
-										<planeGeometry args={[t.run, treadThickness, 8, 8]} />
-									{matSides(zSign > 0)}
-									</mesh>
-									{/* תיוג 2=פנימי, 3=חיצוני */}
-									<Text position={[innerSignLocal * (treadWidth / 2 + 0.004), 0, 0]} rotation={[0, innerSignLocal > 0 ? Math.PI / 2 : -Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">2</Text>
-									<Text position={[-innerSignLocal * (treadWidth / 2 + 0.004), 0, 0]} rotation={[0, innerSignLocal > 0 ? -Math.PI / 2 : Math.PI / 2, 0]} fontSize={0.08} color="#111111" anchorX="center" anchorY="middle">3</Text>
 								</>
 							);
 						}

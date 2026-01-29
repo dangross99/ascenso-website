@@ -1104,17 +1104,24 @@ function Staircase3D({
 
 					{/* דיבוג "הייטק": מספרי קודקודים על כל מדרגה */}
 					{hitech && !t.isLanding ? (() => {
-						const y = treadThickness / 2 + 0.015;
+						const yTop = treadThickness / 2 + 0.015;
+						const yBot = -treadThickness / 2 - 0.015;
 						const dx = t.run / 2;
 						const dz = treadWidth / 2;
 						const fontSize = 0.045;
 						const color = '#e11d48';
 						return (
 							<group>
-								<Text position={[-dx, y, -dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">1</Text>
-								<Text position={[ dx, y, -dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">2</Text>
-								<Text position={[ dx, y,  dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">3</Text>
-								<Text position={[-dx, y,  dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">4</Text>
+								{/* עליונים 1‑4 */}
+								<Text position={[-dx, yTop, -dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">1</Text>
+								<Text position={[ dx, yTop, -dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">2</Text>
+								<Text position={[ dx, yTop,  dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">3</Text>
+								<Text position={[-dx, yTop,  dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">4</Text>
+								{/* תחתונים 5‑8 */}
+								<Text position={[-dx, yBot, -dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">5</Text>
+								<Text position={[ dx, yBot, -dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">6</Text>
+								<Text position={[ dx, yBot,  dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">7</Text>
+								<Text position={[-dx, yBot,  dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">8</Text>
 							</group>
 						);
 					})() : null}

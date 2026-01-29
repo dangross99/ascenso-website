@@ -1172,6 +1172,8 @@ function Staircase3D({
 				let firstP7: [number, number, number] | null = null;
 				let closeP4: [number, number, number] | null = null; // המדרגה לפני הפודסט
 				let closeP7: [number, number, number] | null = null;
+				let closeYaw: number | null = null;
+				let closeAxis: 'x' | 'z' | null = null;
 				for (let i = 0; i < treads.length; i++) {
 					const t = treads[i];
 					if (t.flight !== flightIdx) continue;
@@ -1209,6 +1211,8 @@ function Staircase3D({
 						if (next && next.flight === flightIdx && next.isLanding) {
 							closeP4 = p4w;
 							closeP7 = p7w;
+							closeYaw = yaw;
+							closeAxis = t.axis;
 						}
 					}
 				}
@@ -1243,6 +1247,38 @@ function Staircase3D({
 								<lineBasicMaterial attach="material" color="#10b981" linewidth={1} />
 							</line>
 						)}
+						{/* קו ניצב אמיתי בין שני הקווים המקבילים במדרגה לפני הפודסט */}
+						{closeP4 && closeP7 && closeYaw !== null && closeAxis && (() => {
+							// וקטור כיוון הגרם (יחידה)
+							const ux = closeAxis === 'x' ? Math.cos(closeYaw) : Math.sin(closeYaw);
+							const uz = closeAxis === 'x' ? Math.sin(closeYaw) : Math.cos(closeYaw);
+							const mag = Math.hypot(ux, uz);
+							const uxN = ux / (mag || 1);
+							const uzN = uz / (mag || 1);
+							// וקטור בין שתי הנקודות
+							const dx0 = closeP7[0] - closeP4[0];
+							const dy0 = closeP7[1] - closeP4[1];
+							const dz0 = closeP7[2] - closeP4[2];
+							// רכיב מקביל לגרם
+							const dot = dx0 * uxN + dz0 * uzN;
+							const px = dot * uxN;
+							const pz = dot * uzN;
+							// הרכיב הניצב (הקטע הקצר ביותר בין הישרים)
+							const perpX = dx0 - px;
+							const perpY = dy0; // אין רכיב לאורך u בציר Y
+							const perpZ = dz0 - pz;
+							return (
+								<line>
+									<bufferGeometry attach="geometry">
+										<bufferAttribute attach="attributes-position" args={[new Float32Array([
+											closeP4[0], closeP4[1], closeP4[2],
+											closeP4[0] + perpX, closeP4[1] + perpY, closeP4[2] + perpZ,
+										]), 3]} />
+									</bufferGeometry>
+									<lineBasicMaterial attach="material" color="#06b6d4" linewidth={2} />
+								</line>
+							);
+						})()}
 						{/* הארכה למטה עד הרצפה מהמדרגה הראשונה וסגירה ביניהן */}
 						{firstP4 && firstP7 && (
 							<group>

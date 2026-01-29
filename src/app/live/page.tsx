@@ -1167,7 +1167,7 @@ function Staircase3D({
 				const cosSin = (yaw: number) => ({ c: Math.cos(yaw), s: Math.sin(yaw) });
 				const pts4Off: number[] = [];
 				const pts7Off: number[] = [];
-				const offsetY = 0.06; // 60 מ״מ
+				const offsetY = 0.05; // 50 מ״מ
 				let firstP4: [number, number, number] | null = null;
 				let firstP7: [number, number, number] | null = null;
 				let closeP4: [number, number, number] | null = null; // נקודת 4 (פודסט ראשון) באופסט
@@ -1265,7 +1265,7 @@ function Staircase3D({
 							// המרחק בין קודקוד 4 המקורי (ללא אופסט) לבין קצה עליון של הקו הירוק
 							// שווה לאופסט (60 מ״מ) – מציגים גם אותו
 							const label = `${(len*1000).toFixed(0)} מ״מ`;
-							const label2 = `Δy=60 מ״מ`;
+							const label2 = `Δy=${(offsetY*1000).toFixed(0)} מ״מ`;
 							return (
 								<group>
 									<Text position={[mx, my + 0.04, mz]} fontSize={0.06} color="#0f766e" anchorX="center" anchorY="middle">{label}</Text>

@@ -1241,6 +1241,7 @@ function Staircase3D({
 				}
 				// אופסט צידי בתוך מישור הפלטה – מחושב רק עבור נקודת 4 של המדרגה הראשונה (מניעת "שפיץ")
 				let firstP4SideShift: [number, number, number] | null = null;
+				let firstSideShiftVec: [number, number, number] | null = null;
 				if (firstP4 && firstP7) {
 					// u: כיוון הרייל (ניחש מהמדרגה השנייה אם קיימת, אחרת מהyaw של הראשונה)
 					let ux = 1, uy = 0, uz = 0;
@@ -1268,7 +1269,8 @@ function Staircase3D({
 					const sm = Math.hypot(sx, sy, sz) || 1; sx /= sm; sy /= sm; sz /= sm;
 					const side = 0.03;
 					// אופסט צידי נטו (רק ב‑XZ), ללא שינוי בגובה Y
-					firstP4SideShift = [firstP4[0] + sx * side, firstP4[1], firstP4[2] + sz * side];
+					firstSideShiftVec = [sx * side, 0, sz * side];
+					firstP4SideShift = [firstP4[0] + firstSideShiftVec[0], firstP4[1], firstP4[2] + firstSideShiftVec[2]];
 				}
 
 				if (pts4Off.length === 0 && pts7Off.length === 0) return null;
@@ -1392,7 +1394,17 @@ function Staircase3D({
 						{bottomStepOff.length > 0 && topStepOff.length > 0 && (() => {
 							const topRail: Array<[number, number, number]> = closeP4 ? [...topStepOff, closeP4] : [...topStepOff];
 							// החלף את נקודת ההתחלה של הרייל העליון בהיסט הצידי כדי לבטל "שפיץ"
-							if (firstP4SideShift) topRail[0] = firstP4SideShift;
+							if (firstP4SideShift) {
+								topRail[0] = firstP4SideShift;
+								// כדי למנוע קיפול חד בתחילת הרייל – הזז גם את הנקודה הבאה באותו כיוון צדדי (ללא שינוי Y)
+								if (firstSideShiftVec && topRail.length > 1) {
+									topRail[1] = [
+										topRail[1][0] + firstSideShiftVec[0],
+										topRail[1][1], // שמור על Y המקורי
+										topRail[1][2] + firstSideShiftVec[2],
+									];
+								}
+							}
 							const botRail: Array<[number, number, number]> = [...bottomStepOff];
 							// בחר אורך מקסימלי – אם מסילה אחת ארוכה יותר (למשל כוללת פודסט), נשכפל את הנקודה האחרונה של הקצרה
 							const count = Math.max(topRail.length, botRail.length);

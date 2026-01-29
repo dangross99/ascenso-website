@@ -995,8 +995,8 @@ function Staircase3D({
 						const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
 						const axis = (Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z') as 'x' | 'z';
 						const forwardSignBase = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
-						// היפוך כיוון כך ש‑1 יופיע במקום 4 ו‑2 במקום 3 (תואם אלכסוני/רכס)
-						const forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase);
+						// כיוון חזית לפי כיוון ההליכה בפועל במקטע הנוכחי (ללא היפוך תלוי‑גרם)
+						const forwardSign = forwardSignBase;
 						// צד פנימי: למדרגות לפי stepRailingSides; לפודסטים לפי landingRailingSides
 						const innerIsRight = t.isLanding
 							? (((landingRailingSides?.[lIdx++] ?? 'right') === 'right'))

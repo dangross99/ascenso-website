@@ -1470,8 +1470,10 @@ function Staircase3D({
 									idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
 								}
 							};
-							addSideStrip(topRail);
-							addSideStrip(botRail);
+							const topRailForSide = firstP4SideShift ? [firstP4SideShift, ...topRail] : topRail;
+							const botRailForSide = firstP7 ? [firstP7, ...botRail] : botRail;
+							addSideStrip(topRailForSide);
+							addSideStrip(botRailForSide);
 							// התחלה
 							{
 								const pT = (firstP4SideShift || topRail[0]);
@@ -1813,8 +1815,10 @@ function Staircase3D({
 								}
 							};
 							// דופן עליונה ותחתונה
-							addSideStrip(topRail);
-							addSideStrip(botRail);
+							const topRailForSideB = firstP4SideShift ? [firstP4SideShift, ...topRail] : topRail;
+							const botRailForSideB = firstP7 ? [firstP7, ...botRail] : botRail;
+							addSideStrip(topRailForSideB);
+							addSideStrip(botRailForSideB);
 							// דופן התחלה (קצה f4/f7)
 							{
 								const pT = (firstP4SideShift || topRail[0]);
@@ -1842,7 +1846,7 @@ function Staircase3D({
 										<bufferAttribute attach="attributes-position" args={[new Float32Array(pos), 3]} />
 										<bufferAttribute attach="index" args={[new Uint32Array(idx), 1]} />
 									</bufferGeometry>
-									<meshBasicMaterial color="#4b5563" side={2} />
+									<meshBasicMaterial color="#16a34a" side={2} />
 								</mesh>
 							);
 						})()}

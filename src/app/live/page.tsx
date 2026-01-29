@@ -1102,6 +1102,23 @@ function Staircase3D({
 					{/* מעקה זכוכית פר-מדרגה מבוטל למען פאנל רציף */}
 					{null}
 
+					{/* דיבוג "הייטק": מספרי קודקודים על כל מדרגה */}
+					{hitech && !t.isLanding ? (() => {
+						const y = treadThickness / 2 + 0.015;
+						const dx = t.run / 2;
+						const dz = treadWidth / 2;
+						const fontSize = 0.045;
+						const color = '#e11d48';
+						return (
+							<group>
+								<Text position={[-dx, y, -dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">1</Text>
+								<Text position={[ dx, y, -dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">2</Text>
+								<Text position={[ dx, y,  dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">3</Text>
+								<Text position={[-dx, y,  dz]} fontSize={fontSize} color={color} anchorX="center" anchorY="middle">4</Text>
+							</group>
+						);
+					})() : null}
+
 					{/* דגם 'הייטק' – לוחות רציפים ינוצרו מחוץ ללולאת המדרגות */}
 					{null}
 				</group>
@@ -1175,7 +1192,8 @@ function Staircase3D({
 				const pitch = Math.atan(riser / treadDepth);
 				const epsL = 0.01; // תוספת קטנה לאורך כדי לסגור רווחים
 				const nodes: React.ReactNode[] = [];
-				byFlight.forEach((acc) => {
+				const entries = Array.from(byFlight.entries());
+				entries.forEach(([flightIdx, acc]) => {
 					const len = Math.max(0.001, (acc.max - acc.min) + epsL);
 					const centerAlong = (acc.min + acc.max) / 2;
 					const yaw = acc.yaw;
@@ -1204,6 +1222,9 @@ function Staircase3D({
 								<boxGeometry args={[len, plateH, plateTh]} />
 								{mats}
 							</mesh>
+							{/* תוויות זיהוי לפלטות: P{idx}‑R/L */}
+							<Text position={[0, plateH / 2 + 0.03, zOffsetAbs]} fontSize={0.06} color="#111111" anchorX="center" anchorY="middle">{`P${flightIdx + 1}‑R`}</Text>
+							<Text position={[0, plateH / 2 + 0.03, -zOffsetAbs]} fontSize={0.06} color="#111111" anchorX="center" anchorY="middle">{`P${flightIdx + 1}‑L`}</Text>
 							</group>
 						</group>
 					);

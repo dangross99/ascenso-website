@@ -540,6 +540,8 @@ function Staircase3D({
 				t.repeat.y = -t.repeat.y;
 				t.offset.y = offV + repV;
 			}
+			// הקלה על "פס שחור" במפות עם אלפא שקופה בשוליים
+			t.premultiplyAlpha = true;
 			// מרחב צבע רק למפת צבע; מפות bump/rough נשארות לינאריות
 			// @ts-ignore
 			t.colorSpace = isColor ? SRGBColorSpace : undefined;
@@ -693,7 +695,7 @@ function Staircase3D({
 							const faceMat = (dimU: number, dimV: number, rot: boolean, flipU: boolean = false, flipV: boolean = false) => {
 								if (useSolidMat) return <meshBasicMaterial color={solidSideColor} side={2} />;
 								const ft = buildFaceTextures(dimU, dimV, rot, flipU, flipV);
-								return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />;
+								return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} transparent alphaTest={0.01} />;
 							};
 							const yCenterFront = (yTop + yBottomFront) / 2;
 							const yCenterBack = (yTop + yBottomBack) / 2;
@@ -817,7 +819,7 @@ function Staircase3D({
 							const faceMat = (dimU: number, dimV: number, rot: boolean, flipU: boolean = false, flipV: boolean = false) => {
 								if (useSolidMat) return <meshBasicMaterial color={solidSideColor} side={2} />;
 								const ft = buildFaceTextures(dimU, dimV, rot, flipU, flipV);
-								return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />;
+								return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} transparent alphaTest={0.01} />;
 							};
 
 							// FRONT אחיד

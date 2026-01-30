@@ -1723,21 +1723,26 @@ function Staircase3D({
 									// מישור אנכי דרך הקודקודים 2/6 של המדרגה הראשונה בגרם 2
 									let p2x = f7x, p2z = f7z;
 									{
-										let firstStep: typeof treads[number] | null = null;
-										for (let k = 0; k < treads.length; k++) {
+										// קח את המדרגה האחרונה של גרם 0 שמלפניה מגיע פודסט (פוסט ראשון)
+										let anchorStep: typeof treads[number] | null = null;
+										for (let k = 0; k < treads.length - 1; k++) {
 											const tt = treads[k];
-											if (tt.flight === 1 && !tt.isLanding) { firstStep = tt; break; }
+											const next = treads[k + 1];
+											if (tt.flight === 0 && !tt.isLanding && next && next.flight === 0 && next.isLanding) {
+												anchorStep = tt;
+												break;
+											}
 										}
-										if (firstStep) {
-											const yaw0 = firstStep.rotation[1] as number;
+										if (anchorStep) {
+											const yaw0 = anchorStep.rotation[1] as number;
 											const c0 = Math.cos(yaw0), s0 = Math.sin(yaw0);
-											const dx0 = firstStep.run / 2, dz0 = treadWidth / 2;
+											const dx0 = anchorStep.run / 2, dz0 = treadWidth / 2;
 											// קודקוד 2: (+dx, -dz) מקומי, מסובב לעולם
 											const lx2 = dx0, lz2 = -dz0;
 											const rx2 = lx2 * c0 - lz2 * s0;
 											const rz2 = lx2 * s0 + lz2 * c0;
-											p2x = firstStep.position[0] + rx2;
-											p2z = firstStep.position[2] + rz2;
+											p2x = anchorStep.position[0] + rx2;
+											p2z = anchorStep.position[2] + rz2;
 										}
 									}
 									const dotU = (x: [number, number, number]) => (ux * x[0] + uz * x[2]);
@@ -1826,23 +1831,26 @@ function Staircase3D({
 								const uz0 = topRail[1][2] - topRail[0][2];
 								const um0 = Math.hypot(ux0, uz0) || 1;
 								const uxn = ux0 / um0, uzn = uz0 / um0;
-								// חשב נקודת 2 של המדרגה הראשונה בגרם 2
+								// חשב נקודת 2 של המדרגה האחרונה בגרם 0 שלפניה פודסט (פוסט ראשון)
 								let p2x = firstP7[0], p2z = firstP7[2];
 								{
-									let firstStep: typeof treads[number] | null = null;
-									for (let k = 0; k < treads.length; k++) {
+									let anchorStep: typeof treads[number] | null = null;
+									for (let k = 0; k < treads.length - 1; k++) {
 										const tt = treads[k];
-										if (tt.flight === 1 && !tt.isLanding) { firstStep = tt; break; }
+										const next = treads[k + 1];
+										if (tt.flight === 0 && !tt.isLanding && next && next.flight === 0 && next.isLanding) {
+											anchorStep = tt; break;
+										}
 									}
-									if (firstStep) {
-										const yaw0 = firstStep.rotation[1] as number;
+									if (anchorStep) {
+										const yaw0 = anchorStep.rotation[1] as number;
 										const c0 = Math.cos(yaw0), s0 = Math.sin(yaw0);
-										const dx0 = firstStep.run / 2, dz0 = treadWidth / 2;
+										const dx0 = anchorStep.run / 2, dz0 = treadWidth / 2;
 										const lx2 = dx0, lz2 = -dz0;
 										const rx2 = lx2 * c0 - lz2 * s0;
 										const rz2 = lx2 * s0 + lz2 * c0;
-										p2x = firstStep.position[0] + rx2;
-										p2z = firstStep.position[2] + rz2;
+										p2x = anchorStep.position[0] + rx2;
+										p2z = anchorStep.position[2] + rz2;
 									}
 								}
 								const dotU = (x: [number, number, number]) => (uxn * x[0] + uzn * x[2]);

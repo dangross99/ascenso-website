@@ -2095,18 +2095,29 @@ function Staircase3D({
 				}
 
 				if (!endTopA || !endBotA || !startTopB || !startBotB) return null;
-				// יישור תחילת B למישור האנכי דרך קודקוד 2/6 של המדרגה הראשונה בגרם 2
-				let startTopBClip: [number, number, number] = startTopB;
-				let startBotBClip: [number, number, number] = startBotB;
+
+				// כיוון לאורך המחבר: לפי פלטה B בלבד
+				let ux = 1, uy = 0, uz = 0;
+				if (uB) {
+					ux = uB[0]; uy = uB[1]; uz = uB[2];
+					const um = Math.hypot(ux, uy, uz) || 1; ux /= um; uy /= um; uz /= um;
+				}
+
+				// Clip תחילת B למישור האנכי דרך קודקוד 2/6 של המדרגה הראשונה בגרם 2 כדי למנוע חלל חסר
+				let startTopBClip: [number, number, number] = startTopB as [number, number, number];
+				let startBotBClip: [number, number, number] = startBotB as [number, number, number];
 				(function () {
+					if (!uB) return;
 					let firstStep: typeof treads[number] | null = null;
 					for (let k = 0; k < treads.length; k++) {
 						const tt = treads[k];
 						if (tt.flight === 1 && !tt.isLanding) { firstStep = tt; break; }
 					}
-					if (!firstStep || !uB) return;
+					if (!firstStep) return;
+					// וקטור לאורך הגרם במישור XZ
 					const um0 = Math.hypot(uB[0], uB[2]) || 1;
 					const uxn = uB[0] / um0, uzn = uB[2] / um0;
+					// קודקוד 2 של המדרגה הראשונה
 					const yaw0 = firstStep.rotation[1] as number;
 					const c0 = Math.cos(yaw0), s0 = Math.sin(yaw0);
 					const dx0 = firstStep.run / 2, dz0 = treadWidth / 2;
@@ -2119,20 +2130,14 @@ function Staircase3D({
 					const planeU = dotU([p2x, 0, p2z] as [number, number, number]);
 					const tTop = planeU - dotU(startTopB as [number, number, number]);
 					const tBot = planeU - dotU(startBotB as [number, number, number]);
-					startTopBClip = [startTopB[0] + uxn * tTop, startTopB[1], startTopB[2] + uzn * tTop];
-					startBotBClip = [startBotB[0] + uxn * tBot, startBotB[1], startBotB[2] + uzn * tBot];
+					startTopBClip = [startTopB![0] + uxn * tTop, startTopB![1], startTopB![2] + uzn * tTop];
+					startBotBClip = [startBotB![0] + uxn * tBot, startBotB![1], startBotB![2] + uzn * tBot];
 				})();
 
-				// כיוון לאורך המחבר: לפי פלטה B בלבד
-				let ux = 1, uy = 0, uz = 0;
-				if (uB) {
-					ux = uB[0]; uy = uB[1]; uz = uB[2];
-					const um = Math.hypot(ux, uy, uz) || 1; ux /= um; uy /= um; uz /= um;
-				}
-				// רוחב המחבר: לפי פלטה B (וקטור בין startTopB ל‑startBotB)
-				const wx = startTopB[0] - startBotB[0];
-				const wy = startTopB[1] - startBotB[1];
-				const wz = startTopB[2] - startBotB[2];
+				// רוחב המחבר: לפי פלטה B לאחר clip (וקטור בין עליון/תחתון בתחילת B)
+				const wx = startTopBClip[0] - startBotBClip[0];
+				const wy = startTopBClip[1] - startBotBClip[1];
+				const wz = startTopBClip[2] - startBotBClip[2];
 				// נורמל המישור: n = normalize(u × w)
 				const nmX = uy * wz - uz * wy;
 				const nmY = uz * wx - ux * wz;

@@ -1799,14 +1799,31 @@ function Staircase3D({
 							// בחר אורך מקסימלי – אם מסילה אחת ארוכה יותר (למשל כוללת פודסט), נשכפל את הנקודה האחרונה של הקצרה
 							const count = Math.max(topRail.length, botRail.length);
 							if (count < 2) return null;
+
+							// גרם 2: הארכת קו אופסט 5 (botRail[0]) לאורך כיוון הגרם עד המישור האנכי דרך 2/6 (firstP7)
+							let extendedB0: [number, number, number] | null = null;
+							if (topRail.length >= 2 && typeof firstP7 !== 'undefined' && firstP7) {
+								const ux = topRail[1][0] - topRail[0][0];
+								const uz = topRail[1][2] - topRail[0][2];
+								const um = Math.hypot(ux, uz) || 1;
+								const uxn = ux / um, uzn = uz / um;
+								const dotU = (x: [number, number, number]) => (uxn * x[0] + uzn * x[2]);
+								const planeU = dotU([firstP7[0], firstP7[1], firstP7[2]]);
+								const b0 = botRail[0];
+								const t = planeU - dotU(b0);
+								extendedB0 = [b0[0] + uxn * t, b0[1], b0[2] + uzn * t];
+							}
+							const botRailWithExtension: Array<[number, number, number]> =
+								extendedB0 ? [extendedB0, ...botRail.slice(1)] : botRail;
+
 							const pos: number[] = [];   // משטח קדמי
 							const idx: number[] = [];
 							const pick = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
 							for (let i = 0; i < count - 1; i++) {
 								let t1 = pick(topRail, i);
-								let b1 = pick(botRail, i);
+								let b1 = pick(botRailWithExtension, i);
 								const t2 = pick(topRail, i + 1);
-								const b2 = pick(botRail, i + 1);
+								const b2 = pick(botRailWithExtension, i + 1);
 								// גרם 2: התחלה ללא אופסט – t1/b1 נשארים מהמסילות המקוריות
 								const baseIndex = pos.length / 3;
 								// סדר נקודות: t1,b1,t2,b2
@@ -1868,7 +1885,7 @@ function Staircase3D({
 							};
 							// דופן עליונה ותחתונה – בגרם 2 ללא אופסט התחלה
 							const topRailForSideB = topRail;
-							const botRailForSideB = botRail;
+							const botRailForSideB = botRailWithExtension;
 							addSideStrip(topRailForSideB);
 							addSideStrip(botRailForSideB);
 							// דופן התחלה (קצה f4/f7)

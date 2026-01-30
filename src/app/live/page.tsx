@@ -1962,10 +1962,12 @@ function Staircase3D({
 							const botRailForSideB = botRailWithExtension;
 							addSideStrip(topRailForSideB);
 							addSideStrip(botRailForSideB);
-							// דופן התחלה (קצה f4/f7)
+							// דופן התחלה (קצה לפי המישור דרך 2/6 – ללא אופסט צדדי בגרם 2)
 							{
-								const pT = (firstP4SideShift || topRailClipped[0]);
-								const pB = (firstP7 || botRailWithExtension[0]);
+								// השתמש בנקודות ההתחלה לאחר ה‑clip (top/bot),
+								// כדי שלא ייווצר משולש/״שפיץ״ מקודקוד 2 של המדרגה הראשונה
+								const pT = topRailForSideB[0];
+								const pB = botRailForSideB[0];
 								const pTe: [number, number, number] = [pT[0] + offX, pT[1] + offY, pT[2] + offZ];
 								const pBe: [number, number, number] = [pB[0] + offX, pB[1] + offY, pB[2] + offZ];
 								const bi = pos.length / 3;

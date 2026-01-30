@@ -1753,10 +1753,37 @@ function Staircase3D({
 									const offXB = nxN * thicknessPanelB, offYB = nyN * thicknessPanelB, offZB = nzN * thicknessPanelB;
 									const v0B: [number, number, number] = [f4x, f4y, f4z];
 									const v1B: [number, number, number] = [f7x, f7y, f7z];
-									// תחתית הפאנל: המשך קו אופסט 5 במישור הפלטה עד המישור האנכי דרך 2/6
+									// תחתית הפאנל: המשך קו אופסט 5 במישור הפלטה עד המישור האנכי של פלטת A (ואם אין, עד מישור 2/6)
 									const bottomY = firstP7[1];
 									const b4 = [f4x, bottomY, f4z] as [number, number, number];
-									// מישור אנכי דרך הקודקודים 2/6 של המדרגה הראשונה בגרם 2
+									// חשב מישור אנכי של קצה A (סוף גרם 1) – אם לא קיים נשתמש במישור דרך נק׳ 2/6
+									let planeUA: number | null = null;
+									(() => {
+										let lastStepBeforeLanding: typeof treads[number] | null = null;
+										let landingAfter: typeof treads[number] | null = null;
+										for (let i = 0; i < treads.length - 1; i++) {
+											const cur = treads[i];
+											const nxt = treads[i + 1];
+											if (cur.flight === 0 && !cur.isLanding && nxt && nxt.flight === 0 && nxt.isLanding) {
+												lastStepBeforeLanding = cur;
+												landingAfter = nxt;
+											}
+										}
+										if (lastStepBeforeLanding && landingAfter) {
+											const yawL = landingAfter.rotation[1] as number;
+											const c2 = Math.cos(yawL), s2 = Math.sin(yawL);
+											const dxL = landingAfter.run / 2;
+											const dzL = treadWidth / 2;
+											const lx2 = -dxL, lz2 = dzL; // נק׳ 4 של הפודסט
+											const rx2 = lx2 * c2 - lz2 * s2;
+											const rz2 = lx2 * s2 + lz2 * c2;
+											const wx2 = landingAfter.position[0] + rx2;
+											const wz2 = landingAfter.position[2] + rz2;
+											// מקרינים על u (במישור XZ), לקבלת הקואורדינטה של המישור
+											planeUA = (ux * wx2 + uz * wz2);
+										}
+									})();
+									// מישור גיבוי: אנכי דרך הקודקודים 2/6 של המדרגה הראשונה בגרם 2
 									let p2x = f7x, p2z = f7z;
 									{
 										let firstStep: typeof treads[number] | null = null;
@@ -1777,10 +1804,12 @@ function Staircase3D({
 										}
 									}
 									const dotU = (x: [number, number, number]) => (ux * x[0] + uz * x[2]);
-									const planeU = dotU([p2x, 0, p2z] as [number, number, number]);
+									const backupU = dotU([p2x, 0, p2z] as [number, number, number]);
+									const planeU = (typeof planeUA === 'number') ? Math.max(planeUA, backupU) : backupU;
 									const tNeeded = planeU - dotU(b4);
+									// הארך את שתי נקודות הקצה התחתונות באותו t לשמירת שיפוע/מישור זהים לפאנל העליון
 									const v2B: [number, number, number] = [b4[0] + ux * tNeeded, b4[1], b4[2] + uz * tNeeded];
-									const v3B: [number, number, number] = [f7x, bottomY, f7z];
+									const v3B: [number, number, number] = [f7x + ux * tNeeded, bottomY, f7z + uz * tNeeded];
 									const v4B: [number, number, number] = [v0B[0] + offXB, v0B[1] + offYB, v0B[2] + offZB];
 									const v5B: [number, number, number] = [v1B[0] + offXB, v1B[1] + offYB, v1B[2] + offZB];
 									const v6B: [number, number, number] = [v2B[0] + offXB, v2B[1] + offYB, v2B[2] + offZB];
@@ -1876,7 +1905,34 @@ function Staircase3D({
 									}
 								}
 								const dotU = (x: [number, number, number]) => (uxn * x[0] + uzn * x[2]);
-								const planeU = dotU([p2x, 0, p2z] as [number, number, number]);
+								// חשב גם את מישור הקצה של פלטת A (סוף גרם 1) כדי להמשיך באותו שיפוע עד אליה
+								let planeUA: number | null = null;
+								(() => {
+									let lastStepBeforeLanding: typeof treads[number] | null = null;
+									let landingAfter: typeof treads[number] | null = null;
+									for (let i = 0; i < treads.length - 1; i++) {
+										const cur = treads[i];
+										const nxt = treads[i + 1];
+										if (cur.flight === 0 && !cur.isLanding && nxt && nxt.flight === 0 && nxt.isLanding) {
+											lastStepBeforeLanding = cur;
+											landingAfter = nxt;
+										}
+									}
+									if (lastStepBeforeLanding && landingAfter) {
+										const yawL = landingAfter.rotation[1] as number;
+										const c2 = Math.cos(yawL), s2 = Math.sin(yawL);
+										const dxL = landingAfter.run / 2;
+										const dzL = treadWidth / 2;
+										const lx2 = -dxL, lz2 = dzL; // נק׳ 4 של הפודסט
+										const rx2 = lx2 * c2 - lz2 * s2;
+										const rz2 = lx2 * s2 + lz2 * c2;
+										const wx2 = landingAfter.position[0] + rx2;
+										const wz2 = landingAfter.position[2] + rz2;
+										planeUA = (uxn * wx2 + uzn * wz2);
+									}
+								})();
+								const planeU26 = dotU([p2x, 0, p2z] as [number, number, number]);
+								const planeU = (typeof planeUA === 'number') ? Math.max(planeUA, planeU26) : planeU26;
 								// חיתוך נקודת התחלה של שתי המסילות לאותו מישור
 								{
 									const t0 = topRail[0];

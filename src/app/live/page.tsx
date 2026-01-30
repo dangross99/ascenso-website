@@ -1720,12 +1720,31 @@ function Staircase3D({
 									// תחתית הפאנל: המשך קו אופסט 5 במישור הפלטה עד המישור האנכי דרך 2/6
 									const bottomY = firstP7[1];
 									const b4 = [f4x, bottomY, f4z] as [number, number, number];
-									const b7 = [f7x, bottomY, f7z] as [number, number, number];
+									// מישור אנכי דרך הקודקודים 2/6 של המדרגה הראשונה בגרם 2
+									let p2x = f7x, p2z = f7z;
+									{
+										let firstStep: typeof treads[number] | null = null;
+										for (let k = 0; k < treads.length; k++) {
+											const tt = treads[k];
+											if (tt.flight === 1 && !tt.isLanding) { firstStep = tt; break; }
+										}
+										if (firstStep) {
+											const yaw0 = firstStep.rotation[1] as number;
+											const c0 = Math.cos(yaw0), s0 = Math.sin(yaw0);
+											const dx0 = firstStep.run / 2, dz0 = treadWidth / 2;
+											// קודקוד 2: (+dx, -dz) מקומי, מסובב לעולם
+											const lx2 = dx0, lz2 = -dz0;
+											const rx2 = lx2 * c0 - lz2 * s0;
+											const rz2 = lx2 * s0 + lz2 * c0;
+											p2x = firstStep.position[0] + rx2;
+											p2z = firstStep.position[2] + rz2;
+										}
+									}
 									const dotU = (x: [number, number, number]) => (ux * x[0] + uz * x[2]);
-									const planeU = dotU(b7);
+									const planeU = dotU([p2x, 0, p2z] as [number, number, number]);
 									const tNeeded = planeU - dotU(b4);
 									const v2B: [number, number, number] = [b4[0] + ux * tNeeded, b4[1], b4[2] + uz * tNeeded];
-									const v3B: [number, number, number] = b7;
+									const v3B: [number, number, number] = [f7x, bottomY, f7z];
 									const v4B: [number, number, number] = [v0B[0] + offXB, v0B[1] + offYB, v0B[2] + offZB];
 									const v5B: [number, number, number] = [v1B[0] + offXB, v1B[1] + offYB, v1B[2] + offZB];
 									const v6B: [number, number, number] = [v2B[0] + offXB, v2B[1] + offYB, v2B[2] + offZB];
@@ -1800,15 +1819,34 @@ function Staircase3D({
 							const count = Math.max(topRail.length, botRail.length);
 							if (count < 2) return null;
 
-							// גרם 2: הארכת קו אופסט 5 (botRail[0]) לאורך כיוון הגרם עד המישור האנכי דרך 2/6 (firstP7)
+							// גרם 2: הארכת קו אופסט 5 (botRail[0]) לאורך כיוון הגרם עד המישור האנכי דרך 2/6 של המדרגה הראשונה
 							let extendedB0: [number, number, number] | null = null;
 							if (topRail.length >= 2 && typeof firstP7 !== 'undefined' && firstP7) {
-								const ux = topRail[1][0] - topRail[0][0];
-								const uz = topRail[1][2] - topRail[0][2];
-								const um = Math.hypot(ux, uz) || 1;
-								const uxn = ux / um, uzn = uz / um;
+								const ux0 = topRail[1][0] - topRail[0][0];
+								const uz0 = topRail[1][2] - topRail[0][2];
+								const um0 = Math.hypot(ux0, uz0) || 1;
+								const uxn = ux0 / um0, uzn = uz0 / um0;
+								// חשב נקודת 2 של המדרגה הראשונה בגרם 2
+								let p2x = firstP7[0], p2z = firstP7[2];
+								{
+									let firstStep: typeof treads[number] | null = null;
+									for (let k = 0; k < treads.length; k++) {
+										const tt = treads[k];
+										if (tt.flight === 1 && !tt.isLanding) { firstStep = tt; break; }
+									}
+									if (firstStep) {
+										const yaw0 = firstStep.rotation[1] as number;
+										const c0 = Math.cos(yaw0), s0 = Math.sin(yaw0);
+										const dx0 = firstStep.run / 2, dz0 = treadWidth / 2;
+										const lx2 = dx0, lz2 = -dz0;
+										const rx2 = lx2 * c0 - lz2 * s0;
+										const rz2 = lx2 * s0 + lz2 * c0;
+										p2x = firstStep.position[0] + rx2;
+										p2z = firstStep.position[2] + rz2;
+									}
+								}
 								const dotU = (x: [number, number, number]) => (uxn * x[0] + uzn * x[2]);
-								const planeU = dotU([firstP7[0], firstP7[1], firstP7[2]]);
+								const planeU = dotU([p2x, 0, p2z] as [number, number, number]);
 								const b0 = botRail[0];
 								const t = planeU - dotU(b0);
 								extendedB0 = [b0[0] + uxn * t, b0[1], b0[2] + uzn * t];

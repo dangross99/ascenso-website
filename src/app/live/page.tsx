@@ -2092,18 +2092,16 @@ function Staircase3D({
 
 				if (!endTopA || !endBotA || !startTopB || !startBotB) return null;
 
-				// כיוון לאורך המחבר: ממוצע כיווני הגרמים (נורמל לאפס אם אין מידע)
+				// כיוון לאורך המחבר: לפי פלטה B בלבד
 				let ux = 1, uy = 0, uz = 0;
-				{
-					const uax = uA ? uA[0] : 0, uay = uA ? uA[1] : 0, uaz = uA ? uA[2] : 0;
-					const ubx = uB ? uB[0] : 0, uby = uB ? uB[1] : 0, ubz = uB ? uB[2] : 0;
-					ux = uax + ubx; uy = uay + uby; uz = uaz + ubz;
+				if (uB) {
+					ux = uB[0]; uy = uB[1]; uz = uB[2];
 					const um = Math.hypot(ux, uy, uz) || 1; ux /= um; uy /= um; uz /= um;
 				}
-				// רוחב המחבר (כיוון בין עליון לתחתון בצד A)
-				const wx = endTopA[0] - endBotA[0];
-				const wy = endTopA[1] - endBotA[1];
-				const wz = endTopA[2] - endBotA[2];
+				// רוחב המחבר: לפי פלטה B (וקטור בין startTopB ל‑startBotB)
+				const wx = startTopB[0] - startBotB[0];
+				const wy = startTopB[1] - startBotB[1];
+				const wz = startTopB[2] - startBotB[2];
 				// נורמל המישור: n = normalize(u × w)
 				const nmX = uy * wz - uz * wy;
 				const nmY = uz * wx - ux * wz;
@@ -2150,7 +2148,7 @@ function Staircase3D({
 							<bufferAttribute attach="attributes-position" args={[new Float32Array(pos), 3]} />
 							<bufferAttribute attach="index" args={[new Uint32Array(idx), 1]} />
 						</bufferGeometry>
-						<meshBasicMaterial color="#4b5563" side={2} />
+						<meshBasicMaterial color="#16a34a" side={2} />
 					</mesh>
 				);
 			})() : null}

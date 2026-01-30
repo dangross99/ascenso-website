@@ -2095,6 +2095,33 @@ function Staircase3D({
 				}
 
 				if (!endTopA || !endBotA || !startTopB || !startBotB) return null;
+				// יישור תחילת B למישור האנכי דרך קודקוד 2/6 של המדרגה הראשונה בגרם 2
+				let startTopBClip: [number, number, number] = startTopB;
+				let startBotBClip: [number, number, number] = startBotB;
+				(function () {
+					let firstStep: typeof treads[number] | null = null;
+					for (let k = 0; k < treads.length; k++) {
+						const tt = treads[k];
+						if (tt.flight === 1 && !tt.isLanding) { firstStep = tt; break; }
+					}
+					if (!firstStep || !uB) return;
+					const um0 = Math.hypot(uB[0], uB[2]) || 1;
+					const uxn = uB[0] / um0, uzn = uB[2] / um0;
+					const yaw0 = firstStep.rotation[1] as number;
+					const c0 = Math.cos(yaw0), s0 = Math.sin(yaw0);
+					const dx0 = firstStep.run / 2, dz0 = treadWidth / 2;
+					const lx2 = dx0, lz2 = -dz0;
+					const rx2 = lx2 * c0 - lz2 * s0;
+					const rz2 = lx2 * s0 + lz2 * c0;
+					const p2x = firstStep.position[0] + rx2;
+					const p2z = firstStep.position[2] + rz2;
+					const dotU = (x: [number, number, number]) => (uxn * x[0] + uzn * x[2]);
+					const planeU = dotU([p2x, 0, p2z] as [number, number, number]);
+					const tTop = planeU - dotU(startTopB as [number, number, number]);
+					const tBot = planeU - dotU(startBotB as [number, number, number]);
+					startTopBClip = [startTopB[0] + uxn * tTop, startTopB[1], startTopB[2] + uzn * tTop];
+					startBotBClip = [startBotB[0] + uxn * tBot, startBotB[1], startBotB[2] + uzn * tBot];
+				})();
 
 				// כיוון לאורך המחבר: לפי פלטה B בלבד
 				let ux = 1, uy = 0, uz = 0;
@@ -2115,8 +2142,8 @@ function Staircase3D({
 				const thickness = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
 				const offX = nxN * thickness, offY = nyN * thickness, offZ = nzN * thickness;
 
-				// משטח קדמי: סדר נקודות tA, bA, tB, bB
-				const tA = endTopA, bA = endBotA, tB = startTopB, bB = startBotB;
+				// משטח קדמי: סדר נקודות tA, bA, tB, bB (tB/bB לאחר clip)
+				const tA = endTopA, bA = endBotA, tB = startTopBClip, bB = startBotBClip;
 				const pos: number[] = [
 					tA[0], tA[1], tA[2],
 					bA[0], bA[1], bA[2],

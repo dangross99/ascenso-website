@@ -1832,14 +1832,6 @@ function Staircase3D({
 												</bufferGeometry>
 												<lineBasicMaterial attach="material" color="#111827" linewidth={1} depthTest={false} depthWrite={false} />
 											</line>
-											{/* מוסיפים את נפח הפלטה B (גרם 2) – חזית/גב/דפנות עם עובי מלא */}
-											<mesh castShadow receiveShadow>
-												<bufferGeometry attach="geometry">
-													<bufferAttribute attach="attributes-position" args={[panelPosB, 3]} />
-													<bufferAttribute attach="index" args={[panelIdxB, 1]} />
-												</bufferGeometry>
-												<meshBasicMaterial color="#4b5563" side={2} />
-											</mesh>
 										</group>
 									);
 								})()}

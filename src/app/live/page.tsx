@@ -1308,9 +1308,10 @@ function Staircase3D({
 						pts7LineArr = [ext[0], ext[1], ext[2], ...pts7Off];
 					}
 				}
+				const showGuides = false;
 				return (
 					<group>
-						{pts4Off.length >= 6 && (
+						{showGuides && pts4Off.length >= 6 && (
 							<line>
 								<bufferGeometry attach="geometry">
 									<bufferAttribute attach="attributes-position" args={[new Float32Array(pts4Off), 3]} />
@@ -1318,7 +1319,7 @@ function Staircase3D({
 								<lineBasicMaterial attach="material" color="#6b7280" linewidth={1} depthTest={false} depthWrite={false} />
 							</line>
 						)}
-						{pts7LineArr.length >= 6 && (
+						{showGuides && pts7LineArr.length >= 6 && (
 							<line>
 								<bufferGeometry attach="geometry">
 									<bufferAttribute attach="attributes-position" args={[new Float32Array(pts7LineArr), 3]} />
@@ -1328,7 +1329,7 @@ function Staircase3D({
 						)}
 						{/* סגירה במדרגה לפני הפודסט: קו ישר בין אופסט 4 לאופסט 7 */}
 						{/* קו ירוק אנכי: מ‑8‑offset (Y תחתון) אל 4‑offset בפודסט (Y עליון) באותו XZ של נקודת 4 */}
-						{closeP4 && closeP8 && (
+						{showGuides && closeP4 && closeP8 && (
 							<line>
 								<bufferGeometry attach="geometry">
 									<bufferAttribute attach="attributes-position" args={[new Float32Array([
@@ -1409,7 +1410,7 @@ function Staircase3D({
 									]);
 									return (
 										<group>
-											<line>
+											{showGuides && <line>
 												<bufferGeometry attach="geometry">
 													<bufferAttribute attach="attributes-position" args={[new Float32Array([
 														f4x, f4y, f4z,
@@ -1417,8 +1418,8 @@ function Staircase3D({
 													]), 3]} />
 												</bufferGeometry>
 												<lineBasicMaterial attach="material" color="#6b7280" linewidth={1} depthTest={false} depthWrite={false} />
-											</line>
-											<line>
+											</line>}
+											{showGuides && <line>
 												<bufferGeometry attach="geometry">
 													<bufferAttribute attach="attributes-position" args={[new Float32Array([
 														f7x, f7y, f7z,
@@ -1426,8 +1427,8 @@ function Staircase3D({
 													]), 3]} />
 												</bufferGeometry>
 												<lineBasicMaterial attach="material" color="#f87171" linewidth={1} depthTest={false} depthWrite={false} />
-											</line>
-											<line>
+											</line>}
+											{showGuides && <line>
 												<bufferGeometry attach="geometry">
 													<bufferAttribute attach="attributes-position" args={[new Float32Array([
 														f4x, floorBounds.y, f4z,
@@ -1435,7 +1436,7 @@ function Staircase3D({
 													]), 3]} />
 												</bufferGeometry>
 												<lineBasicMaterial attach="material" color="#111827" linewidth={1} depthTest={false} depthWrite={false} />
-											</line>
+											</line>}
 											<mesh castShadow receiveShadow>
 												<bufferGeometry attach="geometry">
 													<bufferAttribute attach="attributes-position" args={[panelPosA, 3]} />
@@ -1681,9 +1682,10 @@ function Staircase3D({
 				}
 
 				if (pts4Off.length === 0 && pts7Off.length === 0) return null;
+				const showGuides = false;
 				return (
 					<group>
-						{pts4Off.length >= 6 && (
+						{showGuides && pts4Off.length >= 6 && (
 							<line>
 								<bufferGeometry attach="geometry">
 									<bufferAttribute attach="attributes-position" args={[new Float32Array(pts4Off), 3]} />
@@ -1691,7 +1693,7 @@ function Staircase3D({
 								<lineBasicMaterial attach="material" color="#6b7280" linewidth={1} depthTest={false} depthWrite={false} />
 							</line>
 						)}
-						{pts7Off.length >= 6 && (
+						{showGuides && pts7Off.length >= 6 && (
 							<line>
 								<bufferGeometry attach="geometry">
 									<bufferAttribute attach="attributes-position" args={[new Float32Array(pts7Off), 3]} />
@@ -1700,7 +1702,7 @@ function Staircase3D({
 							</line>
 						)}
 						{/* סגירה במדרגה לפני הפודסט */}
-						{closeP4 && closeP8 && (
+						{showGuides && closeP4 && closeP8 && (
 							<line>
 								<bufferGeometry attach="geometry">
 									<bufferAttribute attach="attributes-position" args={[new Float32Array([
@@ -1803,7 +1805,7 @@ function Staircase3D({
 									]);
 									return (
 										<group>
-											<line>
+											{showGuides && <line>
 												<bufferGeometry attach="geometry">
 													<bufferAttribute attach="attributes-position" args={[new Float32Array([
 														f4x, f4y, f4z,
@@ -1811,8 +1813,8 @@ function Staircase3D({
 													]), 3]} />
 												</bufferGeometry>
 												<lineBasicMaterial attach="material" color="#6b7280" linewidth={1} depthTest={false} depthWrite={false} />
-											</line>
-											<line>
+											</line>}
+											{showGuides && <line>
 												<bufferGeometry attach="geometry">
 													<bufferAttribute attach="attributes-position" args={[new Float32Array([
 														f7x, f7y, f7z,
@@ -1820,8 +1822,8 @@ function Staircase3D({
 													]), 3]} />
 												</bufferGeometry>
 												<lineBasicMaterial attach="material" color="#f87171" linewidth={1} depthTest={false} depthWrite={false} />
-											</line>
-											<line>
+											</line>}
+											{showGuides && <line>
 												<bufferGeometry attach="geometry">
 													<bufferAttribute attach="attributes-position" args={[new Float32Array([
 														v2B[0], v2B[1], v2B[2],
@@ -1829,7 +1831,7 @@ function Staircase3D({
 													]), 3]} />
 												</bufferGeometry>
 												<lineBasicMaterial attach="material" color="#111827" linewidth={1} depthTest={false} depthWrite={false} />
-											</line>
+											</line>}
 										</group>
 									);
 								})()}

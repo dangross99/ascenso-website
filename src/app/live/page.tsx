@@ -1848,7 +1848,6 @@ function Staircase3D({
 
 							// גרם 2: הארכת קו אופסט 5 (botRail[0]) לאורך כיוון הגרם עד המישור האנכי דרך 2/6 של המדרגה הראשונה
 							let extendedB0: [number, number, number] | null = null;
-							let extendedT0: [number, number, number] | null = null;
 							if (topRail.length >= 2 && typeof firstP7 !== 'undefined' && firstP7) {
 								const ux0 = topRail[1][0] - topRail[0][0];
 								const uz0 = topRail[1][2] - topRail[0][2];
@@ -1878,24 +1877,17 @@ function Staircase3D({
 								const b0 = botRail[0];
 								const t = planeU - dotU(b0);
 								extendedB0 = [b0[0] + uxn * t, b0[1], b0[2] + uzn * t];
-								// הארכת המסילה העליונה לאותו מישור – למניעת "שפיץ" בקצה
-								const t0 = topRail[0];
-								const tTop = planeU - dotU(t0);
-								extendedT0 = [t0[0] + uxn * tTop, t0[1], t0[2] + uzn * tTop];
 							}
 							const botRailWithExtension: Array<[number, number, number]> =
 								extendedB0 ? [extendedB0, ...botRail.slice(1)] : botRail;
-							const topRailWithExtension: Array<[number, number, number]> =
-								extendedT0 ? [extendedT0, ...topRail.slice(1)] : topRail;
-							const topRailUse = topRailWithExtension;
 
 							const pos: number[] = [];   // משטח קדמי
 							const idx: number[] = [];
 							const pick = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
 							for (let i = 0; i < count - 1; i++) {
-								let t1 = pick(topRailUse, i);
+								let t1 = pick(topRail, i);
 								let b1 = pick(botRailWithExtension, i);
-								const t2 = pick(topRailUse, i + 1);
+								const t2 = pick(topRail, i + 1);
 								const b2 = pick(botRailWithExtension, i + 1);
 								// גרם 2: התחלה ללא אופסט – t1/b1 נשארים מהמסילות המקוריות
 								const baseIndex = pos.length / 3;
@@ -1913,16 +1905,16 @@ function Staircase3D({
 							const thickness = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
 							// כיוון לאורך המסילה (u)
 							let ux = 1, uy = 0, uz = 0;
-							if (topRailUse.length >= 2) {
-								ux = topRailUse[1][0] - topRailUse[0][0];
-								uy = topRailUse[1][1] - topRailUse[0][1];
-								uz = topRailUse[1][2] - topRailUse[0][2];
+							if (topRail.length >= 2) {
+								ux = topRail[1][0] - topRail[0][0];
+								uy = topRail[1][1] - topRail[0][1];
+								uz = topRail[1][2] - topRail[0][2];
 							}
 							const um = Math.hypot(ux, uy, uz) || 1; ux /= um; uy /= um; uz /= um;
 							// רוחב בין המסילות (w)
-							let wx = (firstP4 && firstP7) ? (firstP4[0] - firstP7[0]) : (topRailUse[0][0] - botRailWithExtension[0][0]);
-							let wy = (firstP4 && firstP7) ? (firstP4[1] - firstP7[1]) : (topRailUse[0][1] - botRailWithExtension[0][1]);
-							let wz = (firstP4 && firstP7) ? (firstP4[2] - firstP7[2]) : (topRailUse[0][2] - botRailWithExtension[0][2]);
+							let wx = (firstP4 && firstP7) ? (firstP4[0] - firstP7[0]) : (topRail[0][0] - botRailWithExtension[0][0]);
+							let wy = (firstP4 && firstP7) ? (firstP4[1] - firstP7[1]) : (topRail[0][1] - botRailWithExtension[0][1]);
+							let wz = (firstP4 && firstP7) ? (firstP4[2] - firstP7[2]) : (topRail[0][2] - botRailWithExtension[0][2]);
 							const nmX = uy * wz - uz * wy;
 							const nmY = uz * wx - ux * wz;
 							const nmZ = ux * wy - uy * wx;
@@ -1957,13 +1949,13 @@ function Staircase3D({
 								}
 							};
 							// דופן עליונה ותחתונה – בגרם 2 ללא אופסט התחלה
-							const topRailForSideB = topRailUse;
+							const topRailForSideB = topRail;
 							const botRailForSideB = botRailWithExtension;
 							addSideStrip(topRailForSideB);
 							addSideStrip(botRailForSideB);
 							// דופן התחלה (קצה f4/f7)
 							{
-								const pT = (firstP4SideShift || topRailUse[0]);
+								const pT = (firstP4SideShift || topRail[0]);
 								const pB = (firstP7 || botRailWithExtension[0]);
 								const pTe: [number, number, number] = [pT[0] + offX, pT[1] + offY, pT[2] + offZ];
 								const pBe: [number, number, number] = [pB[0] + offX, pB[1] + offY, pB[2] + offZ];
@@ -1973,7 +1965,7 @@ function Staircase3D({
 							}
 							// דופן סיום
 							{
-								const lastT = topRailUse[topRailUse.length - 1];
+								const lastT = topRail[topRail.length - 1];
 								const lastB = botRailWithExtension[botRailWithExtension.length - 1];
 								const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
 								const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];

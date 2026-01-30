@@ -1892,11 +1892,6 @@ function Staircase3D({
 							const topRailClipped: Array<[number, number, number]> =
 								clippedTop0 ? [clippedTop0, ...topRail.slice(1)] : topRail;
 
-							// שתף את נקודת ההתחלה של B (לאחר clip) עבור בלוק ה"מחבר"
-							if (topRailClipped.length > 0 && botRailWithExtension.length > 0) {
-								hitechBStartRef.current = { top: topRailClipped[0], bot: botRailWithExtension[0] };
-							}
-
 							const pos: number[] = [];   // משטח קדמי
 							const idx: number[] = [];
 							const pick = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
@@ -2123,11 +2118,6 @@ function Staircase3D({
 				const offX = nxN * thickness, offY = nyN * thickness, offZ = nzN * thickness;
 
 				// משטח קדמי: סדר נקודות tA, bA, tB, bB
-				// אם יש נקודת התחלה משותפת שפלטת B חישבה (לאחר clip), נשתמש בה כדי למנוע רווחים
-				if (hitechBStartRef.current) {
-					startTopB = hitechBStartRef.current.top;
-					startBotB = hitechBStartRef.current.bot;
-				}
 				const tA = endTopA, bA = endBotA, tB = startTopB, bB = startBotB;
 				const pos: number[] = [
 					tA[0], tA[1], tA[2],

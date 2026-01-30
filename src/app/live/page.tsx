@@ -2102,10 +2102,41 @@ function Staircase3D({
 					ux = uB[0]; uy = uB[1]; uz = uB[2];
 					const um = Math.hypot(ux, uy, uz) || 1; ux /= um; uy /= um; uz /= um;
 				}
-				// רוחב המחבר: לפי פלטה B (וקטור בין startTopB ל‑startBotB)
-				const wx = startTopB[0] - startBotB[0];
-				const wy = startTopB[1] - startBotB[1];
-				const wz = startTopB[2] - startBotB[2];
+				// יישור נקודות ההתחלה של B למישור האנכי דרך קודקוד 2 של המדרגה הראשונה בגרם 2
+				// כדי שהמחבר יתחבר בדיוק לקצה הקליפט של פלטה B (ללא "שפיץ" או חפיפה)
+				{
+					let firstStep: typeof treads[number] | null = null;
+					for (let i = 0; i < treads.length; i++) {
+						const t = treads[i];
+						if (t.flight === 1 && !t.isLanding) { firstStep = t; break; }
+					}
+					if (firstStep && startTopB && startBotB) {
+						const yaw0 = firstStep.rotation[1] as number;
+						const c0 = Math.cos(yaw0), s0 = Math.sin(yaw0);
+						const dx0 = firstStep.run / 2, dz0 = treadWidth / 2;
+						// קודקוד 2 במערכת המקומית: (+dx, -dz)
+						const lx2 = dx0, lz2 = -dz0;
+						const rx2 = lx2 * c0 - lz2 * s0;
+						const rz2 = lx2 * s0 + lz2 * c0;
+						const p2x = firstStep.position[0] + rx2;
+						const p2z = firstStep.position[2] + rz2;
+						const dotU = (x: [number, number, number]) => (ux * x[0] + uz * x[2]);
+						const planeU = dotU([p2x, 0, p2z] as [number, number, number]);
+						// הזזת tB/bB לאורך u בלבד; Y נשאר קבוע
+						{
+							const tShift = planeU - dotU(startTopB);
+							startTopB = [startTopB[0] + ux * tShift, startTopB[1], startTopB[2] + uz * tShift];
+						}
+						{
+							const bShift = planeU - dotU(startBotB);
+							startBotB = [startBotB[0] + ux * bShift, startBotB[1], startBotB[2] + uz * bShift];
+						}
+					}
+				}
+				// רוחב המחבר: לפי פלטה B לאחר היישור (וקטור בין startTopB ל‑startBotB)
+                const wx = startTopB[0] - startBotB[0];
+                const wy = startTopB[1] - startBotB[1];
+                const wz = startTopB[2] - startBotB[2];
 				// נורמל המישור: n = normalize(u × w)
 				const nmX = uy * wz - uz * wy;
 				const nmY = uz * wx - ux * wz;

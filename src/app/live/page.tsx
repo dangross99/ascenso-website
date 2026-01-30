@@ -1995,6 +1995,166 @@ function Staircase3D({
 				);
 			})() : null}
 
+			{/* דגם 'הייטק' – מחבר בין פלטה A (גרם 0) לפלטה B (גרם 1) */}
+			{hitech ? (() => {
+				// דרישות: מסלול עם שני גרמים (L/U), קיימת מדרגה לפני פודסט בגרם 0 ומדרגה ראשונה בגרם 1
+				// חישוב ארבע נקודות חזית: tA/bA (קצה עליון/תחתון של A) ו‑tB/bB (תחילת B)
+				const offsetY = Math.max(0, (typeof hitechPlateTopOffsetM === 'number' ? hitechPlateTopOffsetM : 0.03));
+				let endTopA: [number, number, number] | null = null;
+				let endBotA: [number, number, number] | null = null;
+				let uA: [number, number, number] | null = null;
+
+				let startTopB: [number, number, number] | null = null;
+				let startBotB: [number, number, number] | null = null;
+				let uB: [number, number, number] | null = null;
+
+				// גרם 0: מצא מדרגה שאחריה פודסט – קצה A מוגדר ע"י 4 של הפודסט ו‑7 של המדרגה שלפניו
+				{
+					let lastStepBeforeLanding: typeof treads[number] | null = null;
+					let landingAfter: typeof treads[number] | null = null;
+					for (let i = 0; i < treads.length - 1; i++) {
+						const cur = treads[i];
+						const nxt = treads[i + 1];
+						if (cur.flight === 0 && !cur.isLanding && nxt && nxt.flight === 0 && nxt.isLanding) {
+							lastStepBeforeLanding = cur;
+							landingAfter = nxt;
+						}
+					}
+					if (lastStepBeforeLanding && landingAfter) {
+						// p7 של המדרגה האחרונה לפני פודסט (עם offset למטה)
+						{
+							const yaw = lastStepBeforeLanding.rotation[1] as number;
+							const c = Math.cos(yaw), s = Math.sin(yaw);
+							const dx = lastStepBeforeLanding.run / 2;
+							const dz = treadWidth / 2;
+							const lx = dx, lz = dz;
+							const rx = lx * c - lz * s;
+							const rz = lx * s + lz * c;
+							const wx = lastStepBeforeLanding.position[0] + rx;
+							const wy = lastStepBeforeLanding.position[1] - treadThickness / 2;
+							const wz = lastStepBeforeLanding.position[2] + rz;
+							endBotA = [wx, wy - offsetY, wz];
+							// כיוון uA לפי yaw של המדרגה האחרונה
+							uA = [Math.cos(yaw), 0, Math.sin(yaw)];
+						}
+						// p4 של הפודסט (עם offset למעלה)
+						{
+							const yawL = landingAfter.rotation[1] as number;
+							const c2 = Math.cos(yawL), s2 = Math.sin(yawL);
+							const dxL = landingAfter.run / 2;
+							const dzL = treadWidth / 2;
+							const lx2 = -dxL, lz2 = dzL;
+							const rx2 = lx2 * c2 - lz2 * s2;
+							const rz2 = lx2 * s2 + lz2 * c2;
+							const wx2 = landingAfter.position[0] + rx2;
+							const wy2 = landingAfter.position[1] + treadThickness / 2;
+							const wz2 = landingAfter.position[2] + rz2;
+							endTopA = [wx2, wy2 + offsetY, wz2];
+						}
+					}
+				}
+
+				// גרם 1: מצא המדרגה הראשונה שאינה פודסט – תחילת B ע"י נקודות 4 ו‑7 שלה
+				{
+					let firstStep: typeof treads[number] | null = null;
+					for (let i = 0; i < treads.length; i++) {
+						const t = treads[i];
+						if (t.flight === 1 && !t.isLanding) { firstStep = t; break; }
+					}
+					if (firstStep) {
+						const yaw = firstStep.rotation[1] as number;
+						const c = Math.cos(yaw), s = Math.sin(yaw);
+						const dx = firstStep.run / 2;
+						const dz = treadWidth / 2;
+						// p4 (עליונה שמאל‑קדימה) עם offset למעלה
+						{
+							const lx = -dx, lz = dz;
+							const rx = lx * c - lz * s;
+							const rz = lx * s + lz * c;
+							const wx = firstStep.position[0] + rx;
+							const wy = firstStep.position[1] + treadThickness / 2;
+							const wz = firstStep.position[2] + rz;
+							startTopB = [wx, wy + offsetY, wz];
+						}
+						// p7 (תחתונה ימין‑קדימה) עם offset למטה
+						{
+							const lx = dx, lz = dz;
+							const rx = lx * c - lz * s;
+							const rz = lx * s + lz * c;
+							const wx = firstStep.position[0] + rx;
+							const wy = firstStep.position[1] - treadThickness / 2;
+							const wz = firstStep.position[2] + rz;
+							startBotB = [wx, wy - offsetY, wz];
+						}
+						uB = [Math.cos(yaw), 0, Math.sin(yaw)];
+					}
+				}
+
+				if (!endTopA || !endBotA || !startTopB || !startBotB) return null;
+
+				// כיוון לאורך המחבר: ממוצע כיווני הגרמים (נורמל לאפס אם אין מידע)
+				let ux = 1, uy = 0, uz = 0;
+				{
+					const uax = uA ? uA[0] : 0, uay = uA ? uA[1] : 0, uaz = uA ? uA[2] : 0;
+					const ubx = uB ? uB[0] : 0, uby = uB ? uB[1] : 0, ubz = uB ? uB[2] : 0;
+					ux = uax + ubx; uy = uay + uby; uz = uaz + ubz;
+					const um = Math.hypot(ux, uy, uz) || 1; ux /= um; uy /= um; uz /= um;
+				}
+				// רוחב המחבר (כיוון בין עליון לתחתון בצד A)
+				const wx = endTopA[0] - endBotA[0];
+				const wy = endTopA[1] - endBotA[1];
+				const wz = endTopA[2] - endBotA[2];
+				// נורמל המישור: n = normalize(u × w)
+				const nmX = uy * wz - uz * wy;
+				const nmY = uz * wx - ux * wz;
+				const nmZ = ux * wy - uy * wx;
+				const nmag = Math.hypot(nmX, nmY, nmZ) || 1;
+				const nxN = nmX / nmag, nyN = nmY / nmag, nzN = nmZ / nmag;
+				const thickness = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
+				const offX = nxN * thickness, offY = nyN * thickness, offZ = nzN * thickness;
+
+				// משטח קדמי: סדר נקודות tA, bA, tB, bB
+				const tA = endTopA, bA = endBotA, tB = startTopB, bB = startBotB;
+				const pos: number[] = [
+					tA[0], tA[1], tA[2],
+					bA[0], bA[1], bA[2],
+					tB[0], tB[1], tB[2],
+					bB[0], bB[1], bB[2],
+				];
+				const idx: number[] = [0,1,2, 2,1,3];
+
+				// משטח אחורי (offset בנורמל)
+				for (let i = 0; i < 4; i++) {
+					const i3 = i * 3;
+					pos.push(pos[i3] + offX, pos[i3 + 1] + offY, pos[i3 + 2] + offZ);
+				}
+				// אינדקסים למשטח האחורי בהיפוך
+				idx.push(4,6,5, 6,7,5);
+
+				// דפנות: עליונה, תחתונה, קצה A, קצה B
+				const pushQuad = (p0: [number, number, number], p1: [number, number, number]) => {
+					const p0e: [number, number, number] = [p0[0] + offX, p0[1] + offY, p0[2] + offZ];
+					const p1e: [number, number, number] = [p1[0] + offX, p1[1] + offY, p1[2] + offZ];
+					const base = pos.length / 3;
+					pos.push(p0[0], p0[1], p0[2],  p1[0], p1[1], p1[2],  p1e[0], p1e[1], p1e[2],  p0e[0], p0e[1], p0e[2]);
+					idx.push(base + 0, base + 1, base + 2,  base + 0, base + 2, base + 3);
+				};
+				pushQuad(tA, tB); // עליונה
+				pushQuad(bA, bB); // תחתונה
+				pushQuad(tA, bA); // קצה A
+				pushQuad(tB, bB); // קצה B
+
+				return (
+					<mesh castShadow receiveShadow>
+						<bufferGeometry attach="geometry">
+							<bufferAttribute attach="attributes-position" args={[new Float32Array(pos), 3]} />
+							<bufferAttribute attach="index" args={[new Uint32Array(idx), 1]} />
+						</bufferGeometry>
+						<meshBasicMaterial color="#4b5563" side={2} />
+					</mesh>
+				);
+			})() : null}
+
 			{/* מעקה זכוכית – קטעים רציפים בקו אלכסוני */}
 			{(() => {
 				if (railingKind !== 'glass') return null;

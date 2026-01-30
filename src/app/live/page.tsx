@@ -1882,11 +1882,10 @@ function Staircase3D({
 								}
 								const dotU = (x: [number, number, number]) => (uxn * x[0] + uzn * x[2]);
 								const planeU = dotU([p2x, 0, p2z] as [number, number, number]);
-								// הארכת התחתון
 								const b0 = botRail[0];
 								const t = planeU - dotU(b0);
 								extendedB0 = [b0[0] + uxn * t, b0[1], b0[2] + uzn * t];
-								// הארכת העליון – לאותו מישור, באותו גובה Y של הנקודה העליונה
+								// הארכת המסילה העליונה לאותו מישור – למניעת "שפיץ" בקצה
 								const t0 = topRail[0];
 								const tTop = planeU - dotU(t0);
 								extendedT0 = [t0[0] + uxn * tTop, t0[1], t0[2] + uzn * tTop];

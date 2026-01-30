@@ -1830,13 +1830,6 @@ function Staircase3D({
 												</bufferGeometry>
 												<lineBasicMaterial attach="material" color="#111827" linewidth={1} depthTest={false} depthWrite={false} />
 											</line>
-											<mesh castShadow receiveShadow>
-												<bufferGeometry attach="geometry">
-													<bufferAttribute attach="attributes-position" args={[panelPosB, 3]} />
-													<bufferAttribute attach="index" args={[panelIdxB, 1]} />
-												</bufferGeometry>
-												<meshBasicMaterial color="#16a34a" side={2} />
-											</mesh>
 										</group>
 									);
 								})()}

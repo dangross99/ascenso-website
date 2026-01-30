@@ -1274,6 +1274,40 @@ function Staircase3D({
 				}
 
 				if (pts4Off.length === 0 && pts7Off.length === 0) return null;
+				// הרחבת קו העזר התחתון (5‑offset) בגרם 2: המשך באותו שיפוע עד המישור האנכי של הפוסט הראשון
+				let pts7LineArr = pts7Off;
+				if (firstP7 && firstYaw !== null) {
+					// כיוון הגרם u לפי המדרגה הראשונה בגרם 2
+					const ux = Math.cos(firstYaw);
+					const uz = Math.sin(firstYaw);
+					// מצא את המדרגה האחרונה בגרם 0 שמלפניה מגיע פודסט (פוסט ראשון)
+					let anchorStep: typeof treads[number] | null = null;
+					for (let k = 0; k < treads.length - 1; k++) {
+						const tt = treads[k];
+						const next = treads[k + 1];
+						if (tt.flight === 0 && !tt.isLanding && next && next.flight === 0 && next.isLanding) {
+							anchorStep = tt; break;
+						}
+					}
+					if (anchorStep) {
+						const yaw0 = anchorStep.rotation[1] as number;
+						const c0 = Math.cos(yaw0), s0 = Math.sin(yaw0);
+						const dx0 = anchorStep.run / 2, dz0 = treadWidth / 2;
+						// קודקוד 2 של המדרגה בגרם 0: (+dx, -dz) במערכת מקומית
+						const lx2 = dx0, lz2 = -dz0;
+						const rx2 = lx2 * c0 - lz2 * s0;
+						const rz2 = lx2 * s0 + lz2 * c0;
+						const p2x = anchorStep.position[0] + rx2;
+						const p2z = anchorStep.position[2] + rz2;
+						// חיתוך קו דרך firstP7 בכיוון u עם המישור האנכי dot(u, x) = dot(u, p2)
+						const dotU = (x: [number, number, number]) => (ux * x[0] + uz * x[2]);
+						const planeU = dotU([p2x, 0, p2z]);
+						const b0: [number, number, number] = firstP7;
+						const t = planeU - dotU(b0);
+						const ext: [number, number, number] = [b0[0] + ux * t, b0[1], b0[2] + uz * t];
+						pts7LineArr = [ext[0], ext[1], ext[2], ...pts7Off];
+					}
+				}
 				return (
 					<group>
 						{pts4Off.length >= 6 && (
@@ -1284,10 +1318,10 @@ function Staircase3D({
 								<lineBasicMaterial attach="material" color="#6b7280" linewidth={1} depthTest={false} depthWrite={false} />
 							</line>
 						)}
-						{pts7Off.length >= 6 && (
+						{pts7LineArr.length >= 6 && (
 							<line>
 								<bufferGeometry attach="geometry">
-									<bufferAttribute attach="attributes-position" args={[new Float32Array(pts7Off), 3]} />
+									<bufferAttribute attach="attributes-position" args={[new Float32Array(pts7LineArr), 3]} />
 								</bufferGeometry>
 								<lineBasicMaterial attach="material" color="#f87171" linewidth={1} depthTest={false} depthWrite={false} />
 							</line>
@@ -1723,26 +1757,21 @@ function Staircase3D({
 									// מישור אנכי דרך הקודקודים 2/6 של המדרגה הראשונה בגרם 2
 									let p2x = f7x, p2z = f7z;
 									{
-										// קח את המדרגה האחרונה של גרם 0 שמלפניה מגיע פודסט (פוסט ראשון)
-										let anchorStep: typeof treads[number] | null = null;
-										for (let k = 0; k < treads.length - 1; k++) {
+										let firstStep: typeof treads[number] | null = null;
+										for (let k = 0; k < treads.length; k++) {
 											const tt = treads[k];
-											const next = treads[k + 1];
-											if (tt.flight === 0 && !tt.isLanding && next && next.flight === 0 && next.isLanding) {
-												anchorStep = tt;
-												break;
-											}
+											if (tt.flight === 1 && !tt.isLanding) { firstStep = tt; break; }
 										}
-										if (anchorStep) {
-											const yaw0 = anchorStep.rotation[1] as number;
+										if (firstStep) {
+											const yaw0 = firstStep.rotation[1] as number;
 											const c0 = Math.cos(yaw0), s0 = Math.sin(yaw0);
-											const dx0 = anchorStep.run / 2, dz0 = treadWidth / 2;
+											const dx0 = firstStep.run / 2, dz0 = treadWidth / 2;
 											// קודקוד 2: (+dx, -dz) מקומי, מסובב לעולם
 											const lx2 = dx0, lz2 = -dz0;
 											const rx2 = lx2 * c0 - lz2 * s0;
 											const rz2 = lx2 * s0 + lz2 * c0;
-											p2x = anchorStep.position[0] + rx2;
-											p2z = anchorStep.position[2] + rz2;
+											p2x = firstStep.position[0] + rx2;
+											p2z = firstStep.position[2] + rz2;
 										}
 									}
 									const dotU = (x: [number, number, number]) => (ux * x[0] + uz * x[2]);
@@ -1831,26 +1860,23 @@ function Staircase3D({
 								const uz0 = topRail[1][2] - topRail[0][2];
 								const um0 = Math.hypot(ux0, uz0) || 1;
 								const uxn = ux0 / um0, uzn = uz0 / um0;
-								// חשב נקודת 2 של המדרגה האחרונה בגרם 0 שלפניה פודסט (פוסט ראשון)
+								// חשב נקודת 2 של המדרגה הראשונה בגרם 2
 								let p2x = firstP7[0], p2z = firstP7[2];
 								{
-									let anchorStep: typeof treads[number] | null = null;
-									for (let k = 0; k < treads.length - 1; k++) {
+									let firstStep: typeof treads[number] | null = null;
+									for (let k = 0; k < treads.length; k++) {
 										const tt = treads[k];
-										const next = treads[k + 1];
-										if (tt.flight === 0 && !tt.isLanding && next && next.flight === 0 && next.isLanding) {
-											anchorStep = tt; break;
-										}
+										if (tt.flight === 1 && !tt.isLanding) { firstStep = tt; break; }
 									}
-									if (anchorStep) {
-										const yaw0 = anchorStep.rotation[1] as number;
+									if (firstStep) {
+										const yaw0 = firstStep.rotation[1] as number;
 										const c0 = Math.cos(yaw0), s0 = Math.sin(yaw0);
-										const dx0 = anchorStep.run / 2, dz0 = treadWidth / 2;
+										const dx0 = firstStep.run / 2, dz0 = treadWidth / 2;
 										const lx2 = dx0, lz2 = -dz0;
 										const rx2 = lx2 * c0 - lz2 * s0;
 										const rz2 = lx2 * s0 + lz2 * c0;
-										p2x = anchorStep.position[0] + rx2;
-										p2z = anchorStep.position[2] + rz2;
+										p2x = firstStep.position[0] + rx2;
+										p2z = firstStep.position[2] + rz2;
 									}
 								}
 								const dotU = (x: [number, number, number]) => (uxn * x[0] + uzn * x[2]);

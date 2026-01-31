@@ -1486,22 +1486,15 @@ function Staircase3D({
 									t1 = firstP4SideShift;
 									if (firstP7) b1 = firstP7;
 								}
-								// במקטע האחרון: חצי פלטה – משולש t2,b2,t1 בלבד
-								if (i === count - 2) {
-									const biTri = pos.length / 3;
-									pos.push(t2[0], t2[1], t2[2],  b2[0], b2[1], b2[2],  t1[0], t1[1], t1[2]);
-									idx.push(biTri + 0, biTri + 1, biTri + 2);
-								} else {
-									const baseIndex = pos.length / 3;
-									// סדר נקודות: t1,b1,t2,b2
-									pos.push(t1[0], t1[1], t1[2]);
-									pos.push(b1[0], b1[1], b1[2]);
-									pos.push(t2[0], t2[1], t2[2]);
-									pos.push(b2[0], b2[1], b2[2]);
-									// שני משולשים לכיסוי הריבוע
-									idx.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
-									idx.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
-								}
+								const baseIndex = pos.length / 3;
+								// סדר נקודות: t1,b1,t2,b2
+								pos.push(t1[0], t1[1], t1[2]);
+								pos.push(b1[0], b1[1], b1[2]);
+								pos.push(t2[0], t2[1], t2[2]);
+								pos.push(b2[0], b2[1], b2[2]);
+								// שני משולשים לכיסוי הריבוע
+								idx.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
+								idx.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
 							}
 
 							// בניית נפח לפלטה A (גרם 1) – עובי לפי hitechPlateThickness (ברירת‑מחדל 12 מ״מ)
@@ -1589,44 +1582,7 @@ function Staircase3D({
 
 							// בוטל: קאפ סיום בצד החיצוני
 
-							// קאפ סיום משולש: ממשיך את שיפוע המסילה העליונה ומסיים בקצה אנכי
-							if (shouldRenderClosingCapForFlight(flightIdx)) {
-								const t2 = topRail[topRail.length - 1];
-								const t1 = topRail[Math.max(0, topRail.length - 2)];
-								const by = botRail[botRail.length - 1][1];
-								const b2: [number, number, number] = [t2[0], by, t2[2]];
-								// חזית המשולש
-								let biTri = pos.length / 3;
-								pos.push(
-									t2[0], t2[1], t2[2],
-									b2[0], b2[1], b2[2],
-									t1[0], t1[1], t1[2],
-								);
-								idx.push(biTri + 0, biTri + 1, biTri + 2);
-								// גב המשולש
-								biTri = pos.length / 3;
-								const t2e: [number, number, number] = [t2[0] + offX, t2[1] + offY, t2[2] + offZ];
-								const b2e: [number, number, number] = [b2[0] + offX, b2[1] + offY, b2[2] + offZ];
-								const t1e: [number, number, number] = [t1[0] + offX, t1[1] + offY, t1[2] + offZ];
-								pos.push(
-									t2e[0], t2e[1], t2e[2],
-									b2e[0], b2e[1], b2e[2],
-									t1e[0], t1e[1], t1e[2],
-								);
-								// היפוך אינדקסים בגב
-								idx.push(biTri + 0, biTri + 2, biTri + 1);
-								// דפנות למשולש (3 צלעות)
-								const addEdge = (a: [number, number, number], b: [number, number, number]) => {
-									const ae: [number, number, number] = [a[0] + offX, a[1] + offY, a[2] + offZ];
-									const be: [number, number, number] = [b[0] + offX, b[1] + offY, b[2] + offZ];
-									const bi = pos.length / 3;
-									pos.push(a[0], a[1], a[2],  b[0], b[1], b[2],  be[0], be[1], be[2],  ae[0], ae[1], ae[2]);
-									idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
-								};
-								addEdge(t2, b2); // קצה אנכי
-								addEdge(b2, t1); // תחתון‑אל השיפוע
-								addEdge(t1, t2); // שיפוע עליון
-							}
+							// קאפ סיום – הוסר
 
 							return (
 								<group>
@@ -1813,17 +1769,10 @@ function Staircase3D({
 							if (firstP7) b1 = firstP7;
 						}
 					}
-					// במקטע האחרון – חצי פלטה: משולש t2,b2,t1
-					if (i === count - 2) {
-						const biTri = pos.length / 3;
-						pos.push(t2[0], t2[1], t2[2],  b2[0], b2[1], b2[2],  t1[0], t1[1], t1[2]);
-						idx.push(biTri + 0, biTri + 1, biTri + 2);
-					} else {
-						const baseIndex = pos.length / 3;
-						pos.push(t1[0], t1[1], t1[2],  b1[0], b1[1], b1[2],  t2[0], t2[1], t2[2],  b2[0], b2[1], b2[2]);
-						idx.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
-						idx.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
-					}
+					const baseIndex = pos.length / 3;
+					pos.push(t1[0], t1[1], t1[2],  b1[0], b1[1], b1[2],  t2[0], t2[1], t2[2],  b2[0], b2[1], b2[2]);
+					idx.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
+					idx.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
 				}
 
 				// נורמל קבוע לפי u×w להתח ולבנות נפח
@@ -1914,43 +1863,7 @@ function Staircase3D({
 
 				// בוטל: קאפ סיום חיצוני לפי קודקודים 3 ו‑7
 
-				// קאפ סיום משולש – ממשיך את שיפוע המסילה העליונה ומסיים בקצה אנכי (רק בגרם האחרון)
-				if (shouldRenderClosingCapForFlight(2)) {
-					const t2 = topRailForSide[topRailForSide.length - 1];
-					const t1 = topRailForSide[Math.max(0, topRailForSide.length - 2)];
-					const by = botRailForSide[botRailForSide.length - 1][1];
-					const b2: [number, number, number] = [t2[0], by, t2[2]];
-					// חזית משולש
-					let biTri = pos.length / 3;
-					pos.push(
-						t2[0], t2[1], t2[2],
-						b2[0], b2[1], b2[2],
-						t1[0], t1[1], t1[2],
-					);
-					idx.push(biTri + 0, biTri + 1, biTri + 2);
-					// גב
-					biTri = pos.length / 3;
-					const t2e: [number, number, number] = [t2[0] + offX, t2[1] + offY, t2[2] + offZ];
-					const b2e: [number, number, number] = [b2[0] + offX, b2[1] + offY, b2[2] + offZ];
-					const t1e: [number, number, number] = [t1[0] + offX, t1[1] + offY, t1[2] + offZ];
-					pos.push(
-						t2e[0], t2e[1], t2e[2],
-						b2e[0], b2e[1], b2e[2],
-						t1e[0], t1e[1], t1e[2],
-					);
-					idx.push(biTri + 0, biTri + 2, biTri + 1);
-					// דפנות
-					const addEdge = (a: [number, number, number], b: [number, number, number]) => {
-						const ae: [number, number, number] = [a[0] + offX, a[1] + offY, a[2] + offZ];
-						const be: [number, number, number] = [b[0] + offX, b[1] + offY, b[2] + offZ];
-						const bi = pos.length / 3;
-						pos.push(a[0], a[1], a[2],  b[0], b[1], b[2],  be[0], be[1], be[2],  ae[0], ae[1], ae[2]);
-						idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
-					};
-					addEdge(t2, b2);
-					addEdge(b2, t1);
-					addEdge(t1, t2);
-				}
+				// קאפ סיום – הוסר
 
 				return (
 					<group>
@@ -2193,22 +2106,15 @@ function Staircase3D({
 										if (firstP7) b1 = firstP7;
 									}
 								}
-								// במקטע האחרון – חצי פלטה: משולש t2,b2,t1
-								if (i === segCount - 2) {
-									const biTri = pos.length / 3;
-									pos.push(t2[0], t2[1], t2[2],  b2[0], b2[1], b2[2],  t1[0], t1[1], t1[2]);
-									idx.push(biTri + 0, biTri + 1, biTri + 2);
-								} else {
-									const baseIndex = pos.length / 3;
-									// סדר נקודות: t1,b1,t2,b2
-									pos.push(t1[0], t1[1], t1[2]);
-									pos.push(b1[0], b1[1], b1[2]);
-									pos.push(t2[0], t2[1], t2[2]);
-									pos.push(b2[0], b2[1], b2[2]);
-									// שני משולשים לכיסוי הריבוע
-									idx.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
-									idx.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
-								}
+								const baseIndex = pos.length / 3;
+								// סדר נקודות: t1,b1,t2,b2
+								pos.push(t1[0], t1[1], t1[2]);
+								pos.push(b1[0], b1[1], b1[2]);
+								pos.push(t2[0], t2[1], t2[2]);
+								pos.push(b2[0], b2[1], b2[2]);
+								// שני משולשים לכיסוי הריבוע
+								idx.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
+								idx.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
 							}
 
 							// בניית נפח: משטח אחורי והדפנות על סמך normal קבוע של המישור
@@ -2293,43 +2199,7 @@ function Staircase3D({
 								idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
 							}
 
-							// קאפ סיום משולש – רק בגרם האחרון: שיפוע עליון + קצה אנכי
-							if (shouldRenderClosingCapForFlight(flightIdx)) {
-								const t2 = topRailForSideB[topRailForSideB.length - 1];
-								const t1 = topRailForSideB[Math.max(0, topRailForSideB.length - 2)];
-								const by = botRailForSideB[botRailForSideB.length - 1][1];
-								const b2: [number, number, number] = [t2[0], by, t2[2]];
-								// חזית
-								let biTri = pos.length / 3;
-								pos.push(
-									t2[0], t2[1], t2[2],
-									b2[0], b2[1], b2[2],
-									t1[0], t1[1], t1[2],
-								);
-								idx.push(biTri + 0, biTri + 1, biTri + 2);
-								// גב
-								biTri = pos.length / 3;
-								const t2e: [number, number, number] = [t2[0] + offX, t2[1] + offY, t2[2] + offZ];
-								const b2e: [number, number, number] = [b2[0] + offX, b2[1] + offY, b2[2] + offZ];
-								const t1e: [number, number, number] = [t1[0] + offX, t1[1] + offY, t1[2] + offZ];
-								pos.push(
-									t2e[0], t2e[1], t2e[2],
-									b2e[0], b2e[1], b2e[2],
-									t1e[0], t1e[1], t1e[2],
-								);
-								idx.push(biTri + 0, biTri + 2, biTri + 1);
-								// דפנות
-								const addEdge = (a: [number, number, number], b: [number, number, number]) => {
-									const ae: [number, number, number] = [a[0] + offX, a[1] + offY, a[2] + offZ];
-									const be: [number, number, number] = [b[0] + offX, b[1] + offY, b[2] + offZ];
-									const bi = pos.length / 3;
-									pos.push(a[0], a[1], a[2],  b[0], b[1], b[2],  be[0], be[1], be[2],  ae[0], ae[1], ae[2]);
-									idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
-								};
-								addEdge(t2, b2);
-								addEdge(b2, t1);
-								addEdge(t1, t2);
-							}
+							// קאפ סיום – הוסר
 
 						// בוטל: קאפ סיום חיצוני לפי 3/7
 

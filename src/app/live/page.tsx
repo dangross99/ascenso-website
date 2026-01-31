@@ -1456,7 +1456,8 @@ function Staircase3D({
 							const baseTop: Array<[number, number, number]> = closeP4 ? [...topStepOff, closeP4] : [...topStepOff];
 							// שמור את הרייל העליון המקורי לשימור השיפוע
 							const topRail: Array<[number, number, number]> = baseTop;
-							const botRail: Array<[number, number, number]> = [...bottomStepOff];
+							// הוסף נקודת סיום תחתונה מהפודסט אם קיימת, כדי לקבל לפחות שתי נקודות למסילה התחתונה
+							const botRail: Array<[number, number, number]> = closeP7 ? [...bottomStepOff, closeP7] : [...bottomStepOff];
 							// בחר אורך מקסימלי – אם מסילה אחת ארוכה יותר (למשל כוללת פודסט), נשכפל את הנקודה האחרונה של הקצרה
 							const count = Math.max(topRail.length, botRail.length);
 							if (count < 2) return null;

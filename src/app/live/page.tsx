@@ -1559,7 +1559,7 @@ function Staircase3D({
 								idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
 							}
 							// סיום
-							if (false && shouldRenderClosingCapForFlight(flightIdx)) {
+							if (shouldRenderClosingCapForFlight(flightIdx)) {
 								const lastT = topRail[topRail.length - 1];
 								// קאפ אנכי: תחתון עם אותו XZ כמו העליון, Y מתחתון קיים
 								const lastBy = botRail[botRail.length - 1][1];
@@ -1843,7 +1843,7 @@ function Staircase3D({
 					);
 				}
 				// קאפ סיום אנכי (מבוסס מסילה) מבוטל – נשאר רק קאפ לפי 3/7
-				if (false && shouldRenderClosingCapForFlight(2)) {
+				if (shouldRenderClosingCapForFlight(flightIdx)) {
 					const lastT = topRailForSide[topRailForSide.length - 1];
 					const lastBy = botRailForSide[botRailForSide.length - 1][1];
 					const lastTUp: [number, number, number] = [lastT[0], lastT[1] + riser, lastT[2]];
@@ -2187,7 +2187,7 @@ function Staircase3D({
 								}
 							}
 							// דופן סיום
-							if (false && shouldRenderClosingCapForFlight(flightIdx)) {
+							if (shouldRenderClosingCapForFlight(flightIdx)) {
 								const lastT = topRailForSideB[topRailForSideB.length - 1];
 								// קאפ אנכי: XZ של התחתון זהה לעליון, Y מתחתון מסילה
 								const lastBy = botRailForSideB[botRailForSideB.length - 1][1];

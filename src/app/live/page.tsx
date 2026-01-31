@@ -1716,110 +1716,20 @@ function Staircase3D({
 						{/* הארכה למטה עד הרצפה מהמדרגה הראשונה וסגירה ביניהן */}
 						{firstP4 && firstP7 && (
 							(() => {
-									// אופסט צידי בתוך מישור הפלטה (רק בתחתית, מדרגה ראשונה)
-									let ux = 1, uy = 0, uz = 0;
-									if (pts4Off.length >= 6) {
-										const x0 = firstP4[0], y0 = firstP4[1], z0 = firstP4[2];
-										const x1 = pts4Off[3], y1 = pts4Off[4], z1 = pts4Off[5];
-										ux = x1 - x0; uy = y1 - y0; uz = z1 - z0;
-									}
-									const umag = Math.hypot(ux, uy, uz) || 1;
-									ux /= umag; uy /= umag; uz /= umag;
-									const wx = firstP4[0] - firstP7[0];
-									const wy = firstP4[1] - firstP7[1];
-									const wz = firstP4[2] - firstP7[2];
-									const nx = uy * wz - uz * wy;
-									const ny = uz * wx - ux * wz;
-									const nz = ux * wy - uy * wx;
-									const nmag = Math.hypot(nx, ny, nz) || 1;
-									const nxN = nx / nmag, nyN = ny / nmag, nzN = nz / nmag;
-									const sx = nyN * uz - nzN * uy;
-									const sy = nzN * ux - nxN * uz;
-									const sz = nxN * uy - nyN * ux;
-									const smag = Math.hypot(sx, sy, sz) || 1;
-									const sxN = sx / smag, szN = sz / smag;
-									// גרם 2: אין אופסט אופקי בתחילת הפלטה
-									const side = 0;
-									const f4x = firstP4[0] + sxN * side;
-									// ללא שינוי בגובה Y כדי למנע שפיץ
+									// התחלה פשוטה: ללא הארכה/קליפינג לגרמים אחרים – כדי שהריבוע הראשון יהיה כמו שאר הריבועים
+									// אין אופסט אופקי בתחילת הפלטה
+									const f4x = firstP4[0];
 									const f4y = firstP4[1];
-									const f4z = firstP4[2] + szN * side;
+									const f4z = firstP4[2];
 									const f7x = firstP7[0];
 									const f7y = firstP7[1];
 									const f7z = firstP7[2];
-									// חישוב נפח לפאנל האנכי בגרם 2
-									const thicknessPanelB = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
-									const offXB = nxN * thicknessPanelB, offYB = nyN * thicknessPanelB, offZB = nzN * thicknessPanelB;
-									const v0B: [number, number, number] = [f4x, f4y, f4z];
-									// נקודת התחתית בצד הפנימי לפי קודקוד 7 (יישור מלא עם רייל תחתון של B)
-									const v1B: [number, number, number] = [f7x, f7y, f7z];
-									// תחתית הפאנל: המשך קו אופסט 5 במישור הפלטה עד המישור האנכי של פלטת A (ואם אין, עד מישור 2/6)
-									const bottomY = firstP7[1];
-									const b4 = [f4x, bottomY, f4z] as [number, number, number];
-									// חשב מישור אנכי של קצה A (סוף גרם 1) – אם לא קיים נשתמש במישור דרך נק׳ 2/6
-									let planeUA: number | null = null;
-									(() => {
-										let lastStepBeforeLanding: typeof treads[number] | null = null;
-										let landingAfter: typeof treads[number] | null = null;
-										for (let i = 0; i < treads.length - 1; i++) {
-											const cur = treads[i];
-											const nxt = treads[i + 1];
-											if (cur.flight === 0 && !cur.isLanding && nxt && nxt.flight === 0 && nxt.isLanding) {
-												lastStepBeforeLanding = cur;
-												landingAfter = nxt;
-											}
-										}
-										if (lastStepBeforeLanding && landingAfter) {
-											const yawL = landingAfter.rotation[1] as number;
-											const c2 = Math.cos(yawL), s2 = Math.sin(yawL);
-											const dxL = landingAfter.run / 2;
-											const dzL = treadWidth / 2;
-											const lx2 = -dxL, lz2 = dzL; // נק׳ 4 של הפודסט
-											const rx2 = lx2 * c2 - lz2 * s2;
-											const rz2 = lx2 * s2 + lz2 * c2;
-											const wx2 = landingAfter.position[0] + rx2;
-											const wz2 = landingAfter.position[2] + rz2;
-											// מקרינים על u (במישור XZ), לקבלת הקואורדינטה של המישור
-											planeUA = (ux * wx2 + uz * wz2);
-										}
-									})();
-									// מישור גיבוי: אנכי דרך הקודקודים 2/6 של המדרגה הראשונה בגרם 2
-									let p2x = f7x, p2z = f7z;
-									{
-										let firstStep: typeof treads[number] | null = null;
-										for (let k = 0; k < treads.length; k++) {
-											const tt = treads[k];
-											if (tt.flight === 1 && !tt.isLanding) { firstStep = tt; break; }
-										}
-										if (firstStep) {
-											const yaw0 = firstStep.rotation[1] as number;
-											const c0 = Math.cos(yaw0), s0 = Math.sin(yaw0);
-											const dx0 = firstStep.run / 2, dz0 = treadWidth / 2;
-											// קודקוד 2: (+dx, -dz) מקומי, מסובב לעולם
-											const lx2 = dx0, lz2 = -dz0;
-											const rx2 = lx2 * c0 - lz2 * s0;
-											const rz2 = lx2 * s0 + lz2 * c0;
-											p2x = firstStep.position[0] + rx2;
-											p2z = firstStep.position[2] + rz2;
-										}
-									}
-									const dotU = (x: [number, number, number]) => (ux * x[0] + uz * x[2]);
-									const backupU = dotU([p2x, 0, p2z] as [number, number, number]);
-									const planeU = (typeof planeUA === 'number') ? Math.max(planeUA, backupU) : backupU;
-									const tNeeded = planeU - dotU(b4);
-									// הארך את שתי נקודות הקצה התחתונות באותו t לשמירת שיפוע/מישור זהים לפאנל העליון
-									const v2B: [number, number, number] = [b4[0] + ux * tNeeded, b4[1], b4[2] + uz * tNeeded];
-									const v3B: [number, number, number] = [f7x + ux * tNeeded, bottomY, f7z + uz * tNeeded];
-									// שיתוף נקודת ההתחלה המדויקת של פלטת B (לאחר הארכה למישור הקצה) עבור המחבר
+									// שמירת נקודת התחלה "טבעית" של פלטת B עבור המחבר
 									hitechBStartRef.current = {
-										top: [f4x + ux * tNeeded, f4y, f4z + uz * tNeeded],
-										bot: [f7x + ux * tNeeded, bottomY, f7z + uz * tNeeded],
+										top: [f4x, f4y, f4z],
+										bot: [f7x, f7y, f7z],
 									};
-									const v4B: [number, number, number] = [v0B[0] + offXB, v0B[1] + offYB, v0B[2] + offZB];
-									const v5B: [number, number, number] = [v1B[0] + offXB, v1B[1] + offYB, v1B[2] + offZB];
-									const v6B: [number, number, number] = [v2B[0] + offXB, v2B[1] + offYB, v2B[2] + offZB];
-									const v7B: [number, number, number] = [v3B[0] + offXB, v3B[1] + offYB, v3B[2] + offZB];
-									// אין רינדור פאנל/קווי עזר – רק קיבוע נקודת ההתחלה לפלטת B
+									// אין רינדור פאנל/קווי עזר כאן
 									return null;
 								})()
 						)}
@@ -1834,85 +1744,9 @@ function Staircase3D({
 							const count = Math.max(topRail.length, botRail.length);
 							if (count < 2) return null;
 
-							// גרם 2: Clip נקודת ההתחלה של שתי המסילות (top/bot) למישור האנכי של הפוסט הראשון
-							let clippedTop0: [number, number, number] | null = null;
-							let clippedBot0: [number, number, number] | null = null;
-							if (topRail.length >= 2 && typeof firstP7 !== 'undefined' && firstP7) {
-								const ux0 = topRail[1][0] - topRail[0][0];
-								const uz0 = topRail[1][2] - topRail[0][2];
-								const um0 = Math.hypot(ux0, uz0) || 1;
-								const uxn = ux0 / um0, uzn = uz0 / um0;
-								// חשב נקודת 2 של המדרגה הראשונה בגרם 2
-								let p2x = firstP7[0], p2z = firstP7[2];
-								{
-									let firstStep: typeof treads[number] | null = null;
-									for (let k = 0; k < treads.length; k++) {
-										const tt = treads[k];
-										if (tt.flight === 1 && !tt.isLanding) { firstStep = tt; break; }
-									}
-									if (firstStep) {
-										const yaw0 = firstStep.rotation[1] as number;
-										const c0 = Math.cos(yaw0), s0 = Math.sin(yaw0);
-										const dx0 = firstStep.run / 2, dz0 = treadWidth / 2;
-										const lx2 = dx0, lz2 = -dz0;
-										const rx2 = lx2 * c0 - lz2 * s0;
-										const rz2 = lx2 * s0 + lz2 * c0;
-										p2x = firstStep.position[0] + rx2;
-										p2z = firstStep.position[2] + rz2;
-									}
-								}
-								const dotU = (x: [number, number, number]) => (uxn * x[0] + uzn * x[2]);
-								// חשב גם את מישור הקצה של פלטת A (סוף גרם 1) כדי להמשיך באותו שיפוע עד אליה
-								let planeUA: number | null = null;
-								(() => {
-									let lastStepBeforeLanding: typeof treads[number] | null = null;
-									let landingAfter: typeof treads[number] | null = null;
-									for (let i = 0; i < treads.length - 1; i++) {
-										const cur = treads[i];
-										const nxt = treads[i + 1];
-										if (cur.flight === 0 && !cur.isLanding && nxt && nxt.flight === 0 && nxt.isLanding) {
-											lastStepBeforeLanding = cur;
-											landingAfter = nxt;
-										}
-									}
-									if (lastStepBeforeLanding && landingAfter) {
-										const yawL = landingAfter.rotation[1] as number;
-										const c2 = Math.cos(yawL), s2 = Math.sin(yawL);
-										const dxL = landingAfter.run / 2;
-										const dzL = treadWidth / 2;
-										const lx2 = -dxL, lz2 = dzL; // נק׳ 4 של הפודסט
-										const rx2 = lx2 * c2 - lz2 * s2;
-										const rz2 = lx2 * s2 + lz2 * c2;
-										const wx2 = landingAfter.position[0] + rx2;
-										const wz2 = landingAfter.position[2] + rz2;
-										planeUA = (uxn * wx2 + uzn * wz2);
-									}
-								})();
-								const planeU26 = dotU([p2x, 0, p2z] as [number, number, number]);
-								const planeU = (typeof planeUA === 'number') ? Math.max(planeUA, planeU26) : planeU26;
-								// חיתוך נקודת התחלה של שתי המסילות לאותו מישור
-								{
-									const t0 = topRail[0];
-									const tTop = planeU - dotU(t0);
-									clippedTop0 = [t0[0] + uxn * tTop, t0[1], t0[2] + uzn * tTop];
-									// יישור תחתית לנקודה אנכית מתחת ל‑t0 (קואורדינטת U זהה) כדי למנוע מקטע פתיחה אלכסוני
-                                    // משתמשים ב‑firstP7 לקביעת גובה התחתית (bottomY)
-									if (firstP7) {
-										const bottomY0 = firstP7[1];
-										const b4u = [t0[0], 0, t0[2]] as [number, number, number];
-										const tBotFromB4 = planeU - dotU(b4u);
-										clippedBot0 = [t0[0] + uxn * tBotFromB4, bottomY0, t0[2] + uzn * tBotFromB4];
-									} else {
-										const bt0 = botRail[0];
-										const tBot = planeU - dotU(bt0);
-										clippedBot0 = [bt0[0] + uxn * tBot, bt0[1], bt0[2] + uzn * tBot];
-									}
-								}
-							}
-							const botRailWithExtension: Array<[number, number, number]> =
-								clippedBot0 ? [clippedBot0, ...botRail.slice(1)] : botRail;
-							const topRailClipped: Array<[number, number, number]> =
-								clippedTop0 ? [clippedTop0, ...topRail.slice(1)] : topRail;
+							// בגרם 2: אין קליפינג/הארכה בתחילת הרצועה – מתחילים ישירות מהנקודות המקוריות
+							const botRailWithExtension: Array<[number, number, number]> = botRail;
+							const topRailClipped: Array<[number, number, number]> = topRail;
 
 							const pos: number[] = [];   // משטח קדמי
 							const idx: number[] = [];

@@ -1747,49 +1747,7 @@ function Staircase3D({
 							// כך שהריבוע הראשון ישלים את הקטע מהרייזר ועד נקודת המסילה הבאה
 							let clippedTop0: [number, number, number] | null = null;
 							let clippedBot0: [number, number, number] | null = null;
-							if (topRail.length >= 2 && typeof firstP7 !== 'undefined' && firstP7) {
-								const ux0 = topRail[1][0] - topRail[0][0];
-								const uy0 = topRail[1][1] - topRail[0][1];
-								const uz0 = topRail[1][2] - topRail[0][2];
-								// נרמול לפי ההיטל ב‑XZ (המישור של הרייזר אנכי), ושימור שיפוע ה‑Y לאורך המסילה
-								const um0xz = Math.hypot(ux0, uz0) || 1;
-								const uxn = ux0 / um0xz, uzn = uz0 / um0xz;
-								const uSlopeY = uy0 / um0xz;
-								// נקודת 2 של המדרגה הראשונה בגרם 2 (מישור הרייזר)
-								let p2x = firstP7[0], p2z = firstP7[2];
-								{
-									let firstStep: typeof treads[number] | null = null;
-									for (let k = 0; k < treads.length; k++) {
-										const tt = treads[k];
-										if (tt.flight === 1 && !tt.isLanding) { firstStep = tt; break; }
-									}
-									if (firstStep) {
-										const yaw0 = firstStep.rotation[1] as number;
-										const c0 = Math.cos(yaw0), s0 = Math.sin(yaw0);
-										const dx0 = firstStep.run / 2, dz0 = treadWidth / 2;
-										const lx2 = dx0, lz2 = -dz0;
-										const rx2 = lx2 * c0 - lz2 * s0;
-										const rz2 = lx2 * s0 + lz2 * c0;
-										p2x = firstStep.position[0] + rx2;
-										p2z = firstStep.position[2] + rz2;
-									}
-								}
-								const dotU = (x: [number, number, number]) => (uxn * x[0] + uzn * x[2]);
-								let planeU = dotU([p2x, 0, p2z] as [number, number, number]);
-								// ודא שהמישור לפני נקודת המסילה השנייה כדי למנוע דגנרציה
-								const uSecond = dotU(topRail[1]);
-								// מרווח מינימלי נצפה בין נקודת ההתחלה לבין הנקודה השנייה במסילה
-								const minSpanU = 0.02; // ~2 ס״מ לאורך u למניעת ריבוע בעובי 0
-								if (planeU >= uSecond - minSpanU) planeU = uSecond - minSpanU;
-								// חתוך את נקודת ההתחלה של שתי המסילות אל המישור
-								{
-									const t0 = topRail[0];
-									const tTop = planeU - dotU(t0);
-									clippedTop0 = [t0[0] + uxn * tTop, t0[1] + uSlopeY * tTop, t0[2] + uzn * tTop];
-									const b0 = botRail[0];
-									const tBot = planeU - dotU(b0);
-									clippedBot0 = [b0[0] + uxn * tBot, b0[1] + uSlopeY * tBot, b0[2] + uzn * tBot];
-								}
+							if (false && topRail.length >= 2 && typeof firstP7 !== 'undefined' && firstP7) {
 							}
 							const botRailWithExtension: Array<[number, number, number]> =
 								clippedBot0 ? [clippedBot0, ...botRail.slice(1)] : botRail;
@@ -1904,9 +1862,9 @@ function Staircase3D({
 							const botRailForSideB = railBot;
 							// אם אין לפחות מקטע אחד ברצועה – אל תיצור דפנות/קאפ (ימנע "פלטה מוזרה")
 							if (segCount >= 2) {
-								// דילוג על דופן ההתחלה בגרם 2 כדי למנוע קצה משולשי/לא מיושר – נוסיף קאפ התחלה נפרד
-								addSideStrip(topRailForSideB.slice(1));
-								addSideStrip(botRailForSideB.slice(1));
+								// דפנות החל מהמקטע הראשון
+								addSideStrip(topRailForSideB);
+								addSideStrip(botRailForSideB);
 								// דופן התחלה (קאפ) – מיישר את תחילת הפלטה עם הנורמל
 								{
 									const firstT = topRailForSideB[0];

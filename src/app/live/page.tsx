@@ -1778,8 +1778,9 @@ function Staircase3D({
 								let planeU = dotU([p2x, 0, p2z] as [number, number, number]);
 								// ודא שהמישור לפני נקודת המסילה השנייה כדי למנוע דגנרציה
 								const uSecond = dotU(topRail[1]);
-								const epsilon = 1e-6;
-								if (planeU >= uSecond) planeU = uSecond - epsilon;
+								// מרווח מינימלי נצפה בין נקודת ההתחלה לבין הנקודה השנייה במסילה
+								const minSpanU = 0.02; // ~2 ס״מ לאורך u למניעת ריבוע בעובי 0
+								if (planeU >= uSecond - minSpanU) planeU = uSecond - minSpanU;
 								// חתוך את נקודת ההתחלה של שתי המסילות אל המישור
 								{
 									const t0 = topRail[0];

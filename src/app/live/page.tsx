@@ -1793,14 +1793,45 @@ function Staircase3D({
 							const topRailClipped: Array<[number, number, number]> =
 								clippedTop0 ? [clippedTop0, ...topRail.slice(1)] : topRail;
 
+							// הבטחת שני קודקודים לפחות למסילות – אם יש רק מדרגה אחת בגרם 2, ניצור נקודת המשך סינתטית
+							let topForFront: Array<[number, number, number]> = topRailClipped;
+							let botForFront: Array<[number, number, number]> = botRailWithExtension;
+							if (topForFront.length < 2 || botForFront.length < 2) {
+								const t1 = topForFront[0];
+								const b1 = botForFront[0];
+								// כיוון u לפי המדרגה הראשונה בגרם 2 (אם קיים), אחרת לפי הפרש מוקדם אם יש, אחרת לפי firstYaw
+								let uxn = 1, uzn = 0;
+								if (typeof firstP7 !== 'undefined' && firstP7) {
+									// ננסה לאתר את המדרגה הראשונה בגרם 2 לקבלת run/yaw
+									let firstStep: typeof treads[number] | null = null;
+									for (let k = 0; k < treads.length; k++) {
+										const tt = treads[k];
+										if (tt.flight === 1 && !tt.isLanding) { firstStep = tt; break; }
+									}
+									if (firstStep) {
+										const yaw0 = firstStep.rotation[1] as number;
+										uxn = Math.cos(yaw0);
+										uzn = Math.sin(yaw0);
+										// הזחה לאורך run של המדרגה
+										const runL = firstStep.run;
+										const wdx = t1[0] - b1[0], wdy = t1[1] - b1[1], wdz = t1[2] - b1[2];
+										const t2: [number, number, number] = [t1[0] + uxn * runL, t1[1], t1[2] + uzn * runL];
+										const b2: [number, number, number] = [t2[0] - wdx, t2[1] - wdy, t2[2] - wdz];
+										topForFront = [t1, t2];
+										botForFront = [b1, b2];
+									}
+								}
+							}
+
 							const pos: number[] = [];   // משטח קדמי
 							const idx: number[] = [];
 							const pick = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
-							for (let i = 0; i < count - 1; i++) {
-								let t1 = pick(topRailClipped, i);
-								let b1 = pick(botRailWithExtension, i);
-								const t2 = pick(topRailClipped, i + 1);
-								const b2 = pick(botRailWithExtension, i + 1);
+							const segCount = Math.max(topForFront.length, botForFront.length);
+							for (let i = 0; i < segCount - 1; i++) {
+								let t1 = pick(topForFront, i);
+								let b1 = pick(botForFront, i);
+								const t2 = pick(topForFront, i + 1);
+								const b2 = pick(botForFront, i + 1);
 								// גרם 2: התחלה ללא אופסט – t1/b1 נשארים מהמסילות המקוריות
 								const baseIndex = pos.length / 3;
 								// סדר נקודות: t1,b1,t2,b2
@@ -1817,16 +1848,16 @@ function Staircase3D({
 							const thickness = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
 							// כיוון לאורך המסילה (u)
 							let ux = 1, uy = 0, uz = 0;
-							if (topRailClipped.length >= 2) {
-								ux = topRailClipped[1][0] - topRailClipped[0][0];
-								uy = topRailClipped[1][1] - topRailClipped[0][1];
-								uz = topRailClipped[1][2] - topRailClipped[0][2];
+							if (topForFront.length >= 2) {
+								ux = topForFront[1][0] - topForFront[0][0];
+								uy = topForFront[1][1] - topForFront[0][1];
+								uz = topForFront[1][2] - topForFront[0][2];
 							}
 							const um = Math.hypot(ux, uy, uz) || 1; ux /= um; uy /= um; uz /= um;
 							// רוחב בין המסילות (w)
-							let wx = (firstP4 && firstP7) ? (firstP4[0] - firstP7[0]) : (topRailClipped[0][0] - botRailWithExtension[0][0]);
-							let wy = (firstP4 && firstP7) ? (firstP4[1] - firstP7[1]) : (topRailClipped[0][1] - botRailWithExtension[0][1]);
-							let wz = (firstP4 && firstP7) ? (firstP4[2] - firstP7[2]) : (topRailClipped[0][2] - botRailWithExtension[0][2]);
+							let wx = (firstP4 && firstP7) ? (firstP4[0] - firstP7[0]) : (topForFront[0][0] - botForFront[0][0]);
+							let wy = (firstP4 && firstP7) ? (firstP4[1] - firstP7[1]) : (topForFront[0][1] - botForFront[0][1]);
+							let wz = (firstP4 && firstP7) ? (firstP4[2] - firstP7[2]) : (topForFront[0][2] - botForFront[0][2]);
 							const nmX = uy * wz - uz * wy;
 							const nmY = uz * wx - ux * wz;
 							const nmZ = ux * wy - uy * wx;

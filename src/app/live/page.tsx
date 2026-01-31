@@ -1200,9 +1200,9 @@ function Staircase3D({
 						if (!t.isLanding && !firstP4) firstP4 = p4w;
 						if (!t.isLanding) topStepOff.push(p4w);
 					}
-					// נקודה 5 – תחתונה שמאל-אחורה: (-dx, -dz, yBot) – רק אם לא פודסט
+					// נקודה 7 – תחתונה ימין-קדימה: (+dx, +dz, yBot) – רק אם לא פודסט
 					if (!t.isLanding) {
-						const lx = -dx, lz = -dz;
+						const lx = dx, lz = dz;
 						const rx = lx * c - lz * s;
 						const rz = lx * s + lz * c;
 						const wx = t.position[0] + rx;

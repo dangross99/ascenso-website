@@ -2050,6 +2050,16 @@ function Staircase3D({
 							const botRailForSideB = botRailWithExtension;
 							addSideStrip(topRailForSideB);
 							addSideStrip(botRailForSideB);
+							// דופן התחלה מוקדמת (אם בוצע מילוי מקדים עד מישור 2/6) – סוגר את קצה 2/6
+							if (prefillStartTop && prefillStartBot) {
+								const pT = prefillStartTop;
+								const pB = prefillStartBot;
+								const pTe: [number, number, number] = [pT[0] + offX, pT[1] + offY, pT[2] + offZ];
+								const pBe: [number, number, number] = [pB[0] + offX, pB[1] + offY, pB[2] + offZ];
+								const bi = pos.length / 3;
+								pos.push(pT[0], pT[1], pT[2],  pB[0], pB[1], pB[2],  pBe[0], pBe[1], pBe[2],  pTe[0], pTe[1], pTe[2]);
+								idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+							}
 							// דופן התחלה (קצה לפי המישור דרך 2/6 – ללא אופסט צדדי בגרם 2)
 							{
 								// השתמש בנקודות ההתחלה לאחר ה‑clip (top/bot),

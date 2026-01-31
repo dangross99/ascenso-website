@@ -1714,26 +1714,7 @@ function Staircase3D({
 								<lineBasicMaterial attach="material" color="#10b981" linewidth={1} depthTest={false} depthWrite={false} />
 							</line>
 						)}
-						{/* הארכה למטה עד הרצפה מהמדרגה הראשונה וסגירה ביניהן */}
-						{firstP4 && firstP7 && (
-							(() => {
-									// התחלה פשוטה: ללא הארכה/קליפינג לגרמים אחרים – כדי שהריבוע הראשון יהיה כמו שאר הריבועים
-									// אין אופסט אופקי בתחילת הפלטה
-									const f4x = firstP4[0];
-									const f4y = firstP4[1];
-									const f4z = firstP4[2];
-									const f7x = firstP7[0];
-									const f7y = firstP7[1];
-									const f7z = firstP7[2];
-									// שמירת נקודת התחלה "טבעית" של פלטת B עבור המחבר
-									hitechBStartRef.current = {
-										top: [f4x, f4y, f4z],
-										bot: [f7x, f7y, f7z],
-									};
-									// אין רינדור פאנל/קווי עזר כאן
-									return null;
-								})()
-						)}
+						{/* (הוסר) לוגיקת עזר/שמירה למדרגה הראשונה בגרם 2 */}
 
 						{/* פלטה A – רצועה מדויקת בין קווי האופסט (מילוי משולשים) */}
 						{bottomStepOff.length > 0 && topStepOff.length > 0 && (() => {
@@ -1744,46 +1725,15 @@ function Staircase3D({
 							// בחר אורך מקסימלי – אם מסילה אחת ארוכה יותר (למשל כוללת פודסט), נשכפל את הנקודה האחרונה של הקצרה
 							const count = Math.max(topRail.length, botRail.length);
 
-							// קליפינג בתחילת הרצועה למישור הרייזר של המדרגה הראשונה בגרם 2,
-							// כך שהריבוע הראשון ישלים את הקטע מהרייזר ועד נקודת המסילה הבאה
-							let clippedTop0: [number, number, number] | null = null;
-							let clippedBot0: [number, number, number] | null = null;
-							if (false && topRail.length >= 2 && typeof firstP7 !== 'undefined' && firstP7) {
-							}
+							// (הוסר) קליפינג ייעודי להתחלת הרצועה בגרם 2
 							const botRailWithExtension: Array<[number, number, number]> =
-								clippedBot0 ? [clippedBot0, ...botRail.slice(1)] : botRail;
+								botRail;
 							const topRailClipped: Array<[number, number, number]> =
-								clippedTop0 ? [clippedTop0, ...topRail.slice(1)] : topRail;
+								topRail;
 
-							// הבטחת שני קודקודים לפחות למסילות – אם יש רק מדרגה אחת בגרם 2, ניצור נקודת המשך סינתטית
-							let topForFront: Array<[number, number, number]> = topRailClipped;
-							let botForFront: Array<[number, number, number]> = botRailWithExtension;
-							if (topForFront.length < 2 || botForFront.length < 2) {
-								const t1 = topForFront[0];
-								const b1 = botForFront[0];
-								// כיוון u לפי המדרגה הראשונה בגרם 2 (אם קיים), אחרת לפי הפרש מוקדם אם יש, אחרת לפי firstYaw
-								let uxn = 1, uzn = 0;
-								if (typeof firstP7 !== 'undefined' && firstP7) {
-									// ננסה לאתר את המדרגה הראשונה בגרם 2 לקבלת run/yaw
-									let firstStep: typeof treads[number] | null = null;
-									for (let k = 0; k < treads.length; k++) {
-										const tt = treads[k];
-										if (tt.flight === 1 && !tt.isLanding) { firstStep = tt; break; }
-									}
-									if (firstStep) {
-										const yaw0 = firstStep.rotation[1] as number;
-										uxn = Math.cos(yaw0);
-										uzn = Math.sin(yaw0);
-										// הזחה לאורך run של המדרגה
-										const runL = firstStep.run;
-										const wdx = t1[0] - b1[0], wdy = t1[1] - b1[1], wdz = t1[2] - b1[2];
-										const t2: [number, number, number] = [t1[0] + uxn * runL, t1[1], t1[2] + uzn * runL];
-										const b2: [number, number, number] = [t2[0] - wdx, t2[1] - wdy, t2[2] - wdz];
-										topForFront = [t1, t2];
-										botForFront = [b1, b2];
-									}
-								}
-							}
+							// הסרת המקטע הראשון בגרם 2: מסילות לשימוש מתחילות מהנקודה השנייה
+							const topForFront: Array<[number, number, number]> = topRailClipped.slice(1);
+							const botForFront: Array<[number, number, number]> = botRailWithExtension.slice(1);
 
 							// הרחבת תחילת פלטת B "לפני" המדרגה הראשונה – התחלה מה"פודסט":
 							// ללא הרחבה סינתטית: המקטע הראשון ייווצר בין מדרגה 1 למדרגה 2 בדיוק כמו שאר המקטעים
@@ -1802,11 +1752,6 @@ function Staircase3D({
 								let b1 = pick(railBot, i);
 								const t2 = pick(railTop, i + 1);
 								const b2 = pick(railBot, i + 1);
-								// גרם 2: במקטע הראשון נאמץ אופסט התחלה כמו בגרם 1 כדי למנוע "חצי פלטה"
-								if (i === 0 && firstP4SideShift) {
-									t1 = firstP4SideShift;
-									if (firstP7) b1 = firstP7;
-								}
 								const baseIndex = pos.length / 3;
 								// סדר נקודות: t1,b1,t2,b2
 								pos.push(t1[0], t1[1], t1[2]);
@@ -1865,9 +1810,9 @@ function Staircase3D({
 									idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
 								}
 							};
-							// דופן עליונה ותחתונה – סנכרון נקודת ההתחלה עם האופסט של המקטע הראשון
-							const topRailForSideB = firstP4SideShift ? [firstP4SideShift, ...railTop] : railTop;
-							const botRailForSideB = firstP7 ? [firstP7, ...railBot] : railBot;
+							// דופן עליונה ותחתונה – התחלה מהנקודה השנייה (ללא מקטע המדרגה הראשונה)
+							const topRailForSideB = railTop;
+							const botRailForSideB = railBot;
 							// אם אין לפחות מקטע אחד ברצועה – אל תיצור דפנות/קאפ (ימנע "פלטה מוזרה")
 							if (segCount >= 2) {
 								// דפנות החל מהמקטע הראשון

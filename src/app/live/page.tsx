@@ -1621,22 +1621,24 @@ function Staircase3D({
 							}
 
 							return (
-								<mesh castShadow receiveShadow>
-									<bufferGeometry attach="geometry">
-										<bufferAttribute attach="attributes-position" args={[new Float32Array(pos), 3]} />
-										<bufferAttribute attach="index" args={[new Uint32Array(idx), 1]} />
-									</bufferGeometry>
-									<meshBasicMaterial color="#4b5563" side={2} />
-								</mesh>
-								{/* מסגרת קאפ סיום */}
-								{edgeLines.length > 0 ? (
-									<lineSegments>
+								<group>
+									<mesh castShadow receiveShadow>
 										<bufferGeometry attach="geometry">
-											<bufferAttribute attach="attributes-position" args={[new Float32Array(edgeLines), 3]} />
+											<bufferAttribute attach="attributes-position" args={[new Float32Array(pos), 3]} />
+											<bufferAttribute attach="index" args={[new Uint32Array(idx), 1]} />
 										</bufferGeometry>
-										<lineBasicMaterial attach="material" color="#111827" linewidth={1} depthTest={true} depthWrite={false} />
-									</lineSegments>
-								) : null}
+										<meshBasicMaterial color="#4b5563" side={2} />
+									</mesh>
+									{/* מסגרת קאפ סיום */}
+									{edgeLines.length > 0 ? (
+										<lineSegments>
+											<bufferGeometry attach="geometry">
+												<bufferAttribute attach="attributes-position" args={[new Float32Array(edgeLines), 3]} />
+											</bufferGeometry>
+											<lineBasicMaterial attach="material" color="#111827" linewidth={1} depthTest={true} depthWrite={false} />
+										</lineSegments>
+									) : null}
+								</group>
 							);
 						})()}
 					</group>
@@ -1933,21 +1935,23 @@ function Staircase3D({
 				}
 
 				return (
-					<mesh castShadow receiveShadow>
-						<bufferGeometry attach="geometry">
-							<bufferAttribute attach="attributes-position" args={[new Float32Array(pos), 3]} />
-							<bufferAttribute attach="index" args={[new Uint32Array(idx), 1]} />
-						</bufferGeometry>
-						<meshBasicMaterial color="#0ea5e9" side={2} />
-					</mesh>
-					{edgeLines.length > 0 ? (
-						<lineSegments>
+					<group>
+						<mesh castShadow receiveShadow>
 							<bufferGeometry attach="geometry">
-								<bufferAttribute attach="attributes-position" args={[new Float32Array(edgeLines), 3]} />
+								<bufferAttribute attach="attributes-position" args={[new Float32Array(pos), 3]} />
+								<bufferAttribute attach="index" args={[new Uint32Array(idx), 1]} />
 							</bufferGeometry>
-							<lineBasicMaterial attach="material" color="#0f172a" linewidth={1} depthTest={true} depthWrite={false} />
-						</lineSegments>
-					) : null}
+							<meshBasicMaterial color="#0ea5e9" side={2} />
+						</mesh>
+						{edgeLines.length > 0 ? (
+							<lineSegments>
+								<bufferGeometry attach="geometry">
+									<bufferAttribute attach="attributes-position" args={[new Float32Array(edgeLines), 3]} />
+								</bufferGeometry>
+								<lineBasicMaterial attach="material" color="#0f172a" linewidth={1} depthTest={true} depthWrite={false} />
+							</lineSegments>
+						) : null}
+					</group>
 				);
 			})() : null}
 

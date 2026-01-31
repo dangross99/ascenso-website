@@ -1539,7 +1539,8 @@ function Staircase3D({
 							// התחלה
 							{
 								const pT = (firstP4SideShift || topRail[0]);
-								const pB = (firstP7 || botRail[0]);
+								// קאפ אנכי: XZ של התחתון זהה לעליון, רק Y שונה
+								const pB: [number, number, number] = [pT[0], (firstP7 ? firstP7[1] : botRail[0][1]), pT[2]];
 								const pTe: [number, number, number] = [pT[0] + offX, pT[1] + offY, pT[2] + offZ];
 								const pBe: [number, number, number] = [pB[0] + offX, pB[1] + offY, pB[2] + offZ];
 								const bi = pos.length / 3;
@@ -1549,7 +1550,9 @@ function Staircase3D({
 							// סיום
 							{
 								const lastT = topRail[topRail.length - 1];
-								const lastB = botRail[botRail.length - 1];
+								// קאפ אנכי: תחתון עם אותו XZ כמו העליון, Y מתחתון קיים
+								const lastBy = botRail[botRail.length - 1][1];
+								const lastB: [number, number, number] = [lastT[0], lastBy, lastT[2]];
 								const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
 								const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
 								const bi = pos.length / 3;
@@ -1861,7 +1864,9 @@ function Staircase3D({
 								// דופן התחלה (קאפ) – מיישר את תחילת הפלטה עם הנורמל
 								{
 									const firstT = topRailForSideB[0];
-									const firstB = botRailForSideB[0];
+									// קאפ אנכי: תחתון באותו XZ כמו העליון, Y מתחתון הקיים
+									const firstBy = botRailForSideB[0][1];
+									const firstB: [number, number, number] = [firstT[0], firstBy, firstT[2]];
 									const firstTe: [number, number, number] = [firstT[0] + offX, firstT[1] + offY, firstT[2] + offZ];
 									const firstBe: [number, number, number] = [firstB[0] + offX, firstB[1] + offY, firstB[2] + offZ];
 									const bi = pos.length / 3;
@@ -1872,7 +1877,9 @@ function Staircase3D({
 							// דופן סיום
 							{
 								const lastT = topRailForSideB[topRailForSideB.length - 1];
-								const lastB = botRailForSideB[botRailForSideB.length - 1];
+								// קאפ אנכי: XZ של התחתון זהה לעליון, Y מתחתון מסילה
+								const lastBy = botRailForSideB[botRailForSideB.length - 1][1];
+								const lastB: [number, number, number] = [lastT[0], lastBy, lastT[2]];
 								const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
 								const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
 								const bi = pos.length / 3;

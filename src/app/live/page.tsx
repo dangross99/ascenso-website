@@ -1711,7 +1711,8 @@ function Staircase3D({
 				})();
 				const topRail: Array<[number, number, number]> = baseTop;
 				const botRail: Array<[number, number, number]> = (() => {
-					const arr = [...bottomStepOff];
+					let arr = [...bottomStepOff];
+					if (closeP7) arr = [...arr, closeP7];
 					return startFromLandingBot ? [startFromLandingBot, ...arr] : arr;
 				})();
 				const count = Math.max(topRail.length, botRail.length);

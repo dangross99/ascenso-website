@@ -1457,44 +1457,23 @@ function Staircase3D({
 							const baseTop: Array<[number, number, number]> = closeP4 ? [...topStepOff, closeP4] : [...topStepOff];
 							// שמור את הרייל העליון המקורי לשימור השיפוע
 							const topRail: Array<[number, number, number]> = baseTop;
-
-							// אורתוגונליות: בניית מסילה תחתונה סינתטית ניצבת לכיוון ההתקדמות
-							if (topRail.length < 2) return null;
-							// u לאורך המסילה
-							let ux = topRail[1][0] - topRail[0][0];
-							let uy = topRail[1][1] - topRail[0][1];
-							let uz = topRail[1][2] - topRail[0][2];
-							{ const m = Math.hypot(ux, uy, uz) || 1; ux /= m; uy /= m; uz /= m; }
-							// וקטור רוחב בסיסי
-							let wx0 = (firstP4 && firstP7) ? (firstP4[0] - firstP7[0]) : (topRail[0][0] - (bottomStepOff[0]?.[0] ?? topRail[0][0]));
-							let wy0 = (firstP4 && firstP7) ? (firstP4[1] - firstP7[1]) : (topRail[0][1] - (bottomStepOff[0]?.[1] ?? topRail[0][1]));
-							let wz0 = (firstP4 && firstP7) ? (firstP4[2] - firstP7[2]) : (topRail[0][2] - (bottomStepOff[0]?.[2] ?? topRail[0][2]));
-							// נורמל למישור
-							let nx = uy * wz0 - uz * wy0;
-							let ny = uz * wx0 - ux * wz0;
-							let nz = ux * wy0 - uy * wx0;
-							{ const m = Math.hypot(nx, ny, nz) || 1; nx /= m; ny /= m; nz /= m; }
-							// כיוון צד במישור, ניצב ל‑u
-							let sx = ny * uz - nz * uy;
-							let sy = nz * ux - nx * uz;
-							let sz = nx * uy - ny * ux;
-							{ const m = Math.hypot(sx, sy, sz) || 1; sx /= m; sy /= m; sz /= m; }
-							// רוחב קבוע לפי הפרויקט של w0 על s
-							let width = wx0 * sx + wy0 * sy + wz0 * sz;
-							if (width < 0) { width = -width; sx = -sx; sy = -sy; sz = -sz; }
-
+							// הוסף נקודת סיום תחתונה מהפודסט אם קיימת, כדי לקבל לפחות שתי נקודות למסילה התחתונה
+							const botRail: Array<[number, number, number]> = closeP7 ? [...bottomStepOff, closeP7] : [...bottomStepOff];
+							// בחר אורך מקסימלי – אם מסילה אחת ארוכה יותר (למשל כוללת פודסט), נשכפל את הנקודה האחרונה של הקצרה
+							const count = Math.max(topRail.length, botRail.length);
+							if (count < 2) return null;
 							const pos: number[] = [];
 							const idx: number[] = [];
 							const pick = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
-							for (let i = 0; i < topRail.length - 1; i++) {
+							for (let i = 0; i < count - 1; i++) {
 								let t1 = pick(topRail, i);
-								let b1: [number, number, number] = [t1[0] - sx * width, t1[1] - sy * width, t1[2] - sz * width];
+								let b1 = pick(botRail, i);
 								const t2 = pick(topRail, i + 1);
-								const b2: [number, number, number] = [t2[0] - sx * width, t2[1] - sy * width, t2[2] - sz * width];
+								const b2 = pick(botRail, i + 1);
 								// התחלת הפלטה בדיוק מהנקודות f4/f7 (firstP4SideShift/firstP7) כדי למנוע משולש חסר בתחילת הרצועה
 								if (i === 0 && firstP4SideShift) {
 									t1 = firstP4SideShift;
-									b1 = [t1[0] - sx * width, t1[1] - sy * width, t1[2] - sz * width];
+									if (firstP7) b1 = firstP7;
 								}
 								const baseIndex = pos.length / 3;
 								// סדר נקודות: t1,b1,t2,b2
@@ -1509,8 +1488,24 @@ function Staircase3D({
 
 							// בניית נפח לפלטה A (גרם 1) – עובי לפי hitechPlateThickness (ברירת‑מחדל 12 מ״מ)
 							const thickness = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
-							// נורמל ידוע – השתמש בו ישירות
-							const offX = nx * thickness, offY = ny * thickness, offZ = nz * thickness;
+							// כיוון לאורך המסילה (u)
+							let ux = 1, uy = 0, uz = 0;
+							if (topRail.length >= 2) {
+								ux = topRail[1][0] - topRail[0][0];
+								uy = topRail[1][1] - topRail[0][1];
+								uz = topRail[1][2] - topRail[0][2];
+							}
+							const um = Math.hypot(ux, uy, uz) || 1; ux /= um; uy /= um; uz /= um;
+							// רוחב בין המסילות (w)
+							let wx = (firstP4 && firstP7) ? (firstP4[0] - firstP7[0]) : (topRail[0][0] - botRail[0][0]);
+							let wy = (firstP4 && firstP7) ? (firstP4[1] - firstP7[1]) : (topRail[0][1] - botRail[0][1]);
+							let wz = (firstP4 && firstP7) ? (firstP4[2] - firstP7[2]) : (topRail[0][2] - botRail[0][2]);
+							const nmX = uy * wz - uz * wy;
+							const nmY = uz * wx - ux * wz;
+							const nmZ = ux * wy - uy * wx;
+							const nmag = Math.hypot(nmX, nmY, nmZ) || 1;
+							const nxN = nmX / nmag, nyN = nmY / nmag, nzN = nmZ / nmag;
+							const offX = nxN * thickness, offY = nyN * thickness, offZ = nzN * thickness;
 
 							// שכבת גב: נעתיק את חזית הפלטה בהסט נורמל קבוע; יש לקבע אורכים לפני הרחבה
 							const frontVertexCount = pos.length / 3;
@@ -1538,13 +1533,13 @@ function Staircase3D({
 								}
 							};
 							const topRailForSide = firstP4SideShift ? [firstP4SideShift, ...topRail] : topRail;
-							const botRailForSide = topRailForSide.map(p => [p[0] - sx * width, p[1] - sy * width, p[2] - sz * width] as [number, number, number]);
+							const botRailForSide = firstP7 ? [firstP7, ...botRail] : botRail;
 							addSideStrip(topRailForSide);
 							addSideStrip(botRailForSide);
 							// התחלה
 							{
 								const pT = (firstP4SideShift || topRail[0]);
-								const pB: [number, number, number] = [pT[0] - sx * width, pT[1] - sy * width, pT[2] - sz * width];
+								const pB = (firstP7 || botRail[0]);
 								const pTe: [number, number, number] = [pT[0] + offX, pT[1] + offY, pT[2] + offZ];
 								const pBe: [number, number, number] = [pB[0] + offX, pB[1] + offY, pB[2] + offZ];
 								const bi = pos.length / 3;
@@ -1554,7 +1549,7 @@ function Staircase3D({
 							// סיום
 							{
 								const lastT = topRail[topRail.length - 1];
-								const lastB: [number, number, number] = [lastT[0] - sx * width, lastT[1] - sy * width, lastT[2] - sz * width];
+								const lastB = botRail[botRail.length - 1];
 								const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
 								const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
 								const bi = pos.length / 3;
@@ -1727,7 +1722,7 @@ function Staircase3D({
 						{bottomStepOff.length > 0 && topStepOff.length > 0 && (() => {
 							// הוספת נקודת פתיחה מהפודסט שלפני גרם 2 (אם קיימת)
 							let startFromLandingTop: [number, number, number] | null = null;
-							let startFromLandingBot: [number, number, number] | null = null; // רק למדידת רוחב אם צריך
+							let startFromLandingBot: [number, number, number] | null = null;
 							if (firstStepIdxInFlight !== null && firstStepIdxInFlight > 0) {
 								const prev = treads[firstStepIdxInFlight - 1];
 								if (prev && prev.isLanding) {
@@ -1753,43 +1748,16 @@ function Staircase3D({
 							})();
 							// שמור את הרייל העליון המקורי לשימור השיפוע
 							const topRail: Array<[number, number, number]> = baseTop;
-							if (topRail.length < 2) return null;
-
-							// אורתוגונליות: כיוון u ומדידת רוחב קבועה
-							let ux = topRail[1][0] - topRail[0][0];
-							let uy = topRail[1][1] - topRail[0][1];
-							let uz = topRail[1][2] - topRail[0][2];
-							{ const m = Math.hypot(ux, uy, uz) || 1; ux /= m; uy /= m; uz /= m; }
-							let wx0: number, wy0: number, wz0: number;
-							if (firstP4 && firstP7) {
-								wx0 = firstP4[0] - firstP7[0];
-								wy0 = firstP4[1] - firstP7[1];
-								wz0 = firstP4[2] - firstP7[2];
-							} else if (startFromLandingTop && startFromLandingBot) {
-								wx0 = startFromLandingTop[0] - startFromLandingBot[0];
-								wy0 = startFromLandingTop[1] - startFromLandingBot[1];
-								wz0 = startFromLandingTop[2] - startFromLandingBot[2];
-							} else {
-								// נפילה אחורה: ניחוש לפי מדרגה ראשונה
-								const t0 = topRail[0], t1 = topRail[Math.min(1, topRail.length - 1)];
-								wx0 = (t0[2] - t1[2]) * 0; wy0 = 1; wz0 = 0; // וקטור אנכי "דמה" מונע מחיקה
-							}
-							let nx = uy * wz0 - uz * wy0;
-							let ny = uz * wx0 - ux * wz0;
-							let nz = ux * wy0 - uy * wx0;
-							{ const m = Math.hypot(nx, ny, nz) || 1; nx /= m; ny /= m; nz /= m; }
-							let sx = ny * uz - nz * uy;
-							let sy = nz * ux - nx * uz;
-							let sz = nx * uy - ny * ux;
-							{ const m = Math.hypot(sx, sy, sz) || 1; sx /= m; sy /= m; sz /= m; }
-							let width = wx0 * sx + wy0 * sy + wz0 * sz;
-							if (width < 0) { width = -width; sx = -sx; sy = -sy; sz = -sz; }
-
-							const count = topRail.length;
+							const botRail: Array<[number, number, number]> = (() => {
+								const arr = [...bottomStepOff];
+								return startFromLandingBot ? [startFromLandingBot, ...arr] : arr;
+							})();
+							// בחר אורך מקסימלי – אם מסילה אחת ארוכה יותר (למשל כוללת פודסט), נשכפל את הנקודה האחרונה של הקצרה
+							const count = Math.max(topRail.length, botRail.length);
 
 							// (הוסר) קליפינג ייעודי להתחלת הרצועה בגרם 2
 							const botRailWithExtension: Array<[number, number, number]> =
-								topRail.map(p => [p[0] - sx * width, p[1] - sy * width, p[2] - sz * width] as [number, number, number]);
+								botRail;
 							const topRailClipped: Array<[number, number, number]> =
 								topRail;
 
@@ -1820,7 +1788,7 @@ function Staircase3D({
 									const hasLandingStart = !!startFromLandingTop && !!startFromLandingBot;
 									if (!hasLandingStart) {
 										if (firstP4SideShift) t1 = firstP4SideShift;
-										b1 = [t1[0] - sx * width, t1[1] - sy * width, t1[2] - sz * width];
+										if (firstP7) b1 = firstP7;
 									}
 								}
 								const baseIndex = pos.length / 3;
@@ -1836,7 +1804,24 @@ function Staircase3D({
 
 							// בניית נפח: משטח אחורי והדפנות על סמך normal קבוע של המישור
 							const thickness = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
-							const offX = nx * thickness, offY = ny * thickness, offZ = nz * thickness;
+							// כיוון לאורך המסילה (u)
+							let ux = 1, uy = 0, uz = 0;
+							if (railTop.length >= 2) {
+								ux = railTop[1][0] - railTop[0][0];
+								uy = railTop[1][1] - railTop[0][1];
+								uz = railTop[1][2] - railTop[0][2];
+							}
+							const um = Math.hypot(ux, uy, uz) || 1; ux /= um; uy /= um; uz /= um;
+							// רוחב בין המסילות (w)
+							let wx = (firstP4 && firstP7) ? (firstP4[0] - firstP7[0]) : (railTop[0][0] - railBot[0][0]);
+							let wy = (firstP4 && firstP7) ? (firstP4[1] - firstP7[1]) : (railTop[0][1] - railBot[0][1]);
+							let wz = (firstP4 && firstP7) ? (firstP4[2] - firstP7[2]) : (railTop[0][2] - railBot[0][2]);
+							const nmX = uy * wz - uz * wy;
+							const nmY = uz * wx - ux * wz;
+							const nmZ = ux * wy - uy * wx;
+							const nmag = Math.hypot(nmX, nmY, nmZ) || 1;
+							const nxN = nmX / nmag, nyN = nmY / nmag, nzN = nmZ / nmag;
+							const offX = nxN * thickness, offY = nyN * thickness, offZ = nzN * thickness;
 
 							// משטח אחורי (הזזה ב-n) – יש ללכוד את אורך החזית לפני ההוספה כדי לא לגדול באותה לולאה
 							const frontVertexCount = pos.length / 3;
@@ -1867,7 +1852,7 @@ function Staircase3D({
 							// דופן עליונה ותחתונה – אם מתחילים מהפודסט, אל תוסיף אופסטים; אחרת הוסף f4/f7 בתחילת המסילה
 							const useLandingStart = !!startFromLandingTop && !!startFromLandingBot;
 							const topRailForSideB = useLandingStart ? railTop : (firstP4SideShift ? [firstP4SideShift, ...railTop] : railTop);
-							const botRailForSideB = topRailForSideB.map(p => [p[0] - sx * width, p[1] - sy * width, p[2] - sz * width] as [number, number, number]);
+							const botRailForSideB = useLandingStart ? railBot : (firstP7 ? [firstP7, ...railBot] : railBot);
 							// אם אין לפחות מקטע אחד ברצועה – אל תיצור דפנות/קאפ (ימנע "פלטה מוזרה")
 							if (segCount >= 2) {
 								// דפנות החל מהמקטע הראשון

@@ -1885,6 +1885,8 @@ function Staircase3D({
 							// גרם 2: Clip נקודת ההתחלה של שתי המסילות (top/bot) למישור האנכי של הפוסט הראשון
 							let clippedTop0: [number, number, number] | null = null;
 							let clippedBot0: [number, number, number] | null = null;
+							let prefillStartTop: [number, number, number] | null = null; // מילוי עד המישור השני (אם קיים)
+							let prefillStartBot: [number, number, number] | null = null;
 							if (topRail.length >= 2 && typeof firstP7 !== 'undefined' && firstP7) {
 								const ux0 = topRail[1][0] - topRail[0][0];
 								const uz0 = topRail[1][2] - topRail[0][2];
@@ -1947,6 +1949,19 @@ function Staircase3D({
 									clippedTop0 = [t0[0] + uxn * tTop, t0[1], t0[2] + uzn * tTop];
 									clippedBot0 = [bt0[0] + uxn * tBot, bt0[1], bt0[2] + uzn * tBot];
 								}
+								// אם קיימים שני מישורים שונים (2/6 ו‑4), חשב נקודת התחלה נוספת למילוי עד המישור הקרוב
+								{
+									const planeUMax = (typeof planeUA === 'number') ? Math.max(planeUA, planeU26) : planeU26;
+									const planeUMin = (typeof planeUA === 'number') ? Math.min(planeUA, planeU26) : planeU26;
+									if (planeUMax - planeUMin > 1e-6) {
+										const t0 = topRail[0];
+										const bt0 = botRail[0];
+										const tTop2 = planeUMin - dotU(t0);
+										const tBot2 = planeUMin - dotU(bt0);
+										prefillStartTop = [t0[0] + uxn * tTop2, t0[1], t0[2] + uzn * tTop2];
+										prefillStartBot = [bt0[0] + uxn * tBot2, bt0[1], bt0[2] + uzn * tBot2];
+									}
+								}
 							}
 							const botRailWithExtension: Array<[number, number, number]> =
 								clippedBot0 ? [clippedBot0, ...botRail.slice(1)] : botRail;
@@ -1956,6 +1971,16 @@ function Staircase3D({
 							const pos: number[] = [];   // משטח קדמי
 							const idx: number[] = [];
 							const pick = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
+							// מילוי מקדים עד המישור השני (אם חושב קודם): ריבוע קצר בין prefillStart ל‑clippedStart
+							if (prefillStartTop && prefillStartBot && clippedTop0 && clippedBot0) {
+								const baseIndexPre = pos.length / 3;
+								pos.push(prefillStartTop[0], prefillStartTop[1], prefillStartTop[2]);
+								pos.push(prefillStartBot[0], prefillStartBot[1], prefillStartBot[2]);
+								pos.push(clippedTop0[0], clippedTop0[1], clippedTop0[2]);
+								pos.push(clippedBot0[0], clippedBot0[1], clippedBot0[2]);
+								idx.push(baseIndexPre + 0, baseIndexPre + 1, baseIndexPre + 2);
+								idx.push(baseIndexPre + 2, baseIndexPre + 1, baseIndexPre + 3);
+							}
 							for (let i = 0; i < count - 1; i++) {
 								let t1 = pick(topRailClipped, i);
 								let b1 = pick(botRailWithExtension, i);

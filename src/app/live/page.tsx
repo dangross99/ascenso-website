@@ -1810,6 +1810,11 @@ function Staircase3D({
 									// הארך את שתי נקודות הקצה התחתונות באותו t לשמירת שיפוע/מישור זהים לפאנל העליון
 									const v2B: [number, number, number] = [b4[0] + ux * tNeeded, b4[1], b4[2] + uz * tNeeded];
 									const v3B: [number, number, number] = [f7x + ux * tNeeded, bottomY, f7z + uz * tNeeded];
+									// שיתוף נקודת ההתחלה המדויקת של פלטת B (לאחר הארכה למישור הקצה) עבור המחבר
+									hitechBStartRef.current = {
+										top: [f4x + ux * tNeeded, f4y, f4z + uz * tNeeded],
+										bot: [f7x + ux * tNeeded, bottomY, f7z + uz * tNeeded],
+									};
 									const v4B: [number, number, number] = [v0B[0] + offXB, v0B[1] + offYB, v0B[2] + offZB];
 									const v5B: [number, number, number] = [v1B[0] + offXB, v1B[1] + offYB, v1B[2] + offZB];
 									const v6B: [number, number, number] = [v2B[0] + offXB, v2B[1] + offYB, v2B[2] + offZB];
@@ -2149,6 +2154,11 @@ function Staircase3D({
 							startBotB = [wx, wy - offsetY, wz];
 						}
 						uB = [Math.cos(yaw), 0, Math.sin(yaw)];
+					}
+					// אם נשמרה נקודת התחלה מדויקת של פלטת B (לאחר הארכה למישור הקצה) – השתמש בה
+					if (hitechBStartRef.current) {
+						startTopB = hitechBStartRef.current.top;
+						startBotB = hitechBStartRef.current.bot;
 					}
 				}
 

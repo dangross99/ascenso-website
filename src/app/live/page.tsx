@@ -1474,6 +1474,7 @@ function Staircase3D({
 							if (count < 2) return null;
 							const pos: number[] = [];
 							const idx: number[] = [];
+							const edgeLines: number[] = [];
 							const pick = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
 							for (let i = 0; i < count - 1; i++) {
 								let t1 = pick(topRail, i);
@@ -1562,12 +1563,21 @@ function Staircase3D({
 								const lastT = topRail[topRail.length - 1];
 								// קאפ אנכי: תחתון עם אותו XZ כמו העליון, Y מתחתון קיים
 								const lastBy = botRail[botRail.length - 1][1];
+								// המשך לגובה רייזר נוסף
+								const lastTUp: [number, number, number] = [lastT[0], lastT[1] + riser, lastT[2]];
 								const lastB: [number, number, number] = [lastT[0], lastBy, lastT[2]];
-								const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
+								const lastTe: [number, number, number] = [lastTUp[0] + offX, lastTUp[1] + offY, lastTUp[2] + offZ];
 								const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
 								const bi = pos.length / 3;
-								pos.push(lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
+								pos.push(lastTUp[0], lastTUp[1], lastTUp[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
 								idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+								// מסגרת – 4 קווי מתאר
+								edgeLines.push(
+									lastTUp[0], lastTUp[1], lastTUp[2],  lastB[0], lastB[1], lastB[2],
+									lastB[0], lastB[1], lastB[2],        lastBe[0], lastBe[1], lastBe[2],
+									lastBe[0], lastBe[1], lastBe[2],      lastTe[0], lastTe[1], lastTe[2],
+									lastTe[0], lastTe[1], lastTe[2],      lastTUp[0], lastTUp[1], lastTUp[2],
+								);
 							}
 
 							// קאפ סיום בצד החיצוני: לפי קודקודים 3 (עליון) ו‑7 (תחתון) של המדרגה האחרונה בגרם
@@ -1590,7 +1600,8 @@ function Staircase3D({
 									const rz = lx * s + lz * c;
 									const xTop = lastStep.position[0] + rx;
 									const zTop = lastStep.position[2] + rz;
-									const yTop = lastStep.position[1] + treadThickness / 2 + offsetY;
+									// המשך לגובה רייזר נוסף
+									const yTop = lastStep.position[1] + treadThickness / 2 + offsetY + riser;
 									const yBot = lastStep.position[1] - treadThickness / 2 - offsetY;
 									const pT: [number, number, number] = [xTop, yTop, zTop];
 									const pB: [number, number, number] = [xTop, yBot, zTop];
@@ -1599,6 +1610,13 @@ function Staircase3D({
 									const bi2 = pos.length / 3;
 									pos.push(pT[0], pT[1], pT[2],  pB[0], pB[1], pB[2],  pBe[0], pBe[1], pBe[2],  pTe[0], pTe[1], pTe[2]);
 									idx.push(bi2 + 0, bi2 + 1, bi2 + 2,  bi2 + 0, bi2 + 2, bi2 + 3);
+									// מסגרת
+									edgeLines.push(
+										pT[0], pT[1], pT[2],  pB[0], pB[1], pB[2],
+										pB[0], pB[1], pB[2],  pBe[0], pBe[1], pBe[2],
+										pBe[0], pBe[1], pBe[2],  pTe[0], pTe[1], pTe[2],
+										pTe[0], pTe[1], pTe[2],  pT[0], pT[1], pT[2],
+									);
 								}
 							}
 
@@ -1610,6 +1628,15 @@ function Staircase3D({
 									</bufferGeometry>
 									<meshBasicMaterial color="#4b5563" side={2} />
 								</mesh>
+								{/* מסגרת קאפ סיום */}
+								{edgeLines.length > 0 ? (
+									<lineSegments>
+										<bufferGeometry attach="geometry">
+											<bufferAttribute attach="attributes-position" args={[new Float32Array(edgeLines), 3]} />
+										</bufferGeometry>
+										<lineBasicMaterial attach="material" color="#111827" linewidth={1} depthTest={true} depthWrite={false} />
+									</lineSegments>
+								) : null}
 							);
 						})()}
 					</group>
@@ -1831,6 +1858,7 @@ function Staircase3D({
 				addSideStrip(topRailForSide);
 				addSideStrip(botRailForSide);
 
+				const edgeLines: number[] = [];
 				// קאפ התחלה אנכי
 				{
 					const pT = topRailForSide[0];
@@ -1841,17 +1869,30 @@ function Staircase3D({
 					const bi = pos.length / 3;
 					pos.push(pT[0], pT[1], pT[2],  pB[0], pB[1], pB[2],  pBe[0], pBe[1], pBe[2],  pTe[0], pTe[1], pTe[2]);
 					idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+					edgeLines.push(
+						pT[0], pT[1], pT[2],  pB[0], pB[1], pB[2],
+						pB[0], pB[1], pB[2],  pBe[0], pBe[1], pBe[2],
+						pBe[0], pBe[1], pBe[2],  pTe[0], pTe[1], pTe[2],
+						pTe[0], pTe[1], pTe[2],  pT[0], pT[1], pT[2],
+					);
 				}
 				// קאפ סיום אנכי
 				if (shouldRenderClosingCapForFlight(2)) {
 					const lastT = topRailForSide[topRailForSide.length - 1];
 					const lastBy = botRailForSide[botRailForSide.length - 1][1];
+					const lastTUp: [number, number, number] = [lastT[0], lastT[1] + riser, lastT[2]];
 					const lastB: [number, number, number] = [lastT[0], lastBy, lastT[2]];
-					const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
+					const lastTe: [number, number, number] = [lastTUp[0] + offX, lastTUp[1] + offY, lastTUp[2] + offZ];
 					const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
 					const bi = pos.length / 3;
-					pos.push(lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
+					pos.push(lastTUp[0], lastTUp[1], lastTUp[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
 					idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+					edgeLines.push(
+						lastTUp[0], lastTUp[1], lastTUp[2],  lastB[0], lastB[1], lastB[2],
+						lastB[0], lastB[1], lastB[2],        lastBe[0], lastBe[1], lastBe[2],
+						lastBe[0], lastBe[1], lastBe[2],      lastTe[0], lastTe[1], lastTe[2],
+						lastTe[0], lastTe[1], lastTe[2],      lastTUp[0], lastTUp[1], lastTUp[2],
+					);
 				}
 
 				// קאפ סיום חיצוני לפי קודקודים 3 ו‑7 של המדרגה האחרונה בגרם זה
@@ -1873,7 +1914,7 @@ function Staircase3D({
 						const rz = lx * s + lz * c;
 						const xTop = lastStep.position[0] + rx;
 						const zTop = lastStep.position[2] + rz;
-						const yTop = lastStep.position[1] + treadThickness / 2 + offsetY;
+						const yTop = lastStep.position[1] + treadThickness / 2 + offsetY + riser;
 						const yBot = lastStep.position[1] - treadThickness / 2 - offsetY;
 						const pT: [number, number, number] = [xTop, yTop, zTop];
 						const pB: [number, number, number] = [xTop, yBot, zTop];
@@ -1882,6 +1923,12 @@ function Staircase3D({
 						const bi2 = pos.length / 3;
 						pos.push(pT[0], pT[1], pT[2],  pB[0], pB[1], pB[2],  pBe[0], pBe[1], pBe[2],  pTe[0], pTe[1], pTe[2]);
 						idx.push(bi2 + 0, bi2 + 1, bi2 + 2,  bi2 + 0, bi2 + 2, bi2 + 3);
+						edgeLines.push(
+							pT[0], pT[1], pT[2],  pB[0], pB[1], pB[2],
+							pB[0], pB[1], pB[2],  pBe[0], pBe[1], pBe[2],
+							pBe[0], pBe[1], pBe[2],  pTe[0], pTe[1], pTe[2],
+							pTe[0], pTe[1], pTe[2],  pT[0], pT[1], pT[2],
+						);
 					}
 				}
 
@@ -1893,6 +1940,14 @@ function Staircase3D({
 						</bufferGeometry>
 						<meshBasicMaterial color="#0ea5e9" side={2} />
 					</mesh>
+					{edgeLines.length > 0 ? (
+						<lineSegments>
+							<bufferGeometry attach="geometry">
+								<bufferAttribute attach="attributes-position" args={[new Float32Array(edgeLines), 3]} />
+							</bufferGeometry>
+							<lineBasicMaterial attach="material" color="#0f172a" linewidth={1} depthTest={true} depthWrite={false} />
+						</lineSegments>
+					) : null}
 				);
 			})() : null}
 

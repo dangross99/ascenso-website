@@ -1731,9 +1731,9 @@ function Staircase3D({
 							const topRailClipped: Array<[number, number, number]> =
 								topRail;
 
-							// הסרת המקטע הראשון בגרם 2: מסילות לשימוש מתחילות מהנקודה השנייה
-							const topForFront: Array<[number, number, number]> = topRailClipped.slice(1);
-							const botForFront: Array<[number, number, number]> = botRailWithExtension.slice(1);
+							// בניית רצועה החל מהמדרגה הראשונה (כולל) בגרם 2
+							const topForFront: Array<[number, number, number]> = topRailClipped;
+							const botForFront: Array<[number, number, number]> = botRailWithExtension;
 
 							// הרחבת תחילת פלטת B "לפני" המדרגה הראשונה – התחלה מה"פודסט":
 							// ללא הרחבה סינתטית: המקטע הראשון ייווצר בין מדרגה 1 למדרגה 2 בדיוק כמו שאר המקטעים

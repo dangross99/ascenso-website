@@ -416,7 +416,7 @@ function Staircase3D({
 		if (!tt.isLanding) { lastNonLandingFlight = tt.flight; break; }
 	}
 	const shouldRenderClosingCapForFlight = (flightIdx: number) =>
-		(lastNonLandingFlight !== null && flightIdx === lastNonLandingFlight && !staircaseEndsWithLanding);
+		(lastNonLandingFlight !== null && flightIdx === lastNonLandingFlight);
 
 	// חישוב גבולות XY וגובה הרצפה לפי המסלול
 	const floorBounds = React.useMemo(() => {

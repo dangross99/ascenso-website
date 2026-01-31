@@ -1570,6 +1570,38 @@ function Staircase3D({
 								idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
 							}
 
+							// קאפ סיום בצד החיצוני: לפי קודקודים 3 (עליון) ו‑7 (תחתון) של המדרגה האחרונה בגרם
+							if (shouldRenderClosingCapForFlight(flightIdx)) {
+								const lastStep = (() => {
+									for (let i = treads.length - 1; i >= 0; i--) {
+										const tr = treads[i];
+										if (tr.flight === flightIdx && !tr.isLanding) return tr;
+									}
+									return null;
+								})();
+								if (lastStep) {
+									const yaw = lastStep.rotation[1] as number;
+									const c = Math.cos(yaw), s = Math.sin(yaw);
+									const dx = lastStep.run / 2;
+									const dz = treadWidth / 2;
+									// נקודה 3 (עליון ימין‑קדימה) ו‑7 (תחתון ימין‑קדימה)
+									const lx = dx, lz = dz;
+									const rx = lx * c - lz * s;
+									const rz = lx * s + lz * c;
+									const xTop = lastStep.position[0] + rx;
+									const zTop = lastStep.position[2] + rz;
+									const yTop = lastStep.position[1] + treadThickness / 2 + offsetY;
+									const yBot = lastStep.position[1] - treadThickness / 2 - offsetY;
+									const pT: [number, number, number] = [xTop, yTop, zTop];
+									const pB: [number, number, number] = [xTop, yBot, zTop];
+									const pTe: [number, number, number] = [pT[0] + offX, pT[1] + offY, pT[2] + offZ];
+									const pBe: [number, number, number] = [pB[0] + offX, pB[1] + offY, pB[2] + offZ];
+									const bi2 = pos.length / 3;
+									pos.push(pT[0], pT[1], pT[2],  pB[0], pB[1], pB[2],  pBe[0], pBe[1], pBe[2],  pTe[0], pTe[1], pTe[2]);
+									idx.push(bi2 + 0, bi2 + 1, bi2 + 2,  bi2 + 0, bi2 + 2, bi2 + 3);
+								}
+							}
+
 							return (
 								<mesh castShadow receiveShadow>
 									<bufferGeometry attach="geometry">
@@ -1820,6 +1852,37 @@ function Staircase3D({
 					const bi = pos.length / 3;
 					pos.push(lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
 					idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+				}
+
+				// קאפ סיום חיצוני לפי קודקודים 3 ו‑7 של המדרגה האחרונה בגרם זה
+				if (shouldRenderClosingCapForFlight(2)) {
+					const lastStep = (() => {
+						for (let i = treads.length - 1; i >= 0; i--) {
+							const tr = treads[i];
+							if (tr.flight === 2 && !tr.isLanding) return tr;
+						}
+						return null;
+					})();
+					if (lastStep) {
+						const yaw = lastStep.rotation[1] as number;
+						const c = Math.cos(yaw), s = Math.sin(yaw);
+						const dx = lastStep.run / 2;
+						const dz = treadWidth / 2;
+						const lx = dx, lz = dz;
+						const rx = lx * c - lz * s;
+						const rz = lx * s + lz * c;
+						const xTop = lastStep.position[0] + rx;
+						const zTop = lastStep.position[2] + rz;
+						const yTop = lastStep.position[1] + treadThickness / 2 + offsetY;
+						const yBot = lastStep.position[1] - treadThickness / 2 - offsetY;
+						const pT: [number, number, number] = [xTop, yTop, zTop];
+						const pB: [number, number, number] = [xTop, yBot, zTop];
+						const pTe: [number, number, number] = [pT[0] + offX, pT[1] + offY, pT[2] + offZ];
+						const pBe: [number, number, number] = [pB[0] + offX, pB[1] + offY, pB[2] + offZ];
+						const bi2 = pos.length / 3;
+						pos.push(pT[0], pT[1], pT[2],  pB[0], pB[1], pB[2],  pBe[0], pBe[1], pBe[2],  pTe[0], pTe[1], pTe[2]);
+						idx.push(bi2 + 0, bi2 + 1, bi2 + 2,  bi2 + 0, bi2 + 2, bi2 + 3);
+					}
 				}
 
 				return (
@@ -2145,6 +2208,37 @@ function Staircase3D({
 								pos.push(lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
 								idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
 							}
+
+						// קאפ סיום חיצוני לפי קודקודים 3 ו‑7 של המדרגה האחרונה בגרם זה
+						if (shouldRenderClosingCapForFlight(flightIdx)) {
+							const lastStep = (() => {
+								for (let i = treads.length - 1; i >= 0; i--) {
+									const tr = treads[i];
+									if (tr.flight === flightIdx && !tr.isLanding) return tr;
+								}
+								return null;
+							})();
+							if (lastStep) {
+								const yaw = lastStep.rotation[1] as number;
+								const c = Math.cos(yaw), s = Math.sin(yaw);
+								const dx = lastStep.run / 2;
+								const dz = treadWidth / 2;
+								const lx = dx, lz = dz;
+								const rx = lx * c - lz * s;
+								const rz = lx * s + lz * c;
+								const xTop = lastStep.position[0] + rx;
+								const zTop = lastStep.position[2] + rz;
+								const yTop = lastStep.position[1] + treadThickness / 2 + offsetY;
+								const yBot = lastStep.position[1] - treadThickness / 2 - offsetY;
+								const pT: [number, number, number] = [xTop, yTop, zTop];
+								const pB: [number, number, number] = [xTop, yBot, zTop];
+								const pTe: [number, number, number] = [pT[0] + offX, pT[1] + offY, pT[2] + offZ];
+								const pBe: [number, number, number] = [pB[0] + offX, pB[1] + offY, pB[2] + offZ];
+								const bi2 = pos.length / 3;
+								pos.push(pT[0], pT[1], pT[2],  pB[0], pB[1], pB[2],  pBe[0], pBe[1], pBe[2],  pTe[0], pTe[1], pTe[2]);
+								idx.push(bi2 + 0, bi2 + 1, bi2 + 2,  bi2 + 0, bi2 + 2, bi2 + 3);
+							}
+						}
 
 							return (
 								<mesh castShadow receiveShadow>

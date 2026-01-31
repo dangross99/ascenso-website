@@ -1802,7 +1802,11 @@ function Staircase3D({
 								let b1 = pick(railBot, i);
 								const t2 = pick(railTop, i + 1);
 								const b2 = pick(railBot, i + 1);
-								// גרם 2: התחלה ללא אופסט – t1/b1 נשארים מהמסילות המקוריות
+								// גרם 2: במקטע הראשון נאמץ אופסט התחלה כמו בגרם 1 כדי למנוע "חצי פלטה"
+								if (i === 0 && firstP4SideShift) {
+									t1 = firstP4SideShift;
+									if (firstP7) b1 = firstP7;
+								}
 								const baseIndex = pos.length / 3;
 								// סדר נקודות: t1,b1,t2,b2
 								pos.push(t1[0], t1[1], t1[2]);

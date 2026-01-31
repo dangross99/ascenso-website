@@ -2499,11 +2499,24 @@ function Staircase3D({
 						const x1 = t.position[0] + t.run / 2;
 						const dirAxis = (Math.cos(yaw) >= 0 ? 1 : -1); // +X או -X
 						const k = (riser / treadDepth) * dirAxis;
-						const b = bottomY - k * t.position[0] - overlapStep;
+						// יישור לשיפוע/ייחוס של המקטע (segs) במקום עיגון במרכז המדרגה
+						let b = bottomY - k * t.position[0] - overlapStep;
 						const tH = treadThickness + (heightAboveFaceStep + overlapStep);
 						const rZ = -Math.cos(yaw);
 						const zSign = (sidePref === 'right' ? (rZ >= 0 ? 1 : -1) : (rZ >= 0 ? -1 : 1)) as 1 | -1;
 						const zPos = t.position[2] + zSign * (treadWidth / 2 + distance);
+						// נסה למצוא את ה‑seg המתאים כדי לעגן את b על baseBottomY/baseCoord (אותו גיאומטריה כמו שאר המדרגות)
+						{
+							const eps = 1e-4;
+							const seg = segs.find(s =>
+								s.axis === 'x' &&
+								t.position[0] + eps >= s.start && t.position[0] - eps <= s.end &&
+								typeof s.zConst === 'number' && Math.abs((s.zConst as number) - zPos) < 1e-3
+							);
+							if (seg) {
+								b = seg.baseBottomY - k * seg.baseCoord - overlapStep;
+							}
+						}
 						const geom = new BufferGeometry();
 						const positions = new Float32BufferAttribute([
 							x0, k * x0 + b, zPos,
@@ -2525,11 +2538,24 @@ function Staircase3D({
 						const z1 = t.position[2] + t.run / 2;
 						const dirAxis = (Math.sin(yaw) >= 0 ? 1 : -1); // +Z או -Z
 						const k = (riser / treadDepth) * dirAxis;
-						const b = bottomY - k * t.position[2] - overlapStep;
+						// יישור לשיפוע/ייחוס של המקטע (segs)
+						let b = bottomY - k * t.position[2] - overlapStep;
 						const tH = treadThickness + (heightAboveFaceStep + overlapStep);
 						const rX = Math.sin(yaw);
 						const signXDesired = (sidePref === 'right' ? (rX >= 0 ? 1 : -1) : (rX >= 0 ? -1 : 1)) as 1 | -1;
 						const xGlass = t.position[0] + signXDesired * (treadWidth / 2 + distance);
+						// עיגון b לפי seg תואם
+						{
+							const eps = 1e-4;
+							const seg = segs.find(s =>
+								s.axis === 'z' &&
+								t.position[2] + eps >= s.start && t.position[2] - eps <= s.end &&
+								typeof s.xConst === 'number' && Math.abs((s.xConst as number) - xGlass) < 1e-3
+							);
+							if (seg) {
+								b = seg.baseBottomY - k * seg.baseCoord - overlapStep;
+							}
+						}
 						const geom = new BufferGeometry();
 						const positions = new Float32BufferAttribute([
 							xGlass, k * z0 + b, z0,
@@ -2967,11 +2993,24 @@ function Staircase3D({
 						const x1 = t.position[0] + t.run / 2;
 						const dirAxis = (Math.cos(yaw) >= 0 ? 1 : -1); // +X או -X
 						const k = (riser / treadDepth) * dirAxis;
-						const b = bottomY - k * t.position[0] - overlapStep;
+						let b = bottomY - k * t.position[0] - overlapStep;
 						const tH = treadThickness + (heightAboveFaceStep + overlapStep);
 						const rZ = -Math.cos(yaw);
 						const zSign = (sidePref === 'right' ? (rZ >= 0 ? 1 : -1) : (rZ >= 0 ? -1 : 1)) as 1 | -1;
 						const zPos = t.position[2] + zSign * (treadWidth / 2 + distance);
+						// עיגון b לפי seg תואם
+						{
+							const eps = 1e-4;
+							// בנינו segs עבור מעקה מתכת למעלה; נשתמש בחישוב עקבי של b
+							const seg = segs.find(s =>
+								s.axis === 'x' &&
+								t.position[0] + eps >= s.start && t.position[0] - eps <= s.end &&
+								typeof s.zConst === 'number' && Math.abs((s.zConst as number) - zPos) < 1e-3
+							);
+							if (seg) {
+								b = seg.baseBottomY - k * seg.baseCoord - overlapStep;
+							}
+						}
 						const geom = new BufferGeometry();
 						const positions = new Float32BufferAttribute([
 							x0, k * x0 + b, zPos,
@@ -3023,11 +3062,23 @@ function Staircase3D({
 						const z1 = t.position[2] + t.run / 2;
 						const dirAxis = (Math.sin(yaw) >= 0 ? 1 : -1); // +Z או -Z
 						const k = (riser / treadDepth) * dirAxis;
-						const b = bottomY - k * t.position[2] - overlapStep;
+						let b = bottomY - k * t.position[2] - overlapStep;
 						const tH = treadThickness + (heightAboveFaceStep + overlapStep);
 						const rX = Math.sin(yaw);
 						const signXDesired = (sidePref === 'right' ? (rX >= 0 ? 1 : -1) : (rX >= 0 ? -1 : 1)) as 1 | -1;
 						const xPos = t.position[0] + signXDesired * (treadWidth / 2 + distance);
+						// עיגון b לפי seg תואם
+						{
+							const eps = 1e-4;
+							const seg = segs.find(s =>
+								s.axis === 'z' &&
+								t.position[2] + eps >= s.start && t.position[2] - eps <= s.end &&
+								typeof s.xConst === 'number' && Math.abs((s.xConst as number) - xPos) < 1e-3
+							);
+							if (seg) {
+								b = seg.baseBottomY - k * seg.baseCoord - overlapStep;
+							}
+						}
 						const geom = new BufferGeometry();
 						const positions = new Float32BufferAttribute([
 							xPos, k * z0 + b, z0,

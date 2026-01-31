@@ -1715,8 +1715,7 @@ function Staircase3D({
 						)}
 						{/* הארכה למטה עד הרצפה מהמדרגה הראשונה וסגירה ביניהן */}
 						{firstP4 && firstP7 && (
-							<group>
-								{(() => {
+							(() => {
 									// אופסט צידי בתוך מישור הפלטה (רק בתחתית, מדרגה ראשונה)
 									let ux = 1, uy = 0, uz = 0;
 									if (pts4Off.length >= 6) {
@@ -1841,57 +1840,9 @@ function Staircase3D({
 									const v5B: [number, number, number] = [v1B[0] + offXB, v1B[1] + offYB, v1B[2] + offZB];
 									const v6B: [number, number, number] = [v2B[0] + offXB, v2B[1] + offYB, v2B[2] + offZB];
 									const v7B: [number, number, number] = [v3B[0] + offXB, v3B[1] + offYB, v3B[2] + offZB];
-									const panelPosB = new Float32Array([
-										v0B[0], v0B[1], v0B[2],
-										v1B[0], v1B[1], v1B[2],
-										v2B[0], v2B[1], v2B[2],
-										v3B[0], v3B[1], v3B[2],
-										v4B[0], v4B[1], v4B[2],
-										v5B[0], v5B[1], v5B[2],
-										v6B[0], v6B[1], v6B[2],
-										v7B[0], v7B[1], v7B[2],
-									]);
-									const panelIdxB = new Uint32Array([
-										0,1,2, 2,1,3,
-										4,6,5, 6,7,5,
-										0,1,5, 0,5,4,
-										1,3,7, 1,7,5,
-										3,2,6, 3,6,7,
-										2,0,4, 2,4,6,
-									]);
-									return (
-										<group>
-											<line>
-												<bufferGeometry attach="geometry">
-													<bufferAttribute attach="attributes-position" args={[new Float32Array([
-														f4x, f4y, f4z,
-														v2B[0], v2B[1], v2B[2],
-													]), 3]} />
-												</bufferGeometry>
-												<lineBasicMaterial attach="material" color="#6b7280" linewidth={1} depthTest={false} depthWrite={false} />
-											</line>
-											<line>
-												<bufferGeometry attach="geometry">
-													<bufferAttribute attach="attributes-position" args={[new Float32Array([
-														f7x, f7y, f7z,
-														v3B[0], v3B[1], v3B[2],
-													]), 3]} />
-												</bufferGeometry>
-												<lineBasicMaterial attach="material" color="#f87171" linewidth={1} depthTest={false} depthWrite={false} />
-											</line>
-											<line>
-												<bufferGeometry attach="geometry">
-													<bufferAttribute attach="attributes-position" args={[new Float32Array([
-														v2B[0], v2B[1], v2B[2],
-														v3B[0], v3B[1], v3B[2],
-													]), 3]} />
-												</bufferGeometry>
-												<lineBasicMaterial attach="material" color="#111827" linewidth={1} depthTest={false} depthWrite={false} />
-											</line>
-										</group>
-									);
-								})()}
-							</group>
+									// אין רינדור פאנל/קווי עזר – רק קיבוע נקודת ההתחלה לפלטת B
+									return null;
+								})()
 						)}
 
 						{/* פלטה A – רצועה מדויקת בין קווי האופסט (מילוי משולשים) */}

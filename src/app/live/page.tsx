@@ -1575,16 +1575,27 @@ function Staircase3D({
 									const lx = dx, lz = dz;
 									const rx = lx * c - lz * s;
 									const rz = lx * s + lz * c;
-									const lastT: [number, number, number] = [
+									let lastT: [number, number, number] = [
 										lastStep.position[0] + rx,
 										lastStep.position[1] + treadThickness / 2 + offsetY,
 										lastStep.position[2] + rz
 									];
-									const lastB: [number, number, number] = [
+									let lastB: [number, number, number] = [
 										lastT[0],
 										lastStep.position[1] - treadThickness / 2 - offsetY,
 										lastT[2]
 									];
+									// חיתוך אנכי דרך P3 עם מישור הפלטה (לפי הנורמל n = off/thickness)
+									const topRef = topRail[topRail.length - 1];
+									const botRef = botRail[botRail.length - 1];
+									const nX = offX / thickness, nY = offY / thickness, nZ = offZ / thickness;
+									if (Math.abs(nY) > 1e-6) {
+										const dyTop = (nX * (lastT[0] - topRef[0]) + nZ * (lastT[2] - topRef[2])) / nY;
+										const topY = topRef[1] - dyTop;
+										const deltaY = topRef[1] - botRef[1];
+										lastT = [lastT[0], topY, lastT[2]];
+										lastB = [lastB[0], topY - deltaY, lastB[2]];
+									}
 									const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
 									const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
 									const bi = pos.length / 3;
@@ -1878,16 +1889,27 @@ function Staircase3D({
 						const lx = dx, lz = dz;
 						const rx = lx * c - lz * s;
 						const rz = lx * s + lz * c;
-						const lastT: [number, number, number] = [
+						let lastT: [number, number, number] = [
 							lastStep.position[0] + rx,
 							lastStep.position[1] + treadThickness / 2 + offsetY,
 							lastStep.position[2] + rz
 						];
-						const lastB: [number, number, number] = [
+						let lastB: [number, number, number] = [
 							lastT[0],
 							lastStep.position[1] - treadThickness / 2 - offsetY,
 							lastT[2]
 						];
+						// חיתוך אנכי דרך P3 עם מישור הפלטה (לפי הנורמל n = off/thickness)
+						const topRef = topRailForSide[topRailForSide.length - 1];
+						const botRef = botRailForSide[botRailForSide.length - 1];
+						const nX = offX / thickness, nY = offY / thickness, nZ = offZ / thickness;
+						if (Math.abs(nY) > 1e-6) {
+							const dyTop = (nX * (lastT[0] - topRef[0]) + nZ * (lastT[2] - topRef[2])) / nY;
+							const topY = topRef[1] - dyTop;
+							const deltaY = topRef[1] - botRef[1];
+							lastT = [lastT[0], topY, lastT[2]];
+							lastB = [lastB[0], topY - deltaY, lastB[2]];
+						}
 						const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
 						const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
 						const bi = pos.length / 3;
@@ -2243,16 +2265,27 @@ function Staircase3D({
 									const lx = dx, lz = dz;
 									const rx = lx * c - lz * s;
 									const rz = lx * s + lz * c;
-									const lastT: [number, number, number] = [
+									let lastT: [number, number, number] = [
 										lastStep.position[0] + rx,
 										lastStep.position[1] + treadThickness / 2 + offsetY,
 										lastStep.position[2] + rz
 									];
-									const lastB: [number, number, number] = [
+									let lastB: [number, number, number] = [
 										lastT[0],
 										lastStep.position[1] - treadThickness / 2 - offsetY,
 										lastT[2]
 									];
+									// חיתוך אנכי דרך P3 עם מישור הפלטה (לפי הנורמל n = off/thickness)
+									const topRef = topRailForSideB[topRailForSideB.length - 1];
+									const botRef = botRailForSideB[botRailForSideB.length - 1];
+									const nX = offX / thickness, nY = offY / thickness, nZ = offZ / thickness;
+									if (Math.abs(nY) > 1e-6) {
+										const dyTop = (nX * (lastT[0] - topRef[0]) + nZ * (lastT[2] - topRef[2])) / nY;
+										const topY = topRef[1] - dyTop;
+										const deltaY = topRef[1] - botRef[1];
+										lastT = [lastT[0], topY, lastT[2]];
+										lastB = [lastB[0], topY - deltaY, lastB[2]];
+									}
 									const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
 									const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
 									const bi = pos.length / 3;

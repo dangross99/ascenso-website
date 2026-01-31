@@ -1967,20 +1967,25 @@ function Staircase3D({
 								clippedBot0 ? [clippedBot0, ...botRail.slice(1)] : botRail;
 							const topRailClipped: Array<[number, number, number]> =
 								clippedTop0 ? [clippedTop0, ...topRail.slice(1)] : topRail;
-							// איחוד: אם יש נקודת התחלה במישור 2/6 – נתחיל ממנה ונמנע תפרים כפולים
-							const topRailFill: Array<[number, number, number]> =
-								(prefillStartTop ? [prefillStartTop, ...topRailClipped] : topRailClipped);
-							const botRailFill: Array<[number, number, number]> =
-								(prefillStartBot ? [prefillStartBot, ...botRailWithExtension] : botRailWithExtension);
 
 							const pos: number[] = [];   // משטח קדמי
 							const idx: number[] = [];
 							const pick = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
+							// מילוי מקדים עד המישור השני (אם חושב קודם): ריבוע קצר בין prefillStart ל‑clippedStart
+							if (prefillStartTop && prefillStartBot && clippedTop0 && clippedBot0) {
+								const baseIndexPre = pos.length / 3;
+								pos.push(prefillStartTop[0], prefillStartTop[1], prefillStartTop[2]);
+								pos.push(prefillStartBot[0], prefillStartBot[1], prefillStartBot[2]);
+								pos.push(clippedTop0[0], clippedTop0[1], clippedTop0[2]);
+								pos.push(clippedBot0[0], clippedBot0[1], clippedBot0[2]);
+								idx.push(baseIndexPre + 0, baseIndexPre + 1, baseIndexPre + 2);
+								idx.push(baseIndexPre + 2, baseIndexPre + 1, baseIndexPre + 3);
+							}
 							for (let i = 0; i < count - 1; i++) {
-								let t1 = pick(topRailFill, i);
-								let b1 = pick(botRailFill, i);
-								const t2 = pick(topRailFill, i + 1);
-								const b2 = pick(botRailFill, i + 1);
+								let t1 = pick(topRailClipped, i);
+								let b1 = pick(botRailWithExtension, i);
+								const t2 = pick(topRailClipped, i + 1);
+								const b2 = pick(botRailWithExtension, i + 1);
 								// גרם 2: התחלה ללא אופסט – t1/b1 נשארים מהמסילות המקוריות
 								const baseIndex = pos.length / 3;
 								// סדר נקודות: t1,b1,t2,b2
@@ -1997,16 +2002,16 @@ function Staircase3D({
 							const thickness = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
 							// כיוון לאורך המסילה (u)
 							let ux = 1, uy = 0, uz = 0;
-							if (topRailFill.length >= 2) {
-								ux = topRailFill[1][0] - topRailFill[0][0];
-								uy = topRailFill[1][1] - topRailFill[0][1];
-								uz = topRailFill[1][2] - topRailFill[0][2];
+							if (topRailClipped.length >= 2) {
+								ux = topRailClipped[1][0] - topRailClipped[0][0];
+								uy = topRailClipped[1][1] - topRailClipped[0][1];
+								uz = topRailClipped[1][2] - topRailClipped[0][2];
 							}
 							const um = Math.hypot(ux, uy, uz) || 1; ux /= um; uy /= um; uz /= um;
 							// רוחב בין המסילות (w)
-							let wx = (firstP4 && firstP7) ? (firstP4[0] - firstP7[0]) : (topRailFill[0][0] - botRailFill[0][0]);
-							let wy = (firstP4 && firstP7) ? (firstP4[1] - firstP7[1]) : (topRailFill[0][1] - botRailFill[0][1]);
-							let wz = (firstP4 && firstP7) ? (firstP4[2] - firstP7[2]) : (topRailFill[0][2] - botRailFill[0][2]);
+							let wx = (firstP4 && firstP7) ? (firstP4[0] - firstP7[0]) : (topRailClipped[0][0] - botRailWithExtension[0][0]);
+							let wy = (firstP4 && firstP7) ? (firstP4[1] - firstP7[1]) : (topRailClipped[0][1] - botRailWithExtension[0][1]);
+							let wz = (firstP4 && firstP7) ? (firstP4[2] - firstP7[2]) : (topRailClipped[0][2] - botRailWithExtension[0][2]);
 							const nmX = uy * wz - uz * wy;
 							const nmY = uz * wx - ux * wz;
 							const nmZ = ux * wy - uy * wx;
@@ -2041,11 +2046,11 @@ function Staircase3D({
 								}
 							};
 							// דופן עליונה ותחתונה – בגרם 2 ללא אופסט התחלה
-							const topRailForSideB = topRailFill;
-							const botRailForSideB = botRailFill;
+							const topRailForSideB = topRailClipped;
+							const botRailForSideB = botRailWithExtension;
 							addSideStrip(topRailForSideB);
 							addSideStrip(botRailForSideB);
-							// דופן התחלה אחת בלבד – לפי הנקודה הראשונה (שיכולה להיות 2/6 אם קיימת)
+							// דופן התחלה (קצה לפי המישור דרך 2/6 – ללא אופסט צדדי בגרם 2)
 							{
 								// השתמש בנקודות ההתחלה לאחר ה‑clip (top/bot),
 								// כדי שלא ייווצר משולש/״שפיץ״ מקודקוד 2 של המדרגה הראשונה

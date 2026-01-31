@@ -1748,9 +1748,12 @@ function Staircase3D({
 							let clippedBot0: [number, number, number] | null = null;
 							if (topRail.length >= 2 && typeof firstP7 !== 'undefined' && firstP7) {
 								const ux0 = topRail[1][0] - topRail[0][0];
+								const uy0 = topRail[1][1] - topRail[0][1];
 								const uz0 = topRail[1][2] - topRail[0][2];
-								const um0 = Math.hypot(ux0, uz0) || 1;
-								const uxn = ux0 / um0, uzn = uz0 / um0;
+								// נרמול לפי ההיטל ב‑XZ (המישור של הרייזר הוא אנכי) – ושימור שיפוע ה‑Y לאורך המסילה
+								const um0xz = Math.hypot(ux0, uz0) || 1;
+								const uxn = ux0 / um0xz, uzn = uz0 / um0xz;
+								const uSlopeY = uy0 / um0xz; // שינוי Y ליחידת התקדמות לאורך ההיטל ב‑XZ
 								// חשב נקודת 2 של המדרגה הראשונה בגרם 2
 								let p2x = firstP7[0], p2z = firstP7[2];
 								{
@@ -1781,10 +1784,10 @@ function Staircase3D({
 								{
 									const t0 = topRail[0];
 									const tTop = planeU - dotU(t0);
-									clippedTop0 = [t0[0] + uxn * tTop, t0[1], t0[2] + uzn * tTop];
+									clippedTop0 = [t0[0] + uxn * tTop, t0[1] + uSlopeY * tTop, t0[2] + uzn * tTop];
 									const b0 = botRail[0];
 									const tBot = planeU - dotU(b0);
-									clippedBot0 = [b0[0] + uxn * tBot, b0[1], b0[2] + uzn * tBot];
+									clippedBot0 = [b0[0] + uxn * tBot, b0[1] + uSlopeY * tBot, b0[2] + uzn * tBot];
 								}
 							}
 							const botRailWithExtension: Array<[number, number, number]> =

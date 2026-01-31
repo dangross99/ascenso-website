@@ -1169,9 +1169,8 @@ function Staircase3D({
 				const cosSin = (yaw: number) => ({ c: Math.cos(yaw), s: Math.sin(yaw) });
 				const pts4Off: number[] = [];
 				const pts7Off: number[] = [];
-				// עבור פלטה B נשתמש בנקודות "2" העליונה ו"6" התחתונה כמסילות
-				const topStepOff: Array<[number, number, number]> = [];    // נקודות 2‑offset לכל מדרגה (ללא פודסט)
-				const bottomStepOff: Array<[number, number, number]> = []; // נקודות 6‑offset לכל מדרגה
+				const topStepOff: Array<[number, number, number]> = [];    // נקודות 4‑offset לכל מדרגה (ללא פודסט)
+				const bottomStepOff: Array<[number, number, number]> = []; // נקודות 7‑offset לכל מדרגה
 				const offsetY = Math.max(0, (typeof hitechPlateTopOffsetM === 'number' ? hitechPlateTopOffsetM : 0.03)); // היסט אנכי מהמשטח
 				let firstP4: [number, number, number] | null = null;
 				let firstP7: [number, number, number] | null = null;
@@ -1186,11 +1185,11 @@ function Staircase3D({
 					const { c, s } = cosSin(yaw);
 					const dx = t.run / 2;
 					const dz = treadWidth / 2;
-					// נקודה 2 – עליונה ימין-אחורה: (+dx, -dz, yTop)
+					// נקודה 4 – עליונה שמאל-קדימה: (-dx, +dz, yTop)
 					let p4w: [number, number, number] | null = null;
 					let p7w: [number, number, number] | null = null;
 					{
-						const lx = +dx, lz = -dz;
+						const lx = -dx, lz = dz;
 						const rx = lx * c - lz * s;
 						const rz = lx * s + lz * c;
 						const wx = t.position[0] + rx;
@@ -1201,9 +1200,9 @@ function Staircase3D({
 						if (!t.isLanding && !firstP4) firstP4 = p4w;
 						if (!t.isLanding) topStepOff.push(p4w);
 					}
-					// נקודה 6 – תחתונה ימין-אחורה: (+dx, -dz, yBot) – רק אם לא פודסט
+					// נקודה 7 – תחתונה ימין-קדימה: (+dx, +dz, yBot) – רק אם לא פודסט
 					if (!t.isLanding) {
-						const lx = dx, lz = -dz;
+						const lx = dx, lz = dz;
 						const rx = lx * c - lz * s;
 						const rz = lx * s + lz * c;
 						const wx = t.position[0] + rx;
@@ -1218,9 +1217,9 @@ function Staircase3D({
 						if (next && next.flight === flightIdx && next.isLanding) {
 							// קודקוד 7 הוא מהמדרגה הנוכחית (עם אופסט)
 							closeP7 = p7w;
-							// קודקוד 8 הוא מהמדרגה הנוכחית (עם אופסט) – אותו XZ כמו 2 של אותה מדרגה
+							// קודקוד 8 הוא מהמדרגה הנוכחית (עם אופסט) – אותו XZ כמו 4 של אותה מדרגה
 							{
-								const lx8 = +dx, lz8 = -dz;
+								const lx8 = -dx, lz8 = dz;
 								const rx8 = lx8 * c - lz8 * s;
 								const rz8 = lx8 * s + lz8 * c;
 								const wx8 = t.position[0] + rx8;
@@ -1228,11 +1227,11 @@ function Staircase3D({
 								const wz8 = t.position[2] + rz8;
 								closeP8 = [wx8, wy8, wz8];
 							}
-							// נקודת "2" מהפודסט הבא (עם אופסט כלפי מעלה)
+							// קודקוד 4 מהפודסט הבא (עם אופסט כלפי מעלה)
 							const yaw2 = next.rotation[1] as number;
 							const c2 = Math.cos(yaw2), s2 = Math.sin(yaw2);
 							const dxL = next.run / 2, dzL = treadWidth / 2;
-							const lx2 = +dxL, lz2 = -dzL;
+							const lx2 = -dxL, lz2 = dzL;
 							const rx2 = lx2 * c2 - lz2 * s2;
 							const rz2 = lx2 * s2 + lz2 * c2;
 							const wx2 = next.position[0] + rx2;

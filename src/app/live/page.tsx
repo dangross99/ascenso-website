@@ -1747,35 +1747,14 @@ function Staircase3D({
 									const f7x = firstP7[0];
 									const f7y = firstP7[1];
 									const f7z = firstP7[2];
-									// חשב גם את קודקוד 5 של המדרגה הראשונה בגרם 2 (תחתונה שמאל‑אחורה) כדי לאפשר בניה לפי 5
-									let f5x = f7x, f5y = f7y, f5z = f7z;
-									{
-										let firstStep: typeof treads[number] | null = null;
-										for (let k = 0; k < treads.length; k++) {
-											const tt = treads[k];
-											if (tt.flight === 1 && !tt.isLanding) { firstStep = tt; break; }
-										}
-										if (firstStep) {
-											const yaw0 = firstStep.rotation[1] as number;
-											const c0 = Math.cos(yaw0), s0 = Math.sin(yaw0);
-											const dx0 = firstStep.run / 2, dz0 = treadWidth / 2;
-											// קודקוד 5: (-dx, -dz) מקומי, מסובב לעולם; גובה תחתית עם offsetY למטה
-											const lx5 = -dx0, lz5 = -dz0;
-											const rx5 = lx5 * c0 - lz5 * s0;
-											const rz5 = lx5 * s0 + lz5 * c0;
-											f5x = firstStep.position[0] + rx5;
-											f5z = firstStep.position[2] + rz5;
-											f5y = firstStep.position[1] - treadThickness / 2 - offsetY;
-										}
-									}
 									// חישוב נפח לפאנל האנכי בגרם 2
 									const thicknessPanelB = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
 									const offXB = nxN * thicknessPanelB, offYB = nyN * thicknessPanelB, offZB = nzN * thicknessPanelB;
 									const v0B: [number, number, number] = [f4x, f4y, f4z];
-									// נקודת התחתית בצד הפנימי לפי קודקוד 5
-									const v1B: [number, number, number] = [f5x, f5y, f5z];
+									// נקודת התחתית בצד הפנימי לפי קודקוד 7 (יישור מלא עם רייל תחתון של B)
+									const v1B: [number, number, number] = [f7x, f7y, f7z];
 									// תחתית הפאנל: המשך קו אופסט 5 במישור הפלטה עד המישור האנכי של פלטת A (ואם אין, עד מישור 2/6)
-									const bottomY = f5y;
+									const bottomY = firstP7[1];
 									const b4 = [f4x, bottomY, f4z] as [number, number, number];
 									// חשב מישור אנכי של קצה A (סוף גרם 1) – אם לא קיים נשתמש במישור דרך נק׳ 2/6
 									let planeUA: number | null = null;
@@ -1830,11 +1809,11 @@ function Staircase3D({
 									const tNeeded = planeU - dotU(b4);
 									// הארך את שתי נקודות הקצה התחתונות באותו t לשמירת שיפוע/מישור זהים לפאנל העליון
 									const v2B: [number, number, number] = [b4[0] + ux * tNeeded, b4[1], b4[2] + uz * tNeeded];
-									const v3B: [number, number, number] = [f5x + ux * tNeeded, bottomY, f5z + uz * tNeeded];
+									const v3B: [number, number, number] = [f7x + ux * tNeeded, bottomY, f7z + uz * tNeeded];
 									// שיתוף נקודת ההתחלה המדויקת של פלטת B (לאחר הארכה למישור הקצה) עבור המחבר
 									hitechBStartRef.current = {
 										top: [f4x + ux * tNeeded, f4y, f4z + uz * tNeeded],
-										bot: [f5x + ux * tNeeded, bottomY, f5z + uz * tNeeded],
+										bot: [f7x + ux * tNeeded, bottomY, f7z + uz * tNeeded],
 									};
 									const v4B: [number, number, number] = [v0B[0] + offXB, v0B[1] + offYB, v0B[2] + offZB];
 									const v5B: [number, number, number] = [v1B[0] + offXB, v1B[1] + offYB, v1B[2] + offZB];

@@ -1908,11 +1908,16 @@ function Staircase3D({
 							const pos: number[] = [];   // משטח קדמי
 							const idx: number[] = [];
 							const pick = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
+							const tiny = 1e-4; // סף דילוג על מקטע זעיר בתחילת הרצועה
 							for (let i = 0; i < count - 1; i++) {
 								let t1 = pick(topRailClipped, i);
 								let b1 = pick(botRailWithExtension, i);
 								const t2 = pick(topRailClipped, i + 1);
 								const b2 = pick(botRailWithExtension, i + 1);
+								// דלג על מקטע קצר מאוד (נובע מחיתוך למישור ההתחלה) כדי למנוע "מלבן" דק/מוזר
+								const segLenTop = Math.hypot(t2[0] - t1[0], t2[2] - t1[2]);
+								const segLenBot = Math.hypot(b2[0] - b1[0], b2[2] - b1[2]);
+								if (Math.min(segLenTop, segLenBot) < tiny) continue;
 								// גרם 2: התחלה ללא אופסט – t1/b1 נשארים מהמסילות המקוריות
 								const baseIndex = pos.length / 3;
 								// סדר נקודות: t1,b1,t2,b2
@@ -1965,6 +1970,9 @@ function Staircase3D({
 								for (let i = 0; i < rail.length - 1; i++) {
 									const pA = rail[i];
 									const pB = rail[i + 1];
+									// דלג על דופן של מקטע קצר מאוד בתחילת הרייל
+									const segLen = Math.hypot(pB[0] - pA[0], pB[2] - pA[2]);
+									if (segLen < tiny) continue;
 									const pAe: [number, number, number] = [pA[0] + offX, pA[1] + offY, pA[2] + offZ];
 									const pBe: [number, number, number] = [pB[0] + offX, pB[1] + offY, pB[2] + offZ];
 									const bi = pos.length / 3;

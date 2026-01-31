@@ -1998,18 +1998,7 @@ function Staircase3D({
 							const botRailForSideB = botRailWithExtension;
 							addSideStrip(topRailForSideB);
 							addSideStrip(botRailForSideB);
-							// דופן התחלה (קצה לפי המישור דרך 2/6 – ללא אופסט צדדי בגרם 2)
-							{
-								// השתמש בנקודות ההתחלה לאחר ה‑clip (top/bot),
-								// כדי שלא ייווצר משולש/״שפיץ״ מקודקוד 2 של המדרגה הראשונה
-								const pT = topRailForSideB[0];
-								const pB = botRailForSideB[0];
-								const pTe: [number, number, number] = [pT[0] + offX, pT[1] + offY, pT[2] + offZ];
-								const pBe: [number, number, number] = [pB[0] + offX, pB[1] + offY, pB[2] + offZ];
-								const bi = pos.length / 3;
-								pos.push(pT[0], pT[1], pT[2],  pB[0], pB[1], pB[2],  pBe[0], pBe[1], pBe[2],  pTe[0], pTe[1], pTe[2]);
-								idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
-							}
+							// דילוג על דופן ההתחלה בגרם 2 כדי למנוע קצה משולשי/לא מיושר; הרצועה מתחילה ישירות מהריבוע הראשון
 							// דופן סיום
 							{
 								const lastT = topRailClipped[topRailClipped.length - 1];

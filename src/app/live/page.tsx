@@ -1742,7 +1742,6 @@ function Staircase3D({
 							const botRail: Array<[number, number, number]> = [...bottomStepOff];
 							// בחר אורך מקסימלי – אם מסילה אחת ארוכה יותר (למשל כוללת פודסט), נשכפל את הנקודה האחרונה של הקצרה
 							const count = Math.max(topRail.length, botRail.length);
-							if (count < 2) return null;
 
 							// החזרת קליפינג נקודתי להתחלה: גזירה למישור האנכי של רייזר המדרגה הראשונה (נק׳ 2/6)
 							let clippedTop0: [number, number, number] | null = null;
@@ -1827,6 +1826,7 @@ function Staircase3D({
 							const idx: number[] = [];
 							const pick = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
 							const segCount = Math.max(topForFront.length, botForFront.length);
+							if (segCount < 2) return null;
 							for (let i = 0; i < segCount - 1; i++) {
 								let t1 = pick(topForFront, i);
 								let b1 = pick(botForFront, i);
@@ -1894,18 +1894,21 @@ function Staircase3D({
 							// דופן עליונה ותחתונה – בגרם 2 ללא אופסט התחלה
 							const topRailForSideB = topRailClipped;
 							const botRailForSideB = botRailWithExtension;
-							// דילוג על דופן ההתחלה בגרם 2 כדי למנוע קצה משולשי/לא מיושר – נוסיף קאפ התחלה נפרד
-							addSideStrip(topRailForSideB.slice(1));
-							addSideStrip(botRailForSideB.slice(1));
-							// דופן התחלה (קאפ) – מיישר את תחילת הפלטה עם הנורמל
-							{
-								const firstT = topRailClipped[0];
-								const firstB = botRailWithExtension[0];
-								const firstTe: [number, number, number] = [firstT[0] + offX, firstT[1] + offY, firstT[2] + offZ];
-								const firstBe: [number, number, number] = [firstB[0] + offX, firstB[1] + offY, firstB[2] + offZ];
-								const bi = pos.length / 3;
-								pos.push(firstT[0], firstT[1], firstT[2],  firstB[0], firstB[1], firstB[2],  firstBe[0], firstBe[1], firstBe[2],  firstTe[0], firstTe[1], firstTe[2]);
-								idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+							// אם אין לפחות מקטע אחד ברצועה – אל תיצור דפנות/קאפ (ימנע "פלטה מוזרה")
+							if (segCount >= 2) {
+								// דילוג על דופן ההתחלה בגרם 2 כדי למנוע קצה משולשי/לא מיושר – נוסיף קאפ התחלה נפרד
+								addSideStrip(topRailForSideB.slice(1));
+								addSideStrip(botRailForSideB.slice(1));
+								// דופן התחלה (קאפ) – מיישר את תחילת הפלטה עם הנורמל
+								{
+									const firstT = topRailClipped[0];
+									const firstB = botRailWithExtension[0];
+									const firstTe: [number, number, number] = [firstT[0] + offX, firstT[1] + offY, firstT[2] + offZ];
+									const firstBe: [number, number, number] = [firstB[0] + offX, firstB[1] + offY, firstB[2] + offZ];
+									const bi = pos.length / 3;
+									pos.push(firstT[0], firstT[1], firstT[2],  firstB[0], firstB[1], firstB[2],  firstBe[0], firstBe[1], firstBe[2],  firstTe[0], firstTe[1], firstTe[2]);
+									idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+								}
 							}
 							// דופן סיום
 							{

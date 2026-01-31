@@ -1865,9 +1865,9 @@ function Staircase3D({
 									idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
 								}
 							};
-							// דופן עליונה ותחתונה – בגרם 2 ללא אופסט התחלה
-							const topRailForSideB = railTop;
-							const botRailForSideB = railBot;
+							// דופן עליונה ותחתונה – סנכרון נקודת ההתחלה עם האופסט של המקטע הראשון
+							const topRailForSideB = firstP4SideShift ? [firstP4SideShift, ...railTop] : railTop;
+							const botRailForSideB = firstP7 ? [firstP7, ...railBot] : railBot;
 							// אם אין לפחות מקטע אחד ברצועה – אל תיצור דפנות/קאפ (ימנע "פלטה מוזרה")
 							if (segCount >= 2) {
 								// דפנות החל מהמקטע הראשון

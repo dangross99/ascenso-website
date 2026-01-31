@@ -1175,6 +1175,7 @@ function Staircase3D({
 				let firstP4: [number, number, number] | null = null;
 				let firstP7: [number, number, number] | null = null;
 				let firstYaw: number | null = null;
+				let firstStepIdxInFlight: number | null = null; // אינדקס המדרגה הראשונה בגרם 2
 				let closeP4: [number, number, number] | null = null; // נקודת 4 (פודסט ראשון) באופסט
 				let closeP7: [number, number, number] | null = null; // נקודת 7 (מדרגה לפני הפודסט) באופסט
 				let closeP8: [number, number, number] | null = null; // נקודת 8 (מדרגה לפני הפודסט) באופסט
@@ -1197,7 +1198,7 @@ function Staircase3D({
 						const wz = t.position[2] + rz;
 						p4w = [wx, wy + offsetY, wz];
 						pts4Off.push(p4w[0], p4w[1], p4w[2]);
-						if (!t.isLanding && !firstP4) firstP4 = p4w;
+						if (!t.isLanding && !firstP4) { firstP4 = p4w; if (firstStepIdxInFlight === null) firstStepIdxInFlight = i; }
 						if (!t.isLanding) topStepOff.push(p4w);
 					}
 					// נקודה 7 – תחתונה ימין-קדימה: (+dx, +dz, yBot) – רק אם לא פודסט
@@ -1583,6 +1584,7 @@ function Staircase3D({
 				let firstP4: [number, number, number] | null = null;
 				let firstP7: [number, number, number] | null = null;
 				let firstYaw: number | null = null;
+				let firstStepIdxInFlight: number | null = null;
 				let closeP4: [number, number, number] | null = null; // נקודת 4 (פודסט ראשון) באופסט
 				let closeP7: [number, number, number] | null = null; // נקודת 7 (מדרגה לפני הפודסט) באופסט
 				let closeP8: [number, number, number] | null = null; // נקודת 8 (מדרגה לפני הפודסט) באופסט
@@ -1605,7 +1607,7 @@ function Staircase3D({
 						const wz = t.position[2] + rz;
 						p4w = [wx, wy + offsetY, wz];
 						pts4Off.push(p4w[0], p4w[1], p4w[2]);
-						if (!t.isLanding && !firstP4) firstP4 = p4w;
+						if (!t.isLanding && !firstP4) { firstP4 = p4w; if (firstStepIdxInFlight === null) firstStepIdxInFlight = i; }
 						if (!t.isLanding) topStepOff.push(p4w);
 					}
 					// נקודה 7 – תחתונה ימין-קדימה: (+dx, +dz, yBot) – רק אם לא פודסט
@@ -1718,10 +1720,38 @@ function Staircase3D({
 
 						{/* פלטה A – רצועה מדויקת בין קווי האופסט (מילוי משולשים) */}
 						{bottomStepOff.length > 0 && topStepOff.length > 0 && (() => {
-							const baseTop: Array<[number, number, number]> = closeP4 ? [...topStepOff, closeP4] : [...topStepOff];
+							// הוספת נקודת פתיחה מהפודסט שלפני גרם 2 (אם קיימת)
+							let startFromLandingTop: [number, number, number] | null = null;
+							let startFromLandingBot: [number, number, number] | null = null;
+							if (firstStepIdxInFlight !== null && firstStepIdxInFlight > 0) {
+								const prev = treads[firstStepIdxInFlight - 1];
+								if (prev && prev.isLanding) {
+									const yawL = prev.rotation[1] as number;
+									const cL = Math.cos(yawL), sL = Math.sin(yawL);
+									const dxL = prev.run / 2, dzL = treadWidth / 2;
+									// p4 בלנדינג: (-dxL, +dzL) למעלה
+									const lx4 = -dxL, lz4 = dzL;
+									const rx4 = lx4 * cL - lz4 * sL;
+									const rz4 = lx4 * sL + lz4 * cL;
+									const wx4 = prev.position[0] + rx4;
+									const wy4 = prev.position[1] + treadThickness / 2 + offsetY;
+									const wz4 = prev.position[2] + rz4;
+									startFromLandingTop = [wx4, wy4, wz4];
+									// p8 "תחתון" תואם (אותו XZ, גובה תחתון)
+									const wy8 = prev.position[1] - treadThickness / 2 - offsetY;
+									startFromLandingBot = [wx4, wy8, wz4];
+								}
+							}
+							const baseTop: Array<[number, number, number]> = (() => {
+								const arr = closeP4 ? [...topStepOff, closeP4] : [...topStepOff];
+								return startFromLandingTop ? [startFromLandingTop, ...arr] : arr;
+							})();
 							// שמור את הרייל העליון המקורי לשימור השיפוע
 							const topRail: Array<[number, number, number]> = baseTop;
-							const botRail: Array<[number, number, number]> = [...bottomStepOff];
+							const botRail: Array<[number, number, number]> = (() => {
+								const arr = [...bottomStepOff];
+								return startFromLandingBot ? [startFromLandingBot, ...arr] : arr;
+							})();
 							// בחר אורך מקסימלי – אם מסילה אחת ארוכה יותר (למשל כוללת פודסט), נשכפל את הנקודה האחרונה של הקצרה
 							const count = Math.max(topRail.length, botRail.length);
 

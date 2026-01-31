@@ -1486,15 +1486,22 @@ function Staircase3D({
 									t1 = firstP4SideShift;
 									if (firstP7) b1 = firstP7;
 								}
-								const baseIndex = pos.length / 3;
-								// סדר נקודות: t1,b1,t2,b2
-								pos.push(t1[0], t1[1], t1[2]);
-								pos.push(b1[0], b1[1], b1[2]);
-								pos.push(t2[0], t2[1], t2[2]);
-								pos.push(b2[0], b2[1], b2[2]);
-								// שני משולשים לכיסוי הריבוע
-								idx.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
-								idx.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
+								// במקטע האחרון: חצי פלטה – משולש t2,b2,t1 בלבד
+								if (i === count - 2) {
+									const biTri = pos.length / 3;
+									pos.push(t2[0], t2[1], t2[2],  b2[0], b2[1], b2[2],  t1[0], t1[1], t1[2]);
+									idx.push(biTri + 0, biTri + 1, biTri + 2);
+								} else {
+									const baseIndex = pos.length / 3;
+									// סדר נקודות: t1,b1,t2,b2
+									pos.push(t1[0], t1[1], t1[2]);
+									pos.push(b1[0], b1[1], b1[2]);
+									pos.push(t2[0], t2[1], t2[2]);
+									pos.push(b2[0], b2[1], b2[2]);
+									// שני משולשים לכיסוי הריבוע
+									idx.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
+									idx.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
+								}
 							}
 
 							// בניית נפח לפלטה A (גרם 1) – עובי לפי hitechPlateThickness (ברירת‑מחדל 12 מ״מ)
@@ -1806,10 +1813,17 @@ function Staircase3D({
 							if (firstP7) b1 = firstP7;
 						}
 					}
-					const baseIndex = pos.length / 3;
-					pos.push(t1[0], t1[1], t1[2],  b1[0], b1[1], b1[2],  t2[0], t2[1], t2[2],  b2[0], b2[1], b2[2]);
-					idx.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
-					idx.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
+					// במקטע האחרון – חצי פלטה: משולש t2,b2,t1
+					if (i === count - 2) {
+						const biTri = pos.length / 3;
+						pos.push(t2[0], t2[1], t2[2],  b2[0], b2[1], b2[2],  t1[0], t1[1], t1[2]);
+						idx.push(biTri + 0, biTri + 1, biTri + 2);
+					} else {
+						const baseIndex = pos.length / 3;
+						pos.push(t1[0], t1[1], t1[2],  b1[0], b1[1], b1[2],  t2[0], t2[1], t2[2],  b2[0], b2[1], b2[2]);
+						idx.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
+						idx.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
+					}
 				}
 
 				// נורמל קבוע לפי u×w להתח ולבנות נפח
@@ -2179,15 +2193,22 @@ function Staircase3D({
 										if (firstP7) b1 = firstP7;
 									}
 								}
-								const baseIndex = pos.length / 3;
-								// סדר נקודות: t1,b1,t2,b2
-								pos.push(t1[0], t1[1], t1[2]);
-								pos.push(b1[0], b1[1], b1[2]);
-								pos.push(t2[0], t2[1], t2[2]);
-								pos.push(b2[0], b2[1], b2[2]);
-								// שני משולשים לכיסוי הריבוע
-								idx.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
-								idx.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
+								// במקטע האחרון – חצי פלטה: משולש t2,b2,t1
+								if (i === segCount - 2) {
+									const biTri = pos.length / 3;
+									pos.push(t2[0], t2[1], t2[2],  b2[0], b2[1], b2[2],  t1[0], t1[1], t1[2]);
+									idx.push(biTri + 0, biTri + 1, biTri + 2);
+								} else {
+									const baseIndex = pos.length / 3;
+									// סדר נקודות: t1,b1,t2,b2
+									pos.push(t1[0], t1[1], t1[2]);
+									pos.push(b1[0], b1[1], b1[2]);
+									pos.push(t2[0], t2[1], t2[2]);
+									pos.push(b2[0], b2[1], b2[2]);
+									// שני משולשים לכיסוי הריבוע
+									idx.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
+									idx.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
+								}
 							}
 
 							// בניית נפח: משטח אחורי והדפנות על סמך normal קבוע של המישור

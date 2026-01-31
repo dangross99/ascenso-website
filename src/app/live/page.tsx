@@ -1744,9 +1744,54 @@ function Staircase3D({
 							const count = Math.max(topRail.length, botRail.length);
 							if (count < 2) return null;
 
-							// ללא קליפינג בתחילת הגרם – מתחילים ישירות מנקודות המקור של המדרגה הראשונה
-							const botRailWithExtension: Array<[number, number, number]> = botRail;
-							const topRailClipped: Array<[number, number, number]> = topRail;
+							// החזרת קליפינג נקודתי להתחלה: גזירה למישור האנכי של רייזר המדרגה הראשונה (נק׳ 2/6)
+							let clippedTop0: [number, number, number] | null = null;
+							let clippedBot0: [number, number, number] | null = null;
+							if (topRail.length >= 2 && typeof firstP7 !== 'undefined' && firstP7) {
+								const ux0 = topRail[1][0] - topRail[0][0];
+								const uz0 = topRail[1][2] - topRail[0][2];
+								const um0 = Math.hypot(ux0, uz0) || 1;
+								const uxn = ux0 / um0, uzn = uz0 / um0;
+								// חשב נקודת 2 של המדרגה הראשונה בגרם 2
+								let p2x = firstP7[0], p2z = firstP7[2];
+								{
+									let firstStep: typeof treads[number] | null = null;
+									for (let k = 0; k < treads.length; k++) {
+										const tt = treads[k];
+										if (tt.flight === 1 && !tt.isLanding) { firstStep = tt; break; }
+									}
+									if (firstStep) {
+										const yaw0 = firstStep.rotation[1] as number;
+										const c0 = Math.cos(yaw0), s0 = Math.sin(yaw0);
+										const dx0 = firstStep.run / 2, dz0 = treadWidth / 2;
+										const lx2 = dx0, lz2 = -dz0;
+										const rx2 = lx2 * c0 - lz2 * s0;
+										const rz2 = lx2 * s0 + lz2 * c0;
+										p2x = firstStep.position[0] + rx2;
+										p2z = firstStep.position[2] + rz2;
+									}
+								}
+								const dotU = (x: [number, number, number]) => (uxn * x[0] + uzn * x[2]);
+								// מישור הרייזר של המדרגה הראשונה
+								let planeU = dotU([p2x, 0, p2z] as [number, number, number]);
+								// ודא שהמישור לפני נקודת המסילה השנייה כדי למנוע דגנרציה
+								const uSecond = dotU(topRail[1]);
+								const epsilon = 1e-6;
+								if (planeU >= uSecond) planeU = uSecond - epsilon;
+								// חיתוך נקודת התחלה של שתי המסילות לאותו מישור
+								{
+									const t0 = topRail[0];
+									const tTop = planeU - dotU(t0);
+									clippedTop0 = [t0[0] + uxn * tTop, t0[1], t0[2] + uzn * tTop];
+									const b0 = botRail[0];
+									const tBot = planeU - dotU(b0);
+									clippedBot0 = [b0[0] + uxn * tBot, b0[1], b0[2] + uzn * tBot];
+								}
+							}
+							const botRailWithExtension: Array<[number, number, number]> =
+								clippedBot0 ? [clippedBot0, ...botRail.slice(1)] : botRail;
+							const topRailClipped: Array<[number, number, number]> =
+								clippedTop0 ? [clippedTop0, ...topRail.slice(1)] : topRail;
 
 							const pos: number[] = [];   // משטח קדמי
 							const idx: number[] = [];

@@ -1784,6 +1784,33 @@ function Staircase3D({
 								}
 							}
 
+							// הרחבת תחילת פלטת B "לפני" המדרגה הראשונה – התחלה מה"פודסט":
+							// מוסיפים נקודת פתיחה סינתטית לאחור לאורך u לפי run של המדרגה הראשונה
+							(() => {
+								// דרושים: לפחות נקודת קצה אחת במסילות ונגזרת u מן המדרגה הראשונה
+								let firstStep: typeof treads[number] | null = null;
+								for (let k = 0; k < treads.length; k++) {
+									const tt = treads[k];
+									if (tt.flight === 1 && !tt.isLanding) { firstStep = tt; break; }
+								}
+								if (!firstStep) return;
+								if (topForFront.length === 0 || botForFront.length === 0) return;
+								const yaw0 = firstStep.rotation[1] as number;
+								const uxn = Math.cos(yaw0);
+								const uzn = Math.sin(yaw0);
+								const runL = firstStep.run;
+								const t0 = topForFront[0];
+								const b0 = botForFront[0];
+								// נקודת פתיחה לאחור לאורך u (לפני t0) באותו גובה Y כמו t0
+								const tPrev: [number, number, number] = [t0[0] - uxn * runL, t0[1], t0[2] - uzn * runL];
+								// שמירה על רוחב בין המסילות (וקטור w בין t0 ל‑b0)
+								const wdx = t0[0] - b0[0], wdy = t0[1] - b0[1], wdz = t0[2] - b0[2];
+								const bPrev: [number, number, number] = [tPrev[0] - wdx, tPrev[1] - wdy, tPrev[2] - wdz];
+								// הוספה בתחילת המסילות כדי שהמקטע הראשון יתחיל "לפני", כמו שאר הפלטות
+								topForFront = [tPrev, ...topForFront];
+								botForFront = [bPrev, ...botForFront];
+							})();
+
 							// מאחדים: מהנקודה הזאת ואילך נשתמש באותן מסילות לכל החזית/דפנות/קאפ
 							const railTop = topForFront;
 							const railBot = botForFront;

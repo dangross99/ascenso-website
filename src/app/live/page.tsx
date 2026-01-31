@@ -1752,6 +1752,11 @@ function Staircase3D({
 								let b1 = pick(railBot, i);
 								const t2 = pick(railTop, i + 1);
 								const b2 = pick(railBot, i + 1);
+								// ייצוב המקטע הראשון: שימוש בנקודות f4/f7 המדויקות אם קיימות
+								if (i === 0) {
+									if (firstP4SideShift) t1 = firstP4SideShift;
+									if (firstP7) b1 = firstP7;
+								}
 								const baseIndex = pos.length / 3;
 								// סדר נקודות: t1,b1,t2,b2
 								pos.push(t1[0], t1[1], t1[2]);
@@ -1810,9 +1815,9 @@ function Staircase3D({
 									idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
 								}
 							};
-							// דופן עליונה ותחתונה – התחלה מהנקודה השנייה (ללא מקטע המדרגה הראשונה)
-							const topRailForSideB = railTop;
-							const botRailForSideB = railBot;
+							// דופן עליונה ותחתונה – סנכרון נקודת ההתחלה עם האופסט של המקטע הראשון (אם קיים)
+							const topRailForSideB = firstP4SideShift ? [firstP4SideShift, ...railTop] : railTop;
+							const botRailForSideB = firstP7 ? [firstP7, ...railBot] : railBot;
 							// אם אין לפחות מקטע אחד ברצועה – אל תיצור דפנות/קאפ (ימנע "פלטה מוזרה")
 							if (segCount >= 2) {
 								// דפנות החל מהמקטע הראשון

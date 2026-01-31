@@ -1739,8 +1739,8 @@ function Staircase3D({
 									const sz = nxN * uy - nyN * ux;
 									const smag = Math.hypot(sx, sy, sz) || 1;
 									const sxN = sx / smag, szN = sz / smag;
-									// גרם 2: אופסט אופקי בתחילת הפלטה = עובי החומר (כ‑12 מ״מ) כדי להמשיך כמו הדופן
-									const side = Math.max(0, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
+									// גרם 2: אין אופסט אופקי בתחילת הפלטה
+									const side = 0;
 									const f4x = firstP4[0] + sxN * side;
 									// ללא שינוי בגובה Y כדי למנע שפיץ
 									const f4y = firstP4[1];

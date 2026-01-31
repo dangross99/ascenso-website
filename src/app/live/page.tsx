@@ -1460,6 +1460,26 @@ function Staircase3D({
 							// הוסף נקודת סיום תחתונה מהפודסט אם קיימת, כדי לקבל לפחות שתי נקודות למסילה התחתונה
 							const botRail: Array<[number, number, number]> = closeP7 ? [...bottomStepOff, closeP7] : [...bottomStepOff];
 							// בחר אורך מקסימלי – אם מסילה אחת ארוכה יותר (למשל כוללת פודסט), נשכפל את הנקודה האחרונה של הקצרה
+							// פלטת סיום בקצה הגרם (ללא קשר לפודסט): הוסף נקודת סוף סינתטית לאורך u באורך run של המדרגה האחרונה בגרם 1 אם אין פודסט אחרי
+							(() => {
+								// אם יש closeP4/closeP7, יש פודסט – אין צורך בהארכה
+								if (closeP4 && closeP7) return;
+								let lastStep: typeof treads[number] | null = null;
+								for (let k = treads.length - 1; k >= 0; k--) {
+									const tt = treads[k];
+									if (tt.flight === 0 && !tt.isLanding) { lastStep = tt; break; }
+								}
+								if (!lastStep) return;
+								const yawL = lastStep.rotation[1] as number;
+								const ux = Math.cos(yawL), uz = Math.sin(yawL);
+								const runL = lastStep.run;
+								const lastT = topRail[topRail.length - 1];
+								const lastB = botRail[botRail.length - 1];
+								if (lastT && lastB) {
+									topRail.push([lastT[0] + ux * runL, lastT[1], lastT[2] + uz * runL]);
+									botRail.push([lastB[0] + ux * runL, lastB[1], lastB[2] + uz * runL]);
+								}
+							})();
 							const count = Math.max(topRail.length, botRail.length);
 							if (count < 2) return null;
 							const pos: number[] = [];
@@ -1711,8 +1731,7 @@ function Staircase3D({
 				})();
 				const topRail: Array<[number, number, number]> = baseTop;
 				const botRail: Array<[number, number, number]> = (() => {
-					let arr = [...bottomStepOff];
-					if (closeP7) arr = [...arr, closeP7];
+					const arr = [...bottomStepOff];
 					return startFromLandingBot ? [startFromLandingBot, ...arr] : arr;
 				})();
 				const count = Math.max(topRail.length, botRail.length);
@@ -2022,8 +2041,28 @@ function Staircase3D({
 							// ללא הרחבה סינתטית: המקטע הראשון ייווצר בין מדרגה 1 למדרגה 2 בדיוק כמו שאר המקטעים
 
 							// מאחדים: מהנקודה הזאת ואילך נשתמש באותן מסילות לכל החזית/דפנות/קאפ
-							const railTop = topForFront;
-							const railBot = botForFront;
+							const railTop = [...topForFront];
+							const railBot = [...botForFront];
+							// פלטת סיום בקצה הגרם (ללא קשר לפודסט): הוסף נקודת סוף סינתטית לאורך u באורך run של המדרגה האחרונה
+							(() => {
+								// מצא את המדרגה האחרונה בגרם 2
+								let lastStep: typeof treads[number] | null = null;
+								for (let k = treads.length - 1; k >= 0; k--) {
+									const tt = treads[k];
+									if (tt.flight === 1 && !tt.isLanding) { lastStep = tt; break; }
+								}
+								if (!lastStep) return;
+								const yawL = lastStep.rotation[1] as number;
+								const ux = Math.cos(yawL), uz = Math.sin(yawL);
+								const runL = lastStep.run;
+								const lastT = railTop[railTop.length - 1];
+								const lastB = railBot[railBot.length - 1];
+								if (lastT && lastB) {
+									railTop.push([lastT[0] + ux * runL, lastT[1], lastT[2] + uz * runL]);
+									railBot.push([lastB[0] + ux * runL, lastB[1], lastB[2] + uz * runL]);
+								}
+							})();
+							// (הארכת קצה לגרם 2 נוספה בהמשך בבלוק 'פלטה C')
 
 							const pos: number[] = [];   // משטח קדמי
 							const idx: number[] = [];

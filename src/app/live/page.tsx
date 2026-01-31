@@ -1788,6 +1788,10 @@ function Staircase3D({
 								clippedBot0 ? [clippedBot0, ...botRail.slice(1)] : botRail;
 							const topRailClipped: Array<[number, number, number]> =
 								clippedTop0 ? [clippedTop0, ...topRail.slice(1)] : topRail;
+							// ודא שהמחבר ישתמש באותה נקודת התחלה של פלטת B (מניעת טריאנגולציה בקצה)
+							if (clippedTop0 && clippedBot0) {
+								hitechBStartRef.current = { top: clippedTop0, bot: clippedBot0 };
+							}
 
 							const pos: number[] = [];   // משטח קדמי
 							const idx: number[] = [];

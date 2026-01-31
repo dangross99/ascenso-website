@@ -1585,17 +1585,22 @@ function Staircase3D({
 										lastStep.position[1] - treadThickness / 2 - offsetY,
 										lastT[2]
 									];
-									// חיתוך אנכי דרך P3 עם מישור הפלטה (לפי הנורמל n = off/thickness)
-									const topRef = topRail[topRail.length - 1];
-									const botRef = botRail[botRail.length - 1];
-									const nX = offX / thickness, nY = offY / thickness, nZ = offZ / thickness;
-									if (Math.abs(nY) > 1e-6) {
-										const dyTop = (nX * (lastT[0] - topRef[0]) + nZ * (lastT[2] - topRef[2])) / nY;
-										const topY = topRef[1] - dyTop;
-										const deltaY = topRef[1] - botRef[1];
-										lastT = [lastT[0], topY, lastT[2]];
-										lastB = [lastB[0], topY - deltaY, lastB[2]];
-									}
+									// הארכת מסילות 4‑offset ו‑7‑offset באותו שיפוע עד שנפגשות עם האנך ב‑P3
+									const topEnd = topRail[topRail.length - 1];
+									const topPrev = topRail.length >= 2 ? topRail[topRail.length - 2] : topEnd;
+									const botEnd = botRail[botRail.length - 1];
+									const botPrev = botRail.length >= 2 ? botRail[botRail.length - 2] : botEnd;
+									const ux = topEnd[0] - topPrev[0], uz = topEnd[2] - topPrev[2], uy = topEnd[1] - topPrev[1];
+									const vx = botEnd[0] - botPrev[0], vz = botEnd[2] - botPrev[2], vy = botEnd[1] - botPrev[1];
+									let tTop = 0, tBot = 0;
+									if (Math.abs(ux) >= Math.abs(uz) && Math.abs(ux) > 1e-9) tTop = (lastT[0] - topEnd[0]) / ux;
+									else if (Math.abs(uz) > 1e-9) tTop = (lastT[2] - topEnd[2]) / uz;
+									if (Math.abs(vx) >= Math.abs(vz) && Math.abs(vx) > 1e-9) tBot = (lastB[0] - botEnd[0]) / vx;
+									else if (Math.abs(vz) > 1e-9) tBot = (lastB[2] - botEnd[2]) / vz;
+									const yTop = topEnd[1] + tTop * uy;
+									const yBot = botEnd[1] + tBot * vy;
+									lastT = [lastT[0], yTop, lastT[2]];
+									lastB = [lastB[0], yBot, lastB[2]];
 									const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
 									const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
 									const bi = pos.length / 3;
@@ -1899,17 +1904,22 @@ function Staircase3D({
 							lastStep.position[1] - treadThickness / 2 - offsetY,
 							lastT[2]
 						];
-						// חיתוך אנכי דרך P3 עם מישור הפלטה (לפי הנורמל n = off/thickness)
-						const topRef = topRailForSide[topRailForSide.length - 1];
-						const botRef = botRailForSide[botRailForSide.length - 1];
-						const nX = offX / thickness, nY = offY / thickness, nZ = offZ / thickness;
-						if (Math.abs(nY) > 1e-6) {
-							const dyTop = (nX * (lastT[0] - topRef[0]) + nZ * (lastT[2] - topRef[2])) / nY;
-							const topY = topRef[1] - dyTop;
-							const deltaY = topRef[1] - botRef[1];
-							lastT = [lastT[0], topY, lastT[2]];
-							lastB = [lastB[0], topY - deltaY, lastB[2]];
-						}
+						// הארכת מסילות 4‑offset ו‑7‑offset באותו שיפוע עד שנפגשות עם האנך ב‑P3
+						const topEnd = topRailForSide[topRailForSide.length - 1];
+						const topPrev = topRailForSide.length >= 2 ? topRailForSide[topRailForSide.length - 2] : topEnd;
+						const botEnd = botRailForSide[botRailForSide.length - 1];
+						const botPrev = botRailForSide.length >= 2 ? botRailForSide[botRailForSide.length - 2] : botEnd;
+						const ux = topEnd[0] - topPrev[0], uz = topEnd[2] - topPrev[2], uy = topEnd[1] - topPrev[1];
+						const vx = botEnd[0] - botPrev[0], vz = botEnd[2] - botPrev[2], vy = botEnd[1] - botPrev[1];
+						let tTop = 0, tBot = 0;
+						if (Math.abs(ux) >= Math.abs(uz) && Math.abs(ux) > 1e-9) tTop = (lastT[0] - topEnd[0]) / ux;
+						else if (Math.abs(uz) > 1e-9) tTop = (lastT[2] - topEnd[2]) / uz;
+						if (Math.abs(vx) >= Math.abs(vz) && Math.abs(vx) > 1e-9) tBot = (lastB[0] - botEnd[0]) / vx;
+						else if (Math.abs(vz) > 1e-9) tBot = (lastB[2] - botEnd[2]) / vz;
+						const yTop = topEnd[1] + tTop * uy;
+						const yBot = botEnd[1] + tBot * vy;
+						lastT = [lastT[0], yTop, lastT[2]];
+						lastB = [lastB[0], yBot, lastB[2]];
 						const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
 						const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
 						const bi = pos.length / 3;
@@ -2275,17 +2285,22 @@ function Staircase3D({
 										lastStep.position[1] - treadThickness / 2 - offsetY,
 										lastT[2]
 									];
-									// חיתוך אנכי דרך P3 עם מישור הפלטה (לפי הנורמל n = off/thickness)
-									const topRef = topRailForSideB[topRailForSideB.length - 1];
-									const botRef = botRailForSideB[botRailForSideB.length - 1];
-									const nX = offX / thickness, nY = offY / thickness, nZ = offZ / thickness;
-									if (Math.abs(nY) > 1e-6) {
-										const dyTop = (nX * (lastT[0] - topRef[0]) + nZ * (lastT[2] - topRef[2])) / nY;
-										const topY = topRef[1] - dyTop;
-										const deltaY = topRef[1] - botRef[1];
-										lastT = [lastT[0], topY, lastT[2]];
-										lastB = [lastB[0], topY - deltaY, lastB[2]];
-									}
+									// הארכת מסילות 4‑offset ו‑7‑offset באותו שיפוע עד שנפגשות עם האנך ב‑P3
+									const topEnd = topRailForSideB[topRailForSideB.length - 1];
+									const topPrev = topRailForSideB.length >= 2 ? topRailForSideB[topRailForSideB.length - 2] : topEnd;
+									const botEnd = botRailForSideB[botRailForSideB.length - 1];
+									const botPrev = botRailForSideB.length >= 2 ? botRailForSideB[botRailForSideB.length - 2] : botEnd;
+									const ux = topEnd[0] - topPrev[0], uz = topEnd[2] - topPrev[2], uy = topEnd[1] - topPrev[1];
+									const vx = botEnd[0] - botPrev[0], vz = botEnd[2] - botPrev[2], vy = botEnd[1] - botPrev[1];
+									let tTop = 0, tBot = 0;
+									if (Math.abs(ux) >= Math.abs(uz) && Math.abs(ux) > 1e-9) tTop = (lastT[0] - topEnd[0]) / ux;
+									else if (Math.abs(uz) > 1e-9) tTop = (lastT[2] - topEnd[2]) / uz;
+									if (Math.abs(vx) >= Math.abs(vz) && Math.abs(vx) > 1e-9) tBot = (lastB[0] - botEnd[0]) / vx;
+									else if (Math.abs(vz) > 1e-9) tBot = (lastB[2] - botEnd[2]) / vz;
+									const yTop = topEnd[1] + tTop * uy;
+									const yBot = botEnd[1] + tBot * vy;
+									lastT = [lastT[0], yTop, lastT[2]];
+									lastB = [lastB[0], yBot, lastB[2]];
 									const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
 									const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
 									const bi = pos.length / 3;

@@ -1560,24 +1560,44 @@ function Staircase3D({
 							}
 							// סיום
 							if (shouldRenderClosingCapForFlight(flightIdx)) {
-								const lastT = topRail[topRail.length - 1];
-								// קאפ אנכי: תחתון עם אותו XZ כמו העליון, Y מתחתון קיים
-								const lastBy = botRail[botRail.length - 1][1];
-								// המשך לגובה רייזר נוסף
-								const lastTUp: [number, number, number] = [lastT[0], lastT[1] + riser, lastT[2]];
-								const lastB: [number, number, number] = [lastT[0], lastBy, lastT[2]];
-								const lastTe: [number, number, number] = [lastTUp[0] + offX, lastTUp[1] + offY, lastTUp[2] + offZ];
-								const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
-								const bi = pos.length / 3;
-								pos.push(lastTUp[0], lastTUp[1], lastTUp[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
-								idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
-								// מסגרת – 4 קווי מתאר
-								edgeLines.push(
-									lastTUp[0], lastTUp[1], lastTUp[2],  lastB[0], lastB[1], lastB[2],
-									lastB[0], lastB[1], lastB[2],        lastBe[0], lastBe[1], lastBe[2],
-									lastBe[0], lastBe[1], lastBe[2],      lastTe[0], lastTe[1], lastTe[2],
-									lastTe[0], lastTe[1], lastTe[2],      lastTUp[0], lastTUp[1], lastTUp[2],
-								);
+								// הצב את הקאפ בקצה המדרגה (נק׳ 3/7 של המדרגה האחרונה בגרם)
+								let lastStep: any = null;
+								for (let ii = treads.length - 1; ii >= 0; ii--) {
+									const tt = treads[ii];
+									if (tt.flight === flightIdx && !tt.isLanding) { lastStep = tt; break; }
+								}
+								if (lastStep) {
+									const yaw = lastStep.rotation[1] as number;
+									const { c, s } = cosSin(yaw);
+									const dx = lastStep.run / 2;
+									const dz = treadWidth / 2;
+									// נק׳ 3 עליונה: (+dx, +dz) למעלה; נק׳ 7 תחתונה: (+dx, +dz) למטה
+									const lx = dx, lz = dz;
+									const rx = lx * c - lz * s;
+									const rz = lx * s + lz * c;
+									const lastT: [number, number, number] = [
+										lastStep.position[0] + rx,
+										lastStep.position[1] + treadThickness / 2 + offsetY,
+										lastStep.position[2] + rz
+									];
+									const lastB: [number, number, number] = [
+										lastT[0],
+										lastStep.position[1] - treadThickness / 2 - offsetY,
+										lastT[2]
+									];
+									const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
+									const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
+									const bi = pos.length / 3;
+									pos.push(lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
+									idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+									// מסגרת – 4 קווי מתאר
+									edgeLines.push(
+										lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],
+										lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],
+										lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2],
+										lastTe[0], lastTe[1], lastTe[2],  lastT[0], lastT[1], lastT[2],
+									);
+								}
 							}
 
 							// בוטל: קאפ סיום בצד החיצוני
@@ -1844,21 +1864,42 @@ function Staircase3D({
 				}
 				// קאפ סיום אנכי (מבוסס מסילה) מבוטל – נשאר רק קאפ לפי 3/7
 				if (shouldRenderClosingCapForFlight(flightIdx)) {
-					const lastT = topRailForSide[topRailForSide.length - 1];
-					const lastBy = botRailForSide[botRailForSide.length - 1][1];
-					const lastTUp: [number, number, number] = [lastT[0], lastT[1] + riser, lastT[2]];
-					const lastB: [number, number, number] = [lastT[0], lastBy, lastT[2]];
-					const lastTe: [number, number, number] = [lastTUp[0] + offX, lastTUp[1] + offY, lastTUp[2] + offZ];
-					const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
-					const bi = pos.length / 3;
-					pos.push(lastTUp[0], lastTUp[1], lastTUp[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
-					idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
-					edgeLines.push(
-						lastTUp[0], lastTUp[1], lastTUp[2],  lastB[0], lastB[1], lastB[2],
-						lastB[0], lastB[1], lastB[2],        lastBe[0], lastBe[1], lastBe[2],
-						lastBe[0], lastBe[1], lastBe[2],      lastTe[0], lastTe[1], lastTe[2],
-						lastTe[0], lastTe[1], lastTe[2],      lastTUp[0], lastTUp[1], lastTUp[2],
-					);
+					// הצב את הקאפ בקצה המדרגה (נק׳ 3/7 של המדרגה האחרונה בגרם)
+					let lastStep: any = null;
+					for (let ii = treads.length - 1; ii >= 0; ii--) {
+						const tt = treads[ii];
+						if (tt.flight === flightIdx && !tt.isLanding) { lastStep = tt; break; }
+					}
+					if (lastStep) {
+						const yaw = lastStep.rotation[1] as number;
+						const { c, s } = cosSin(yaw);
+						const dx = lastStep.run / 2;
+						const dz = treadWidth / 2;
+						const lx = dx, lz = dz;
+						const rx = lx * c - lz * s;
+						const rz = lx * s + lz * c;
+						const lastT: [number, number, number] = [
+							lastStep.position[0] + rx,
+							lastStep.position[1] + treadThickness / 2 + offsetY,
+							lastStep.position[2] + rz
+						];
+						const lastB: [number, number, number] = [
+							lastT[0],
+							lastStep.position[1] - treadThickness / 2 - offsetY,
+							lastT[2]
+						];
+						const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
+						const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
+						const bi = pos.length / 3;
+						pos.push(lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
+						idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+						edgeLines.push(
+							lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],
+							lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],
+							lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2],
+							lastTe[0], lastTe[1], lastTe[2],  lastT[0], lastT[1], lastT[2],
+						);
+					}
 				}
 
 				// בוטל: קאפ סיום חיצוני לפי קודקודים 3 ו‑7
@@ -2188,15 +2229,36 @@ function Staircase3D({
 							}
 							// דופן סיום
 							if (shouldRenderClosingCapForFlight(flightIdx)) {
-								const lastT = topRailForSideB[topRailForSideB.length - 1];
-								// קאפ אנכי: XZ של התחתון זהה לעליון, Y מתחתון מסילה
-								const lastBy = botRailForSideB[botRailForSideB.length - 1][1];
-								const lastB: [number, number, number] = [lastT[0], lastBy, lastT[2]];
-								const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
-								const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
-								const bi = pos.length / 3;
-								pos.push(lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
-								idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+								// הצב את הקאפ בקצה המדרגה (נק׳ 3/7 של המדרגה האחרונה בגרם)
+								let lastStep: any = null;
+								for (let ii = treads.length - 1; ii >= 0; ii--) {
+									const tt = treads[ii];
+									if (tt.flight === flightIdx && !tt.isLanding) { lastStep = tt; break; }
+								}
+								if (lastStep) {
+									const yaw = lastStep.rotation[1] as number;
+									const { c, s } = cosSin(yaw);
+									const dx = lastStep.run / 2;
+									const dz = treadWidth / 2;
+									const lx = dx, lz = dz;
+									const rx = lx * c - lz * s;
+									const rz = lx * s + lz * c;
+									const lastT: [number, number, number] = [
+										lastStep.position[0] + rx,
+										lastStep.position[1] + treadThickness / 2 + offsetY,
+										lastStep.position[2] + rz
+									];
+									const lastB: [number, number, number] = [
+										lastT[0],
+										lastStep.position[1] - treadThickness / 2 - offsetY,
+										lastT[2]
+									];
+									const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
+									const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
+									const bi = pos.length / 3;
+									pos.push(lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
+									idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+								}
 							}
 
 							// קאפ סיום – הוסר

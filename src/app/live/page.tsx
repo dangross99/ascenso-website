@@ -1169,8 +1169,9 @@ function Staircase3D({
 				const cosSin = (yaw: number) => ({ c: Math.cos(yaw), s: Math.sin(yaw) });
 				const pts4Off: number[] = [];
 				const pts7Off: number[] = [];
-				const topStepOff: Array<[number, number, number]> = [];    // נקודות 4‑offset לכל מדרגה (ללא פודסט)
-				const bottomStepOff: Array<[number, number, number]> = []; // נקודות 7‑offset לכל מדרגה
+				// עבור פלטה B נשתמש בנקודות "2" העליונה ו"6" התחתונה כמסילות
+				const topStepOff: Array<[number, number, number]> = [];    // נקודות 2‑offset לכל מדרגה (ללא פודסט)
+				const bottomStepOff: Array<[number, number, number]> = []; // נקודות 6‑offset לכל מדרגה
 				const offsetY = Math.max(0, (typeof hitechPlateTopOffsetM === 'number' ? hitechPlateTopOffsetM : 0.03)); // היסט אנכי מהמשטח
 				let firstP4: [number, number, number] | null = null;
 				let firstP7: [number, number, number] | null = null;
@@ -1185,7 +1186,6 @@ function Staircase3D({
 					const { c, s } = cosSin(yaw);
 					const dx = t.run / 2;
 					const dz = treadWidth / 2;
-					// התאמה לגרם 2: נשתמש בפינת "2" העליונה (ימין-אחורה) במקום "4" כדי ליישר את הפלטה לצד הפנימי
 					// נקודה 2 – עליונה ימין-אחורה: (+dx, -dz, yTop)
 					let p4w: [number, number, number] | null = null;
 					let p7w: [number, number, number] | null = null;
@@ -1228,11 +1228,10 @@ function Staircase3D({
 								const wz8 = t.position[2] + rz8;
 								closeP8 = [wx8, wy8, wz8];
 							}
-							// קודקוד 4 מהפודסט הבא (עם אופסט כלפי מעלה)
+							// נקודת "2" מהפודסט הבא (עם אופסט כלפי מעלה)
 							const yaw2 = next.rotation[1] as number;
 							const c2 = Math.cos(yaw2), s2 = Math.sin(yaw2);
 							const dxL = next.run / 2, dzL = treadWidth / 2;
-							// משתמשים ב"2" העליונה של הפודסט הבא: (+dxL, -dzL)
 							const lx2 = +dxL, lz2 = -dzL;
 							const rx2 = lx2 * c2 - lz2 * s2;
 							const rz2 = lx2 * s2 + lz2 * c2;

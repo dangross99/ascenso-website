@@ -1784,8 +1784,12 @@ function Staircase3D({
 								const b2 = pick(railBot, i + 1);
 								// ייצוב המקטע הראשון: שימוש בנקודות f4/f7 המדויקות אם קיימות
 								if (i === 0) {
-									if (firstP4SideShift) t1 = firstP4SideShift;
-									if (firstP7) b1 = firstP7;
+									// אם יש נקודת פתיחה מהפודסט – לא לעקוף אותה
+									const hasLandingStart = !!startFromLandingTop && !!startFromLandingBot;
+									if (!hasLandingStart) {
+										if (firstP4SideShift) t1 = firstP4SideShift;
+										if (firstP7) b1 = firstP7;
+									}
 								}
 								const baseIndex = pos.length / 3;
 								// סדר נקודות: t1,b1,t2,b2
@@ -1845,9 +1849,10 @@ function Staircase3D({
 									idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
 								}
 							};
-							// דופן עליונה ותחתונה – סנכרון נקודת ההתחלה עם האופסט של המקטע הראשון (אם קיים)
-							const topRailForSideB = firstP4SideShift ? [firstP4SideShift, ...railTop] : railTop;
-							const botRailForSideB = firstP7 ? [firstP7, ...railBot] : railBot;
+							// דופן עליונה ותחתונה – אם מתחילים מהפודסט, אל תוסיף אופסטים; אחרת הוסף f4/f7 בתחילת המסילה
+							const useLandingStart = !!startFromLandingTop && !!startFromLandingBot;
+							const topRailForSideB = useLandingStart ? railTop : (firstP4SideShift ? [firstP4SideShift, ...railTop] : railTop);
+							const botRailForSideB = useLandingStart ? railBot : (firstP7 ? [firstP7, ...railBot] : railBot);
 							// אם אין לפחות מקטע אחד ברצועה – אל תיצור דפנות/קאפ (ימנע "פלטה מוזרה")
 							if (segCount >= 2) {
 								// דפנות החל מהמקטע הראשון

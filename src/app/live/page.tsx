@@ -1801,6 +1801,11 @@ function Staircase3D({
 								let b1 = pick(botRailWithExtension, i);
 								const t2 = pick(topRailClipped, i + 1);
 								const b2 = pick(botRailWithExtension, i + 1);
+								// ודא שמופיע ריבוע עבור המדרגה הראשונה: התחל מנקודות המקור של המדרגה הראשונה (ללא קליפינג)
+								if (i === 0) {
+									t1 = topRail[0];
+									b1 = botRail[0];
+								}
 								// גרם 2: התחלה ללא אופסט – t1/b1 נשארים מהמסילות המקוריות
 								const baseIndex = pos.length / 3;
 								// סדר נקודות: t1,b1,t2,b2

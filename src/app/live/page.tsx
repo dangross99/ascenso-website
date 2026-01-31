@@ -1822,16 +1822,20 @@ function Staircase3D({
 								}
 							}
 
+							// מאחדים: מהנקודה הזאת ואילך נשתמש באותן מסילות לכל החזית/דפנות/קאפ
+							const railTop = topForFront;
+							const railBot = botForFront;
+
 							const pos: number[] = [];   // משטח קדמי
 							const idx: number[] = [];
 							const pick = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
-							const segCount = Math.max(topForFront.length, botForFront.length);
+							const segCount = Math.max(railTop.length, railBot.length);
 							if (segCount < 2) return null;
 							for (let i = 0; i < segCount - 1; i++) {
-								let t1 = pick(topForFront, i);
-								let b1 = pick(botForFront, i);
-								const t2 = pick(topForFront, i + 1);
-								const b2 = pick(botForFront, i + 1);
+								let t1 = pick(railTop, i);
+								let b1 = pick(railBot, i);
+								const t2 = pick(railTop, i + 1);
+								const b2 = pick(railBot, i + 1);
 								// גרם 2: התחלה ללא אופסט – t1/b1 נשארים מהמסילות המקוריות
 								const baseIndex = pos.length / 3;
 								// סדר נקודות: t1,b1,t2,b2
@@ -1848,16 +1852,16 @@ function Staircase3D({
 							const thickness = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
 							// כיוון לאורך המסילה (u)
 							let ux = 1, uy = 0, uz = 0;
-							if (topForFront.length >= 2) {
-								ux = topForFront[1][0] - topForFront[0][0];
-								uy = topForFront[1][1] - topForFront[0][1];
-								uz = topForFront[1][2] - topForFront[0][2];
+							if (railTop.length >= 2) {
+								ux = railTop[1][0] - railTop[0][0];
+								uy = railTop[1][1] - railTop[0][1];
+								uz = railTop[1][2] - railTop[0][2];
 							}
 							const um = Math.hypot(ux, uy, uz) || 1; ux /= um; uy /= um; uz /= um;
 							// רוחב בין המסילות (w)
-							let wx = (firstP4 && firstP7) ? (firstP4[0] - firstP7[0]) : (topForFront[0][0] - botForFront[0][0]);
-							let wy = (firstP4 && firstP7) ? (firstP4[1] - firstP7[1]) : (topForFront[0][1] - botForFront[0][1]);
-							let wz = (firstP4 && firstP7) ? (firstP4[2] - firstP7[2]) : (topForFront[0][2] - botForFront[0][2]);
+							let wx = (firstP4 && firstP7) ? (firstP4[0] - firstP7[0]) : (railTop[0][0] - railBot[0][0]);
+							let wy = (firstP4 && firstP7) ? (firstP4[1] - firstP7[1]) : (railTop[0][1] - railBot[0][1]);
+							let wz = (firstP4 && firstP7) ? (firstP4[2] - firstP7[2]) : (railTop[0][2] - railBot[0][2]);
 							const nmX = uy * wz - uz * wy;
 							const nmY = uz * wx - ux * wz;
 							const nmZ = ux * wy - uy * wx;
@@ -1892,8 +1896,8 @@ function Staircase3D({
 								}
 							};
 							// דופן עליונה ותחתונה – בגרם 2 ללא אופסט התחלה
-							const topRailForSideB = topRailClipped;
-							const botRailForSideB = botRailWithExtension;
+							const topRailForSideB = railTop;
+							const botRailForSideB = railBot;
 							// אם אין לפחות מקטע אחד ברצועה – אל תיצור דפנות/קאפ (ימנע "פלטה מוזרה")
 							if (segCount >= 2) {
 								// דילוג על דופן ההתחלה בגרם 2 כדי למנוע קצה משולשי/לא מיושר – נוסיף קאפ התחלה נפרד
@@ -1901,8 +1905,8 @@ function Staircase3D({
 								addSideStrip(botRailForSideB.slice(1));
 								// דופן התחלה (קאפ) – מיישר את תחילת הפלטה עם הנורמל
 								{
-									const firstT = topRailClipped[0];
-									const firstB = botRailWithExtension[0];
+									const firstT = topRailForSideB[0];
+									const firstB = botRailForSideB[0];
 									const firstTe: [number, number, number] = [firstT[0] + offX, firstT[1] + offY, firstT[2] + offZ];
 									const firstBe: [number, number, number] = [firstB[0] + offX, firstB[1] + offY, firstB[2] + offZ];
 									const bi = pos.length / 3;
@@ -1912,8 +1916,8 @@ function Staircase3D({
 							}
 							// דופן סיום
 							{
-								const lastT = topRailClipped[topRailClipped.length - 1];
-								const lastB = botRailWithExtension[botRailWithExtension.length - 1];
+								const lastT = topRailForSideB[topRailForSideB.length - 1];
+								const lastB = botRailForSideB[botRailForSideB.length - 1];
 								const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
 								const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
 								const bi = pos.length / 3;

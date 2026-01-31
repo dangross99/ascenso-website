@@ -408,6 +408,16 @@ function Staircase3D({
 
 	const treads = React.useMemo(getTreads, [shape, steps, JSON.stringify(pathSegments)]);
 
+	// זיהוי הגרם והמדרגה האחרונה עבור פאנל הסגירה בדגם "הייטק"
+	const staircaseEndsWithLanding = (treads.length > 0 ? treads[treads.length - 1].isLanding : false);
+	let lastNonLandingFlight: number | null = null;
+	for (let i = treads.length - 1; i >= 0; i--) {
+		const tt = treads[i];
+		if (!tt.isLanding) { lastNonLandingFlight = tt.flight; break; }
+	}
+	const shouldRenderClosingCapForFlight = (flightIdx: number) =>
+		(lastNonLandingFlight !== null && flightIdx === lastNonLandingFlight && !staircaseEndsWithLanding);
+
 	// חישוב גבולות XY וגובה הרצפה לפי המסלול
 	const floorBounds = React.useMemo(() => {
 		if (!treads.length) {
@@ -1548,7 +1558,7 @@ function Staircase3D({
 								idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
 							}
 							// סיום
-							{
+							if (shouldRenderClosingCapForFlight(flightIdx)) {
 								const lastT = topRail[topRail.length - 1];
 								// קאפ אנכי: תחתון עם אותו XZ כמו העליון, Y מתחתון קיים
 								const lastBy = botRail[botRail.length - 1][1];
@@ -1801,7 +1811,7 @@ function Staircase3D({
 					idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
 				}
 				// קאפ סיום אנכי
-				{
+				if (shouldRenderClosingCapForFlight(2)) {
 					const lastT = topRailForSide[topRailForSide.length - 1];
 					const lastBy = botRailForSide[botRailForSide.length - 1][1];
 					const lastB: [number, number, number] = [lastT[0], lastBy, lastT[2]];
@@ -2124,7 +2134,7 @@ function Staircase3D({
 								}
 							}
 							// דופן סיום
-							{
+							if (shouldRenderClosingCapForFlight(flightIdx)) {
 								const lastT = topRailForSideB[topRailForSideB.length - 1];
 								// קאפ אנכי: XZ של התחתון זהה לעליון, Y מתחתון מסילה
 								const lastBy = botRailForSideB[botRailForSideB.length - 1][1];

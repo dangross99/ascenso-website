@@ -1585,6 +1585,22 @@ function Staircase3D({
 										lastStep.position[1] - treadThickness / 2 - offsetY,
 										lastT[2]
 									];
+									// בחר בין אנך דרך P3 לאנך דרך P2 לפי המשך המסילה
+									const candT3: [number, number, number] = [...lastT];
+									const candB3: [number, number, number] = [...lastB];
+									// P2: (+dx, -dz)
+									const rx2 = lx * c - (-lz) * s;
+									const rz2 = lx * s + (-lz) * c;
+									const candT2: [number, number, number] = [
+										lastStep.position[0] + rx2,
+										lastStep.position[1] + treadThickness / 2 + offsetY,
+										lastStep.position[2] + rz2
+									];
+									const candB2: [number, number, number] = [
+										candT2[0],
+										lastStep.position[1] - treadThickness / 2 - offsetY,
+										candT2[2]
+									];
 									// הארכת מסילות 4‑offset ו‑7‑offset באותו שיפוע עד שנפגשות עם האנך ב‑P3
 									const topEnd = topRail[topRail.length - 1];
 									const topPrev = topRail.length >= 2 ? topRail[topRail.length - 2] : topEnd;
@@ -1596,14 +1612,56 @@ function Staircase3D({
 									if (Math.abs(ux) < 1e-9 && Math.abs(uz) < 1e-9) { ux = Math.cos(yaw); uz = Math.sin(yaw); uy = 0; }
 									if (Math.abs(vx) < 1e-9 && Math.abs(vz) < 1e-9) { vx = Math.cos(yaw); vz = Math.sin(yaw); vy = 0; }
 									let tTop = 0, tBot = 0;
-									if (Math.abs(ux) >= Math.abs(uz) && Math.abs(ux) > 1e-9) tTop = (lastT[0] - topEnd[0]) / ux;
-									else if (Math.abs(uz) > 1e-9) tTop = (lastT[2] - topEnd[2]) / uz;
-									if (Math.abs(vx) >= Math.abs(vz) && Math.abs(vx) > 1e-9) tBot = (lastB[0] - botEnd[0]) / vx;
-									else if (Math.abs(vz) > 1e-9) tBot = (lastB[2] - botEnd[2]) / vz;
+									const projT = (pt: [number, number, number]) => {
+										if (Math.abs(ux) >= Math.abs(uz) && Math.abs(ux) > 1e-9) return (pt[0] - topEnd[0]) / ux;
+										if (Math.abs(uz) > 1e-9) return (pt[2] - topEnd[2]) / uz;
+										return 0;
+									};
+									const projB = (pb: [number, number, number]) => {
+										if (Math.abs(vx) >= Math.abs(vz) && Math.abs(vx) > 1e-9) return (pb[0] - botEnd[0]) / vx;
+										if (Math.abs(vz) > 1e-9) return (pb[2] - botEnd[2]) / vz;
+										return 0;
+									};
+									// בחר מועמד שנותן המשך קדימה (t>=0) והקרוב ביותר
+									let tTop3 = projT(candT3), tBot3 = projB(candB3);
+									let tTop2 = projT(candT2), tBot2 = projB(candB2);
+									const good3 = tTop3 >= -1e-6 && tBot3 >= -1e-6;
+									const good2 = tTop2 >= -1e-6 && tBot2 >= -1e-6;
+									if (!good3 && good2) { lastT = candT2; lastB = candB2; tTop = tTop2; tBot = tBot2; }
+									else if (good3 && good2) {
+										const score3 = Math.abs(tTop3) + Math.abs(tBot3);
+										const score2 = Math.abs(tTop2) + Math.abs(tBot2);
+										if (score2 < score3) { lastT = candT2; lastB = candB2; tTop = tTop2; tBot = tBot2; } else { tTop = tTop3; tBot = tBot3; }
+									} else { tTop = tTop3; tBot = tBot3; }
 									const yTop = topEnd[1] + tTop * uy;
 									const yBot = botEnd[1] + tBot * vy;
 									lastT = [lastT[0], yTop, lastT[2]];
 									lastB = [lastB[0], yBot, lastB[2]];
+									// הוספת מקטע פלטה מגשר בין קצה הפלטה לנק׳ המפגש
+									{
+										const baseIndex = pos.length / 3;
+										pos.push(topEnd[0], topEnd[1], topEnd[2]);
+										pos.push(botEnd[0], botEnd[1], botEnd[2]);
+										pos.push(lastT[0], lastT[1], lastT[2]);
+										pos.push(lastB[0], lastB[1], lastB[2]);
+										idx.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
+										idx.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
+										const backBase = pos.length / 3;
+										const t1e: [number, number, number] = [topEnd[0] + offX, topEnd[1] + offY, topEnd[2] + offZ];
+										const b1e: [number, number, number] = [botEnd[0] + offX, botEnd[1] + offY, botEnd[2] + offZ];
+										const t2e: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
+										const b2e: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
+										pos.push(t1e[0], t1e[1], t1e[2],  b1e[0], b1e[1], b1e[2],  t2e[0], t2e[1], t2e[2],  b2e[0], b2e[1], b2e[2]);
+										idx.push(backBase + 0, backBase + 2, backBase + 1);
+										idx.push(backBase + 2, backBase + 3, backBase + 1);
+										// דפנות עליון/תחתון של המקטע המגשר
+										const biTop = pos.length / 3;
+										pos.push(topEnd[0], topEnd[1], topEnd[2],  lastT[0], lastT[1], lastT[2],  t2e[0], t2e[1], t2e[2],  t1e[0], t1e[1], t1e[2]);
+										idx.push(biTop + 0, biTop + 1, biTop + 2,  biTop + 0, biTop + 2, biTop + 3);
+										const biBot = pos.length / 3;
+										pos.push(botEnd[0], botEnd[1], botEnd[2],  lastB[0], lastB[1], lastB[2],  b2e[0], b2e[1], b2e[2],  b1e[0], b1e[1], b1e[2]);
+										idx.push(biBot + 0, biBot + 1, biBot + 2,  biBot + 0, biBot + 2, biBot + 3);
+									}
 									// הוספת מקטע חזית אחרון בין קצה הפלטה לקאפ (t1=topEnd,b1=botEnd,t2=lastT,b2=lastB)
 									{
 										const baseIndex = pos.length / 3;

@@ -1949,16 +1949,32 @@ function Staircase3D({
 						const lx = dx, lz = dz;
 						const rx = lx * c - lz * s;
 						const rz = lx * s + lz * c;
-						let lastT: [number, number, number] = [
+						// מועמדים לקו האנכי: דרך P3 (קדמי‑ימני) או דרך P2 (אחורי‑ימני) – נבחר את זה שמתיישר עם כיוון המסילה
+						const candT3: [number, number, number] = [
 							lastStep.position[0] + rx,
 							lastStep.position[1] + treadThickness / 2 + offsetY,
 							lastStep.position[2] + rz
 						];
-						let lastB: [number, number, number] = [
-							lastT[0],
+						const candB3: [number, number, number] = [
+							candT3[0],
 							lastStep.position[1] - treadThickness / 2 - offsetY,
-							lastT[2]
+							candT3[2]
 						];
+						// P2: (+dx, -dz)
+						const rx2 = lx * c - (-lz) * s;
+						const rz2 = lx * s + (-lz) * c;
+						const candT2: [number, number, number] = [
+							lastStep.position[0] + rx2,
+							lastStep.position[1] + treadThickness / 2 + offsetY,
+							lastStep.position[2] + rz2
+						];
+						const candB2: [number, number, number] = [
+							candT2[0],
+							lastStep.position[1] - treadThickness / 2 - offsetY,
+							candT2[2]
+						];
+						let lastT: [number, number, number] = candT3;
+						let lastB: [number, number, number] = candB3;
 						// הארכת מסילות 4‑offset ו‑7‑offset באותו שיפוע עד שנפגשות עם האנך ב‑P3
 						const topEnd = topRailForSide[topRailForSide.length - 1];
 						const topPrev = topRailForSide.length >= 2 ? topRailForSide[topRailForSide.length - 2] : topEnd;
@@ -1969,11 +1985,27 @@ function Staircase3D({
 						// fallback: אם אין שני נק׳ למסילה, קח כיוון לפי yaw של המדרגה האחרונה (שטוח בגובה בתוך המדרך)
 						if (Math.abs(ux) < 1e-9 && Math.abs(uz) < 1e-9) { ux = Math.cos(yaw); uz = Math.sin(yaw); uy = 0; }
 						if (Math.abs(vx) < 1e-9 && Math.abs(vz) < 1e-9) { vx = Math.cos(yaw); vz = Math.sin(yaw); vy = 0; }
-						let tTop = 0, tBot = 0;
-						if (Math.abs(ux) >= Math.abs(uz) && Math.abs(ux) > 1e-9) tTop = (lastT[0] - topEnd[0]) / ux;
-						else if (Math.abs(uz) > 1e-9) tTop = (lastT[2] - topEnd[2]) / uz;
-						if (Math.abs(vx) >= Math.abs(vz) && Math.abs(vx) > 1e-9) tBot = (lastB[0] - botEnd[0]) / vx;
-						else if (Math.abs(vz) > 1e-9) tBot = (lastB[2] - botEnd[2]) / vz;
+						// בחר מועמד (P3 או P2) שנותן המשך קדימה (t>=0) ובערך הקרוב ביותר
+						const projT = (pt: [number, number, number]) => {
+							if (Math.abs(ux) >= Math.abs(uz) && Math.abs(ux) > 1e-9) return (pt[0] - topEnd[0]) / ux;
+							if (Math.abs(uz) > 1e-9) return (pt[2] - topEnd[2]) / uz;
+							return 0;
+						};
+						const projB = (pb: [number, number, number]) => {
+							if (Math.abs(vx) >= Math.abs(vz) && Math.abs(vx) > 1e-9) return (pb[0] - botEnd[0]) / vx;
+							if (Math.abs(vz) > 1e-9) return (pb[2] - botEnd[2]) / vz;
+							return 0;
+						};
+						let tTop = projT(lastT), tBot = projB(lastB);
+						const tTop2 = projT(candT2), tBot2 = projB(candB2);
+						const good1 = tTop >= -1e-6 && tBot >= -1e-6;
+						const good2 = tTop2 >= -1e-6 && tBot2 >= -1e-6;
+						if (!good1 && good2) { lastT = candT2; lastB = candB2; tTop = tTop2; tBot = tBot2; }
+						else if (good1 && good2) {
+							const score1 = Math.abs(tTop) + Math.abs(tBot);
+							const score2 = Math.abs(tTop2) + Math.abs(tBot2);
+							if (score2 < score1) { lastT = candT2; lastB = candB2; tTop = tTop2; tBot = tBot2; }
+						}
 						const yTop = topEnd[1] + tTop * uy;
 						const yBot = botEnd[1] + tBot * vy;
 						lastT = [lastT[0], yTop, lastT[2]];

@@ -1847,26 +1847,45 @@ function Staircase3D({
 							// מסילות עבור חזית
 							const railTop: Array<[number, number, number]> = closeP1 ? [...topP1, closeP1] : [...topP1];
 							let railBot: Array<[number, number, number]> = closeP6 ? [...botP6, closeP6] : [...botP6];
-							// הארכת קו האופסט התחתון באותו שיפוע לכיוון הפודסט עד 30 מ״מ ממנו
-							if (closeP1 && firstYaw !== null && railBot.length >= 2) {
+							// הרחבת הקו התחתון בלבד עד מרחק 30 מ״מ ממישור הפודסט, באותו שיפוע
+							let extBot30: [number, number, number] | null = null;
+							let extTopAt30: [number, number, number] | null = null;
+							if (closeP1 && firstYaw !== null && railBot.length >= 2 && railTop.length >= 2) {
 								const uxDir = Math.cos(firstYaw);
 								const uzDir = Math.sin(firstYaw);
 								const dotU = (p: [number, number, number]) => (uxDir * p[0] + uzDir * p[2]);
-								const planeU = dotU(closeP1); // מיקום הפודסט במרחב U
+								const planeU = dotU(closeP1);
 								const wantGap = 0.03; // 30 מ״מ
+
+								// תחתון: המשך לאורך וקטור המקטע האחרון
 								const bEnd = railBot[railBot.length - 1];
 								const bPrev = railBot[railBot.length - 2];
-								const vx = bEnd[0] - bPrev[0];
-								const vy = bEnd[1] - bPrev[1];
-								const vz = bEnd[2] - bPrev[2];
-								const denom = uxDir * vx + uzDir * vz;
-								if (Math.abs(denom) > 1e-9) {
+								const bvx = bEnd[0] - bPrev[0];
+								const bvy = bEnd[1] - bPrev[1];
+								const bvz = bEnd[2] - bPrev[2];
+								const denomB = uxDir * bvx + uzDir * bvz;
+								if (Math.abs(denomB) > 1e-9) {
 									const uEnd = dotU(bEnd);
 									const sign = (planeU - uEnd) >= 0 ? +1 : -1;
 									const targetU = planeU - sign * wantGap;
-									const t = (targetU - uEnd) / denom;
-									const extB: [number, number, number] = [bEnd[0] + vx * t, bEnd[1] + vy * t, bEnd[2] + vz * t];
-									railBot = [...railBot, extB];
+									const tB = (targetU - uEnd) / denomB;
+									extBot30 = [bEnd[0] + bvx * tB, bEnd[1] + bvy * tB, bEnd[2] + bvz * tB];
+									railBot = [...railBot, extBot30];
+
+									// עליון: נקודת ייחוס באותו U (לצורך קאפ אנכי ושמירת ורטיקליות)
+									const tEnd = railTop[railTop.length - 1];
+									const tPrev = railTop[railTop.length - 2];
+									const tvx = tEnd[0] - tPrev[0];
+									const tvy = tEnd[1] - tPrev[1];
+									const tvz = tEnd[2] - tPrev[2];
+									const denomT = uxDir * tvx + uzDir * tvz;
+									if (Math.abs(denomT) > 1e-9) {
+										const uTopEnd = dotU(tEnd);
+										const tT = (targetU - uTopEnd) / denomT;
+										extTopAt30 = [tEnd[0] + tvx * tT, tEnd[1] + tvy * tT, tEnd[2] + tvz * tT];
+									} else {
+										extTopAt30 = tEnd;
+									}
 								}
 							}
 							const segCount = Math.max(railTop.length, railBot.length);
@@ -1983,8 +2002,47 @@ function Staircase3D({
 								);
 							}
 
-							// סיום: הארכה + קאפ לפי האנך דרך P2 או P1 של המדרגה האחרונה – לפי יישור המסילה
-							if (shouldRenderClosingCapForFlight(0)) {
+							// סיום: אם יש הארכת תחתון ל‑30 מ״מ – סגור לקאפ אנכי במיקום זה; אחרת fallback ללוגיקה הקיימת
+							if (shouldRenderClosingCapForFlight(0) && extBot30 && extTopAt30) {
+								// קטע מגשר מקצה הפלטה אל מיקום ה‑30 מ״מ + שכבת גב + דפנות
+								const topEnd = railTopForSide[railTopForSide.length - 1];
+								const botEnd = railBotForSide[railBotForSide.length - 1 - (extBot30 ? 1 : 0)]; // לפני תוספת ה‑ext ב‑forSide
+								{
+									const base = pos.length / 3;
+									pos.push(topEnd[0], topEnd[1], topEnd[2]);
+									pos.push(botEnd[0], botEnd[1], botEnd[2]);
+									pos.push(extTopAt30[0], extTopAt30[1], extTopAt30[2]);
+									pos.push(extBot30[0], extBot30[1], extBot30[2]);
+									idx.push(base + 0, base + 1, base + 2);
+									idx.push(base + 2, base + 1, base + 3);
+									// שכבת גב
+									const backBase = pos.length / 3;
+									const t1e: [number, number, number] = [topEnd[0] + offX, topEnd[1] + offY, topEnd[2] + offZ];
+									const b1e: [number, number, number] = [botEnd[0] + offX, botEnd[1] + offY, botEnd[2] + offZ];
+									const t2e: [number, number, number] = [extTopAt30[0] + offX, extTopAt30[1] + offY, extTopAt30[2] + offZ];
+									const b2e: [number, number, number] = [extBot30[0] + offX, extBot30[1] + offY, extBot30[2] + offZ];
+									pos.push(t1e[0], t1e[1], t1e[2],  b1e[0], b1e[1], b1e[2],  t2e[0], t2e[1], t2e[2],  b2e[0], b2e[1], b2e[2]);
+									idx.push(backBase + 0, backBase + 2, backBase + 1);
+									idx.push(backBase + 2, backBase + 3, backBase + 1);
+									// דפנות
+									const biTop = pos.length / 3;
+									pos.push(topEnd[0], topEnd[1], topEnd[2],  extTopAt30[0], extTopAt30[1], extTopAt30[2],  t2e[0], t2e[1], t2e[2],  t1e[0], t1e[1], t1e[2]);
+									idx.push(biTop + 0, biTop + 1, biTop + 2,  biTop + 0, biTop + 2, biTop + 3);
+									const biBot = pos.length / 3;
+									pos.push(botEnd[0], botEnd[1], botEnd[2],  extBot30[0], extBot30[1], extBot30[2],  b2e[0], b2e[1], b2e[2],  b1e[0], b1e[1], b1e[2]);
+									idx.push(biBot + 0, biBot + 1, biBot + 2,  biBot + 0, biBot + 2, biBot + 3);
+								}
+								// מלבן קאפ אנכי במיקום ה‑30 מ״מ
+								{
+									const lastT = extTopAt30;
+									const lastB = extBot30;
+									const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
+									const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
+									const bi = pos.length / 3;
+									pos.push(lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
+									idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+								}
+							} else if (shouldRenderClosingCapForFlight(0)) {
 								let lastStep: any = null;
 								for (let ii = treads.length - 1; ii >= 0; ii--) {
 									const tt = treads[ii];

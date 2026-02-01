@@ -2460,10 +2460,31 @@ function Staircase3D({
 										lastT[2]
 									];
 									// הארכת מסילות 4‑offset ו‑7‑offset באותו שיפוע עד שנפגשות עם האנך ב‑P3
-									const topEnd = topRailForSideB[topRailForSideB.length - 1];
-									const topPrev = topRailForSideB.length >= 2 ? topRailForSideB[topRailForSideB.length - 2] : topEnd;
-									const botEnd = botRailForSideB[botRailForSideB.length - 1];
-									const botPrev = botRailForSideB.length >= 2 ? botRailForSideB[botRailForSideB.length - 2] : botEnd;
+									// בחר קצה מסילה נכון (תחילה/סוף) לפי הקרנה לכיוון המפגש
+									const pickRailEnd = (rail: Array<[number, number, number]>, target: [number, number, number]) => {
+										if (rail.length === 0) return { end: target, prev: target };
+										if (rail.length === 1) return { end: rail[0], prev: rail[0] };
+										const a = rail[rail.length - 1];
+										const aPrev = rail[rail.length - 2];
+										const b = rail[0];
+										const bNext = rail[1];
+										const dirA: [number, number, number] = [a[0] - aPrev[0], a[1] - aPrev[1], a[2] - aPrev[2]];
+										const dirB: [number, number, number] = [bNext[0] - b[0], bNext[1] - b[1], bNext[2] - b[2]];
+										const lenA = Math.hypot(dirA[0], dirA[1], dirA[2]) || 1;
+										const lenB = Math.hypot(dirB[0], dirB[1], dirB[2]) || 1;
+										const uxA = dirA[0] / lenA, uzA = dirA[2] / lenA;
+										const uxB = dirB[0] / lenB, uzB = dirB[2] / lenB;
+										const tA = Math.abs(uxA) >= Math.abs(uzA) ? ((target[0] - a[0]) / (uxA || 1e-9)) : ((target[2] - a[2]) / (uzA || 1e-9));
+										const tB = Math.abs(uxB) >= Math.abs(uzB) ? ((target[0] - b[0]) / (uxB || 1e-9)) : ((target[2] - b[2]) / (uzB || 1e-9));
+										// העדף t>=0 והקרוב ביותר, אחרת בחר את הקרוב בערך מוחלט
+										const goodA = tA >= -1e-6, goodB = tB >= -1e-6;
+										if (goodA && !goodB) return { end: a, prev: aPrev };
+										if (!goodA && goodB) return { end: b, prev: bNext };
+										if (goodA && goodB) return (Math.abs(tA) <= Math.abs(tB) ? { end: a, prev: aPrev } : { end: b, prev: bNext });
+										return (Math.abs(tA) <= Math.abs(tB) ? { end: a, prev: aPrev } : { end: b, prev: bNext });
+									};
+									const { end: topEnd, prev: topPrev } = pickRailEnd(topRailForSideB, lastT);
+									const { end: botEnd, prev: botPrev } = pickRailEnd(botRailForSideB, lastB);
 									let ux = topEnd[0] - topPrev[0], uz = topEnd[2] - topPrev[2], uy = topEnd[1] - topPrev[1];
 									let vx = botEnd[0] - botPrev[0], vz = botEnd[2] - botPrev[2], vy = botEnd[1] - botPrev[1];
 									// fallback: אם אין שני נק׳ למסילה, קח כיוון לפי yaw של המדרגה האחרונה (שטוח בגובה בתוך המדרך)

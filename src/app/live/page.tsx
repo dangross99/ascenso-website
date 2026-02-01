@@ -1888,6 +1888,11 @@ function Staircase3D({
 									} else {
 										extTopAt30 = tEnd;
 									}
+
+									// הוסף גם נקודת הארכה ל‑railTop כדי שהחזית תכיל מקטע אמיתי (לא דגנרטיבי)
+									if (extTopAt30) {
+										railTop.push(extTopAt30);
+									}
 								}
 							}
 							const segCount = Math.max(railTop.length, railBot.length);

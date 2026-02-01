@@ -1858,8 +1858,9 @@ function Staircase3D({
 								const wantGap = 0.03; // 30 מ״מ
 
 								// תחתון: המשך לאורך וקטור המקטע האחרון
-								const bEnd = railBot[railBot.length - 1];
-								const bPrev = railBot[railBot.length - 2];
+								// שים לב: אם closeP6 זהה לנקודה האחרונה, נשתמש בשתי הנקודות האחרונות של botP6 (לא railBot עם שכפול)
+								const bEnd = botP6[botP6.length - 1];
+								const bPrev = botP6[Math.max(0, botP6.length - 2)];
 								const bvx = bEnd[0] - bPrev[0];
 								const bvy = bEnd[1] - bPrev[1];
 								const bvz = bEnd[2] - bPrev[2];
@@ -1873,8 +1874,9 @@ function Staircase3D({
 									railBot = [...railBot, extBot30];
 
 									// עליון: נקודת ייחוס באותו U (לצורך קאפ אנכי ושמירת ורטיקליות)
-									const tEnd = railTop[railTop.length - 1];
-									const tPrev = railTop[railTop.length - 2];
+									const tSrc = closeP1 ? [...topP1, closeP1] : [...topP1];
+									const tEnd = tSrc[tSrc.length - 1];
+									const tPrev = tSrc[Math.max(0, tSrc.length - 2)];
 									const tvx = tEnd[0] - tPrev[0];
 									const tvy = tEnd[1] - tPrev[1];
 									const tvz = tEnd[2] - tPrev[2];

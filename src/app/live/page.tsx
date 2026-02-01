@@ -1812,6 +1812,25 @@ function Staircase3D({
 									}
 								}
 							}
+							// אם לא נמצאה נקודת פודסט קרובה בלולאה – חפש פודסט ראשון בגרם 0 כדי לאפשר הארכה ל‑30 מ״מ
+							if (!closeP1) {
+								for (let i = 0; i < treads.length; i++) {
+									const t = treads[i];
+									if (t.flight === 0 && t.isLanding) {
+										const yawL = t.rotation[1] as number;
+										const cL = Math.cos(yawL), sL = Math.sin(yawL);
+										const dxL = t.run / 2, dzL = treadWidth / 2;
+										const lx1 = -dxL, lz1 = -dzL;
+										const rx1 = lx1 * cL - lz1 * sL;
+										const rz1 = lx1 * sL + lz1 * cL;
+										const wx1 = t.position[0] + rx1;
+										const wy1 = t.position[1] + treadThickness / 2 + offsetY;
+										const wz1 = t.position[2] + rz1;
+										closeP1 = [wx1, wy1, wz1];
+										break;
+									}
+								}
+							}
 							if (topP1.length === 0 || botP6.length === 0) return null;
 
 							// אופסט צידי כדי למנוע "שפיץ" בתחילת הפלטה

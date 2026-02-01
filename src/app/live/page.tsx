@@ -1637,34 +1637,6 @@ function Staircase3D({
 									const yBot = botEnd[1] + tBot * vy;
 									lastT = [lastT[0], yTop, lastT[2]];
 									lastB = [lastB[0], yBot, lastB[2]];
-									// הארכת הפלטה: מקטע גישור בין קצה המסילה לנקודת הקאפ (topEnd/botEnd -> lastT/lastB)
-									{
-										const baseIndex = pos.length / 3;
-										// חזית
-										pos.push(topEnd[0], topEnd[1], topEnd[2]);
-										pos.push(botEnd[0], botEnd[1], botEnd[2]);
-										pos.push(lastT[0], lastT[1], lastT[2]);
-										pos.push(lastB[0], lastB[1], lastB[2]);
-										idx.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
-										idx.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
-										// גב
-										const backBase = pos.length / 3;
-										const t1e: [number, number, number] = [topEnd[0] + offX, topEnd[1] + offY, topEnd[2] + offZ];
-										const b1e: [number, number, number] = [botEnd[0] + offX, botEnd[1] + offY, botEnd[2] + offZ];
-										const t2e: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
-										const b2e: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
-										pos.push(t1e[0], t1e[1], t1e[2],  b1e[0], b1e[1], b1e[2],  t2e[0], t2e[1], t2e[2],  b2e[0], b2e[1], b2e[2]);
-										idx.push(backBase + 0, backBase + 2, backBase + 1);
-										idx.push(backBase + 2, backBase + 3, backBase + 1);
-										// דופן עליונה
-										const biTop = pos.length / 3;
-										pos.push(topEnd[0], topEnd[1], topEnd[2],  lastT[0], lastT[1], lastT[2],  t2e[0], t2e[1], t2e[2],  t1e[0], t1e[1], t1e[2]);
-										idx.push(biTop + 0, biTop + 1, biTop + 2,  biTop + 0, biTop + 2, biTop + 3);
-										// דופן תחתונה
-										const biBot = pos.length / 3;
-										pos.push(botEnd[0], botEnd[1], botEnd[2],  lastB[0], lastB[1], lastB[2],  b2e[0], b2e[1], b2e[2],  b1e[0], b1e[1], b1e[2]);
-										idx.push(biBot + 0, biBot + 1, biBot + 2,  biBot + 0, biBot + 2, biBot + 3);
-									}
 									// הוספת מקטע פלטה מגשר בין קצה הפלטה לנק׳ המפגש
 									{
 										const baseIndex = pos.length / 3;
@@ -2497,20 +2469,52 @@ function Staircase3D({
 									// fallback: אם אין שני נק׳ למסילה, קח כיוון לפי yaw של המדרגה האחרונה (שטוח בגובה בתוך המדרך)
 									if (Math.abs(ux) < 1e-9 && Math.abs(uz) < 1e-9) { ux = Math.cos(yaw); uz = Math.sin(yaw); uy = 0; }
 									if (Math.abs(vx) < 1e-9 && Math.abs(vz) < 1e-9) { vx = Math.cos(yaw); vz = Math.sin(yaw); vy = 0; }
-									let tTop = 0, tBot = 0;
-									if (Math.abs(ux) >= Math.abs(uz) && Math.abs(ux) > 1e-9) tTop = (lastT[0] - topEnd[0]) / ux;
-									else if (Math.abs(uz) > 1e-9) tTop = (lastT[2] - topEnd[2]) / uz;
-									if (Math.abs(vx) >= Math.abs(vz) && Math.abs(vx) > 1e-9) tBot = (lastB[0] - botEnd[0]) / vx;
-									else if (Math.abs(vz) > 1e-9) tBot = (lastB[2] - botEnd[2]) / vz;
-									const yTop = topEnd[1] + tTop * uy;
-									const yBot = botEnd[1] + tBot * vy;
-									lastT = [lastT[0], yTop, lastT[2]];
-									lastB = [lastB[0], yBot, lastB[2]];
-									const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
-									const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
-									const bi = pos.length / 3;
-									pos.push(lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
-									idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+										// הקרנה לקבלת גובהים ב‑lastT/lastB
+										let tTop = 0, tBot = 0;
+										if (Math.abs(ux) >= Math.abs(uz) && Math.abs(ux) > 1e-9) tTop = (lastT[0] - topEnd[0]) / ux;
+										else if (Math.abs(uz) > 1e-9) tTop = (lastT[2] - topEnd[2]) / uz;
+										if (Math.abs(vx) >= Math.abs(vz) && Math.abs(vx) > 1e-9) tBot = (lastB[0] - botEnd[0]) / vx;
+										else if (Math.abs(vz) > 1e-9) tBot = (lastB[2] - botEnd[2]) / vz;
+										const yTop = topEnd[1] + tTop * uy;
+										const yBot = botEnd[1] + tBot * vy;
+										lastT = [lastT[0], yTop, lastT[2]];
+										lastB = [lastB[0], yBot, lastB[2]];
+
+										// הוספת מקטע חזית מגשר בין קצה הפלטה (topEnd/botEnd) אל נק׳ הקאפ (lastT/lastB)
+										{
+											const baseIndex = pos.length / 3;
+											pos.push(topEnd[0], topEnd[1], topEnd[2]);
+											pos.push(botEnd[0], botEnd[1], botEnd[2]);
+											pos.push(lastT[0], lastT[1], lastT[2]);
+											pos.push(lastB[0], lastB[1], lastB[2]);
+											idx.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
+											idx.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
+
+											// שכבת גב למקטע המגשר
+											const backBase = pos.length / 3;
+											const t1e: [number, number, number] = [topEnd[0] + offX, topEnd[1] + offY, topEnd[2] + offZ];
+											const b1e: [number, number, number] = [botEnd[0] + offX, botEnd[1] + offY, botEnd[2] + offZ];
+											const t2e: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
+											const b2e: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
+											pos.push(t1e[0], t1e[1], t1e[2],  b1e[0], b1e[1], b1e[2],  t2e[0], t2e[1], t2e[2],  b2e[0], b2e[1], b2e[2]);
+											idx.push(backBase + 0, backBase + 2, backBase + 1);
+											idx.push(backBase + 2, backBase + 3, backBase + 1);
+
+											// דפנות עליונה ותחתונה למקטע המגשר
+											const biTop = pos.length / 3;
+											pos.push(topEnd[0], topEnd[1], topEnd[2],  lastT[0], lastT[1], lastT[2],  t2e[0], t2e[1], t2e[2],  t1e[0], t1e[1], t1e[2]);
+											idx.push(biTop + 0, biTop + 1, biTop + 2,  biTop + 0, biTop + 2, biTop + 3);
+											const biBot = pos.length / 3;
+											pos.push(botEnd[0], botEnd[1], botEnd[2],  lastB[0], lastB[1], lastB[2],  b2e[0], b2e[1], b2e[2],  b1e[0], b1e[1], b1e[2]);
+											idx.push(biBot + 0, biBot + 1, biBot + 2,  biBot + 0, biBot + 2, biBot + 3);
+										}
+
+										// קאפ סיום אנכי (המלבן הסופי)
+										const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
+										const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
+										const bi = pos.length / 3;
+										pos.push(lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
+										idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
 								}
 							}
 

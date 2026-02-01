@@ -1764,8 +1764,6 @@ function Staircase3D({
 							let firstYaw: number | null = null;
 							let closeP1: [number, number, number] | null = null; // נקודת 1 של הפודסט (עליונה)
 							let closeP6: [number, number, number] | null = null; // נקודת 6 של המדרגה שלפני הפודסט (תחתונה)
-							let landingTopY: number | null = null;
-							let landingBotY: number | null = null;
 
 							for (let i = 0; i < treads.length; i++) {
 								const t = treads[i];
@@ -1811,8 +1809,6 @@ function Staircase3D({
 										const wy1 = next.position[1] + treadThickness / 2 + offsetY;
 										const wz1 = next.position[2] + rz1;
 										closeP1 = [wx1, wy1, wz1];
-										landingTopY = next.position[1] + treadThickness / 2 + offsetY;
-										landingBotY = next.position[1] - treadThickness / 2 - offsetY;
 									}
 								}
 							}
@@ -1848,35 +1844,9 @@ function Staircase3D({
 								firstP1Side = [firstP1[0] + sx * sideInset, firstP1[1], firstP1[2] + sz * sideInset];
 							}
 
-							// מסילות עבור חזית – הארכה עד 30 מ״מ מהפודסט
-							let railTop: Array<[number, number, number]> = [...topP1];
-							let railBot: Array<[number, number, number]> = [...botP6];
-							if (closeP1 && firstYaw !== null && landingTopY !== null && landingBotY !== null) {
-								const uxDir = Math.cos(firstYaw);
-								const uzDir = Math.sin(firstYaw);
-								const dotU = (p: [number, number, number]) => (uxDir * p[0] + uzDir * p[2]);
-								const planeU = dotU(closeP1); // מישור אנכי של הפודסט לפי P1
-								const wantGap = 0.03; // 30 מ״מ
-								const lastT = railTop[railTop.length - 1];
-								const lastB = railBot[railBot.length - 1];
-								const uLastT = dotU(lastT);
-								const uLastB = dotU(lastB);
-								// קבע כיוון התקדמות לקראת הפודסט
-								const signT = (planeU - uLastT) >= 0 ? +1 : -1;
-								const signB = (planeU - uLastB) >= 0 ? +1 : -1;
-								const targetUT = planeU - signT * wantGap;
-								const targetUB = planeU - signB * wantGap;
-								const dT = targetUT - uLastT;
-								const dB = targetUB - uLastB;
-								const extTop: [number, number, number] = [lastT[0] + uxDir * dT, landingTopY, lastT[2] + uzDir * dT];
-								const extBot: [number, number, number] = [lastB[0] + uxDir * dB, landingBotY, lastB[2] + uzDir * dB];
-								railTop = [...railTop, extTop];
-								railBot = [...railBot, extBot];
-							} else {
-								// אין פודסט להיאחז בו – השאר התנהגות קיימת
-								if (closeP1) railTop = [...railTop, closeP1];
-								if (closeP6) railBot = [...railBot, closeP6];
-							}
+							// מסילות עבור חזית
+							const railTop: Array<[number, number, number]> = closeP1 ? [...topP1, closeP1] : [...topP1];
+							const railBot: Array<[number, number, number]> = closeP6 ? [...botP6, closeP6] : [...botP6];
 							const segCount = Math.max(railTop.length, railBot.length);
 							if (segCount < 2) return null;
 

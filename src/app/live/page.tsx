@@ -1754,18 +1754,17 @@ function Staircase3D({
 								</group>
 							);
 						})()}
-
-						{/* פלטה A1 – הצד הנגדי של גרם 1 (מראה לפלטה A) */}
+						{/* פלטה A1 – נגדי לפלטה A: עליון P1 ותחתון P6 */}
 						{(() => {
-							// בניית מסילות צד נגדי: עליון לפי P3, תחתון לפי P8
-							const topStepOffR: Array<[number, number, number]> = [];
-							const bottomStepOffR: Array<[number, number, number]> = [];
-							let firstP3: [number, number, number] | null = null;
-							let firstP8: [number, number, number] | null = null;
-							let firstYawR: number | null = null;
-							let firstStepIdxInFlightR: number | null = null;
-							let closeP3: [number, number, number] | null = null;
-							let closeP8: [number, number, number] | null = null;
+							// אסוף נקודות צד נגדי (P1 למעלה, P6 למטה) עבור גרם ראשון
+							const topP1: Array<[number, number, number]> = [];
+							const botP6: Array<[number, number, number]> = [];
+							let firstP1: [number, number, number] | null = null;
+							let firstP6: [number, number, number] | null = null;
+							let firstYaw: number | null = null;
+							let closeP1: [number, number, number] | null = null; // נקודת 1 של הפודסט (עליונה)
+							let closeP6: [number, number, number] | null = null; // נקודת 6 של המדרגה שלפני הפודסט (תחתונה)
+
 							for (let i = 0; i < treads.length; i++) {
 								const t = treads[i];
 								if (t.flight !== 0) continue;
@@ -1773,198 +1772,164 @@ function Staircase3D({
 								const c = Math.cos(yaw), s = Math.sin(yaw);
 								const dx = t.run / 2;
 								const dz = treadWidth / 2;
-								// P3 עליונה: (+dx, +dz)
+								// P1 – עליונה שמאל-אחורה: (-dx, -dz)
 								{
-									const lx = +dx, lz = +dz;
+									const lx = -dx, lz = -dz;
 									const rx = lx * c - lz * s;
 									const rz = lx * s + lz * c;
 									const wx = t.position[0] + rx;
 									const wy = t.position[1] + treadThickness / 2;
 									const wz = t.position[2] + rz;
-									const p3w: [number, number, number] = [wx, wy + offsetY, wz];
-									if (!t.isLanding && !firstP3) { firstP3 = p3w; if (firstStepIdxInFlightR === null) firstStepIdxInFlightR = i; }
-									if (!t.isLanding) topStepOffR.push(p3w);
+									const p1: [number, number, number] = [wx, wy + offsetY, wz];
+									if (!t.isLanding && !firstP1) firstP1 = p1;
+									if (!t.isLanding) topP1.push(p1);
 								}
-								// P8 תחתונה: (-dx, +dz) (רק אם לא פודסט)
+								// P6 – תחתונה ימין-אחורה: (+dx, -dz) רק אם אינה פודסט
 								if (!t.isLanding) {
-									const lx = -dx, lz = +dz;
+									const lx = +dx, lz = -dz;
 									const rx = lx * c - lz * s;
 									const rz = lx * s + lz * c;
 									const wx = t.position[0] + rx;
 									const wy = t.position[1] - treadThickness / 2;
 									const wz = t.position[2] + rz;
-									const p8w: [number, number, number] = [wx, wy - offsetY, wz];
-									if (!firstP8) { firstP8 = p8w; firstYawR = yaw; }
-									bottomStepOffR.push(p8w);
-									// סגירה לפני פודסט
+									const p6: [number, number, number] = [wx, wy - offsetY, wz];
+									if (!firstP6) { firstP6 = p6; firstYaw = yaw; }
+									botP6.push(p6);
+									// אם הבאה היא פודסט – זו המדרגה שלפני פודסט: שמור 6 תחתון והוסף 1 עליון מפודסט
 									const next = treads[i + 1];
 									if (next && next.flight === 0 && next.isLanding) {
-										closeP8 = p8w;
-										const yaw2 = next.rotation[1] as number;
-										const c2 = Math.cos(yaw2), s2 = Math.sin(yaw2);
+										closeP6 = p6;
+										const yawL = next.rotation[1] as number;
+										const cL = Math.cos(yawL), sL = Math.sin(yawL);
 										const dxL = next.run / 2, dzL = treadWidth / 2;
-										const lx3 = +dxL, lz3 = +dzL;
-										const rx3 = lx3 * c2 - lz3 * s2;
-										const rz3 = lx3 * s2 + lz3 * c2;
-										const wx3 = next.position[0] + rx3;
-										const wy3 = next.position[1] + treadThickness / 2 + offsetY;
-										const wz3 = next.position[2] + rz3;
-										closeP3 = [wx3, wy3, wz3];
+										const lx1 = -dxL, lz1 = -dzL;
+										const rx1 = lx1 * cL - lz1 * sL;
+										const rz1 = lx1 * sL + lz1 * cL;
+										const wx1 = next.position[0] + rx1;
+										const wy1 = next.position[1] + treadThickness / 2 + offsetY;
+										const wz1 = next.position[2] + rz1;
+										closeP1 = [wx1, wy1, wz1];
 									}
 								}
 							}
-							// אופסט צידי למניעת "שפיץ" בתחילת הפלטה
-							let firstP3SideShift: [number, number, number] | null = null;
-							if (firstP3 && firstP8) {
+							if (topP1.length === 0 || botP6.length === 0) return null;
+
+							// אופסט צידי כדי למנוע "שפיץ" בתחילת הפלטה
+							let firstP1Side: [number, number, number] | null = null;
+							if (firstP1 && firstP6) {
+								// כיוון לאורך המסילה u
 								let ux = 1, uy = 0, uz = 0;
-								if (topStepOffR.length >= 2) {
-									ux = topStepOffR[1][0] - topStepOffR[0][0];
-									uy = topStepOffR[1][1] - topStepOffR[0][1];
-									uz = topStepOffR[1][2] - topStepOffR[0][2];
+								if (topP1.length >= 2) {
+									ux = topP1[1][0] - topP1[0][0];
+									uy = topP1[1][1] - topP1[0][1];
+									uz = topP1[1][2] - topP1[0][2];
 									const m = Math.hypot(ux, uy, uz) || 1; ux /= m; uy /= m; uz /= m;
-								} else if (firstYawR !== null) {
-									ux = Math.cos(firstYawR); uy = 0; uz = Math.sin(firstYawR);
+								} else if (firstYaw !== null) {
+									ux = Math.cos(firstYaw); uy = 0; uz = Math.sin(firstYaw);
 								}
-								const wx = firstP3[0] - firstP8[0];
-								const wy = firstP3[1] - firstP8[1];
-								const wz = firstP3[2] - firstP8[2];
+								// נורמל למישור: n = u × (P1-P6)
+								const wx = firstP1[0] - firstP6[0];
+								const wy = firstP1[1] - firstP6[1];
+								const wz = firstP1[2] - firstP6[2];
 								let nx = uy * wz - uz * wy;
 								let ny = uz * wx - ux * wz;
 								let nz = ux * wy - uy * wx;
 								{ const m = Math.hypot(nx, ny, nz) || 1; nx /= m; ny /= m; nz /= m; }
+								// כיוון צד: s = n × u
 								let sx = ny * uz - nz * uy;
 								let sy = nz * ux - nx * uz;
 								let sz = nx * uy - ny * ux;
 								{ const m = Math.hypot(sx, sy, sz) || 1; sx /= m; sy /= m; sz /= m; }
-								const side = Math.max(0, (typeof hitechPlateInsetFromEdge === 'number' ? hitechPlateInsetFromEdge : 0.03));
-								firstP3SideShift = [firstP3[0] + sx * side, firstP3[1], firstP3[2] + sz * side];
+								const sideInset = Math.max(0, (typeof hitechPlateInsetFromEdge === 'number' ? hitechPlateInsetFromEdge : 0.03));
+								firstP1Side = [firstP1[0] + sx * sideInset, firstP1[1], firstP1[2] + sz * sideInset];
 							}
-							if (topStepOffR.length === 0 || bottomStepOffR.length === 0) return null;
 
-							// מסילות מלאות
-							const baseTopR: Array<[number, number, number]> = closeP3 ? [...topStepOffR, closeP3] : [...topStepOffR];
-							const topRailR: Array<[number, number, number]> = baseTopR;
-							const botRailR: Array<[number, number, number]> = closeP8 ? [...bottomStepOffR, closeP8] : [...bottomStepOffR];
-							const countR = Math.max(topRailR.length, botRailR.length);
-							if (countR < 2) return null;
+							// מסילות עבור חזית
+							const railTop: Array<[number, number, number]> = closeP1 ? [...topP1, closeP1] : [...topP1];
+							const railBot: Array<[number, number, number]> = closeP6 ? [...botP6, closeP6] : [...botP6];
+							const segCount = Math.max(railTop.length, railBot.length);
+							if (segCount < 2) return null;
 
-							// חזית A1
-							const posR: number[] = [];
-							const idxR: number[] = [];
-							const pickR = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
-							for (let i = 0; i < countR - 1; i++) {
-								let t1 = pickR(topRailR, i);
-								let b1 = pickR(botRailR, i);
-								const t2 = pickR(topRailR, i + 1);
-								const b2 = pickR(botRailR, i + 1);
+							// בניית חזית A1 (טריאנגולציה בין המסילות)
+							const pos: number[] = [];
+							const idx: number[] = [];
+							const pick = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
+							for (let i = 0; i < segCount - 1; i++) {
+								let t1 = pick(railTop, i);
+								let b1 = pick(railBot, i);
+								const t2 = pick(railTop, i + 1);
+								const b2 = pick(railBot, i + 1);
 								if (i === 0) {
-									const hasLandingStart = false; // ב‑A לא נוספה התחלה מפודסט; שמרנו סימטריה
-									if (!hasLandingStart) {
-										if (firstP3SideShift) t1 = firstP3SideShift;
-										if (firstP8) b1 = firstP8;
-									}
+									if (firstP1Side) t1 = firstP1Side;
+									if (firstP6) b1 = firstP6;
 								}
-								const baseIndex = posR.length / 3;
-								posR.push(t1[0], t1[1], t1[2],  b1[0], b1[1], b1[2],  t2[0], t2[1], t2[2],  b2[0], b2[1], b2[2]);
-								idxR.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
-								idxR.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
+								const base = pos.length / 3;
+								pos.push(t1[0], t1[1], t1[2],  b1[0], b1[1], b1[2],  t2[0], t2[1], t2[2],  b2[0], b2[1], b2[2]);
+								idx.push(base + 0, base + 1, base + 2);
+								idx.push(base + 2, base + 1, base + 3);
 							}
 
-							// עובי ונורמל
+							// עובי קבוע לפי נורמל המישור
 							const thickness = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
 							let ux = 1, uy = 0, uz = 0;
-							if (topRailR.length >= 2) {
-								ux = topRailR[1][0] - topRailR[0][0];
-								uy = topRailR[1][1] - topRailR[0][1];
-								uz = topRailR[1][2] - topRailR[0][2];
+							if (railTop.length >= 2) {
+								ux = railTop[1][0] - railTop[0][0];
+								uy = railTop[1][1] - railTop[0][1];
+								uz = railTop[1][2] - railTop[0][2];
+								const m = Math.hypot(ux, uy, uz) || 1; ux /= m; uy /= m; uz /= m;
 							}
-							const um = Math.hypot(ux, uy, uz) || 1; ux /= um; uy /= um; uz /= um;
-							let wxR = (firstP3 && firstP8) ? (firstP3[0] - firstP8[0]) : (topRailR[0][0] - botRailR[0][0]);
-							let wyR = (firstP3 && firstP8) ? (firstP3[1] - firstP8[1]) : (topRailR[0][1] - botRailR[0][1]);
-							let wzR = (firstP3 && firstP8) ? (firstP3[2] - firstP8[2]) : (topRailR[0][2] - botRailR[0][2]);
-							const nmX = uy * wzR - uz * wyR;
-							const nmY = uz * wxR - ux * wzR;
-							const nmZ = ux * wyR - uy * wxR;
-							const nmag = Math.hypot(nmX, nmY, nmZ) || 1;
-							const nxN = nmX / nmag, nyN = nmY / nmag, nzN = nmZ / nmag;
-							const offX = nxN * thickness, offY = nyN * thickness, offZ = nzN * thickness;
+							let wx = (firstP1 && firstP6) ? (firstP1[0] - firstP6[0]) : (railTop[0][0] - railBot[0][0]);
+							let wy = (firstP1 && firstP6) ? (firstP1[1] - firstP6[1]) : (railTop[0][1] - railBot[0][1]);
+							let wz = (firstP1 && firstP6) ? (firstP1[2] - firstP6[2]) : (railTop[0][2] - railBot[0][2]);
+							let nmX = uy * wz - uz * wy;
+							let nmY = uz * wx - ux * wz;
+							let nmZ = ux * wy - uy * wx;
+							{ const m = Math.hypot(nmX, nmY, nmZ) || 1; nmX /= m; nmY /= m; nmZ /= m; }
+							const offX = nmX * thickness, offY = nmY * thickness, offZ = nmZ * thickness;
 
-							// שכבת גב ל‑A1
+							// שכבת גב
 							{
-								const frontVertexCount = posR.length / 3;
-								const backBase = frontVertexCount;
-								for (let i = 0; i < frontVertexCount * 3; i += 3) {
-									posR.push(posR[i] + offX, posR[i + 1] + offY, posR[i + 2] + offZ);
+								const frontN = pos.length / 3;
+								const backBase = frontN;
+								for (let i = 0; i < frontN * 3; i += 3) {
+                                    pos.push(pos[i] + offX, pos[i + 1] + offY, pos[i + 2] + offZ);
 								}
-								const frontIndexCount = idxR.length;
-								for (let i = 0; i < frontIndexCount; i += 3) {
-									const a = idxR[i], b = idxR[i + 1], c = idxR[i + 2];
-									idxR.push(backBase + a, backBase + c, backBase + b);
+								const frontI = idx.length;
+								for (let i = 0; i < frontI; i += 3) {
+                                    const a = idx[i], b = idx[i + 1], c = idx[i + 2];
+                                    idx.push(backBase + a, backBase + c, backBase + b);
 								}
 							}
 
 							// דפנות לאורך המסילות
-							const addSideStripR = (rail: Array<[number, number, number]>) => {
+							const addSide = (rail: Array<[number, number, number]>) => {
 								if (rail.length < 2) return;
 								for (let i = 0; i < rail.length - 1; i++) {
-									const pA = rail[i];
-									const pB = rail[i + 1];
+									const pA = rail[i], pB = rail[i + 1];
 									const pAe: [number, number, number] = [pA[0] + offX, pA[1] + offY, pA[2] + offZ];
 									const pBe: [number, number, number] = [pB[0] + offX, pB[1] + offY, pB[2] + offZ];
-									const bi = posR.length / 3;
-									posR.push(pA[0], pA[1], pA[2],  pB[0], pB[1], pB[2],  pBe[0], pBe[1], pBe[2],  pAe[0], pAe[1], pAe[2]);
-									idxR.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+									const bi = pos.length / 3;
+									pos.push(pA[0], pA[1], pA[2],  pB[0], pB[1], pB[2],  pBe[0], pBe[1], pBe[2],  pAe[0], pAe[1], pAe[2]);
+									idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
 								}
 							};
-							const topRailForSideR = firstP3SideShift ? [firstP3SideShift, ...topRailR] : topRailR;
-							const botRailForSideR = firstP8 ? [firstP8, ...botRailR] : botRailR;
-							addSideStripR(topRailForSideR);
-							addSideStripR(botRailForSideR);
+							const railTopForSide = firstP1Side ? [firstP1Side, ...railTop] : railTop;
+							const railBotForSide = firstP6 ? [firstP6, ...railBot] : railBot;
+							addSide(railTopForSide);
+							addSide(railBotForSide);
 
-							// קאפ התחלה אנכי (לרצפה) לפלטה A1
-							let startPanelMesh = null;
-							if (firstP3 && firstP8) {
-								const f3 = firstP3SideShift || firstP3;
-								const f8 = firstP8;
-								const v0: [number, number, number] = [f3[0], f3[1], f3[2]];
-								const v1: [number, number, number] = [f8[0], f8[1], f8[2]];
-								const v2: [number, number, number] = [f3[0], floorBounds.y, f3[2]];
-								const v3: [number, number, number] = [f8[0], floorBounds.y, f8[2]];
-								const v4: [number, number, number] = [v0[0] + offX, v0[1] + offY, v0[2] + offZ];
-								const v5: [number, number, number] = [v1[0] + offX, v1[1] + offY, v1[2] + offZ];
-								const v6: [number, number, number] = [v2[0] + offX, v2[1] + offY, v2[2] + offZ];
-								const v7: [number, number, number] = [v3[0] + offX, v3[1] + offY, v3[2] + offZ];
-								const panelPos = new Float32Array([
-									v0[0], v0[1], v0[2],
-									v1[0], v1[1], v1[2],
-									v2[0], v2[1], v2[2],
-									v3[0], v3[1], v3[2],
-									v4[0], v4[1], v4[2],
-									v5[0], v5[1], v5[2],
-									v6[0], v6[1], v6[2],
-									v7[0], v7[1], v7[2],
-								]);
-								const panelIdx = new Uint32Array([
-									0,1,2, 2,1,3,
-									4,6,5, 6,7,5,
-									0,1,5, 0,5,4,
-									1,3,7, 1,7,5,
-									3,2,6, 3,6,7,
-									2,0,4, 2,4,6,
-								]);
-								startPanelMesh = (
-									<mesh castShadow receiveShadow>
-										<bufferGeometry attach="geometry">
-											<bufferAttribute attach="attributes-position" args={[panelPos, 3]} />
-											<bufferAttribute attach="index" args={[panelIdx, 1]} />
-										</bufferGeometry>
-										<meshBasicMaterial color="#4b5563" side={2} />
-									</mesh>
-								);
+							// קאפ התחלה אנכי לרצפה: בין P1(top) ל‑P6(bottom) בתחילת הרצועה
+							if (firstP1 && firstP6) {
+								const pT: [number, number, number] = firstP1Side || firstP1;
+								const pB: [number, number, number] = [pT[0], firstP6[1], pT[2]];
+								const pTe: [number, number, number] = [pT[0] + offX, pT[1] + offY, pT[2] + offZ];
+								const pBe: [number, number, number] = [pB[0] + offX, pB[1] + offY, pB[2] + offZ];
+								const bi = pos.length / 3;
+								pos.push(pT[0], pT[1], pT[2],  pB[0], pB[1], pB[2],  pBe[0], pBe[1], pBe[2],  pTe[0], pTe[1], pTe[2]);
+								idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
 							}
 
-							// הארכה לסיום וקאפ אנכי בקצה האחרון אם הגרם אחרון
-							let endExtension = null;
+							// סיום: הארכה + קאפ לפי האנך דרך P2 או P1 של המדרגה האחרונה – לפי יישור המסילה
 							if (shouldRenderClosingCapForFlight(0)) {
 								let lastStep: any = null;
 								for (let ii = treads.length - 1; ii >= 0; ii--) {
@@ -1975,103 +1940,103 @@ function Staircase3D({
 									const yaw = lastStep.rotation[1] as number;
 									const c = Math.cos(yaw), s = Math.sin(yaw);
 									const dx = lastStep.run / 2, dz = treadWidth / 2;
-									const lx = +dx, lz = +dz;
-									const rx = lx * c - lz * s;
-									const rz = lx * s + lz * c;
-									let lastT: [number, number, number] = [lastStep.position[0] + rx, lastStep.position[1] + treadThickness / 2 + offsetY, lastStep.position[2] + rz];
-									let lastB: [number, number, number] = [lastT[0], lastStep.position[1] - treadThickness / 2 - offsetY, lastT[2]];
-									const topEnd = topRailR[topRailR.length - 1];
-									const topPrev = topRailR.length >= 2 ? topRailR[topRailR.length - 2] : topEnd;
-									const botEnd = botRailR[botRailR.length - 1];
-									const botPrev = botRailR.length >= 2 ? botRailR[botRailR.length - 2] : botEnd;
+									// מועמדים לקו האנכי: דרך P2 (+dx,-dz) או דרך P1 (-dx,-dz)
+									const cand = (lx: number, lz: number, yTop: number, yBot: number): [[number, number, number], [number, number, number]] => {
+										const rx = lx * c - lz * s;
+										const rz = lx * s + lz * c;
+										const tx: [number, number, number] = [lastStep.position[0] + rx, yTop, lastStep.position[2] + rz];
+										const bx: [number, number, number] = [tx[0], yBot, tx[2]];
+										return [tx, bx];
+									};
+									// נקודות עליונה/תחתונה בגובה משוער (יעודכן לפי הקרנה)
+									const yTop0 = lastStep.position[1] + treadThickness / 2 + offsetY;
+									const yBot0 = lastStep.position[1] - treadThickness / 2 - offsetY;
+									const [candT2, candB2] = cand(+dx, -dz, yTop0, yBot0);
+									const [candT1, candB1] = cand(-dx, -dz, yTop0, yBot0);
+
+									// כיוון המסילות בקצה
+									const topEnd = railTopForSide[railTopForSide.length - 1];
+									const topPrev = railTopForSide.length >= 2 ? railTopForSide[railTopForSide.length - 2] : topEnd;
+									const botEnd = railBotForSide[railBotForSide.length - 1];
+									const botPrev = railBotForSide.length >= 2 ? railBotForSide[railBotForSide.length - 2] : botEnd;
 									let uxE = topEnd[0] - topPrev[0], uzE = topEnd[2] - topPrev[2], uyE = topEnd[1] - topPrev[1];
 									let vxE = botEnd[0] - botPrev[0], vzE = botEnd[2] - botPrev[2], vyE = botEnd[1] - botPrev[1];
 									if (Math.abs(uxE) < 1e-9 && Math.abs(uzE) < 1e-9) { uxE = Math.cos(yaw); uzE = Math.sin(yaw); uyE = 0; }
 									if (Math.abs(vxE) < 1e-9 && Math.abs(vzE) < 1e-9) { vxE = Math.cos(yaw); vzE = Math.sin(yaw); vyE = 0; }
-									let tTop = 0, tBot = 0;
-									if (Math.abs(uxE) >= Math.abs(uzE) && Math.abs(uxE) > 1e-9) tTop = (lastT[0] - topEnd[0]) / uxE;
-									else if (Math.abs(uzE) > 1e-9) tTop = (lastT[2] - topEnd[2]) / uzE;
-									if (Math.abs(vxE) >= Math.abs(vzE) && Math.abs(vxE) > 1e-9) tBot = (lastB[0] - botEnd[0]) / vxE;
-									else if (Math.abs(vzE) > 1e-9) tBot = (lastB[2] - botEnd[2]) / vzE;
+
+									const projT = (pt: [number, number, number]) => {
+										if (Math.abs(uxE) >= Math.abs(uzE) && Math.abs(uxE) > 1e-9) return (pt[0] - topEnd[0]) / uxE;
+										if (Math.abs(uzE) > 1e-9) return (pt[2] - topEnd[2]) / uzE;
+										return 0;
+									};
+									const projB = (pb: [number, number, number]) => {
+										if (Math.abs(vxE) >= Math.abs(vzE) && Math.abs(vxE) > 1e-9) return (pb[0] - botEnd[0]) / vxE;
+										if (Math.abs(vzE) > 1e-9) return (pb[2] - botEnd[2]) / vzE;
+										return 0;
+									};
+									let tTop2 = projT(candT2), tBot2 = projB(candB2);
+									let tTop1 = projT(candT1), tBot1 = projB(candB1);
+									const good2 = tTop2 >= -1e-6 && tBot2 >= -1e-6;
+									const good1 = tTop1 >= -1e-6 && tBot1 >= -1e-6;
+									let lastT = candT2, lastB = candB2, tTop = tTop2, tBot = tBot2;
+									if (!good2 && good1) { lastT = candT1; lastB = candB1; tTop = tTop1; tBot = tBot1; }
+									else if (good2 && good1) {
+										const score2 = Math.abs(tTop2) + Math.abs(tBot2);
+										const score1 = Math.abs(tTop1) + Math.abs(tBot1);
+										if (score1 < score2) { lastT = candT1; lastB = candB1; tTop = tTop1; tBot = tBot1; }
+									}
+
+									// עדכון גבהים לפי הקרנה
 									const yTop = topEnd[1] + tTop * uyE;
 									const yBot = botEnd[1] + tBot * vyE;
 									lastT = [lastT[0], yTop, lastT[2]];
 									lastB = [lastB[0], yBot, lastB[2]];
 
-									const extPos: number[] = [];
-									const extIdx: number[] = [];
-									const extEdge: number[] = [];
-									// מקטע מגשר קדמי + שכבת גב + דפנות
+									// הוספת מקטע מגשר בין קצה הפלטה לקאפ + שכבת גב + דפנות
 									{
-										const baseIndex = extPos.length / 3;
-										extPos.push(topEnd[0], topEnd[1], topEnd[2]);
-										extPos.push(botEnd[0], botEnd[1], botEnd[2]);
-										extPos.push(lastT[0], lastT[1], lastT[2]);
-										extPos.push(lastB[0], lastB[1], lastB[2]);
-										extIdx.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
-										extIdx.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
-										const backBase2 = extPos.length / 3;
+										const base = pos.length / 3;
+										pos.push(topEnd[0], topEnd[1], topEnd[2]);
+										pos.push(botEnd[0], botEnd[1], botEnd[2]);
+										pos.push(lastT[0], lastT[1], lastT[2]);
+										pos.push(lastB[0], lastB[1], lastB[2]);
+										idx.push(base + 0, base + 1, base + 2);
+										idx.push(base + 2, base + 1, base + 3);
+										const backBase = pos.length / 3;
 										const t1e: [number, number, number] = [topEnd[0] + offX, topEnd[1] + offY, topEnd[2] + offZ];
 										const b1e: [number, number, number] = [botEnd[0] + offX, botEnd[1] + offY, botEnd[2] + offZ];
 										const t2e: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
 										const b2e: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
-										extPos.push(t1e[0], t1e[1], t1e[2],  b1e[0], b1e[1], b1e[2],  t2e[0], t2e[1], t2e[2],  b2e[0], b2e[1], b2e[2]);
-										extIdx.push(backBase2 + 0, backBase2 + 2, backBase2 + 1);
-										extIdx.push(backBase2 + 2, backBase2 + 3, backBase2 + 1);
-										// דפנות
-										const biTop = extPos.length / 3;
-										extPos.push(topEnd[0], topEnd[1], topEnd[2],  lastT[0], lastT[1], lastT[2],  t2e[0], t2e[1], t2e[2],  t1e[0], t1e[1], t1e[2]);
-										extIdx.push(biTop + 0, biTop + 1, biTop + 2,  biTop + 0, biTop + 2, biTop + 3);
-										const biBot = extPos.length / 3;
-										extPos.push(botEnd[0], botEnd[1], botEnd[2],  lastB[0], lastB[1], lastB[2],  b2e[0], b2e[1], b2e[2],  b1e[0], b1e[1], b1e[2]);
-										extIdx.push(biBot + 0, biBot + 1, biBot + 2,  biBot + 0, biBot + 2, biBot + 3);
+										pos.push(t1e[0], t1e[1], t1e[2],  b1e[0], b1e[1], b1e[2],  t2e[0], t2e[1], t2e[2],  b2e[0], b2e[1], b2e[2]);
+										idx.push(backBase + 0, backBase + 2, backBase + 1);
+										idx.push(backBase + 2, backBase + 3, backBase + 1);
+										// דפנות עליון/תחתון
+										const biTop = pos.length / 3;
+										pos.push(topEnd[0], topEnd[1], topEnd[2],  lastT[0], lastT[1], lastT[2],  t2e[0], t2e[1], t2e[2],  t1e[0], t1e[1], t1e[2]);
+										idx.push(biTop + 0, biTop + 1, biTop + 2,  biTop + 0, biTop + 2, biTop + 3);
+										const biBot = pos.length / 3;
+										pos.push(botEnd[0], botEnd[1], botEnd[2],  lastB[0], lastB[1], lastB[2],  b2e[0], b2e[1], b2e[2],  b1e[0], b1e[1], b1e[2]);
+										idx.push(biBot + 0, biBot + 1, biBot + 2,  biBot + 0, biBot + 2, biBot + 3);
 									}
-									// מלבן קאפ
-									const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
-									const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
-									const bi = extPos.length / 3;
-									extPos.push(lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
-									extIdx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
-									extEdge.push(
-										lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],
-										lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],
-										lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2],
-										lastTe[0], lastTe[1], lastTe[2],  lastT[0], lastT[1], lastT[2],
-									);
-									endExtension = (
-										<group>
-											<mesh castShadow receiveShadow>
-												<bufferGeometry attach="geometry">
-													<bufferAttribute attach="attributes-position" args={[new Float32Array(extPos), 3]} />
-													<bufferAttribute attach="index" args={[new Uint32Array(extIdx), 1]} />
-												</bufferGeometry>
-												<meshBasicMaterial color="#4b5563" side={2} />
-											</mesh>
-											{extEdge.length > 0 ? (
-												<lineSegments>
-													<bufferGeometry attach="geometry">
-														<bufferAttribute attach="attributes-position" args={[new Float32Array(extEdge), 3]} />
-													</bufferGeometry>
-													<lineBasicMaterial attach="material" color="#111827" linewidth={1} depthTest={true} depthWrite={false} />
-												</lineSegments>
-											) : null}
-										</group>
-									);
+
+									// מלבן קאפ סופי
+									{
+										const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
+										const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
+										const bi = pos.length / 3;
+										pos.push(lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
+										idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+									}
 								}
 							}
 
 							return (
-								<group>
-									<mesh castShadow receiveShadow>
-										<bufferGeometry attach="geometry">
-											<bufferAttribute attach="attributes-position" args={[new Float32Array(posR), 3]} />
-											<bufferAttribute attach="index" args={[new Uint32Array(idxR), 1]} />
-										</bufferGeometry>
-										<meshBasicMaterial color="#4b5563" side={2} />
-									</mesh>
-									{startPanelMesh}
-									{endExtension}
-								</group>
+								<mesh castShadow receiveShadow>
+									<bufferGeometry attach="geometry">
+										<bufferAttribute attach="attributes-position" args={[new Float32Array(pos), 3]} />
+										<bufferAttribute attach="index" args={[new Uint32Array(idx), 1]} />
+									</bufferGeometry>
+									<meshBasicMaterial color="#4b5563" side={2} />
+								</mesh>
 							);
 						})()}
 					</group>

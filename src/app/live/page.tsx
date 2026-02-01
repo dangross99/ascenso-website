@@ -2447,8 +2447,9 @@ function Staircase3D({
 									const dx = lastStep.run / 2;
 									const dz = treadWidth / 2;
 									const lx = dx, lz = dz;
-									const rx = lx * c - lz * s;
-									const rz = lx * s + lz * c;
+									// בגרם 2 נדרשת המשכה לקודקוד 2 (ולא 3): (+dx, -dz)
+									const rx = lx * c - (-lz) * s;
+									const rz = lx * s + (-lz) * c;
 									let lastT: [number, number, number] = [
 										lastStep.position[0] + rx,
 										lastStep.position[1] + treadThickness / 2 + offsetY,
@@ -2478,6 +2479,32 @@ function Staircase3D({
 									const yBot = botEnd[1] + tBot * vy;
 									lastT = [lastT[0], yTop, lastT[2]];
 									lastB = [lastB[0], yBot, lastB[2]];
+									// מקטע גישור של הפלטה עד נקודת המפגש
+									{
+										const baseIndex = pos.length / 3;
+										pos.push(topEnd[0], topEnd[1], topEnd[2]);
+										pos.push(botEnd[0], botEnd[1], botEnd[2]);
+										pos.push(lastT[0], lastT[1], lastT[2]);
+										pos.push(lastB[0], lastB[1], lastB[2]);
+										idx.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
+										idx.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
+										// שכבת גב למקטע הגישור
+										const backBase = pos.length / 3;
+										const t1e: [number, number, number] = [topEnd[0] + offX, topEnd[1] + offY, topEnd[2] + offZ];
+										const b1e: [number, number, number] = [botEnd[0] + offX, botEnd[1] + offY, botEnd[2] + offZ];
+										const t2e: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
+										const b2e: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
+										pos.push(t1e[0], t1e[1], t1e[2],  b1e[0], b1e[1], b1e[2],  t2e[0], t2e[1], t2e[2],  b2e[0], b2e[1], b2e[2]);
+										idx.push(backBase + 0, backBase + 2, backBase + 1);
+										idx.push(backBase + 2, backBase + 3, backBase + 1);
+										// דפנות עליון/תחתון למקטע הגישור
+										const biTop = pos.length / 3;
+										pos.push(topEnd[0], topEnd[1], topEnd[2],  lastT[0], lastT[1], lastT[2],  t2e[0], t2e[1], t2e[2],  t1e[0], t1e[1], t1e[2]);
+										idx.push(biTop + 0, biTop + 1, biTop + 2,  biTop + 0, biTop + 2, biTop + 3);
+										const biBot = pos.length / 3;
+										pos.push(botEnd[0], botEnd[1], botEnd[2],  lastB[0], lastB[1], lastB[2],  b2e[0], b2e[1], b2e[2],  b1e[0], b1e[1], b1e[2]);
+										idx.push(biBot + 0, biBot + 1, biBot + 2,  biBot + 0, biBot + 2, biBot + 3);
+									}
 									const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
 									const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
 									const bi = pos.length / 3;

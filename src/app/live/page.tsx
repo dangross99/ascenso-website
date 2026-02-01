@@ -1846,7 +1846,29 @@ function Staircase3D({
 
 							// מסילות עבור חזית
 							const railTop: Array<[number, number, number]> = closeP1 ? [...topP1, closeP1] : [...topP1];
-							const railBot: Array<[number, number, number]> = closeP6 ? [...botP6, closeP6] : [...botP6];
+							let railBot: Array<[number, number, number]> = closeP6 ? [...botP6, closeP6] : [...botP6];
+							// הארכת קו האופסט התחתון באותו שיפוע לכיוון הפודסט עד 30 מ״מ ממנו
+							if (closeP1 && firstYaw !== null && railBot.length >= 2) {
+								const uxDir = Math.cos(firstYaw);
+								const uzDir = Math.sin(firstYaw);
+								const dotU = (p: [number, number, number]) => (uxDir * p[0] + uzDir * p[2]);
+								const planeU = dotU(closeP1); // מיקום הפודסט במרחב U
+								const wantGap = 0.03; // 30 מ״מ
+								const bEnd = railBot[railBot.length - 1];
+								const bPrev = railBot[railBot.length - 2];
+								const vx = bEnd[0] - bPrev[0];
+								const vy = bEnd[1] - bPrev[1];
+								const vz = bEnd[2] - bPrev[2];
+								const denom = uxDir * vx + uzDir * vz;
+								if (Math.abs(denom) > 1e-9) {
+									const uEnd = dotU(bEnd);
+									const sign = (planeU - uEnd) >= 0 ? +1 : -1;
+									const targetU = planeU - sign * wantGap;
+									const t = (targetU - uEnd) / denom;
+									const extB: [number, number, number] = [bEnd[0] + vx * t, bEnd[1] + vy * t, bEnd[2] + vz * t];
+									railBot = [...railBot, extB];
+								}
+							}
 							const segCount = Math.max(railTop.length, railBot.length);
 							if (segCount < 2) return null;
 

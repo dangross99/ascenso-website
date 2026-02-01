@@ -1590,8 +1590,11 @@ function Staircase3D({
 									const topPrev = topRail.length >= 2 ? topRail[topRail.length - 2] : topEnd;
 									const botEnd = botRail[botRail.length - 1];
 									const botPrev = botRail.length >= 2 ? botRail[botRail.length - 2] : botEnd;
-									const ux = topEnd[0] - topPrev[0], uz = topEnd[2] - topPrev[2], uy = topEnd[1] - topPrev[1];
-									const vx = botEnd[0] - botPrev[0], vz = botEnd[2] - botPrev[2], vy = botEnd[1] - botPrev[1];
+									let ux = topEnd[0] - topPrev[0], uz = topEnd[2] - topPrev[2], uy = topEnd[1] - topPrev[1];
+									let vx = botEnd[0] - botPrev[0], vz = botEnd[2] - botPrev[2], vy = botEnd[1] - botPrev[1];
+									// fallback: אם אין שני נק׳ למסילה, קח כיוון לפי yaw של המדרגה האחרונה (שטוח בגובה בתוך המדרך)
+									if (Math.abs(ux) < 1e-9 && Math.abs(uz) < 1e-9) { ux = Math.cos(yaw); uz = Math.sin(yaw); uy = 0; }
+									if (Math.abs(vx) < 1e-9 && Math.abs(vz) < 1e-9) { vx = Math.cos(yaw); vz = Math.sin(yaw); vy = 0; }
 									let tTop = 0, tBot = 0;
 									if (Math.abs(ux) >= Math.abs(uz) && Math.abs(ux) > 1e-9) tTop = (lastT[0] - topEnd[0]) / ux;
 									else if (Math.abs(uz) > 1e-9) tTop = (lastT[2] - topEnd[2]) / uz;
@@ -1961,8 +1964,11 @@ function Staircase3D({
 						const topPrev = topRailForSide.length >= 2 ? topRailForSide[topRailForSide.length - 2] : topEnd;
 						const botEnd = botRailForSide[botRailForSide.length - 1];
 						const botPrev = botRailForSide.length >= 2 ? botRailForSide[botRailForSide.length - 2] : botEnd;
-						const ux = topEnd[0] - topPrev[0], uz = topEnd[2] - topPrev[2], uy = topEnd[1] - topPrev[1];
-						const vx = botEnd[0] - botPrev[0], vz = botEnd[2] - botPrev[2], vy = botEnd[1] - botPrev[1];
+						let ux = topEnd[0] - topPrev[0], uz = topEnd[2] - topPrev[2], uy = topEnd[1] - topPrev[1];
+						let vx = botEnd[0] - botPrev[0], vz = botEnd[2] - botPrev[2], vy = botEnd[1] - botPrev[1];
+						// fallback: אם אין שני נק׳ למסילה, קח כיוון לפי yaw של המדרגה האחרונה (שטוח בגובה בתוך המדרך)
+						if (Math.abs(ux) < 1e-9 && Math.abs(uz) < 1e-9) { ux = Math.cos(yaw); uz = Math.sin(yaw); uy = 0; }
+						if (Math.abs(vx) < 1e-9 && Math.abs(vz) < 1e-9) { vx = Math.cos(yaw); vz = Math.sin(yaw); vy = 0; }
 						let tTop = 0, tBot = 0;
 						if (Math.abs(ux) >= Math.abs(uz) && Math.abs(ux) > 1e-9) tTop = (lastT[0] - topEnd[0]) / ux;
 						else if (Math.abs(uz) > 1e-9) tTop = (lastT[2] - topEnd[2]) / uz;
@@ -2368,8 +2374,11 @@ function Staircase3D({
 									const topPrev = topRailForSideB.length >= 2 ? topRailForSideB[topRailForSideB.length - 2] : topEnd;
 									const botEnd = botRailForSideB[botRailForSideB.length - 1];
 									const botPrev = botRailForSideB.length >= 2 ? botRailForSideB[botRailForSideB.length - 2] : botEnd;
-									const ux = topEnd[0] - topPrev[0], uz = topEnd[2] - topPrev[2], uy = topEnd[1] - topPrev[1];
-									const vx = botEnd[0] - botPrev[0], vz = botEnd[2] - botPrev[2], vy = botEnd[1] - botPrev[1];
+									let ux = topEnd[0] - topPrev[0], uz = topEnd[2] - topPrev[2], uy = topEnd[1] - topPrev[1];
+									let vx = botEnd[0] - botPrev[0], vz = botEnd[2] - botPrev[2], vy = botEnd[1] - botPrev[1];
+									// fallback: אם אין שני נק׳ למסילה, קח כיוון לפי yaw של המדרגה האחרונה (שטוח בגובה בתוך המדרך)
+									if (Math.abs(ux) < 1e-9 && Math.abs(uz) < 1e-9) { ux = Math.cos(yaw); uz = Math.sin(yaw); uy = 0; }
+									if (Math.abs(vx) < 1e-9 && Math.abs(vz) < 1e-9) { vx = Math.cos(yaw); vz = Math.sin(yaw); vy = 0; }
 									let tTop = 0, tBot = 0;
 									if (Math.abs(ux) >= Math.abs(uz) && Math.abs(ux) > 1e-9) tTop = (lastT[0] - topEnd[0]) / ux;
 									else if (Math.abs(uz) > 1e-9) tTop = (lastT[2] - topEnd[2]) / uz;

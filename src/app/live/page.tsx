@@ -1885,7 +1885,8 @@ function Staircase3D({
 							let nmY = uz * wx - ux * wz;
 							let nmZ = ux * wy - uy * wx;
 							{ const m = Math.hypot(nmX, nmY, nmZ) || 1; nmX /= m; nmY /= m; nmZ /= m; }
-							const offX = nmX * thickness, offY = nmY * thickness, offZ = nmZ * thickness;
+							// כיוון "החוצה" לצד הנגדי: הופכים את כיוון הנורמל
+							const offX = -nmX * thickness, offY = -nmY * thickness, offZ = -nmZ * thickness;
 
 							// שכבת גב
 							{
@@ -1918,15 +1919,46 @@ function Staircase3D({
 							addSide(railTopForSide);
 							addSide(railBotForSide);
 
-							// קאפ התחלה אנכי לרצפה: בין P1(top) ל‑P6(bottom) בתחילת הרצועה
+							// פאנל התחלה אנכי לרצפה (כמו בפלטה A): בין P1 למטה לרצפה ובין P6 למטה לרצפה, כולל עובי
+							let startPanelMesh = null;
 							if (firstP1 && firstP6) {
-								const pT: [number, number, number] = firstP1Side || firstP1;
-								const pB: [number, number, number] = [pT[0], firstP6[1], pT[2]];
-								const pTe: [number, number, number] = [pT[0] + offX, pT[1] + offY, pT[2] + offZ];
-								const pBe: [number, number, number] = [pB[0] + offX, pB[1] + offY, pB[2] + offZ];
-								const bi = pos.length / 3;
-								pos.push(pT[0], pT[1], pT[2],  pB[0], pB[1], pB[2],  pBe[0], pBe[1], pBe[2],  pTe[0], pTe[1], pTe[2]);
-								idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+								const pTop = firstP1Side || firstP1;
+								const pBot = firstP6;
+								const v0: [number, number, number] = [pTop[0], pTop[1], pTop[2]];
+								const v1: [number, number, number] = [pBot[0], pBot[1], pBot[2]];
+								const v2: [number, number, number] = [pTop[0], floorBounds.y, pTop[2]];
+								const v3: [number, number, number] = [pBot[0], floorBounds.y, pBot[2]];
+								const v4: [number, number, number] = [v0[0] + offX, v0[1] + offY, v0[2] + offZ];
+								const v5: [number, number, number] = [v1[0] + offX, v1[1] + offY, v1[2] + offZ];
+								const v6: [number, number, number] = [v2[0] + offX, v2[1] + offY, v2[2] + offZ];
+								const v7: [number, number, number] = [v3[0] + offX, v3[1] + offY, v3[2] + offZ];
+								const panelPos = new Float32Array([
+									v0[0], v0[1], v0[2],
+									v1[0], v1[1], v1[2],
+									v2[0], v2[1], v2[2],
+									v3[0], v3[1], v3[2],
+									v4[0], v4[1], v4[2],
+									v5[0], v5[1], v5[2],
+									v6[0], v6[1], v6[2],
+									v7[0], v7[1], v7[2],
+								]);
+								const panelIdx = new Uint32Array([
+									0,1,2, 2,1,3,
+									4,6,5, 6,7,5,
+									0,1,5, 0,5,4,
+									1,3,7, 1,7,5,
+									3,2,6, 3,6,7,
+									2,0,4, 2,4,6,
+								]);
+								startPanelMesh = (
+									<mesh castShadow receiveShadow>
+										<bufferGeometry attach="geometry">
+											<bufferAttribute attach="attributes-position" args={[panelPos, 3]} />
+											<bufferAttribute attach="index" args={[panelIdx, 1]} />
+										</bufferGeometry>
+										<meshBasicMaterial color="#4b5563" side={2} />
+									</mesh>
+								);
 							}
 
 							// סיום: הארכה + קאפ לפי האנך דרך P2 או P1 של המדרגה האחרונה – לפי יישור המסילה
@@ -2030,13 +2062,16 @@ function Staircase3D({
 							}
 
 							return (
-								<mesh castShadow receiveShadow>
-									<bufferGeometry attach="geometry">
-										<bufferAttribute attach="attributes-position" args={[new Float32Array(pos), 3]} />
-										<bufferAttribute attach="index" args={[new Uint32Array(idx), 1]} />
-									</bufferGeometry>
-									<meshBasicMaterial color="#4b5563" side={2} />
-								</mesh>
+								<group>
+									<mesh castShadow receiveShadow>
+										<bufferGeometry attach="geometry">
+											<bufferAttribute attach="attributes-position" args={[new Float32Array(pos), 3]} />
+											<bufferAttribute attach="index" args={[new Uint32Array(idx), 1]} />
+										</bufferGeometry>
+										<meshBasicMaterial color="#4b5563" side={2} />
+									</mesh>
+									{startPanelMesh}
+								</group>
 							);
 						})()}
 					</group>

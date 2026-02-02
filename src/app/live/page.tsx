@@ -3190,19 +3190,6 @@ function Staircase3D({
 								// חזית
 								const posB1: number[] = [];
 								const idxB1: number[] = [];
-								// אם חושב מקטע אופקי בלנדינג – הוסף אותו קודם (יועתק לשכבת הגב בהמשך)
-								if (landingStrip) {
-									const base = posB1.length / 3;
-									const { t0, b0, t1, b1 } = landingStrip;
-									posB1.push(
-										t0[0], t0[1], t0[2],
-										b0[0], b0[1], b0[2],
-										t1[0], t1[1], t1[2],
-										b1[0], b1[1], b1[2],
-									);
-									idxB1.push(base + 0, base + 1, base + 2);
-									idxB1.push(base + 2, base + 1, base + 3);
-								}
 								// (בוטל) מקטע אופקי בלנדינג העליון
 								const pickB1 = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
 								for (let i = 0; i < segCountB1 - 1; i++) {
@@ -3313,8 +3300,8 @@ function Staircase3D({
 								addSideB1(topRailB1);
 								addSideB1(botRailB1);
 
-								// קאפ התחלה אנכי (אם לא מתחילים מהפודסט)
-								if (!(startFromLandingTop && startFromLandingBot)) {
+								// קאפ התחלה אנכי בלנדינג – תמיד נסגור בתחילת הפלטה
+								{
 									const pT = topRailB1[0];
 									const pBy = botRailB1[0][1];
 									const pB: [number, number, number] = [pT[0], pBy, pT[2]];

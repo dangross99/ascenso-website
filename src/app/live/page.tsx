@@ -3226,6 +3226,18 @@ function Staircase3D({
 								const idxB1: number[] = [];
 								// (בוטל) מקטע אופקי בלנדינג העליון
 								const pickB1 = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
+								// אם יש פחות משני קטעים – צור קטע גשר מינימלי בין תחילת הפודסט לנקודת המדרגה הראשונה
+								if (segCountB1 < 2) {
+									const t1 = startFromLandingTop || topRailB1[0];
+									const b1 = startFromLandingBot || botRailB1[0];
+									const t2 = topRailB1[topRailB1.length - 1] || t1;
+									const b2 = botRailB1[botRailB1.length - 1] || b1;
+									const baseIndex = posB1.length / 3;
+									posB1.push(t1[0], t1[1], t1[2],  b1[0], b1[1], b1[2],  t2[0], t2[1], t2[2],  b2[0], b2[1], b2[2]);
+									idxB1.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
+									idxB1.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
+								}
+
 								for (let i = 0; i < segCountB1 - 1; i++) {
 									let t1 = pickB1(topRailB1, i);
 									let b1 = pickB1(botRailB1, i);

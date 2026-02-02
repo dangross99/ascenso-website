@@ -1986,10 +1986,14 @@ function Staircase3D({
 								if (landingYaw !== null) { ux = Math.cos(landingYaw); uz = Math.sin(landingYaw); }
 								const dotU = (x: [number, number, number]) => (ux * x[0] + uz * x[2]);
 								const planeU = dotU(extTopAt30);
-								const denom = ux * vx + uz * vz;
-								if (Math.abs(denom) > 1e-9) {
-                                    const t = (planeU - dotU(botEndW)) / denom;
-									extBot30 = [botEndW[0] + vx * t, botEndW[1] + vy * t, botEndW[2] + vz * t];
+								// נרצה לעבוד עם וקטור יחידה לאורך המסילה התחתונה
+								const vmag = Math.hypot(vx, vy, vz) || 1;
+								const vUx = vx / vmag, vUy = vy / vmag, vUz = vz / vmag;
+								const denomU = ux * vUx + uz * vUz;
+								let t0U = 0; // פרמטר לאורך וקטור היחידה
+								if (Math.abs(denomU) > 1e-9) {
+									t0U = (planeU - dotU(botEndW)) / denomU;
+									extBot30 = [botEndW[0] + vUx * t0U, botEndW[1] + vUy * t0U, botEndW[2] + vUz * t0U];
 								} else {
 									// פולבאק: שמור רוחב לפי הווקטור בקצה הפלטה
 									const topEndW = railTopForSide[railTopForSide.length - 1];
@@ -1997,6 +2001,40 @@ function Staircase3D({
 									const wdy = topEndW[1] - botEndW[1];
 									const wdz = topEndW[2] - botEndW[2];
 									extBot30 = [extTopAt30[0] - wdx, extTopAt30[1] - wdy, extTopAt30[2] - wdz];
+								}
+								// שלב עדין: אם הרוחב לא מדויק – המשך באותו שיפוע כלפי מעלה עד שהרוחב שווה לרוחב בקצה הפלטה
+								if (extBot30) {
+									const topEndW = railTopForSide[railTopForSide.length - 1];
+									const botEndW2 = railBotForSide[railBotForSide.length - 1];
+									const refW =
+										Math.hypot(
+											topEndW[0] - botEndW2[0],
+											topEndW[1] - botEndW2[1],
+											topEndW[2] - botEndW2[2],
+										);
+									// פתרון אנליטי ל-|w0 - t*vU| = refW, כאשר w0 = extTopAt30 - botEndW2
+									const w0x = extTopAt30[0] - botEndW2[0];
+									const w0y = extTopAt30[1] - botEndW2[1];
+									const w0z = extTopAt30[2] - botEndW2[2];
+									const w0dotv = w0x * vUx + w0y * vUy + w0z * vUz;
+									const w0norm2 = w0x * w0x + w0y * w0y + w0z * w0z;
+									const disc = (w0dotv * w0dotv) - (w0norm2 - refW * refW);
+									if (disc >= 0) {
+										const r1 = w0dotv + Math.sqrt(disc);
+										const r2 = w0dotv - Math.sqrt(disc);
+										// בחר פתרון שממשיך "כלפי מעלה" יחסית ל-t0U (כלומר vUy * (t - t0U) > 0) ובעל סטייה מינימלית
+										const choose = (tCand: number) => {
+											const scoreDir = vUy * (tCand - t0U);
+											return { t: tCand, ok: scoreDir > -1e-9, dist: Math.abs(tCand - t0U) };
+										};
+										const c1 = choose(r1), c2 = choose(r2);
+										let tBest = t0U;
+										if (c1.ok && c2.ok) tBest = (c1.dist <= c2.dist) ? c1.t : c2.t;
+										else if (c1.ok) tBest = c1.t;
+										else if (c2.ok) tBest = c2.t;
+										// עדכן נקודת תחתית
+										extBot30 = [botEndW2[0] + vUx * tBest, botEndW2[1] + vUy * tBest, botEndW2[2] + vUz * tBest];
+									}
 								}
 							}
 

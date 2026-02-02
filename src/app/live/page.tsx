@@ -3072,19 +3072,114 @@ function Staircase3D({
 									}
 								}
 								// אם קיימת הפניה מה‑A1 (דרך ref) – השתמש בדיוק בנקודות הסיום של A1 לשמירת רוחב זהה
-								// שים לב: אם A1 כבר חישב נקודת קצה מדויקת בפודסט (כולל התאמות רוחב/שיפוע),
-								// חובה להשתמש בה כנקודת התחלה מדויקת ל‑B1 — אחרת מתקבל "קני" לא מיושר/פער.
-								const exactLandingAnchor = !!hitechBStartRef.current;
-								if (hitechBStartRef.current) {
-									const W = hitechBStartRef.current;
-									startFromLandingTop = W.top;
-									startFromLandingBot = W.bot;
+								// חיבור "ברך" נכון בתחילת גרם 2:
+								// Top הוא ציר משותף (נלקח מ‑A1), אבל Bot אינו "נעול" לאותה נקודת פודסט —
+								// הוא מחושב כמפגש (miter) בין:
+								// 1) הקו התחתון של הפודסט (offset במרחק W מה‑Top לאורך הניצב בתוך מישור הפלטה)
+								// 2) הקו התחתון של השיפוע (offset במרחק W מה‑Top לאורך הניצב בתוך מישור הפלטה)
+								const a1Anchor = hitechBStartRef.current;
+								const hasExactLandingAnchor = !!a1Anchor;
+								if (a1Anchor) {
+									const H: [number, number, number] = a1Anchor.top;
+									const wVec: [number, number, number] = [
+										a1Anchor.top[0] - a1Anchor.bot[0],
+										a1Anchor.top[1] - a1Anchor.bot[1],
+										a1Anchor.top[2] - a1Anchor.bot[2],
+									];
+									const Wmag = Math.hypot(wVec[0], wVec[1], wVec[2]);
+									startFromLandingTop = H;
+
+									// עזרי וקטורים
+									const dot = (a: [number, number, number], b: [number, number, number]) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+									const sub = (a: [number, number, number], b: [number, number, number]): [number, number, number] => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+									const add = (a: [number, number, number], b: [number, number, number]): [number, number, number] => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+									const scale = (a: [number, number, number], s: number): [number, number, number] => [a[0] * s, a[1] * s, a[2] * s];
+									const cross = (a: [number, number, number], b: [number, number, number]): [number, number, number] => [
+										a[1] * b[2] - a[2] * b[1],
+										a[2] * b[0] - a[0] * b[2],
+										a[0] * b[1] - a[1] * b[0],
+									];
+									const norm = (a: [number, number, number]) => Math.hypot(a[0], a[1], a[2]);
+									const normalize = (a: [number, number, number]): [number, number, number] => {
+										const m = norm(a) || 1;
+										return [a[0] / m, a[1] / m, a[2] / m];
+									};
+
+									// כיוון הפודסט (ב‑XZ) לפי yaw של הפודסט הקודם אם קיים, אחרת fallback לפי firstYaw/שיפוע
+									let uxL = 1, uzL = 0;
+									if (firstStepIdxInFlight !== null && firstStepIdxInFlight > 0) {
+										const prev = treads[firstStepIdxInFlight - 1];
+										if (prev && prev.isLanding) { uxL = Math.cos(prev.rotation[1] as number); uzL = Math.sin(prev.rotation[1] as number); }
+									} else if (firstYaw !== null) {
+										uxL = Math.cos(firstYaw); uzL = Math.sin(firstYaw);
+									} else if (topP1.length >= 2) {
+										const d = sub(topP1[1], topP1[0]);
+										uxL = d[0]; uzL = d[2];
+										const m = Math.hypot(uxL, uzL) || 1; uxL /= m; uzL /= m;
+									}
+									const uL = normalize([uxL, 0, uzL]);
+
+									// כיוון השיפוע לפי שתי נקודות ראשונות של המסילה העליונה
+									const s0 = topP1.length >= 1 ? topP1[0] : H;
+									const s1 =
+										topP1.length >= 2 ? topP1[1]
+										: (firstYaw !== null ? ([s0[0] + Math.cos(firstYaw), s0[1], s0[2] + Math.sin(firstYaw)] as [number, number, number])
+										: ([s0[0] + 1, s0[1], s0[2]] as [number, number, number]));
+									const uS = normalize(sub(s1, s0));
+
+									// נורמל "חזית" הפלטה (ניצב למישור הפלטה) – נדרש כדי להפיק offset בתוך המישור
+									let nFace = cross(uS, wVec);
+									if (norm(nFace) < 1e-9) nFace = cross(uL, wVec);
+									if (norm(nFace) < 1e-9) nFace = [0, 1, 0];
+									nFace = normalize(nFace);
+
+									// וקטור offset בתוך מישור הפלטה לכל כיוון: p = normalize(nFace × u)
+									let pL = normalize(cross(nFace, uL));
+									let pS = normalize(cross(nFace, uS));
+									// כיוון ה‑p צריך להיות "לכיוון ה‑Top" ביחס לוקטור הרוחב (bot->top)
+									if (dot(pL, wVec) < 0) pL = scale(pL, -1);
+									if (dot(pS, wVec) < 0) pS = scale(pS, -1);
+
+									// נקודות על הקווים התחתונים (offset במרחק Wmag מה‑Top)
+									const landingBotPoint = add(H, scale(pL, -Wmag));
+									const slopeBotPoint = add(H, scale(pS, -Wmag));
+
+									// חיתוך קווים במישור הפלטה: נבצע הקרנה ל‑2D בבסיס (e1,e2) של המישור
+									if (Wmag > 1e-9) {
+										let e1 = sub(uL, scale(nFace, dot(uL, nFace)));
+										if (norm(e1) < 1e-9) e1 = sub(uS, scale(nFace, dot(uS, nFace)));
+										e1 = normalize(e1);
+										const e2 = normalize(cross(nFace, e1));
+
+										const to2 = (P: [number, number, number]): [number, number] => {
+											const v = sub(P, H);
+											return [dot(v, e1), dot(v, e2)];
+										};
+										const d2 = (D: [number, number, number]): [number, number] => [dot(D, e1), dot(D, e2)];
+										const cross2 = (a: [number, number], b: [number, number]) => a[0] * b[1] - a[1] * b[0];
+
+										const p0 = to2(landingBotPoint);
+										const q0 = to2(slopeBotPoint);
+										const r = d2(uL);
+										const s = d2(uS);
+										const denom = cross2(r, s);
+										if (Math.abs(denom) > 1e-9) {
+											const qp: [number, number] = [q0[0] - p0[0], q0[1] - p0[1]];
+											const t = cross2(qp, s) / denom;
+											const ix = p0[0] + t * r[0];
+											const iy = p0[1] + t * r[1];
+											startFromLandingBot = add(H, add(scale(e1, ix), scale(e2, iy)));
+										} else {
+											// כמעט מקביל – פולבאק: קח את ה‑bottom של השיפוע בנקודת הציר
+											startFromLandingBot = slopeBotPoint;
+										}
+									}
 								}
 
 								// יישור זרימה (רק כשאין נקודת עיגון מדויקת מ‑A1):
 								// המשך אופסטים בשיפוע עד נקודת השקה עם רוחב זהה לפלטת הלנדינג
 								let landingStrip: { t0: [number, number, number]; b0: [number, number, number]; t1: [number, number, number]; b1: [number, number, number] } | null = null;
-								if (startFromLandingTop && startFromLandingBot && !exactLandingAnchor) {
+								if (startFromLandingTop && startFromLandingBot && !hasExactLandingAnchor) {
 									// כיוון שיפוע למסילות: אם אין מספיק נקודות מדרגות, נשתמש ב‑firstYaw או בכיוון ברירת מחדל
 									const pT1 = topP1.length >= 1 ? topP1[0] : startFromLandingTop;
 									const pT2 = topP1.length >= 2 ? topP1[1] : (firstYaw !== null ? [pT1[0] + Math.cos(firstYaw), pT1[1], pT1[2] + Math.sin(firstYaw)] as [number, number, number] : [pT1[0] + 1, pT1[1], pT1[2]] as [number, number, number]);

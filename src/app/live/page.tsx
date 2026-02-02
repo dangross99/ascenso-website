@@ -1339,19 +1339,7 @@ function Staircase3D({
 								<lineBasicMaterial attach="material" color="#f87171" linewidth={1} depthTest={false} depthWrite={false} />
 							</line>
 						)}
-						{/* סגירה במדרגה לפני הפודסט: קו ישר בין אופסט 4 לאופסט 7 */}
-						{/* קו ירוק אנכי: מ‑8‑offset (Y תחתון) אל 4‑offset בפודסט (Y עליון) באותו XZ של נקודת 4 */}
-						{closeP4 && closeP8 && (
-							<line>
-								<bufferGeometry attach="geometry">
-									<bufferAttribute attach="attributes-position" args={[new Float32Array([
-										closeP4[0], closeP8[1], closeP4[2],
-										closeP4[0], closeP4[1], closeP4[2],
-									]), 3]} />
-								</bufferGeometry>
-								<lineBasicMaterial attach="material" color="#10b981" linewidth={1} depthTest={false} depthWrite={false} />
-							</line>
-						)}
+						{/* (הוסר) קו ירוק אנכי בין 8‑offset ל‑4‑offset בפודסט */}
 						{/* הארכה למטה עד הרצפה מהמדרגה הראשונה וסגירה ביניהן */}
 						{firstP4 && firstP7 && (
 							<group>
@@ -2758,18 +2746,7 @@ function Staircase3D({
 								<lineBasicMaterial attach="material" color="#f87171" linewidth={1} depthTest={false} depthWrite={false} />
 							</line>
 						)}
-						{/* סגירה במדרגה לפני הפודסט */}
-						{closeP4 && closeP8 && (
-							<line>
-								<bufferGeometry attach="geometry">
-									<bufferAttribute attach="attributes-position" args={[new Float32Array([
-										closeP4[0], closeP8[1], closeP4[2],
-										closeP4[0], closeP4[1], closeP4[2],
-									]), 3]} />
-								</bufferGeometry>
-								<lineBasicMaterial attach="material" color="#10b981" linewidth={1} depthTest={false} depthWrite={false} />
-							</line>
-						)}
+						{/* (הוסר) קו ירוק אנכי לסימון סגירה לפני הפודסט */}
 						{/* (הוסר) לוגיקת עזר/שמירה למדרגה הראשונה בגרם 2 */}
 
 						{/* פלטה A – רצועה מדויקת בין קווי האופסט (מילוי משולשים) */}

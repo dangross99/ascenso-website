@@ -3028,7 +3028,7 @@ function Staircase3D({
 							const buildB1ForFlight1 = () => {
 								const topP1: Array<[number, number, number]> = [];
 								const botP6: Array<[number, number, number]> = [];
-								let firstP1: [number, number, number] | null = null;
+								let firstP1: [number, number, number] | null = null; // משתמש כעת ב‑P2 העליון (ימין‑אחורה)
 								let firstP6: [number, number, number] | null = null;
 								let firstYaw: number | null = null;
 								let firstStepIdxInFlight: number | null = null;
@@ -3042,9 +3042,9 @@ function Staircase3D({
 									const c = Math.cos(yaw), s = Math.sin(yaw);
 									const dx = t.run / 2;
 									const dz = treadWidth / 2;
-									// P1 – עליונה שמאל‑אחורה: (-dx, -dz)
+									// P2 – עליונה ימין‑אחורה: (+dx, -dz)
 									{
-										const lx = -dx, lz = -dz;
+										const lx = +dx, lz = -dz;
 										const rx = lx * c - lz * s;
 										const rz = lx * s + lz * c;
 										const wx = t.position[0] + rx;
@@ -3072,7 +3072,7 @@ function Staircase3D({
 											const yawL = next.rotation[1] as number;
 											const cL = Math.cos(yawL), sL = Math.sin(yawL);
 											const dxL = next.run / 2, dzL = treadWidth / 2;
-											const lx1 = -dxL, lz1 = -dzL; // P1 של הפודסט
+											const lx1 = +dxL, lz1 = -dzL; // P2 של הפודסט
 											const rx1 = lx1 * cL - lz1 * sL;
 											const rz1 = lx1 * sL + lz1 * cL;
 											const wx1 = next.position[0] + rx1;

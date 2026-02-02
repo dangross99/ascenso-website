@@ -3445,23 +3445,26 @@ function Staircase3D({
 											if (Math.abs(vz) > 1e-9) return (pb[2] - botEnd[2]) / vz;
 											return 0;
 										};
-										let lastT = candT3, lastB = candB3;
-										const tTop3 = projT(candT3), tBot3 = projB(candB3);
-										const tTop2 = projT(candT2), tBot2 = projB(candB2);
-										const good3 = tTop3 >= -1e-6 && tBot3 >= -1e-6;
-										const good2 = tTop2 >= -1e-6 && tBot2 >= -1e-6;
-										if (!good3 && good2) { lastT = candT2; lastB = candB2; }
-										else if (good3 && good2) {
-											const score3 = Math.abs(tTop3) + Math.abs(tBot3);
-											const score2 = Math.abs(tTop2) + Math.abs(tBot2);
-											if (score2 < score3) { lastT = candT2; lastB = candB2; }
-										}
-										// עדכון גבהים
-										const tTop = projT(lastT), tBot = projB(lastB);
-										const yTop = topEnd[1] + tTop * uy;
-										const yBot = botEnd[1] + tBot * vy;
-										lastT = [lastT[0], yTop, lastT[2]];
-										lastB = [lastB[0], yBot, lastB[2]];
+										// סגור בצד שמאל: עמודה דרך P4/P8 (lx=-dx,lz=+dz)
+										const lx4 = -dx, lz4 = +dz;
+										const rx4 = lx4 * c - lz4 * s;
+										const rz4 = lx4 * s + lz4 * c;
+										const candT4: [number, number, number] = [
+											lastStep.position[0] + rx4,
+											lastStep.position[1] + treadThickness / 2 + offsetY,
+											lastStep.position[2] + rz4
+										];
+										const candB8: [number, number, number] = [
+											candT4[0],
+											lastStep.position[1] - treadThickness / 2 - offsetY,
+											candT4[2]
+										];
+										const tTop4 = projT(candT4);
+										const tBot8 = projB(candB8);
+										const yTop = topEnd[1] + tTop4 * uy;
+										const yBot = botEnd[1] + tBot8 * vy;
+										const lastT: [number, number, number] = [candT4[0], yTop, candT4[2]];
+										const lastB: [number, number, number] = [candB8[0], yBot, candB8[2]];
 										// מקטע מגשר + שכבת גב + דפנות
 										{
 											const baseIndex = posB1.length / 3;

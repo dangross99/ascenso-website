@@ -3106,8 +3106,14 @@ function Staircase3D({
 								}
 								// אם קיימת הפניה מה‑A1 (דרך ref) – השתמש בדיוק בנקודות הסיום של A1 לשמירת רוחב זהה
 								if (hitechBStartRef.current) {
-									startFromLandingTop = hitechBStartRef.current.top;
-									startFromLandingBot = hitechBStartRef.current.bot;
+									const W = hitechBStartRef.current;
+									const Wdx = W.top[0] - W.bot[0], Wdy = W.top[1] - W.bot[1], Wdz = W.top[2] - W.bot[2];
+									if (startFromLandingTop) {
+										startFromLandingBot = [startFromLandingTop[0] - Wdx, startFromLandingTop[1] - Wdy, startFromLandingTop[2] - Wdz];
+									} else {
+										startFromLandingTop = W.top;
+										startFromLandingBot = W.bot;
+									}
 								}
 								// יישור זרימה: המשך אופסטים בשיפוע עד נקודת השקה עם רוחב זהה לפלטת הלנדינג
 								let landingStrip: { t0: [number, number, number]; b0: [number, number, number]; t1: [number, number, number]; b1: [number, number, number] } | null = null;
@@ -3170,9 +3176,7 @@ function Staircase3D({
 									const landTopEnd: [number, number, number] = [startFromLandingTop[0] + (Ustar - U0) * uxL, startFromLandingTop[1], startFromLandingTop[2] + (Ustar - U0) * uzL];
 									const landBotEnd: [number, number, number] = [startFromLandingBot[0] + (Ustar - U0) * uxL, startFromLandingBot[1], startFromLandingBot[2] + (Ustar - U0) * uzL];
 									landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: landTopEnd, b1: landBotEnd };
-									// החלף את נקודות הפתיחה בנקודות המושקות
-									startFromLandingTop = joinTop;
-									startFromLandingBot = joinBot;
+									// (אל תחליף את נקודות ההתחלה אם לא מצויר פס חיבור בפועל, כדי למנוע רווח)
 								}
 
 								// בניית מסילות B1 (כולל הארכת פתיחה מהפודסט אם קיים)
@@ -3190,19 +3194,6 @@ function Staircase3D({
 								// חזית
 								const posB1: number[] = [];
 								const idxB1: number[] = [];
-								// רצועת לנדינג אופקית בתחילת B1 (אם חושבה) – מחברת את קאפ הפודסט להתחלת המסילות
-								if (landingStrip) {
-									const base = posB1.length / 3;
-									const { t0, b0, t1, b1 } = landingStrip;
-									posB1.push(
-										t0[0], t0[1], t0[2],
-										b0[0], b0[1], b0[2],
-										t1[0], t1[1], t1[2],
-										b1[0], b1[1], b1[2],
-									);
-									idxB1.push(base + 0, base + 1, base + 2);
-									idxB1.push(base + 2, base + 1, base + 3);
-								}
 								// (בוטל) מקטע אופקי בלנדינג העליון
 								const pickB1 = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
 								for (let i = 0; i < segCountB1 - 1; i++) {
@@ -3312,18 +3303,6 @@ function Staircase3D({
 								};
 								addSideB1(topRailB1);
 								addSideB1(botRailB1);
-
-								// קאפ התחלה אנכי (אם לא מתחילים מהפודסט)
-								if (!(startFromLandingTop && startFromLandingBot)) {
-									const pT = topRailB1[0];
-									const pBy = botRailB1[0][1];
-									const pB: [number, number, number] = [pT[0], pBy, pT[2]];
-									const pTe: [number, number, number] = [pT[0] + offXB, pT[1] + offYB, pT[2] + offZB];
-									const pBe: [number, number, number] = [pB[0] + offXB, pB[1] + offYB, pB[2] + offZB];
-									const bi = posB1.length / 3;
-									posB1.push(pT[0], pT[1], pT[2],  pB[0], pB[1], pB[2],  pBe[0], pBe[1], pBe[2],  pTe[0], pTe[1], pTe[2]);
-									idxB1.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
-								}
 
 								// הארכה לסוף הפודסט הבא אם יש (בדומה ל‑A1): שמור אופסט עליון, התאם תחתון בשיפוע
 								let extTopAtL: [number, number, number] | null = null;

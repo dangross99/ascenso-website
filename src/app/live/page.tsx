@@ -3180,18 +3180,22 @@ function Staircase3D({
 									// וקטור offset בתוך מישור הפלטה לכל כיוון: p = normalize(nFace × u)
 									let pL = normalize(cross(nFace, uL));
 									let pS = normalize(cross(nFace, uS));
-									// קיבוע כיוון ה‑offset כדי למנוע "קפיצה לצד השני":
-									// נעדיף רפרנס אמיתי מהגאומטריה (top->bot) לכל מקטע, ורק אם אין ניפול ל‑wVec מה‑A1.
-									const flipIfNeeded = (p: [number, number, number], top: [number, number, number] | null, bot: [number, number, number] | null) => {
-										if (top && bot) {
-											const w = sub(top, bot); // bot->top
-											return (dot(p, w) < 0) ? scale(p, -1) : p;
-										}
-										return (dot(p, wVec) < 0) ? scale(p, -1) : p;
+									// קיבוע כיוון ה‑offset כדי למנוע "בריחה" בקצה החיבור:
+									// בוחרים את הסימן כך ש‑Top + (-p*W) יהיה הכי קרוב לנקודת Bot הרפרנס.
+									const chooseByClosestBot = (p: [number, number, number], top: [number, number, number], botRef: [number, number, number] | null) => {
+										if (!botRef || Wmag <= 1e-9) return (dot(p, wVec) < 0) ? scale(p, -1) : p;
+										const candA = add(top, scale(p, -Wmag));
+										const candB = add(top, scale(p, +Wmag));
+										const dA = Math.hypot(candA[0] - botRef[0], candA[1] - botRef[1], candA[2] - botRef[2]);
+										const dB = Math.hypot(candB[0] - botRef[0], candB[1] - botRef[1], candB[2] - botRef[2]);
+										return (dA <= dB) ? p : scale(p, -1);
 									};
+									// בפודסט: ודא ש‑bottom line בנקודת הברך עובר דרך ה‑bot של A1 (אחרת רואים פער/בריחה ליד A)
+									pL = chooseByClosestBot(pL, H, a1Anchor.bot);
+									// בשיפוע: כוון כך שיתאים ל‑bot של המדרגה הראשונה (לפני שנחליף אותו)
+									const slopeTopHint: [number, number, number] | null = (topP1.length >= 1 ? topP1[0] : null);
 									const slopeBotHint: [number, number, number] | null = (botP6.length >= 1 ? botP6[0] : null);
-									pL = flipIfNeeded(pL, rawLandingStartTop, rawLandingStartBot);
-									pS = flipIfNeeded(pS, (topP1.length >= 1 ? topP1[0] : null), slopeBotHint);
+									if (slopeTopHint) pS = chooseByClosestBot(pS, slopeTopHint, slopeBotHint);
 
 									// חישוב דינמי ב"מישור הפלטה":
 									// 1) חיתוך קווי TOP (פודסט מול שיפוע) כדי להבטיח שהפודסט נשאר ישר, ואז

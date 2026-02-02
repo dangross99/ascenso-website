@@ -2008,7 +2008,7 @@ function Staircase3D({
 							}
 
 							// סיום: אם יש הארכת תחתון ל‑30 מ״מ – סגור לקאפ אנכי במיקום זה; אחרת fallback ללוגיקה הקיימת
-							if (shouldRenderClosingCapForFlight(0) && extBot30 && extTopAt30) {
+							if (extBot30 && extTopAt30) {
 								// קטע מגשר מקצה הפלטה אל מיקום ה‑30 מ״מ + שכבת גב + דפנות
 								const topEnd = railTopForSide[railTopForSide.length - 1];
 								const botEnd = railBotForSide[railBotForSide.length - 1];
@@ -2047,7 +2047,7 @@ function Staircase3D({
 									pos.push(lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
 									idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
 								}
-							} else if (shouldRenderClosingCapForFlight(0)) {
+							} else {
 								let lastStep: any = null;
 								for (let ii = treads.length - 1; ii >= 0; ii--) {
 									const tt = treads[ii];

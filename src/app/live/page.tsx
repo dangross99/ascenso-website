@@ -3074,6 +3074,7 @@ function Staircase3D({
 								}
 								// נקודת התחלה "גולמית" של הפודסט (הקצה הרחוק) — נשמרת גם כש‑Top מוחלף בעוגן המדויק מ‑A1
 								const rawLandingStartTop = startFromLandingTop;
+								const rawLandingStartBot = startFromLandingBot;
 
 								// פס פודסט ישר (landing strip) — נבנה או לפי חישוב ה‑miter (כשיש עוגן מ‑A1) או לפי לוגיקת ה‑secant (כשאין)
 								let landingStrip: {
@@ -3179,9 +3180,18 @@ function Staircase3D({
 									// וקטור offset בתוך מישור הפלטה לכל כיוון: p = normalize(nFace × u)
 									let pL = normalize(cross(nFace, uL));
 									let pS = normalize(cross(nFace, uS));
-									// כיוון ה‑p צריך להיות "לכיוון ה‑Top" ביחס לוקטור הרוחב (bot->top)
-									if (dot(pL, wVec) < 0) pL = scale(pL, -1);
-									if (dot(pS, wVec) < 0) pS = scale(pS, -1);
+									// קיבוע כיוון ה‑offset כדי למנוע "קפיצה לצד השני":
+									// נעדיף רפרנס אמיתי מהגאומטריה (top->bot) לכל מקטע, ורק אם אין ניפול ל‑wVec מה‑A1.
+									const flipIfNeeded = (p: [number, number, number], top: [number, number, number] | null, bot: [number, number, number] | null) => {
+										if (top && bot) {
+											const w = sub(top, bot); // bot->top
+											return (dot(p, w) < 0) ? scale(p, -1) : p;
+										}
+										return (dot(p, wVec) < 0) ? scale(p, -1) : p;
+									};
+									const slopeBotHint: [number, number, number] | null = (botP6.length >= 1 ? botP6[0] : null);
+									pL = flipIfNeeded(pL, rawLandingStartTop, rawLandingStartBot);
+									pS = flipIfNeeded(pS, (topP1.length >= 1 ? topP1[0] : null), slopeBotHint);
 
 									// חישוב דינמי ב"מישור הפלטה":
 									// 1) חיתוך קווי TOP (פודסט מול שיפוע) כדי להבטיח שהפודסט נשאר ישר, ואז

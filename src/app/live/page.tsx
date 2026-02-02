@@ -3119,13 +3119,15 @@ function Staircase3D({
 									}
 									const uL = normalize([uxL, 0, uzL]);
 
-									// כיוון השיפוע לפי שתי נקודות ראשונות של המסילה העליונה
-									const s0 = topP1.length >= 1 ? topP1[0] : H;
-									const s1 =
-										topP1.length >= 2 ? topP1[1]
-										: (firstYaw !== null ? ([s0[0] + Math.cos(firstYaw), s0[1], s0[2] + Math.sin(firstYaw)] as [number, number, number])
-										: ([s0[0] + 1, s0[1], s0[2]] as [number, number, number]));
-									const uS = normalize(sub(s1, s0));
+									// כיוון השיפוע ב"קני" חייב להיגזר מהקטע שמתחיל ב‑Top המשותף (H)
+									// כלומר H -> נקודת המדרגה הראשונה של הגרם (topP1[0]).
+									// שימוש ב‑topP1[0]->topP1[1] עלול לתת כיוון שונה ולשבור את חישוב ה‑miter.
+									const sK0 = H;
+									const sK1 =
+										topP1.length >= 1 ? topP1[0]
+										: (firstYaw !== null ? ([sK0[0] + Math.cos(firstYaw), sK0[1], sK0[2] + Math.sin(firstYaw)] as [number, number, number])
+										: ([sK0[0] + 1, sK0[1], sK0[2]] as [number, number, number]));
+									const uS = normalize(sub(sK1, sK0));
 
 									// נורמל "חזית" הפלטה (ניצב למישור הפלטה) – נדרש כדי להפיק offset בתוך המישור
 									let nFace = cross(uS, wVec);

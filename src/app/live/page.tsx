@@ -3072,19 +3072,19 @@ function Staircase3D({
 									}
 								}
 								// אם קיימת הפניה מה‑A1 (דרך ref) – השתמש בדיוק בנקודות הסיום של A1 לשמירת רוחב זהה
+								// שים לב: אם A1 כבר חישב נקודת קצה מדויקת בפודסט (כולל התאמות רוחב/שיפוע),
+								// חובה להשתמש בה כנקודת התחלה מדויקת ל‑B1 — אחרת מתקבל "קני" לא מיושר/פער.
+								const exactLandingAnchor = !!hitechBStartRef.current;
 								if (hitechBStartRef.current) {
 									const W = hitechBStartRef.current;
-									const Wdx = W.top[0] - W.bot[0], Wdy = W.top[1] - W.bot[1], Wdz = W.top[2] - W.bot[2];
-									if (startFromLandingTop) {
-										startFromLandingBot = [startFromLandingTop[0] - Wdx, startFromLandingTop[1] - Wdy, startFromLandingTop[2] - Wdz];
-									} else {
-										startFromLandingTop = W.top;
-										startFromLandingBot = W.bot;
-									}
+									startFromLandingTop = W.top;
+									startFromLandingBot = W.bot;
 								}
-								// יישור זרימה: המשך אופסטים בשיפוע עד נקודת השקה עם רוחב זהה לפלטת הלנדינג
+
+								// יישור זרימה (רק כשאין נקודת עיגון מדויקת מ‑A1):
+								// המשך אופסטים בשיפוע עד נקודת השקה עם רוחב זהה לפלטת הלנדינג
 								let landingStrip: { t0: [number, number, number]; b0: [number, number, number]; t1: [number, number, number]; b1: [number, number, number] } | null = null;
-								if (startFromLandingTop && startFromLandingBot) {
+								if (startFromLandingTop && startFromLandingBot && !exactLandingAnchor) {
 									// כיוון שיפוע למסילות: אם אין מספיק נקודות מדרגות, נשתמש ב‑firstYaw או בכיוון ברירת מחדל
 									const pT1 = topP1.length >= 1 ? topP1[0] : startFromLandingTop;
 									const pT2 = topP1.length >= 2 ? topP1[1] : (firstYaw !== null ? [pT1[0] + Math.cos(firstYaw), pT1[1], pT1[2] + Math.sin(firstYaw)] as [number, number, number] : [pT1[0] + 1, pT1[1], pT1[2]] as [number, number, number]);

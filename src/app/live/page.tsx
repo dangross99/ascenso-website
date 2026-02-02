@@ -3233,38 +3233,49 @@ function Staircase3D({
 									idxB1.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
 								}
 
-								// בנה סלב אופקי של הפודסט כגיאומטריה נפרדת (עובי כלפי מטה בציר Y)
+								// בנה סלב משופע של הפודסט באותו מישור של B1 (u×w), עם עובי לאורך הנורמל
 								if (landingStrip) {
-									const yTop0 = landingStrip.t0[1];
-									const yTop1 = landingStrip.t1[1];
-									const t0 = landingStrip.t0;
-									const t1 = landingStrip.t1;
-									// הצד הפנימי עליון: מקרב נקודות התחתון ל‑Y של העליון
-									const d0: [number, number, number] = [landingStrip.b0[0], yTop0, landingStrip.b0[2]];
-									const d1: [number, number, number] = [landingStrip.b1[0], yTop1, landingStrip.b1[2]];
+									const t0 = landingStrip.t0; // עליון בתחילת הפודסט
+									const b0 = landingStrip.b0; // תחתון בתחילת הפודסט
+									const t1 = landingStrip.t1; // עליון בנקודת ההצמדה
+									const b1 = landingStrip.b1; // תחתון בנקודת ההצמדה
+									// u לאורך החיבור (מ‑t0 אל t1); w רוחב (מ‑b0 אל t0)
+									let ux = t1[0] - t0[0], uy = t1[1] - t0[1], uz = t1[2] - t0[2];
+									let wx = t0[0] - b0[0], wy = t0[1] - b0[1], wz = t0[2] - b0[2];
+									{ const m = Math.hypot(ux, uy, uz) || 1; ux /= m; uy /= m; uz /= m; }
+									{ const m = Math.hypot(wx, wy, wz) || 1; wx /= m; wy /= m; wz /= m; }
+									// נורמל למישור (כמו B1): n = normalize(u × w), וניקח היסט שלילי לשמירה על "חוץ"
+									let nx = uy * wz - uz * wy;
+									let ny = uz * wx - ux * wz;
+									let nz = ux * wy - uy * wx;
+									{ const m = Math.hypot(nx, ny, nz) || 1; nx /= m; ny /= m; nz /= m; }
 									const th = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
-									// משטח עליון (שתי משולשים): t0,t1,d1,d0
+									const offX = -nx * th, offY = -ny * th, offZ = -nz * th;
+
+									// משטח קדמי (ארבע נקודות): t0, b0, t1, b1
 									let base = posLS.length / 3;
-									posLS.push(t0[0], t0[1], t0[2],  t1[0], t1[1], t1[2],  d1[0], d1[1], d1[2],  d0[0], d0[1], d0[2]);
-									idxLS.push(base + 0, base + 1, base + 2,  base + 0, base + 2, base + 3);
-									// משטח תחתון מוזז מטה ב‑Y
-									const t0e: [number, number, number] = [t0[0], t0[1] - th, t0[2]];
-									const t1e: [number, number, number] = [t1[0], t1[1] - th, t1[2]];
-									const d0e: [number, number, number] = [d0[0], d0[1] - th, d0[2]];
-									const d1e: [number, number, number] = [d1[0], d1[1] - th, d1[2]];
+									posLS.push(t0[0], t0[1], t0[2],  b0[0], b0[1], b0[2],  t1[0], t1[1], t1[2],  b1[0], b1[1], b1[2]);
+									idxLS.push(base + 0, base + 1, base + 2,  base + 2, base + 1, base + 3);
+
+									// משטח אחורי מוזז לפי הנורמל
+									const t0e: [number, number, number] = [t0[0] + offX, t0[1] + offY, t0[2] + offZ];
+									const b0e: [number, number, number] = [b0[0] + offX, b0[1] + offY, b0[2] + offZ];
+									const t1e: [number, number, number] = [t1[0] + offX, t1[1] + offY, t1[2] + offZ];
+									const b1e: [number, number, number] = [b1[0] + offX, b1[1] + offY, b1[2] + offZ];
 									base = posLS.length / 3;
-									posLS.push(t0e[0], t0e[1], t0e[2],  t1e[0], t1e[1], t1e[2],  d1e[0], d1e[1], d1e[2],  d0e[0], d0e[1], d0e[2]);
-									idxLS.push(base + 0, base + 2, base + 1,  base + 0, base + 3, base + 2);
-									// דפנות סביב
+									posLS.push(t0e[0], t0e[1], t0e[2],  b0e[0], b0e[1], b0e[2],  t1e[0], t1e[1], t1e[2],  b1e[0], b1e[1], b1e[2]);
+									idxLS.push(base + 0, base + 2, base + 1,  base + 2, base + 3, base + 1);
+
+									// דפנות סביב (4 צלעות)
 									const addSide = (a: [number, number, number], b: [number, number, number], ae: [number, number, number], be: [number, number, number]) => {
 										const bi = posLS.length / 3;
 										posLS.push(a[0], a[1], a[2],  b[0], b[1], b[2],  be[0], be[1], be[2],  ae[0], ae[1], ae[2]);
 										idxLS.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
 									};
-									addSide(t0, t1, t0e, t1e);
-									addSide(t1, d1, t1e, d1e);
-									addSide(d1, d0, d1e, d0e);
-									addSide(d0, t0, d0e, t0e);
+									addSide(t0, b0, t0e, b0e);
+									addSide(b0, b1, b0e, b1e);
+									addSide(b1, t1, b1e, t1e);
+									addSide(t1, t0, t1e, t0e);
 								}
 								// בוטל: מקטע התאמה אל המסילות
 

@@ -1880,9 +1880,16 @@ function Staircase3D({
 								// שים לב: אם closeP6 זהה לנקודה האחרונה, נשתמש בשתי הנקודות האחרונות של botP6 (לא railBot עם שכפול)
 								const bEnd = botP6[botP6.length - 1];
 								const bPrev = botP6[Math.max(0, botP6.length - 2)];
-								const bvx = bEnd[0] - bPrev[0];
-								const bvy = bEnd[1] - bPrev[1];
-								const bvz = bEnd[2] - bPrev[2];
+								let bvx = bEnd[0] - bPrev[0];
+								let bvy = bEnd[1] - bPrev[1];
+								let bvz = bEnd[2] - bPrev[2];
+								// אם יש רק מדרגה אחת לפני הפודסט, וקטור הכיוון יכול להיות דגנרטיבי
+								// במקרה כזה נ fallback לכיוון הגרם (firstYaw)
+								if (Math.hypot(bvx, bvz) < 1e-9) {
+									bvx = uxDir;
+									bvy = 0;
+									bvz = uzDir;
+								}
 								const denomB = uxDir * bvx + uzDir * bvz;
 								if (Math.abs(denomB) > 1e-9) {
 									const uEnd = dotU(bEnd);

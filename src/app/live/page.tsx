@@ -3022,14 +3022,147 @@ function Staircase3D({
 
 						// בוטל: קאפ סיום חיצוני לפי 3/7
 
+							// --- פלטה B1 לגרם 2 (flight=1) – נגדי לפלטת B: עליון P1 ותחתון P6 ---
+							const buildB1ForFlight1 = () => {
+								const topP1: Array<[number, number, number]> = [];
+								const botP6: Array<[number, number, number]> = [];
+								let firstP1: [number, number, number] | null = null;
+								let firstP6: [number, number, number] | null = null;
+								let firstYaw: number | null = null;
+								let closeP1: [number, number, number] | null = null;
+								let closeP6: [number, number, number] | null = null;
+								for (let i = 0; i < treads.length; i++) {
+									const t = treads[i];
+									if (t.flight !== 1) continue;
+									const yaw = t.rotation[1] as number;
+									const c = Math.cos(yaw), s = Math.sin(yaw);
+									const dx = t.run / 2;
+									const dz = treadWidth / 2;
+									// P1 – עליונה שמאל-אחורה: (-dx, -dz)
+									{
+										const lx = -dx, lz = -dz;
+										const rx = lx * c - lz * s;
+										const rz = lx * s + lz * c;
+										const wx = t.position[0] + rx;
+										const wy = t.position[1] + treadThickness / 2;
+										const wz = t.position[2] + rz;
+										const p1: [number, number, number] = [wx, wy + offsetY, wz];
+										if (!t.isLanding && !firstP1) firstP1 = p1;
+										if (!t.isLanding) topP1.push(p1);
+									}
+									// P6 – תחתונה ימין-אחורה: (+dx, -dz) רק אם אינה פודסט
+									if (!t.isLanding) {
+										const lx = +dx, lz = -dz;
+										const rx = lx * c - lz * s;
+										const rz = lx * s + lz * c;
+										const wx = t.position[0] + rx;
+										const wy = t.position[1] - treadThickness / 2;
+										const wz = t.position[2] + rz;
+										const p6: [number, number, number] = [wx, wy - offsetY, wz];
+										if (!firstP6) { firstP6 = p6; firstYaw = yaw; }
+										botP6.push(p6);
+										// אם הבאה היא פודסט – זו המדרגה שלפני פודסט: שמור 6 תחתון והוסף 1 עליון מפודסט
+										const next = treads[i + 1];
+										if (next && next.flight === 1 && next.isLanding) {
+											closeP6 = p6;
+											const yawL = next.rotation[1] as number;
+											const cL = Math.cos(yawL), sL = Math.sin(yawL);
+											const dxL = next.run / 2, dzL = treadWidth / 2;
+											const lx1 = -dxL, lz1 = -dzL;
+											const rx1 = lx1 * cL - lz1 * sL;
+											const rz1 = lx1 * sL + lz1 * cL;
+											const wx1 = next.position[0] + rx1;
+											const wy1 = next.position[1] + treadThickness / 2 + offsetY;
+											const wz1 = next.position[2] + rz1;
+											closeP1 = [wx1, wy1, wz1];
+										}
+									}
+								}
+								if (topP1.length === 0 || botP6.length === 0) return null;
+								// מסילות
+								const railTopB1: Array<[number, number, number]> = closeP1 ? [...topP1, closeP1] : [...topP1];
+								const railBotB1: Array<[number, number, number]> = closeP6 ? [...botP6, closeP6] : [...botP6];
+								const segCountB1 = Math.max(railTopB1.length, railBotB1.length);
+								if (segCountB1 < 2) return null;
+								const posB1: number[] = [];
+								const idxB1: number[] = [];
+								const pickB1 = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
+								for (let i = 0; i < segCountB1 - 1; i++) {
+									const t1 = pickB1(railTopB1, i);
+									const b1 = pickB1(railBotB1, i);
+									const t2 = pickB1(railTopB1, i + 1);
+									const b2 = pickB1(railBotB1, i + 1);
+									const baseIndex = posB1.length / 3;
+									posB1.push(t1[0], t1[1], t1[2],  b1[0], b1[1], b1[2],  t2[0], t2[1], t2[2],  b2[0], b2[1], b2[2]);
+									idxB1.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
+									idxB1.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
+								}
+								// עובי ונורמל
+								const thicknessB1 = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
+								let uxB = 1, uyB = 0, uzB = 0;
+								if (railTopB1.length >= 2) {
+									uxB = railTopB1[1][0] - railTopB1[0][0];
+									uyB = railTopB1[1][1] - railTopB1[0][1];
+									uzB = railTopB1[1][2] - railTopB1[0][2];
+									const m = Math.hypot(uxB, uyB, uzB) || 1; uxB /= m; uyB /= m; uzB /= m;
+								}
+								let wxB = (firstP1 && firstP6) ? (firstP1[0] - firstP6[0]) : (railTopB1[0][0] - railBotB1[0][0]);
+								let wyB = (firstP1 && firstP6) ? (firstP1[1] - firstP6[1]) : (railTopB1[0][1] - railBotB1[0][1]);
+								let wzB = (firstP1 && firstP6) ? (firstP1[2] - firstP6[2]) : (railTopB1[0][2] - railBotB1[0][2]);
+								let nmXB = uyB * wzB - uzB * wyB;
+								let nmYB = uzB * wxB - uxB * wzB;
+								let nmZB = uxB * wyB - uyB * wxB;
+								{ const m = Math.hypot(nmXB, nmYB, nmZB) || 1; nmXB /= m; nmYB /= m; nmZB /= m; }
+								const offXB = -nmXB * thicknessB1, offYB = -nmYB * thicknessB1, offZB = -nmZB * thicknessB1;
+								// שכבת גב
+								{
+									const frontN = posB1.length / 3;
+									const backBase = frontN;
+									for (let i = 0; i < frontN * 3; i += 3) {
+										posB1.push(posB1[i] + offXB, posB1[i + 1] + offYB, posB1[i + 2] + offZB);
+									}
+									const frontI = idxB1.length;
+									for (let i = 0; i < frontI; i += 3) {
+										const a = idxB1[i], b = idxB1[i + 1], c = idxB1[i + 2];
+										idxB1.push(backBase + a, backBase + c, backBase + b);
+									}
+								}
+								// דפנות
+								const addSideB1 = (rail: Array<[number, number, number]>) => {
+									if (rail.length < 2) return;
+									for (let i = 0; i < rail.length - 1; i++) {
+										const pA = rail[i], pB = rail[i + 1];
+										const pAe: [number, number, number] = [pA[0] + offXB, pA[1] + offYB, pA[2] + offZB];
+										const pBe: [number, number, number] = [pB[0] + offXB, pB[1] + offYB, pB[2] + offZB];
+										const bi = posB1.length / 3;
+										posB1.push(pA[0], pA[1], pA[2],  pB[0], pB[1], pB[2],  pBe[0], pBe[1], pBe[2],  pAe[0], pAe[1], pAe[2]);
+										idxB1.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+									}
+								};
+								addSideB1(railTopB1);
+								addSideB1(railBotB1);
+								return (
+									<mesh castShadow receiveShadow>
+										<bufferGeometry attach="geometry">
+											<bufferAttribute attach="attributes-position" args={[new Float32Array(posB1), 3]} />
+											<bufferAttribute attach="index" args={[new Uint32Array(idxB1), 1]} />
+										</bufferGeometry>
+										<meshBasicMaterial color="#4b5563" side={2} />
+									</mesh>
+								);
+							};
+
 							return (
-								<mesh castShadow receiveShadow>
-									<bufferGeometry attach="geometry">
-										<bufferAttribute attach="attributes-position" args={[new Float32Array(pos), 3]} />
-										<bufferAttribute attach="index" args={[new Uint32Array(idx), 1]} />
-									</bufferGeometry>
-									<meshBasicMaterial color="#16a34a" side={2} />
-								</mesh>
+								<group>
+									<mesh castShadow receiveShadow>
+										<bufferGeometry attach="geometry">
+											<bufferAttribute attach="attributes-position" args={[new Float32Array(pos), 3]} />
+											<bufferAttribute attach="index" args={[new Uint32Array(idx), 1]} />
+										</bufferGeometry>
+										<meshBasicMaterial color="#16a34a" side={2} />
+									</mesh>
+									{buildB1ForFlight1()}
+								</group>
 							);
 						})()}
 					</group>

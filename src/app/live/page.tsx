@@ -3300,8 +3300,8 @@ function Staircase3D({
 								addSideB1(topRailB1);
 								addSideB1(botRailB1);
 
-								// קאפ התחלה אנכי (אם לא מתחילים מהפודסט)
-								if (!(startFromLandingTop && startFromLandingBot)) {
+								// קאפ התחלה אנכי – תמיד סגור בתחילת הפלטה (גם אם מתחילים מהפודסט)
+								{
 									const pT = topRailB1[0];
 									const pBy = botRailB1[0][1];
 									const pB: [number, number, number] = [pT[0], pBy, pT[2]];

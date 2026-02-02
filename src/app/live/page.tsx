@@ -3118,14 +3118,14 @@ function Staircase3D({
 								// יישור זרימה: המשך אופסטים בשיפוע עד נקודת השקה עם רוחב זהה לפלטת הלנדינג
 								let landingStrip: { t0: [number, number, number]; b0: [number, number, number]; t1: [number, number, number]; b1: [number, number, number] } | null = null;
 								let landingAdapter: { t0: [number, number, number]; b0: [number, number, number]; t1: [number, number, number]; b1: [number, number, number] } | null = null;
-								if (startFromLandingTop && startFromLandingBot && topP1.length >= 1 && botP6.length >= 1) {
-									// כיוון שיפוע למסילה העליונה/תחתונה מהשתי נקודות הראשונות של הגרם
-									const pT1 = topP1[0];
-									const pT2 = topP1.length >= 2 ? topP1[1] : pT1;
+								if (startFromLandingTop && startFromLandingBot) {
+									// כיוון שיפוע למסילות: אם אין מספיק נקודות מדרגות, נשתמש ב‑firstYaw או בכיוון ברירת מחדל
+									const pT1 = topP1.length >= 1 ? topP1[0] : startFromLandingTop;
+									const pT2 = topP1.length >= 2 ? topP1[1] : (firstYaw !== null ? [pT1[0] + Math.cos(firstYaw), pT1[1], pT1[2] + Math.sin(firstYaw)] as [number, number, number] : [pT1[0] + 1, pT1[1], pT1[2]] as [number, number, number]);
 									let dTx = pT1[0] - pT2[0], dTy = pT1[1] - pT2[1], dTz = pT1[2] - pT2[2];
 									{ const m = Math.hypot(dTx, dTy, dTz) || 1; dTx /= m; dTy /= m; dTz /= m; }
-									const pB1 = botP6[0];
-									const pB2 = botP6.length >= 2 ? botP6[1] : pB1;
+									const pB1 = botP6.length >= 1 ? botP6[0] : startFromLandingBot;
+									const pB2 = botP6.length >= 2 ? botP6[1] : (firstYaw !== null ? [pB1[0] + Math.cos(firstYaw), pB1[1], pB1[2] + Math.sin(firstYaw)] as [number, number, number] : [pB1[0] + 1, pB1[1], pB1[2]] as [number, number, number]);
 									let dBx = pB1[0] - pB2[0], dBy = pB1[1] - pB2[1], dBz = pB1[2] - pB2[2];
 									{ const m = Math.hypot(dBx, dBy, dBz) || 1; dBx /= m; dBy /= m; dBz /= m; }
 									// וקטור כיוון המישור של הפודסט (לפי yaw של הפודסט הקודם אם קיים; אחרת לפי firstYaw או כיוון המסילה העליונה)
@@ -3170,7 +3170,9 @@ function Staircase3D({
 										Ua = Ub; Fa = Fb; Ub = Uc; Fb = Fc;
 										if (Math.abs(Fb) < 1e-6) break;
 									}
-									const Ustar = Ub;
+									let Ustar = Ub;
+									// מניעת פס באורך 0: אם U* קרוב מדי ל‑U0, דחוף אותו מעט קדימה
+									if (Math.abs(Ustar - U0) < 1e-4) Ustar = U0 + 0.02;
 									const joinTop = pointOnLineAtU(pT1, [dTx, dTy, dTz], Ustar);
 									const joinBot = pointOnLineAtU(pB1, [dBx, dBy, dBz], Ustar);
 									// אם זה אכן הפודסט הראשון לפני הגרם – חיבור אופקי (Y קבוע) עם רוחב קבוע; אחרת – החיבור המקורי

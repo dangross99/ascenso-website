@@ -3172,11 +3172,38 @@ function Staircase3D({
 									const Ustar = Ub;
 									const joinTop = pointOnLineAtU(pT1, [dTx, dTy, dTz], Ustar);
 									const joinBot = pointOnLineAtU(pB1, [dBx, dBy, dBz], Ustar);
-									// פס חיבור ישיר מהפודסט אל נקודת ההצמדה על המסילות
-									landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: joinTop, b1: joinBot };
-									// התחלת הפלטה תהיה בדיוק בנקודות ההצמדה כדי לשמור רוחב זהה
-									startFromLandingTop = joinTop;
-									startFromLandingBot = joinBot;
+									// אם זה אכן הפודסט הראשון לפני הגרם – חיבור אופקי (Y קבוע) עם רוחב קבוע; אחרת – החיבור המקורי
+									let hasPrevLanding = false;
+									if (firstStepIdxInFlight !== null && firstStepIdxInFlight > 0) {
+										const prev = treads[firstStepIdxInFlight - 1];
+										hasPrevLanding = !!(prev && prev.isLanding);
+									}
+									if (hasPrevLanding) {
+										const widthVec: [number, number, number] = [
+											startFromLandingTop[0] - startFromLandingBot[0],
+											startFromLandingTop[1] - startFromLandingBot[1],
+											startFromLandingTop[2] - startFromLandingBot[2],
+										];
+										const landTopEnd: [number, number, number] = [
+											startFromLandingTop[0] + (Ustar - U0) * uxL,
+											startFromLandingTop[1],
+											startFromLandingTop[2] + (Ustar - U0) * uzL,
+										];
+										const landBotEnd: [number, number, number] = [
+											landTopEnd[0] - widthVec[0],
+											landTopEnd[1] - widthVec[1],
+											landTopEnd[2] - widthVec[2],
+										];
+										landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: landTopEnd, b1: landBotEnd };
+										startFromLandingTop = landTopEnd;
+										startFromLandingBot = landBotEnd;
+									} else {
+										// פס חיבור ישיר מהפודסט אל נקודת ההצמדה על המסילות
+										landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: joinTop, b1: joinBot };
+										// התחלת הפלטה תהיה בדיוק בנקודות ההצמדה כדי לשמור רוחב זהה
+										startFromLandingTop = joinTop;
+										startFromLandingBot = joinBot;
+									}
 								}
 
 								// בניית מסילות B1 (כולל הארכת פתיחה מהפודסט אם קיים)

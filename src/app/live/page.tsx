@@ -3201,6 +3201,16 @@ function Staircase3D({
 									idxB1.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
 								}
 
+								// fallback נוסף: אם משום מה לא נוצרו משולשים (לדוגמה נקודות חופפות) – צור סגמנט ראשון מינימלי
+								if (posB1.length === 0 && topRailB1.length >= 2 && botRailB1.length >= 2) {
+									const t1 = topRailB1[0], t2 = topRailB1[1];
+									const b1 = botRailB1[0], b2 = botRailB1[1];
+									const baseIndex = posB1.length / 3;
+									posB1.push(t1[0], t1[1], t1[2],  b1[0], b1[1], b1[2],  t2[0], t2[1], t2[2],  b2[0], b2[1], b2[2]);
+									idxB1.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
+									idxB1.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
+								}
+
 								// (הוסר) פס חיבור נפרד מהפודסט – B1 מתחילה ישירות בנקודות ההצמדה
 								// בוטל: מקטע התאמה אל המסילות
 

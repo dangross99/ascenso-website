@@ -3203,8 +3203,8 @@ function Staircase3D({
 										e1 = normalize(e1);
 										const e2 = normalize(cross(nFace, e1));
 
-										// נשתמש במוצא יציב (קצה רחוק של הפודסט) כדי לקבל חישוב עקבי
-										const O = rawLandingStartTop || H;
+										// מוצא יציב: H (ציר הפודסט). חשוב לא להזיז את H במישור אחר, כדי שהפודסט לא "יחליף מישור".
+										const O = H;
 										const to2 = (P: [number, number, number]): [number, number] => {
 											const v = sub(P, O);
 											return [dot(v, e1), dot(v, e2)];
@@ -3222,17 +3222,10 @@ function Staircase3D({
 											return from2(p0[0] + t * r[0], p0[1] + t * r[1]);
 										};
 
-										// TOP lines
-										const landingTopLinePoint = rawLandingStartTop || H;
-										const Hk = intersect(landingTopLinePoint, uL, slopeTop0, uS);
-										if (Hk) {
-											H = Hk;
-											startFromLandingTop = H;
-										}
-
-										// BOTTOM lines (offset from each TOP by Wmag)
-										const landingBotLinePoint = add(landingTopLinePoint, scale(pL, -Wmag));
-										const slopeBotLinePoint = add(slopeTop0, scale(pS, -Wmag));
+										// BOTTOM lines (offset במרחק Wmag מה‑TOP בנקודת הברך H)
+										// חשוב: ה‑Top נשאר H (גובה הפודסט), וה‑Bot הוא שמחליק דינמית לפי זווית (miter).
+										const landingBotLinePoint = add(H, scale(pL, -Wmag));
+										const slopeBotLinePoint = add(H, scale(pS, -Wmag));
 										const Bk = intersect(landingBotLinePoint, uL, slopeBotLinePoint, uS);
 										startFromLandingBot = Bk || slopeBotLinePoint;
 									}

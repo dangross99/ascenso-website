@@ -3140,11 +3140,7 @@ function Staircase3D({
 									}
 									const dotU = (x: [number, number, number]) => (uxL * x[0] + uzL * x[2]);
 									const U0 = dotU(startFromLandingTop);
-									// רוחב יעד קבוע לפי רוחב הפלטות (הפרש P1‑P6 של המדרגה הראשונה אם קיים; אחרת לפי נקודות הלנדינג)
-									const widthFromSteps = (firstP1 && firstP6)
-										? Math.hypot(firstP1[0] - firstP6[0], firstP1[1] - firstP6[1], firstP1[2] - firstP6[2])
-										: null;
-									const widthTarget = widthFromSteps !== null ? widthFromSteps : Math.hypot(
+									const widthTarget = Math.hypot(
 										startFromLandingTop[0] - startFromLandingBot[0],
 										startFromLandingTop[1] - startFromLandingBot[1],
 										startFromLandingTop[2] - startFromLandingBot[2],
@@ -3175,24 +3171,9 @@ function Staircase3D({
 									}
 									const Ustar = Ub;
 									const joinTop = pointOnLineAtU(pT1, [dTx, dTy, dTz], Ustar);
-									// שמירת רוחב קבוע לאורך כל פס החיבור: תחתון = עליון פחות וקטור רוחב קבוע
-									const widthVec: [number, number, number] = [
-										startFromLandingTop[0] - startFromLandingBot[0],
-										startFromLandingTop[1] - startFromLandingBot[1],
-										startFromLandingTop[2] - startFromLandingBot[2],
-									];
-									const joinBot: [number, number, number] = [
-										joinTop[0] - widthVec[0],
-										joinTop[1] - widthVec[1],
-										joinTop[2] - widthVec[2],
-									];
+									const joinBot = pointOnLineAtU(pB1, [dBx, dBy, dBz], Ustar);
 									// פס חיבור ישיר מהפודסט אל נקודת ההצמדה על המסילות
-									landingStrip = {
-										t0: startFromLandingTop,
-										b0: [startFromLandingTop[0] - widthVec[0], startFromLandingTop[1] - widthVec[1], startFromLandingTop[2] - widthVec[2]],
-										t1: joinTop,
-										b1: joinBot,
-									};
+									landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: joinTop, b1: joinBot };
 									// התחלת הפלטה תהיה בדיוק בנקודות ההצמדה כדי לשמור רוחב זהה
 									startFromLandingTop = joinTop;
 									startFromLandingBot = joinBot;
@@ -3317,8 +3298,23 @@ function Staircase3D({
 										const zFar = nextLanding.position[2] + rzFar;
 										const yTop = nextLanding.position[1] + treadThickness / 2 + offsetY;
 										extTopAtL = [xFar, yTop, zFar];
-										// שמור רוחב קבוע: תחתון = עליון פחות וקטור רוחב של הפלטה בתחילת הגרם
-										extBotAtL = [extTopAtL[0] - wxB, extTopAtL[1] - wyB, extTopAtL[2] - wzB];
+										// הקרנת תחתון לאורך שיפוע המסילה התחתונה למישור קצה הפודסט
+										const botEndW = botRailB1[botRailB1.length - 1];
+										const botPrevW = botRailB1.length >= 2 ? botRailB1[botRailB1.length - 2] : botEndW;
+										let vx = botEndW[0] - botPrevW[0];
+										let vy = botEndW[1] - botPrevW[1];
+										let vz = botEndW[2] - botPrevW[2];
+										if (Math.abs(vx) < 1e-9 && Math.abs(vz) < 1e-9 && firstYaw !== null) { vx = Math.cos(firstYaw); vz = Math.sin(firstYaw); vy = 0; }
+										let ux = Math.cos(yawL), uz = Math.sin(yawL);
+										const dotU = (x: [number, number, number]) => (ux * x[0] + uz * x[2]);
+										const planeU = dotU(extTopAtL);
+										const mag = Math.hypot(vx, vy, vz) || 1;
+										const vUx = vx / mag, vUy = vy / mag, vUz = vz / mag;
+										const denomU = ux * vUx + uz * vUz;
+										if (Math.abs(denomU) > 1e-9) {
+											const t = (planeU - dotU(botEndW)) / denomU;
+											extBotAtL = [botEndW[0] + vUx * t, botEndW[1] + vUy * t, botEndW[2] + vUz * t];
+										}
 									}
 								}
 

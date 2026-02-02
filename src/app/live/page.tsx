@@ -3175,8 +3175,9 @@ function Staircase3D({
 								if (segCountB1 < 2) {
 									const t1 = startFromLandingTop || topRailB1[0];
 									const b1 = startFromLandingBot || botRailB1[0];
-									const t2 = topRailB1[topRailB1.length - 1] || t1;
-									const b2 = botRailB1[botRailB1.length - 1] || b1;
+									// מניעת רצועה דקה באורך 0: אם יש לפחות מדרגה אחת – השתמש בנקודת המדרגה הראשונה בתור קצה שני
+									const t2 = (topRailB1.length >= 2 ? topRailB1[1] : (topP1.length >= 1 ? topP1[0] : (topRailB1[topRailB1.length - 1] || t1)));
+									const b2 = (botRailB1.length >= 2 ? botRailB1[1] : (botP6.length >= 1 ? botP6[0] : (botRailB1[botRailB1.length - 1] || b1)));
 									const baseIndex = posB1.length / 3;
 									posB1.push(t1[0], t1[1], t1[2],  b1[0], b1[1], b1[2],  t2[0], t2[1], t2[2],  b2[0], b2[1], b2[2]);
 									idxB1.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);

@@ -3090,13 +3090,33 @@ function Staircase3D({
 								const a1Anchor = hitechBStartRef.current;
 								const hasExactLandingAnchor = !!a1Anchor;
 								if (a1Anchor) {
-									const H: [number, number, number] = a1Anchor.top;
+									// H (Top knee) צריך לשבת על חיתוך ה‑Top של הפודסט עם ה‑Top של השיפוע,
+									// אחרת הפודסט "נשאב" לשיפוע ונוצר אלכסון (כמו שאתה רואה בירוק).
+									const H0: [number, number, number] = a1Anchor.top;
 									const wVec: [number, number, number] = [
 										a1Anchor.top[0] - a1Anchor.bot[0],
 										a1Anchor.top[1] - a1Anchor.bot[1],
 										a1Anchor.top[2] - a1Anchor.bot[2],
 									];
 									const Wmag = Math.hypot(wVec[0], wVec[1], wVec[2]);
+									// נחשב H ב‑XZ כ‑intersection בין קו הפודסט וקו השיפוע, ונשמור Y של הפודסט
+									const landingTop0 = rawLandingStartTop || H0;
+									const Hy = (rawLandingStartTop ? rawLandingStartTop[1] : H0[1]);
+									// כיוון השיפוע ב‑XZ – נעדיף שתי נקודות ראשונות של השיפוע, אחרת firstYaw
+									let sx = 1, sz = 0;
+									if (topP1.length >= 2) {
+										sx = topP1[1][0] - topP1[0][0];
+										sz = topP1[1][2] - topP1[0][2];
+									} else if (topP1.length >= 1) {
+										sx = topP1[0][0] - H0[0];
+										sz = topP1[0][2] - H0[2];
+									} else if (firstYaw !== null) {
+										sx = Math.cos(firstYaw); sz = Math.sin(firstYaw);
+									}
+									{ const m = Math.hypot(sx, sz) || 1; sx /= m; sz /= m; }
+									const slopeTop0XZ = topP1.length >= 1 ? topP1[0] : H0;
+									const crossXZ = (ax: number, az: number, bx: number, bz: number) => ax * bz - az * bx;
+									let H: [number, number, number] = H0;
 									startFromLandingTop = H;
 
 									// עזרי וקטורים
@@ -3126,6 +3146,17 @@ function Staircase3D({
 										const d = sub(topP1[1], topP1[0]);
 										uxL = d[0]; uzL = d[2];
 										const m = Math.hypot(uxL, uzL) || 1; uxL /= m; uzL /= m;
+									}
+									// עדכן את H כ‑intersection ב‑XZ בין קו הפודסט וקו השיפוע (אחרי שחישבנו uxL/uzL)
+									{
+										const denom = crossXZ(uxL, uzL, sx, sz);
+										if (Math.abs(denom) > 1e-9) {
+											const qpx = slopeTop0XZ[0] - landingTop0[0];
+											const qpz = slopeTop0XZ[2] - landingTop0[2];
+											const t = crossXZ(qpx, qpz, sx, sz) / denom;
+											H = [landingTop0[0] + uxL * t, Hy, landingTop0[2] + uzL * t];
+											startFromLandingTop = H;
+										}
 									}
 									const uL = normalize([uxL, 0, uzL]);
 

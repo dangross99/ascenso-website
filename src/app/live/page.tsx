@@ -3348,15 +3348,41 @@ function Staircase3D({
 										posB1.push(botEnd[0], botEnd[1], botEnd[2],  extBotAtL[0], extBotAtL[1], extBotAtL[2],  b2e[0], b2e[1], b2e[2],  b1e[0], b1e[1], b1e[2]);
 										idxB1.push(biBot + 0, biBot + 1, biBot + 2,  biBot + 0, biBot + 2, biBot + 3);
 									}
-									// קאפ אנכי בסוף הפודסט
+									// פלטה מלבנית לאורך צד הפודסט (קודקודי 2‑3‑7‑6) ברוחב סיום A1
 									{
-										const lastT = extTopAtL;
-										const lastB = extBotAtL;
-										const lastTe: [number, number, number] = [lastT[0] + offXB, lastT[1] + offYB, lastT[2] + offZB];
-										const lastBe: [number, number, number] = [lastB[0] + offXB, lastB[1] + offYB, lastB[2] + offZB];
+										// וקטור רוחב מהרפרנס: W = extTopAtL - extBotAtL
+										const Wdx = extTopAtL[0] - extBotAtL[0];
+										const Wdy = extTopAtL[1] - extBotAtL[1];
+										const Wdz = extTopAtL[2] - extBotAtL[2];
+										// נקודות עליונות בקצה הימני של הפודסט: P2 (lz = -dzL), P3 (lz = +dzL)
+										const p2Top: [number, number, number] = [extTopAtL[0], extTopAtL[1], extTopAtL[2]];
+										const rx3 = dxL * cL - (+dzL) * sL;
+										const rz3 = dxL * sL + (+dzL) * cL;
+										const p3Top: [number, number, number] = [nextLanding ? nextLanding.position[0] + rx3 : extTopAtL[0], extTopAtL[1], nextLanding ? nextLanding.position[2] + rz3 : extTopAtL[2]];
+										// נקודות תחתונות לפי רוחב W
+										const p2Bot: [number, number, number] = [p2Top[0] - Wdx, p2Top[1] - Wdy, p2Top[2] - Wdz];
+										const p3Bot: [number, number, number] = [p3Top[0] - Wdx, p3Top[1] - Wdy, p3Top[2] - Wdz];
+										// משטח קדמי
 										const bi = posB1.length / 3;
-										posB1.push(lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
-										idxB1.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+										posB1.push(p2Top[0], p2Top[1], p2Top[2],  p2Bot[0], p2Bot[1], p2Bot[2],  p3Top[0], p3Top[1], p3Top[2],  p3Bot[0], p3Bot[1], p3Bot[2]);
+										idxB1.push(bi + 0, bi + 1, bi + 2);
+										idxB1.push(bi + 2, bi + 1, bi + 3);
+										// שכבת גב
+										const bb = posB1.length / 3;
+										const p2Te: [number, number, number] = [p2Top[0] + offXB, p2Top[1] + offYB, p2Top[2] + offZB];
+										const p2Be: [number, number, number] = [p2Bot[0] + offXB, p2Bot[1] + offYB, p2Bot[2] + offZB];
+										const p3Te: [number, number, number] = [p3Top[0] + offXB, p3Top[1] + offYB, p3Top[2] + offZB];
+										const p3Be: [number, number, number] = [p3Bot[0] + offXB, p3Bot[1] + offYB, p3Bot[2] + offZB];
+										posB1.push(p2Te[0], p2Te[1], p2Te[2],  p2Be[0], p2Be[1], p2Be[2],  p3Te[0], p3Te[1], p3Te[2],  p3Be[0], p3Be[1], p3Be[2]);
+										idxB1.push(bb + 0, bb + 2, bb + 1);
+										idxB1.push(bb + 2, bb + 3, bb + 1);
+										// דפנות קצרות בשני קצות הפודסט
+										const biA = posB1.length / 3;
+										posB1.push(p2Top[0], p2Top[1], p2Top[2],  p2Bot[0], p2Bot[1], p2Bot[2],  p2Be[0], p2Be[1], p2Be[2],  p2Te[0], p2Te[1], p2Te[2]);
+										idxB1.push(biA + 0, biA + 1, biA + 2,  biA + 0, biA + 2, biA + 3);
+										const biB = posB1.length / 3;
+										posB1.push(p3Top[0], p3Top[1], p3Top[2],  p3Bot[0], p3Bot[1], p3Bot[2],  p3Be[0], p3Be[1], p3Be[2],  p3Te[0], p3Te[1], p3Te[2]);
+										idxB1.push(biB + 0, biB + 1, biB + 2,  biB + 0, biB + 2, biB + 3);
 									}
 								} else if (shouldRenderClosingCapForFlight(1)) {
 									// פולבאק: קאפ בסוף הגרם (דרך P3/2 של המדרגה האחרונה) – כמו ב‑B

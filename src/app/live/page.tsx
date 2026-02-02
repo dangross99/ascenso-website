@@ -1888,7 +1888,7 @@ function Staircase3D({
 								idx.push(base + 2, base + 1, base + 3);
 							}
 
-							// הכנה להארכה מתחת לפודסט: 30 מ״מ מתחתית הפודסט והמשך עד סופו (פלטה A1)
+							// הכנה להארכה עד סוף הפודסט (פלטה A1) – נשמור אופסט עליון קבוע, רוחב ייקבע מלמטה בהמשך
 							let extTopAt30: [number, number, number] | null = null;
 							let extBot30: [number, number, number] | null = null;
 							(() => {
@@ -1908,11 +1908,10 @@ function Staircase3D({
 								const rzFar = lxFar * sL + lzFar * cL;
 								const xFar = landing.position[0] + rxFar;
 								const zFar = landing.position[2] + rzFar;
-								// עליון ממשטח הפודסט + offsetY, תחתון 30 מ״מ מתחת לתחתית הפודסט
+								// עליון ממשטח הפודסט + offsetY (האופסט מלמעלה נשמר קבוע)
 								const yTop = landing.position[1] + treadThickness / 2 + offsetY;
-								const yBot = landing.position[1] - treadThickness / 2 - 0.03;
 								extTopAt30 = [xFar, yTop, zFar];
-								extBot30 = [xFar, yBot, zFar];
+								// extBot30 יחושב בהמשך משימור רוחב הפלטה (כל הרוחב מגיע מלמטה)
 							})();
 
 							// עובי קבוע לפי נורמל המישור
@@ -1964,6 +1963,16 @@ function Staircase3D({
 							const railBotForSide = firstP6 ? [firstP6, ...railBot] : railBot;
 							addSide(railTopForSide);
 							addSide(railBotForSide);
+
+							// קיבוע רוחב ההארכה בסוף הפודסט: אותו רוחב כמו בקצה הפלטה, וכל הרוחב מלמטה
+							if (extTopAt30) {
+								const topEndW = railTopForSide[railTopForSide.length - 1];
+								const botEndW = railBotForSide[railBotForSide.length - 1];
+								const wdx = topEndW[0] - botEndW[0];
+								const wdy = topEndW[1] - botEndW[1];
+								const wdz = topEndW[2] - botEndW[2];
+								extBot30 = [extTopAt30[0] - wdx, extTopAt30[1] - wdy, extTopAt30[2] - wdz];
+							}
 
 							// פאנל התחלה אנכי לרצפה (כמו בפלטה A): בין P1 למטה לרצפה ובין P6 למטה לרצפה, כולל עובי
 							let startPanelMesh = null;

@@ -1888,6 +1888,33 @@ function Staircase3D({
 								idx.push(base + 2, base + 1, base + 3);
 							}
 
+							// הכנה להארכה מתחת לפודסט: 30 מ״מ מתחתית הפודסט והמשך עד סופו (פלטה A1)
+							let extTopAt30: [number, number, number] | null = null;
+							let extBot30: [number, number, number] | null = null;
+							(() => {
+								// מצא את הפודסט הראשון בגרם 0
+								let landing: typeof treads[number] | null = null;
+								for (let i = 0; i < treads.length; i++) {
+									const t = treads[i];
+									if (t.flight === 0 && t.isLanding) { landing = t; break; }
+								}
+								if (!landing) return;
+								const yawL = landing.rotation[1] as number;
+								const cL = Math.cos(yawL), sL = Math.sin(yawL);
+								const dxL = landing.run / 2, dzL = treadWidth / 2;
+								// קצה רחוק של הפודסט לאורך כיוון הגרם, בצד A1 (lz = -dzL)
+								const lxFar = +dxL, lzFar = -dzL;
+								const rxFar = lxFar * cL - lzFar * sL;
+								const rzFar = lxFar * sL + lzFar * cL;
+								const xFar = landing.position[0] + rxFar;
+								const zFar = landing.position[2] + rzFar;
+								// עליון ממשטח הפודסט + offsetY, תחתון 30 מ״מ מתחת לתחתית הפודסט
+								const yTop = landing.position[1] + treadThickness / 2 + offsetY;
+								const yBot = landing.position[1] - treadThickness / 2 - 0.03;
+								extTopAt30 = [xFar, yTop, zFar];
+								extBot30 = [xFar, yBot, zFar];
+							})();
+
 							// עובי קבוע לפי נורמל המישור
 							const thickness = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
 							let ux = 1, uy = 0, uz = 0;
@@ -1980,35 +2007,140 @@ function Staircase3D({
 								);
 							}
 
-							// פאנל סיום קבוע בקצה פלטת A1 (ללא תלות בפודסט)
-							{
+							// סיום: אם יש הארכת תחתון ל‑30 מ״מ – סגור לקאפ אנכי במיקום זה; אחרת fallback ללוגיקה הקיימת
+							if (shouldRenderClosingCapForFlight(0) && extBot30 && extTopAt30) {
+								// קטע מגשר מקצה הפלטה אל מיקום ה‑30 מ״מ + שכבת גב + דפנות
 								const topEnd = railTopForSide[railTopForSide.length - 1];
 								const botEnd = railBotForSide[railBotForSide.length - 1];
-								// חזית
 								{
 									const base = pos.length / 3;
-									pos.push(topEnd[0], topEnd[1], topEnd[2],  botEnd[0], botEnd[1], botEnd[2],  botEnd[0], botEnd[1], botEnd[2],  topEnd[0], topEnd[1], topEnd[2]);
-									// שתי משולשים (ריבוע אנכי)
-									idx.push(base + 0, base + 1, base + 3);
-									idx.push(base + 3, base + 1, base + 2);
-								}
-								// גב
-								{
+									pos.push(topEnd[0], topEnd[1], topEnd[2]);
+									pos.push(botEnd[0], botEnd[1], botEnd[2]);
+									pos.push(extTopAt30[0], extTopAt30[1], extTopAt30[2]);
+									pos.push(extBot30[0], extBot30[1], extBot30[2]);
+									idx.push(base + 0, base + 1, base + 2);
+									idx.push(base + 2, base + 1, base + 3);
+									// שכבת גב
+									const backBase = pos.length / 3;
 									const t1e: [number, number, number] = [topEnd[0] + offX, topEnd[1] + offY, topEnd[2] + offZ];
 									const b1e: [number, number, number] = [botEnd[0] + offX, botEnd[1] + offY, botEnd[2] + offZ];
-									const base = pos.length / 3;
-									pos.push(t1e[0], t1e[1], t1e[2],  b1e[0], b1e[1], b1e[2],  b1e[0], b1e[1], b1e[2],  t1e[0], t1e[1], t1e[2]);
-									idx.push(base + 0, base + 2, base + 1);
-									idx.push(base + 0, base + 3, base + 2);
+									const t2e: [number, number, number] = [extTopAt30[0] + offX, extTopAt30[1] + offY, extTopAt30[2] + offZ];
+									const b2e: [number, number, number] = [extBot30[0] + offX, extBot30[1] + offY, extBot30[2] + offZ];
+									pos.push(t1e[0], t1e[1], t1e[2],  b1e[0], b1e[1], b1e[2],  t2e[0], t2e[1], t2e[2],  b2e[0], b2e[1], b2e[2]);
+									idx.push(backBase + 0, backBase + 2, backBase + 1);
+									idx.push(backBase + 2, backBase + 3, backBase + 1);
+									// דפנות
+									const biTop = pos.length / 3;
+									pos.push(topEnd[0], topEnd[1], topEnd[2],  extTopAt30[0], extTopAt30[1], extTopAt30[2],  t2e[0], t2e[1], t2e[2],  t1e[0], t1e[1], t1e[2]);
+									idx.push(biTop + 0, biTop + 1, biTop + 2,  biTop + 0, biTop + 2, biTop + 3);
+									const biBot = pos.length / 3;
+									pos.push(botEnd[0], botEnd[1], botEnd[2],  extBot30[0], extBot30[1], extBot30[2],  b2e[0], b2e[1], b2e[2],  b1e[0], b1e[1], b1e[2]);
+									idx.push(biBot + 0, biBot + 1, biBot + 2,  biBot + 0, biBot + 2, biBot + 3);
 								}
-								// דפנות עליונה ותחתונה המחברות בין חזית לגב
+								// מלבן קאפ אנכי במיקום ה‑30 מ״מ
 								{
-									const t1e: [number, number, number] = [topEnd[0] + offX, topEnd[1] + offY, topEnd[2] + offZ];
-									const b1e: [number, number, number] = [botEnd[0] + offX, botEnd[1] + offY, botEnd[2] + offZ];
-									// עליונה
+									const lastT = extTopAt30;
+									const lastB = extBot30;
+									const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
+									const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
+									const bi = pos.length / 3;
+									pos.push(lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
+									idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+								}
+							} else if (shouldRenderClosingCapForFlight(0)) {
+								let lastStep: any = null;
+								for (let ii = treads.length - 1; ii >= 0; ii--) {
+									const tt = treads[ii];
+									if (tt.flight === 0 && !tt.isLanding) { lastStep = tt; break; }
+								}
+								if (lastStep) {
+									const yaw = lastStep.rotation[1] as number;
+									const c = Math.cos(yaw), s = Math.sin(yaw);
+									const dx = lastStep.run / 2, dz = treadWidth / 2;
+									// מועמדים לקו האנכי: דרך P2 (+dx,-dz) או דרך P1 (-dx,-dz)
+									const cand = (lx: number, lz: number, yTop: number, yBot: number): [[number, number, number], [number, number, number]] => {
+										const rx = lx * c - lz * s;
+										const rz = lx * s + lz * c;
+										const tx: [number, number, number] = [lastStep.position[0] + rx, yTop, lastStep.position[2] + rz];
+										const bx: [number, number, number] = [tx[0], yBot, tx[2]];
+										return [tx, bx];
+									};
+									// נקודות עליונה/תחתונה בגובה משוער (יעודכן לפי הקרנה)
+									const yTop0 = lastStep.position[1] + treadThickness / 2 + offsetY;
+									const yBot0 = lastStep.position[1] - treadThickness / 2 - offsetY;
+									const [candT2, candB2] = cand(+dx, -dz, yTop0, yBot0);
+									const [candT1, candB1] = cand(-dx, -dz, yTop0, yBot0);
+
+									// כיוון המסילות בקצה
+									const topEnd = railTopForSide[railTopForSide.length - 1];
+									const topPrev = railTopForSide.length >= 2 ? railTopForSide[railTopForSide.length - 2] : topEnd;
+									const botEnd = railBotForSide[railBotForSide.length - 1];
+									const botPrev = railBotForSide.length >= 2 ? railBotForSide[railBotForSide.length - 2] : botEnd;
+									let uxE = topEnd[0] - topPrev[0], uzE = topEnd[2] - topPrev[2], uyE = topEnd[1] - topPrev[1];
+									let vxE = botEnd[0] - botPrev[0], vzE = botEnd[2] - botPrev[2], vyE = botEnd[1] - botPrev[1];
+									if (Math.abs(uxE) < 1e-9 && Math.abs(uzE) < 1e-9) { uxE = Math.cos(yaw); uzE = Math.sin(yaw); uyE = 0; }
+									if (Math.abs(vxE) < 1e-9 && Math.abs(vzE) < 1e-9) { vxE = Math.cos(yaw); vzE = Math.sin(yaw); vyE = 0; }
+
+									const projT = (pt: [number, number, number]) => {
+										if (Math.abs(uxE) >= Math.abs(uzE) && Math.abs(uxE) > 1e-9) return (pt[0] - topEnd[0]) / uxE;
+										if (Math.abs(uzE) > 1e-9) return (pt[2] - topEnd[2]) / uzE;
+										return 0;
+									};
+									const projB = (pb: [number, number, number]) => {
+										if (Math.abs(vxE) >= Math.abs(vzE) && Math.abs(vxE) > 1e-9) return (pb[0] - botEnd[0]) / vxE;
+										if (Math.abs(vzE) > 1e-9) return (pb[2] - botEnd[2]) / vzE;
+										return 0;
+									};
+									let tTop2 = projT(candT2), tBot2 = projB(candB2);
+									let tTop1 = projT(candT1), tBot1 = projB(candB1);
+									const good2 = tTop2 >= -1e-6 && tBot2 >= -1e-6;
+									const good1 = tTop1 >= -1e-6 && tBot1 >= -1e-6;
+									let lastT = candT2, lastB = candB2, tTop = tTop2, tBot = tBot2;
+									if (!good2 && good1) { lastT = candT1; lastB = candB1; tTop = tTop1; tBot = tBot1; }
+									else if (good2 && good1) {
+										const score2 = Math.abs(tTop2) + Math.abs(tBot2);
+										const score1 = Math.abs(tTop1) + Math.abs(tBot1);
+										if (score1 < score2) { lastT = candT1; lastB = candB1; tTop = tTop1; tBot = tBot1; }
+									}
+
+									// עדכון גבהים לפי הקרנה
+									const yTop = topEnd[1] + tTop * uyE;
+									const yBot = botEnd[1] + tBot * vyE;
+									lastT = [lastT[0], yTop, lastT[2]];
+									lastB = [lastB[0], yBot, lastB[2]];
+
+									// הוספת מקטע מגשר בין קצה הפלטה לקאפ + שכבת גב + דפנות
 									{
+										const base = pos.length / 3;
+										pos.push(topEnd[0], topEnd[1], topEnd[2]);
+										pos.push(botEnd[0], botEnd[1], botEnd[2]);
+										pos.push(lastT[0], lastT[1], lastT[2]);
+										pos.push(lastB[0], lastB[1], lastB[2]);
+										idx.push(base + 0, base + 1, base + 2);
+										idx.push(base + 2, base + 1, base + 3);
+										const backBase = pos.length / 3;
+										const t1e: [number, number, number] = [topEnd[0] + offX, topEnd[1] + offY, topEnd[2] + offZ];
+										const b1e: [number, number, number] = [botEnd[0] + offX, botEnd[1] + offY, botEnd[2] + offZ];
+										const t2e: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
+										const b2e: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
+										pos.push(t1e[0], t1e[1], t1e[2],  b1e[0], b1e[1], b1e[2],  t2e[0], t2e[1], t2e[2],  b2e[0], b2e[1], b2e[2]);
+										idx.push(backBase + 0, backBase + 2, backBase + 1);
+										idx.push(backBase + 2, backBase + 3, backBase + 1);
+										// דפנות עליון/תחתון
+										const biTop = pos.length / 3;
+										pos.push(topEnd[0], topEnd[1], topEnd[2],  lastT[0], lastT[1], lastT[2],  t2e[0], t2e[1], t2e[2],  t1e[0], t1e[1], t1e[2]);
+										idx.push(biTop + 0, biTop + 1, biTop + 2,  biTop + 0, biTop + 2, biTop + 3);
+										const biBot = pos.length / 3;
+										pos.push(botEnd[0], botEnd[1], botEnd[2],  lastB[0], lastB[1], lastB[2],  b2e[0], b2e[1], b2e[2],  b1e[0], b1e[1], b1e[2]);
+										idx.push(biBot + 0, biBot + 1, biBot + 2,  biBot + 0, biBot + 2, biBot + 3);
+									}
+
+									// מלבן קאפ סופי
+									{
+										const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
+										const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
 										const bi = pos.length / 3;
-										pos.push(topEnd[0], topEnd[1], topEnd[2],  t1e[0], t1e[1], t1e[2],  b1e[0], b1e[1], b1e[2],  botEnd[0], botEnd[1], botEnd[2]);
+										pos.push(lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
 										idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
 									}
 								}

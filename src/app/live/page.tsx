@@ -3148,35 +3148,11 @@ function Staircase3D({
 										const prev = treads[firstStepIdxInFlight - 1];
 										hasPrevLanding = !!(prev && prev.isLanding);
 									}
-									if (hasPrevLanding) {
-										const widthVec: [number, number, number] = [
-											startFromLandingTop[0] - startFromLandingBot[0],
-											startFromLandingTop[1] - startFromLandingBot[1],
-											startFromLandingTop[2] - startFromLandingBot[2],
-										];
-										const landTopEnd: [number, number, number] = [
-											startFromLandingTop[0] + (Ustar - U0) * uxL,
-											startFromLandingTop[1],
-											startFromLandingTop[2] + (Ustar - U0) * uzL,
-										];
-										const landBotEnd: [number, number, number] = [
-											landTopEnd[0] - widthVec[0],
-											landTopEnd[1] - widthVec[1],
-											landTopEnd[2] - widthVec[2],
-										];
-										// נצייר פס אופקי של הפודסט בלבד, ללא מקטע התאמה
-										landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: landTopEnd, b1: landBotEnd };
-										landingAdapter = null;
-										// תחילת הפלטה תהיה ישר על המסילות בנקודות ההצמדה
-										startFromLandingTop = joinTop;
-										startFromLandingBot = joinBot;
-									} else {
-										// פס חיבור ישיר מהפודסט אל נקודת ההצמדה על המסילות
-										landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: joinTop, b1: joinBot };
-										// התחלת הפלטה תהיה בדיוק בנקודות ההצמדה כדי לשמור רוחב זהה
-										startFromLandingTop = joinTop;
-										startFromLandingBot = joinBot;
-									}
+									// המשך פלטה בשיפוע הגרם: רצועת חיבור משופעת מהפודסט לנקודות ההצמדה על המסילות
+									landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: joinTop, b1: joinBot };
+									// תחילת הפלטה תהיה בדיוק בנקודות ההצמדה כדי לשמור רוחב זהה
+									startFromLandingTop = joinTop;
+									startFromLandingBot = joinBot;
 								}
 
 								// בניית מסילות B1 (כולל הארכת פתיחה מהפודסט אם קיים)
@@ -3225,8 +3201,8 @@ function Staircase3D({
 									idxB1.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
 								}
 
-								// אם לא נוצרו משולשים מהמסילות (למשל אין מדרגות בגרם) – צייר את פס הפודסט בלבד
-								if (posB1.length === 0 && landingStrip) {
+								// הוסף תמיד את רצועת החיבור המשופעת מהפודסט אל נקודת ההצמדה (המשך שיפוע)
+								if (landingStrip) {
 									const base = posB1.length / 3;
 									posB1.push(
 										landingStrip.t0[0], landingStrip.t0[1], landingStrip.t0[2],

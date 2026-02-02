@@ -2053,9 +2053,11 @@ function Staircase3D({
 									extTopAt30[2] - extBot30[2],
 								);
 								const deltaMm = Math.round((extW - refW) * 1000);
-								if (Math.abs(deltaMm) > 0) {
-									console.info('[A1] width delta at landing end (mm):', deltaMm, { refWm: refW, extWm: extW });
-								}
+								console.info('[A1] width check at landing end:', {
+									delta_mm: deltaMm,
+									ref_width_m: Number(refW.toFixed(6)),
+									ext_width_m: Number(extW.toFixed(6)),
+								});
 							}
 
 							// פאנל התחלה אנכי לרצפה (כמו בפלטה A): בין P1 למטה לרצפה ובין P6 למטה לרצפה, כולל עובי

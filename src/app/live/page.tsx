@@ -3071,6 +3071,16 @@ function Staircase3D({
 										startFromLandingBot = [wx1, wy6, wz1];
 									}
 								}
+								// נקודת התחלה "גולמית" של הפודסט (הקצה הרחוק) — נשמרת גם כש‑Top מוחלף בעוגן המדויק מ‑A1
+								const rawLandingStartTop = startFromLandingTop;
+
+								// פס פודסט ישר (landing strip) — נבנה או לפי חישוב ה‑miter (כשיש עוגן מ‑A1) או לפי לוגיקת ה‑secant (כשאין)
+								let landingStrip: {
+									t0: [number, number, number];
+									b0: [number, number, number];
+									t1: [number, number, number];
+									b1: [number, number, number];
+								} | null = null;
 								// אם קיימת הפניה מה‑A1 (דרך ref) – השתמש בדיוק בנקודות הסיום של A1 לשמירת רוחב זהה
 								// חיבור "ברך" נכון בתחילת גרם 2:
 								// Top הוא ציר משותף (נלקח מ‑A1), אבל Bot אינו "נעול" לאותה נקודת פודסט —
@@ -3177,6 +3187,16 @@ function Staircase3D({
 										}
 									}
 
+									// פס פודסט ישר: מהקצה הרחוק של הפודסט (rawLandingStartTop) עד ציר הברך (H),
+									// כאשר ה‑bottom בקצה הברך הוא נקודת ה‑miter (startFromLandingBot).
+									if (rawLandingStartTop && Wmag > 1e-9 && startFromLandingBot) {
+										const t0 = rawLandingStartTop;
+										const b0 = add(t0, scale(pL, -Wmag));
+										const t1 = H;
+										const b1 = startFromLandingBot;
+										landingStrip = { t0, b0, t1, b1 };
+									}
+
 									// חשוב לשמור רוחב מלא גם ממש בתחילת השיפוע:
 									// הנקודה התחתונה הראשונה של השיפוע (botP6[0]) חייבת להיות offset של topP1[0] במרחק Wmag בתוך מישור הפלטה,
 									// אחרת מתקבל שינוי עובי/שבירה בסגמנט הראשון אחרי הברך.
@@ -3190,7 +3210,6 @@ function Staircase3D({
 
 								// יישור זרימה (רק כשאין נקודת עיגון מדויקת מ‑A1):
 								// המשך אופסטים בשיפוע עד נקודת השקה עם רוחב זהה לפלטת הלנדינג
-								let landingStrip: { t0: [number, number, number]; b0: [number, number, number]; t1: [number, number, number]; b1: [number, number, number] } | null = null;
 								if (startFromLandingTop && startFromLandingBot && !hasExactLandingAnchor) {
 									// כיוון שיפוע למסילות: אם אין מספיק נקודות מדרגות, נשתמש ב‑firstYaw או בכיוון ברירת מחדל
 									const pT1 = topP1.length >= 1 ? topP1[0] : startFromLandingTop;

@@ -3059,8 +3059,9 @@ function Staircase3D({
 										const yawL = prev.rotation[1] as number;
 										const cL = Math.cos(yawL), sL = Math.sin(yawL);
 										const dxL = prev.run / 2, dzL = treadWidth / 2;
-										// חיבור לנקודת הסיום של A1: קצה רחוק של הפודסט בצד A1 (+dxL, -dzL)
-										const lx1 = +dxL, lz1 = -dzL;
+										// B1 יושב על צד P1 (שמאל‑אחורה) — בפודסט צריך לקחת את אותה פינה, אחרת פס הפודסט יוצא אלכסוני.
+										// לכן: (-dxL, -dzL) ולא (+dxL, -dzL)
+										const lx1 = -dxL, lz1 = -dzL;
 										const rx1 = lx1 * cL - lz1 * sL;
 										const rz1 = lx1 * sL + lz1 * cL;
 										const wx1 = prev.position[0] + rx1;
@@ -3212,7 +3213,7 @@ function Staircase3D({
 											const ix = p0[0] + t * r[0];
 											const iy = p0[1] + t * r[1];
 											startFromLandingBot = add(H, add(scale(e1, ix), scale(e2, iy)));
-										} else {
+									} else {
 											// כמעט מקביל – פולבאק: קח את ה‑bottom של השיפוע בנקודת הציר
 											startFromLandingBot = slopeBotPoint;
 										}

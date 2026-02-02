@@ -3084,7 +3084,6 @@ function Staircase3D({
 								}
 								// יישור זרימה: המשך אופסטים בשיפוע עד נקודת השקה עם רוחב זהה לפלטת הלנדינג
 								let landingStrip: { t0: [number, number, number]; b0: [number, number, number]; t1: [number, number, number]; b1: [number, number, number] } | null = null;
-								let landingAdapter: { t0: [number, number, number]; b0: [number, number, number]; t1: [number, number, number]; b1: [number, number, number] } | null = null;
 								if (startFromLandingTop && startFromLandingBot) {
 									// כיוון שיפוע למסילות: אם אין מספיק נקודות מדרגות, נשתמש ב‑firstYaw או בכיוון ברירת מחדל
 									const pT1 = topP1.length >= 1 ? topP1[0] : startFromLandingTop;

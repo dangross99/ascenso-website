@@ -3195,10 +3195,10 @@ function Staircase3D({
 											landTopEnd[1] - widthVec[1],
 											landTopEnd[2] - widthVec[2],
 										];
-										landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: landTopEnd, b1: landBotEnd };
-										// מקטע התאמה מהפס האופקי למסילות – מאפשר הבדל אורך קצה (P למעלה/למטה)
-										landingAdapter = { t0: landTopEnd, b0: landBotEnd, t1: joinTop, b1: joinBot };
-										// תחילת הפלטה תעבור לנקודות ההצמדה על המסילות
+										// לא נצייר פס אופקי – רק נשתמש בו לחישוב נקודות ההתחלה כדי לשמור רוחב קבוע בלי "קאפ"
+										landingStrip = null;
+										landingAdapter = null;
+										// תחילת הפלטה תהיה ישר על המסילות בנקודות ההצמדה
 										startFromLandingTop = joinTop;
 										startFromLandingBot = joinBot;
 									} else {

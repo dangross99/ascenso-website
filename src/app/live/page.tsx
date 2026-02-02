@@ -2040,6 +2040,8 @@ function Staircase3D({
 
 							// מדידת סטיית רוחב בקצה הפודסט (דיבאג לקונסול)
 							if (extTopAt30 && extBot30) {
+								// חשיפה לגרם הבא: B1 יתחבר בדיוק לרוחב הסיום של A1
+								hitechBStartRef.current = { top: extTopAt30, bot: extBot30 };
 								const topEndMeas = railTopForSide[railTopForSide.length - 1];
 								const botEndMeas = railBotForSide[railBotForSide.length - 1];
 								const refW = Math.hypot(
@@ -3101,6 +3103,11 @@ function Staircase3D({
 										const wy6 = prev.position[1] - treadThickness / 2 - offsetY;
 										startFromLandingBot = [wx1, wy6, wz1];
 									}
+								}
+								// אם קיימת הפניה מה‑A1 (דרך ref) – השתמש בדיוק בנקודות הסיום של A1 לשמירת רוחב זהה
+								if (hitechBStartRef.current) {
+									startFromLandingTop = hitechBStartRef.current.top;
+									startFromLandingBot = hitechBStartRef.current.bot;
 								}
 
 								// בניית מסילות B1 (כולל הארכת פתיחה מהפודסט אם קיים)

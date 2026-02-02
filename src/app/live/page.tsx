@@ -1964,14 +1964,40 @@ function Staircase3D({
 							addSide(railTopForSide);
 							addSide(railBotForSide);
 
-							// קיבוע רוחב ההארכה בסוף הפודסט: אותו רוחב כמו בקצה הפלטה, וכל הרוחב מלמטה
+							// התאמת המסילה התחתונה בקצה: הקרנה לאורך השיפוע עד מישור קצה הפודסט (לתיקון רוחב מדויק)
 							if (extTopAt30) {
-								const topEndW = railTopForSide[railTopForSide.length - 1];
 								const botEndW = railBotForSide[railBotForSide.length - 1];
-								const wdx = topEndW[0] - botEndW[0];
-								const wdy = topEndW[1] - botEndW[1];
-								const wdz = topEndW[2] - botEndW[2];
-								extBot30 = [extTopAt30[0] - wdx, extTopAt30[1] - wdy, extTopAt30[2] - wdz];
+								const botPrevW = railBotForSide.length >= 2 ? railBotForSide[railBotForSide.length - 2] : botEndW;
+								// כיוון שיפוע המסילה התחתונה
+								let vx = botEndW[0] - botPrevW[0];
+								let vy = botEndW[1] - botPrevW[1];
+								let vz = botEndW[2] - botPrevW[2];
+								// אם הכיוון כמעט אפס – קח כיוון לפי yaw של הפודסט
+								let landingYaw: number | null = null;
+								for (let i = 0; i < treads.length; i++) {
+									const t = treads[i];
+									if (t.flight === 0 && t.isLanding) { landingYaw = t.rotation[1] as number; break; }
+								}
+								if (Math.abs(vx) < 1e-9 && Math.abs(vz) < 1e-9 && landingYaw !== null) {
+									vx = Math.cos(landingYaw); vz = Math.sin(landingYaw); vy = 0;
+								}
+								// מישור קצה הפודסט: נקבע לפי רכיב dot(u, x) עם u = (cos(yaw), sin(yaw)) של הפודסט
+								let ux = 1, uz = 0;
+								if (landingYaw !== null) { ux = Math.cos(landingYaw); uz = Math.sin(landingYaw); }
+								const dotU = (x: [number, number, number]) => (ux * x[0] + uz * x[2]);
+								const planeU = dotU(extTopAt30);
+								const denom = ux * vx + uz * vz;
+								if (Math.abs(denom) > 1e-9) {
+                                    const t = (planeU - dotU(botEndW)) / denom;
+									extBot30 = [botEndW[0] + vx * t, botEndW[1] + vy * t, botEndW[2] + vz * t];
+								} else {
+									// פולבאק: שמור רוחב לפי הווקטור בקצה הפלטה
+									const topEndW = railTopForSide[railTopForSide.length - 1];
+									const wdx = topEndW[0] - botEndW[0];
+									const wdy = topEndW[1] - botEndW[1];
+									const wdz = topEndW[2] - botEndW[2];
+									extBot30 = [extTopAt30[0] - wdx, extTopAt30[1] - wdy, extTopAt30[2] - wdz];
+								}
 							}
 
 							// פאנל התחלה אנכי לרצפה (כמו בפלטה A): בין P1 למטה לרצפה ובין P6 למטה לרצפה, כולל עובי

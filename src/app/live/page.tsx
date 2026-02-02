@@ -3101,23 +3101,8 @@ function Staircase3D({
 										a1Anchor.top[2] - a1Anchor.bot[2],
 									];
 									const Wmag = Math.hypot(wVec[0], wVec[1], wVec[2]);
-									// נחשב H ב‑XZ כ‑intersection בין קו הפודסט וקו השיפוע, ונשמור Y של הפודסט
-									const landingTop0 = rawLandingStartTop || H0;
-									const Hy = (rawLandingStartTop ? rawLandingStartTop[1] : H0[1]);
-									// כיוון השיפוע ב‑XZ – נעדיף שתי נקודות ראשונות של השיפוע, אחרת firstYaw
-									let sx = 1, sz = 0;
-									if (topP1.length >= 2) {
-										sx = topP1[1][0] - topP1[0][0];
-										sz = topP1[1][2] - topP1[0][2];
-									} else if (topP1.length >= 1) {
-										sx = topP1[0][0] - H0[0];
-										sz = topP1[0][2] - H0[2];
-									} else if (firstYaw !== null) {
-										sx = Math.cos(firstYaw); sz = Math.sin(firstYaw);
-									}
-									{ const m = Math.hypot(sx, sz) || 1; sx /= m; sz /= m; }
-									const slopeTop0XZ = topP1.length >= 1 ? topP1[0] : H0;
-									const crossXZ = (ax: number, az: number, bx: number, bz: number) => ax * bz - az * bx;
+									// חשוב: כדי להישאר "על אותה מסילה" עם פלטה A, לא מזיזים את H.
+									// H הוא ציר ה‑Top המשותף (נקודת החיבור לפלטה A).
 									let H: [number, number, number] = H0;
 									startFromLandingTop = H;
 
@@ -3148,17 +3133,6 @@ function Staircase3D({
 										const d = sub(topP1[1], topP1[0]);
 										uxL = d[0]; uzL = d[2];
 										const m = Math.hypot(uxL, uzL) || 1; uxL /= m; uzL /= m;
-									}
-									// עדכן את H כ‑intersection ב‑XZ בין קו הפודסט וקו השיפוע (אחרי שחישבנו uxL/uzL)
-									{
-										const denom = crossXZ(uxL, uzL, sx, sz);
-										if (Math.abs(denom) > 1e-9) {
-											const qpx = slopeTop0XZ[0] - landingTop0[0];
-											const qpz = slopeTop0XZ[2] - landingTop0[2];
-											const t = crossXZ(qpx, qpz, sx, sz) / denom;
-											H = [landingTop0[0] + uxL * t, Hy, landingTop0[2] + uzL * t];
-											startFromLandingTop = H;
-										}
 									}
 									const uL = normalize([uxL, 0, uzL]);
 
@@ -3197,41 +3171,31 @@ function Staircase3D({
 									const slopeBotHint: [number, number, number] | null = (botP6.length >= 1 ? botP6[0] : null);
 									if (slopeTopHint) pS = chooseByClosestBot(pS, slopeTopHint, slopeBotHint);
 
-									// חישוב דינמי ב"מישור הפלטה":
-									// 1) חיתוך קווי TOP (פודסט מול שיפוע) כדי להבטיח שהפודסט נשאר ישר, ואז
-									// 2) חיתוך קווי BOTTOM (offset של כל TOP במרחק W) כדי לקבל Bot שמחליק קדימה/מטה לפי הזווית.
+									// חישוב דינמי "על אותה מסילה" ב‑3D:
+									// במקום להניח שהקווים נחתכים באותו מישור (שגורם ל"בריחה"), מחשבים את נקודת החיבור
+									// כנקודת האמצע בין שתי הנקודות הקרובות ביותר של שני קווים תלת‑ממדיים (closest points).
 									if (Wmag > 1e-9) {
-										// בסיס 2D במישור הפלטה
-										let e1 = sub(uL, scale(nFace, dot(uL, nFace)));
-										if (norm(e1) < 1e-9) e1 = sub(uS, scale(nFace, dot(uS, nFace)));
-										e1 = normalize(e1);
-										const e2 = normalize(cross(nFace, e1));
+										const P = a1Anchor.bot; // קו ה‑bottom של הפודסט חייב לעבור דרך הבוט של A1 כדי שלא יברח
+										const D = uL; // קו הפודסט אופקי
+										const Q = add(slopeTop0, scale(pS, -Wmag)); // bottom של השיפוע = offset אמיתי מה‑top של השיפוע
+										const E = uS; // קו השיפוע (כולל רכיב Y)
 
-										// מוצא יציב: H (ציר הפודסט). חשוב לא להזיז את H במישור אחר, כדי שהפודסט לא "יחליף מישור".
-										const O = H;
-										const to2 = (P: [number, number, number]): [number, number] => {
-											const v = sub(P, O);
-											return [dot(v, e1), dot(v, e2)];
-										};
-										const from2 = (x: number, y: number): [number, number, number] => add(O, add(scale(e1, x), scale(e2, y)));
-										const d2 = (D: [number, number, number]): [number, number] => [dot(D, e1), dot(D, e2)];
-										const cross2 = (a: [number, number], b: [number, number]) => a[0] * b[1] - a[1] * b[0];
-										const intersect = (P0: [number, number, number], R: [number, number, number], Q0: [number, number, number], S: [number, number, number]) => {
-											const p0 = to2(P0), q0 = to2(Q0);
-											const r = d2(R), s = d2(S);
-											const denom = cross2(r, s);
-											if (Math.abs(denom) < 1e-9) return null;
-											const qp: [number, number] = [q0[0] - p0[0], q0[1] - p0[1]];
-											const t = cross2(qp, s) / denom;
-											return from2(p0[0] + t * r[0], p0[1] + t * r[1]);
-										};
-
-										// BOTTOM lines (offset במרחק Wmag מה‑TOP בנקודת הברך H)
-										// חשוב: ה‑Top נשאר H (גובה הפודסט), וה‑Bot הוא שמחליק דינמית לפי זווית (miter).
-										const landingBotLinePoint = add(H, scale(pL, -Wmag));
-										const slopeBotLinePoint = add(H, scale(pS, -Wmag));
-										const Bk = intersect(landingBotLinePoint, uL, slopeBotLinePoint, uS);
-										startFromLandingBot = Bk || slopeBotLinePoint;
+										// closest points בין שני קווים תלת‑ממדיים (D ו‑E מנורמלים)
+										const b = dot(D, E);
+										const w0 = sub(P, Q);
+										const d = dot(D, w0);
+										const e = dot(E, w0);
+										const denom = 1 - b * b;
+										if (Math.abs(denom) > 1e-9) {
+											const sc = (b * e - d) / denom;
+											const tc = (e - b * d) / denom;
+											const Pc = add(P, scale(D, sc));
+											const Qc = add(Q, scale(E, tc));
+											startFromLandingBot = scale(add(Pc, Qc), 0.5);
+										} else {
+											// כמעט מקבילים – פולבאק: שמור על הבוט של השיפוע
+											startFromLandingBot = Q;
+										}
 									}
 
 									// פס פודסט ישר: מהקצה הרחוק של הפודסט (rawLandingStartTop) עד ציר הברך (H),

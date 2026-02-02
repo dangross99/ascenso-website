@@ -3148,8 +3148,8 @@ function Staircase3D({
 										const prev = treads[firstStepIdxInFlight - 1];
 										hasPrevLanding = !!(prev && prev.isLanding);
 									}
-									// המשך פלטה בשיפוע הגרם: רצועת חיבור משופעת מהפודסט לנקודות ההצמדה על המסילות
-									landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: joinTop, b1: joinBot };
+									// בלי פס נפרד: מתחילים את B1 ישירות מנקודות ההצמדה על המסילות
+									landingStrip = null;
 									// תחילת הפלטה תהיה בדיוק בנקודות ההצמדה כדי לשמור רוחב זהה
 									startFromLandingTop = joinTop;
 									startFromLandingBot = joinBot;
@@ -3201,18 +3201,7 @@ function Staircase3D({
 									idxB1.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
 								}
 
-								// הוסף תמיד את רצועת החיבור המשופעת מהפודסט אל נקודת ההצמדה (המשך שיפוע)
-								if (landingStrip) {
-									const base = posB1.length / 3;
-									posB1.push(
-										landingStrip.t0[0], landingStrip.t0[1], landingStrip.t0[2],
-										landingStrip.b0[0], landingStrip.b0[1], landingStrip.b0[2],
-										landingStrip.t1[0], landingStrip.t1[1], landingStrip.t1[2],
-										landingStrip.b1[0], landingStrip.b1[1], landingStrip.b1[2],
-									);
-									idxB1.push(base + 0, base + 1, base + 2);
-									idxB1.push(base + 2, base + 1, base + 3);
-								}
+								// (הוסר) פס חיבור נפרד מהפודסט – B1 מתחילה ישירות בנקודות ההצמדה
 								// בוטל: מקטע התאמה אל המסילות
 
 								// עובי ונורמל (מישור הפלטה)

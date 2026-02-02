@@ -1547,17 +1547,7 @@ function Staircase3D({
 							const botRailForSide = firstP7 ? [firstP7, ...botRail] : botRail;
 							addSideStrip(topRailForSide);
 							addSideStrip(botRailForSide);
-							// התחלה
-							{
-								const pT = (firstP4SideShift || topRail[0]);
-								// קאפ אנכי: XZ של התחתון זהה לעליון, רק Y שונה
-								const pB: [number, number, number] = [pT[0], (firstP7 ? firstP7[1] : botRail[0][1]), pT[2]];
-								const pTe: [number, number, number] = [pT[0] + offX, pT[1] + offY, pT[2] + offZ];
-								const pBe: [number, number, number] = [pB[0] + offX, pB[1] + offY, pB[2] + offZ];
-								const bi = pos.length / 3;
-								pos.push(pT[0], pT[1], pT[2],  pB[0], pB[1], pB[2],  pBe[0], pBe[1], pBe[2],  pTe[0], pTe[1], pTe[2]);
-								idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
-							}
+							// (בוטל) קאפ אנכי בתחילת הפאנל – הוסר לטובת פתיחה פשוטה בפודסט
 							// סיום
 							if (shouldRenderClosingCapForFlight(flightIdx)) {
 								// הצב את הקאפ בקצה המדרגה (נק׳ 3/7 של המדרגה האחרונה בגרם)
@@ -3028,7 +3018,7 @@ function Staircase3D({
 							const buildB1ForFlight1 = () => {
 								const topP1: Array<[number, number, number]> = [];
 								const botP6: Array<[number, number, number]> = [];
-								let firstP1: [number, number, number] | null = null; // משתמש כעת ב‑P2 העליון (ימין‑אחורה)
+								let firstP1: [number, number, number] | null = null;
 								let firstP6: [number, number, number] | null = null;
 								let firstYaw: number | null = null;
 								let firstStepIdxInFlight: number | null = null;
@@ -3042,9 +3032,9 @@ function Staircase3D({
 									const c = Math.cos(yaw), s = Math.sin(yaw);
 									const dx = t.run / 2;
 									const dz = treadWidth / 2;
-									// P2 – עליונה ימין‑אחורה: (+dx, -dz)
+									// P1 – עליונה שמאל‑אחורה: (-dx, -dz)
 									{
-										const lx = +dx, lz = -dz;
+										const lx = -dx, lz = -dz;
 										const rx = lx * c - lz * s;
 										const rz = lx * s + lz * c;
 										const wx = t.position[0] + rx;
@@ -3072,7 +3062,7 @@ function Staircase3D({
 											const yawL = next.rotation[1] as number;
 											const cL = Math.cos(yawL), sL = Math.sin(yawL);
 											const dxL = next.run / 2, dzL = treadWidth / 2;
-											const lx1 = +dxL, lz1 = -dzL; // P2 של הפודסט
+											const lx1 = -dxL, lz1 = -dzL; // P1 של הפודסט
 											const rx1 = lx1 * cL - lz1 * sL;
 											const rz1 = lx1 * sL + lz1 * cL;
 											const wx1 = next.position[0] + rx1;

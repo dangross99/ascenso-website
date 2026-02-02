@@ -3172,11 +3172,11 @@ function Staircase3D({
 									const Ustar = Ub;
 									const joinTop = pointOnLineAtU(pT1, [dTx, dTy, dTz], Ustar);
 									const joinBot = pointOnLineAtU(pB1, [dBx, dBy, dBz], Ustar);
-									// סוף מקטע אופקי בלנדינג (במישור U): נקודה על המישור עם Y קבוע של הלנדינג
-									const landTopEnd: [number, number, number] = [startFromLandingTop[0] + (Ustar - U0) * uxL, startFromLandingTop[1], startFromLandingTop[2] + (Ustar - U0) * uzL];
-									const landBotEnd: [number, number, number] = [startFromLandingBot[0] + (Ustar - U0) * uxL, startFromLandingBot[1], startFromLandingBot[2] + (Ustar - U0) * uzL];
-									landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: landTopEnd, b1: landBotEnd };
-									// (אל תחליף את נקודות ההתחלה אם לא מצויר פס חיבור בפועל, כדי למנוע רווח)
+									// פס חיבור ישיר מהפודסט אל נקודת ההצמדה על המסילות
+									landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: joinTop, b1: joinBot };
+									// התחלת הפלטה תהיה בדיוק בנקודות ההצמדה כדי לשמור רוחב זהה
+									startFromLandingTop = joinTop;
+									startFromLandingBot = joinBot;
 								}
 
 								// בניית מסילות B1 (כולל הארכת פתיחה מהפודסט אם קיים)
@@ -3212,6 +3212,19 @@ function Staircase3D({
 									posB1.push(t1[0], t1[1], t1[2],  b1[0], b1[1], b1[2],  t2[0], t2[1], t2[2],  b2[0], b2[1], b2[2]);
 									idxB1.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
 									idxB1.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
+								}
+
+								// פס חיבור בין הפודסט לפלטה (אם חושב)
+								if (landingStrip) {
+									const base = posB1.length / 3;
+									posB1.push(
+										landingStrip.t0[0], landingStrip.t0[1], landingStrip.t0[2],
+										landingStrip.b0[0], landingStrip.b0[1], landingStrip.b0[2],
+										landingStrip.t1[0], landingStrip.t1[1], landingStrip.t1[2],
+										landingStrip.b1[0], landingStrip.b1[1], landingStrip.b1[2],
+									);
+									idxB1.push(base + 0, base + 1, base + 2);
+									idxB1.push(base + 2, base + 1, base + 3);
 								}
 
 								// עובי ונורמל (מישור הפלטה)

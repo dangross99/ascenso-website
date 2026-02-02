@@ -3258,8 +3258,8 @@ function Staircase3D({
 									idxB1.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
 								}
 
-								// אם לא נוצרו משולשים מהמסילות (למשל אין מדרגות בגרם) – צייר את פס הפודסט בלבד
-								if (posB1.length === 0 && landingStrip) {
+								// צייר תמיד את פס הפודסט הראשון אם חושב landingStrip
+								if (landingStrip) {
 									const base = posB1.length / 3;
 									posB1.push(
 										landingStrip.t0[0], landingStrip.t0[1], landingStrip.t0[2],

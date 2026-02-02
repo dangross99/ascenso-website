@@ -3445,26 +3445,37 @@ function Staircase3D({
 											if (Math.abs(vz) > 1e-9) return (pb[2] - botEnd[2]) / vz;
 											return 0;
 										};
-										// סגור בצד שמאל: עמודה דרך P4/P8 (lx=-dx,lz=+dz)
-										const lx4 = -dx, lz4 = +dz;
-										const rx4 = lx4 * c - lz4 * s;
-										const rz4 = lx4 * s + lz4 * c;
-										const candT4: [number, number, number] = [
-											lastStep.position[0] + rx4,
-											lastStep.position[1] + treadThickness / 2 + offsetY,
-											lastStep.position[2] + rz4
-										];
-										const candB8: [number, number, number] = [
-											candT4[0],
-											lastStep.position[1] - treadThickness / 2 - offsetY,
-											candT4[2]
-										];
-										const tTop4 = projT(candT4);
-										const tBot8 = projB(candB8);
-										const yTop = topEnd[1] + tTop4 * uy;
-										const yBot = botEnd[1] + tBot8 * vy;
-										const lastT: [number, number, number] = [candT4[0], yTop, candT4[2]];
-										const lastB: [number, number, number] = [candB8[0], yBot, candB8[2]];
+										// בחר אוטומטית עמודת סגירה שמתיישרת עם המסילות: נסה P4/P8 (שמאל‑קדמי) או P2/P6 (ימין‑אחורי) ובחר לפי ציון
+										const makeCand = (lx: number, lz: number) => {
+											const rx = lx * c - lz * s;
+											const rz = lx * s + lz * c;
+											const tCand: [number, number, number] = [
+												lastStep.position[0] + rx,
+												lastStep.position[1] + treadThickness / 2 + offsetY,
+												lastStep.position[2] + rz
+											];
+											const bCand: [number, number, number] = [
+												tCand[0],
+												lastStep.position[1] - treadThickness / 2 - offsetY,
+												tCand[2]
+											];
+											const tt = projT(tCand);
+											const tb = projB(bCand);
+											// עדכון גבהים על המסילות
+											const yT = topEnd[1] + tt * uy;
+											const yB = botEnd[1] + tb * vy;
+											const tFin: [number, number, number] = [tCand[0], yT, tCand[2]];
+											const bFin: [number, number, number] = [bCand[0], yB, bCand[2]];
+											// ציון: העדף קדימה (tt,tb>=0) וציון קרבה קטן
+											const penaltyBack = (tt < -1e-6 ? 10 : 0) + (tb < -1e-6 ? 10 : 0);
+											const score = Math.abs(tt) + Math.abs(tb) + penaltyBack;
+											return { tFin, bFin, score };
+										};
+										const cLeft = makeCand(-dx, +dz);   // P4/P8 – שמאל‑קדמי
+										const cAlt  = makeCand(+dx, -dz);   // P2/P6 – ימין‑אחורי (אלטרנטיבה אם השמאלי לא מסתדר)
+										const pick = (cLeft.score <= cAlt.score) ? cLeft : cAlt;
+										const lastT = pick.tFin;
+										const lastB = pick.bFin;
 										// מקטע מגשר + שכבת גב + דפנות
 										{
 											const baseIndex = posB1.length / 3;

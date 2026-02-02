@@ -3356,9 +3356,20 @@ function Staircase3D({
 										const Wdz = extTopAtL[2] - extBotAtL[2];
 										// נקודות עליונות בקצה הימני של הפודסט: P2 (lz = -dzL), P3 (lz = +dzL)
 										const p2Top: [number, number, number] = [extTopAtL[0], extTopAtL[1], extTopAtL[2]];
-										const rx3 = dxL * cL - (+dzL) * sL;
-										const rz3 = dxL * sL + (+dzL) * cL;
-										const p3Top: [number, number, number] = [nextLanding ? nextLanding.position[0] + rx3 : extTopAtL[0], extTopAtL[1], nextLanding ? nextLanding.position[2] + rz3 : extTopAtL[2]];
+										// חישוב נקודת P3 דרך נתוני הפודסט
+										let p3Top: [number, number, number] = [extTopAtL[0], extTopAtL[1], extTopAtL[2]];
+										{
+											let ln: typeof treads[number] | null = null;
+											for (let i = 0; i < treads.length; i++) { const tt = treads[i]; if (tt.flight === 1 && tt.isLanding) { ln = tt; break; } }
+											if (ln) {
+												const yawL = ln.rotation[1] as number;
+												const cL = Math.cos(yawL), sL = Math.sin(yawL);
+												const dxL = ln.run / 2, dzL = treadWidth / 2;
+												const rx3 = dxL * cL - (+dzL) * sL;
+												const rz3 = dxL * sL + (+dzL) * cL;
+												p3Top = [ln.position[0] + rx3, extTopAtL[1], ln.position[2] + rz3];
+											}
+										}
 										// נקודות תחתונות לפי רוחב W
 										const p2Bot: [number, number, number] = [p2Top[0] - Wdx, p2Top[1] - Wdy, p2Top[2] - Wdz];
 										const p3Bot: [number, number, number] = [p3Top[0] - Wdx, p3Top[1] - Wdy, p3Top[2] - Wdz];

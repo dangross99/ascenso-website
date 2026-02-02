@@ -3141,15 +3141,34 @@ function Staircase3D({
 									if (Math.abs(Ustar - U0) < 1e-4) Ustar = U0 + 0.02;
 									const joinTop = pointOnLineAtU(pT1, [dTx, dTy, dTz], Ustar);
 									const joinBot = pointOnLineAtU(pB1, [dBx, dBy, dBz], Ustar);
-									// אם זה אכן הפודסט הראשון לפני הגרם – חיבור אופקי (Y קבוע) עם רוחב קבוע; אחרת – החיבור המקורי
+									// אם זה אכן הפודסט הראשון לפני הגרם – נצייר פס אופקי בלנדינג עצמו (ללא גשר משופע)
 									let hasPrevLanding = false;
 									if (firstStepIdxInFlight !== null && firstStepIdxInFlight > 0) {
 										const prev = treads[firstStepIdxInFlight - 1];
 										hasPrevLanding = !!(prev && prev.isLanding);
 									}
-									// בלי פס נפרד: מתחילים את B1 ישירות מנקודות ההצמדה על המסילות
-									landingStrip = null;
-									// תחילת הפלטה תהיה בדיוק בנקודות ההצמדה כדי לשמור רוחב זהה
+									if (hasPrevLanding) {
+										const widthVec: [number, number, number] = [
+											startFromLandingTop[0] - startFromLandingBot[0],
+											startFromLandingTop[1] - startFromLandingBot[1],
+											startFromLandingTop[2] - startFromLandingBot[2],
+										];
+										const landTopEnd: [number, number, number] = [
+											startFromLandingTop[0] + (Ustar - U0) * uxL,
+											startFromLandingTop[1],
+											startFromLandingTop[2] + (Ustar - U0) * uzL,
+										];
+										const landBotEnd: [number, number, number] = [
+											landTopEnd[0] - widthVec[0],
+											landTopEnd[1] - widthVec[1],
+											landTopEnd[2] - widthVec[2],
+										];
+										// פס אופקי בלנדינג (Y קבוע), הפלטה B1 תתחיל ב‑joinTop/joinBot
+										landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: landTopEnd, b1: landBotEnd };
+									} else {
+										landingStrip = null;
+									}
+									// תחילת הפלטה תהיה בנקודות ההצמדה כדי לשמור רוחב זהה
 									startFromLandingTop = joinTop;
 									startFromLandingBot = joinBot;
 								}
@@ -3211,7 +3230,18 @@ function Staircase3D({
 									idxB1.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
 								}
 
-								// (הוסר) פס חיבור נפרד מהפודסט – B1 מתחילה ישירות בנקודות ההצמדה
+								// הוסף פס אופקי של הפודסט אם חושב landingStrip (בלנדינג הראשון בלבד)
+								if (landingStrip) {
+									const base = posB1.length / 3;
+									posB1.push(
+										landingStrip.t0[0], landingStrip.t0[1], landingStrip.t0[2],
+										landingStrip.b0[0], landingStrip.b0[1], landingStrip.b0[2],
+										landingStrip.t1[0], landingStrip.t1[1], landingStrip.t1[2],
+										landingStrip.b1[0], landingStrip.b1[1], landingStrip.b1[2],
+									);
+									idxB1.push(base + 0, base + 1, base + 2);
+									idxB1.push(base + 2, base + 1, base + 3);
+								}
 								// בוטל: מקטע התאמה אל המסילות
 
 								// עובי ונורמל (מישור הפלטה)

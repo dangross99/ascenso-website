@@ -3090,8 +3090,8 @@ function Staircase3D({
 										const yawL = prev.rotation[1] as number;
 										const cL = Math.cos(yawL), sL = Math.sin(yawL);
 										const dxL = prev.run / 2, dzL = treadWidth / 2;
-										// P1 בלנדינג: (-dxL, -dzL) למעלה; תחתון תואם באותו XZ
-										const lx1 = -dxL, lz1 = -dzL;
+										// חיבור לנקודת הסיום של A1: קצה רחוק של הפודסט בצד A1 (+dxL, -dzL)
+										const lx1 = +dxL, lz1 = -dzL;
 										const rx1 = lx1 * cL - lz1 * sL;
 										const rz1 = lx1 * sL + lz1 * cL;
 										const wx1 = prev.position[0] + rx1;
@@ -3383,7 +3383,7 @@ function Staircase3D({
 											<bufferAttribute attach="attributes-position" args={[new Float32Array(posB1), 3]} />
 											<bufferAttribute attach="index" args={[new Uint32Array(idxB1), 1]} />
 										</bufferGeometry>
-										<meshBasicMaterial color="#4b5563" side={2} />
+										<meshBasicMaterial color="#16a34a" side={2} />
 									</mesh>
 								);
 							};

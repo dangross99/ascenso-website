@@ -3175,9 +3175,24 @@ function Staircase3D({
 									}
 									const Ustar = Ub;
 									const joinTop = pointOnLineAtU(pT1, [dTx, dTy, dTz], Ustar);
-									const joinBot = pointOnLineAtU(pB1, [dBx, dBy, dBz], Ustar);
+									// שמירת רוחב קבוע לאורך כל פס החיבור: תחתון = עליון פחות וקטור רוחב קבוע
+									const widthVec: [number, number, number] = [
+										startFromLandingTop[0] - startFromLandingBot[0],
+										startFromLandingTop[1] - startFromLandingBot[1],
+										startFromLandingTop[2] - startFromLandingBot[2],
+									];
+									const joinBot: [number, number, number] = [
+										joinTop[0] - widthVec[0],
+										joinTop[1] - widthVec[1],
+										joinTop[2] - widthVec[2],
+									];
 									// פס חיבור ישיר מהפודסט אל נקודת ההצמדה על המסילות
-									landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: joinTop, b1: joinBot };
+									landingStrip = {
+										t0: startFromLandingTop,
+										b0: [startFromLandingTop[0] - widthVec[0], startFromLandingTop[1] - widthVec[1], startFromLandingTop[2] - widthVec[2]],
+										t1: joinTop,
+										b1: joinBot,
+									};
 									// התחלת הפלטה תהיה בדיוק בנקודות ההצמדה כדי לשמור רוחב זהה
 									startFromLandingTop = joinTop;
 									startFromLandingBot = joinBot;

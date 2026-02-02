@@ -3110,6 +3110,7 @@ function Staircase3D({
 									startFromLandingBot = hitechBStartRef.current.bot;
 								}
 								// יישור זרימה: המשך אופסטים בשיפוע עד נקודת השקה עם רוחב זהה לפלטת הלנדינג
+								let landingStrip: { t0: [number, number, number]; b0: [number, number, number]; t1: [number, number, number]; b1: [number, number, number] } | null = null;
 								if (startFromLandingTop && startFromLandingBot && topP1.length >= 1 && botP6.length >= 1) {
 									// כיוון שיפוע למסילה העליונה/תחתונה מהשתי נקודות הראשונות של הגרם
 									const pT1 = topP1[0];
@@ -3165,6 +3166,10 @@ function Staircase3D({
 									const Ustar = Ub;
 									const joinTop = pointOnLineAtU(pT1, [dTx, dTy, dTz], Ustar);
 									const joinBot = pointOnLineAtU(pB1, [dBx, dBy, dBz], Ustar);
+									// סוף מקטע אופקי בלנדינג (במישור U): נקודה על המישור עם Y קבוע של הלנדינג
+									const landTopEnd: [number, number, number] = [startFromLandingTop[0] + (Ustar - U0) * uxL, startFromLandingTop[1], startFromLandingTop[2] + (Ustar - U0) * uzL];
+									const landBotEnd: [number, number, number] = [startFromLandingBot[0] + (Ustar - U0) * uxL, startFromLandingBot[1], startFromLandingBot[2] + (Ustar - U0) * uzL];
+									landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: landTopEnd, b1: landBotEnd };
 									// החלף את נקודות הפתיחה בנקודות המושקות
 									startFromLandingTop = joinTop;
 									startFromLandingBot = joinBot;
@@ -3185,6 +3190,14 @@ function Staircase3D({
 								// חזית
 								const posB1: number[] = [];
 								const idxB1: number[] = [];
+								// אם יש מקטע אופקי בלנדינג – הוסף אותו קודם, כדי שישתכפל גם לשכבת הגב
+								if (landingStrip) {
+									const base = posB1.length / 3;
+									const { t0, b0, t1, b1 } = landingStrip;
+									posB1.push(t0[0], t0[1], t0[2],  b0[0], b0[1], b0[2],  t1[0], t1[1], t1[2],  b1[0], b1[1], b1[2]);
+									idxB1.push(base + 0, base + 1, base + 2);
+									idxB1.push(base + 2, base + 1, base + 3);
+								}
 								const pickB1 = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
 								for (let i = 0; i < segCountB1 - 1; i++) {
 									let t1 = pickB1(topRailB1, i);

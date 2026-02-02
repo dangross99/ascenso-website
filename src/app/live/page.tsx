@@ -3195,8 +3195,8 @@ function Staircase3D({
 											landTopEnd[1] - widthVec[1],
 											landTopEnd[2] - widthVec[2],
 										];
-										// לא נצייר פס אופקי – רק נשתמש בו לחישוב נקודות ההתחלה כדי לשמור רוחב קבוע בלי "קאפ"
-										landingStrip = null;
+										// נצייר פס אופקי של הפודסט בלבד, ללא מקטע התאמה
+										landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: landTopEnd, b1: landBotEnd };
 										landingAdapter = null;
 										// תחילת הפלטה תהיה ישר על המסילות בנקודות ההצמדה
 										startFromLandingTop = joinTop;

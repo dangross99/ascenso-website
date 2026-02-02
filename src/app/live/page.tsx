@@ -3257,18 +3257,7 @@ function Staircase3D({
 									idxB1.push(base + 0, base + 1, base + 2);
 									idxB1.push(base + 2, base + 1, base + 3);
 								}
-								// מקטע התאמה אל המסילות (אם קיים)
-								if (landingAdapter) {
-									const base2 = posB1.length / 3;
-									posB1.push(
-										landingAdapter.t0[0], landingAdapter.t0[1], landingAdapter.t0[2],
-										landingAdapter.b0[0], landingAdapter.b0[1], landingAdapter.b0[2],
-										landingAdapter.t1[0], landingAdapter.t1[1], landingAdapter.t1[2],
-										landingAdapter.b1[0], landingAdapter.b1[1], landingAdapter.b1[2],
-									);
-									idxB1.push(base2 + 0, base2 + 1, base2 + 2);
-									idxB1.push(base2 + 2, base2 + 1, base2 + 3);
-								}
+								// בוטל: מקטע התאמה אל המסילות
 
 								// עובי ונורמל (מישור הפלטה)
 								const thicknessB1 = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));

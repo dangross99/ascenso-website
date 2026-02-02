@@ -3117,6 +3117,7 @@ function Staircase3D({
 								}
 								// יישור זרימה: המשך אופסטים בשיפוע עד נקודת השקה עם רוחב זהה לפלטת הלנדינג
 								let landingStrip: { t0: [number, number, number]; b0: [number, number, number]; t1: [number, number, number]; b1: [number, number, number] } | null = null;
+								let landingAdapter: { t0: [number, number, number]; b0: [number, number, number]; t1: [number, number, number]; b1: [number, number, number] } | null = null;
 								if (startFromLandingTop && startFromLandingBot && topP1.length >= 1 && botP6.length >= 1) {
 									// כיוון שיפוע למסילה העליונה/תחתונה מהשתי נקודות הראשונות של הגרם
 									const pT1 = topP1[0];
@@ -3195,8 +3196,11 @@ function Staircase3D({
 											landTopEnd[2] - widthVec[2],
 										];
 										landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: landTopEnd, b1: landBotEnd };
-										startFromLandingTop = landTopEnd;
-										startFromLandingBot = landBotEnd;
+										// מקטע התאמה מהפס האופקי למסילות – מאפשר הבדל אורך קצה (P למעלה/למטה)
+										landingAdapter = { t0: landTopEnd, b0: landBotEnd, t1: joinTop, b1: joinBot };
+										// תחילת הפלטה תעבור לנקודות ההצמדה על המסילות
+										startFromLandingTop = joinTop;
+										startFromLandingBot = joinBot;
 									} else {
 										// פס חיבור ישיר מהפודסט אל נקודת ההצמדה על המסילות
 										landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: joinTop, b1: joinBot };
@@ -3252,6 +3256,18 @@ function Staircase3D({
 									);
 									idxB1.push(base + 0, base + 1, base + 2);
 									idxB1.push(base + 2, base + 1, base + 3);
+								}
+								// מקטע התאמה אל המסילות (אם קיים)
+								if (landingAdapter) {
+									const base2 = posB1.length / 3;
+									posB1.push(
+										landingAdapter.t0[0], landingAdapter.t0[1], landingAdapter.t0[2],
+										landingAdapter.b0[0], landingAdapter.b0[1], landingAdapter.b0[2],
+										landingAdapter.t1[0], landingAdapter.t1[1], landingAdapter.t1[2],
+										landingAdapter.b1[0], landingAdapter.b1[1], landingAdapter.b1[2],
+									);
+									idxB1.push(base2 + 0, base2 + 1, base2 + 2);
+									idxB1.push(base2 + 2, base2 + 1, base2 + 3);
 								}
 
 								// עובי ונורמל (מישור הפלטה)

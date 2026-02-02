@@ -2923,7 +2923,7 @@ function Staircase3D({
 								addSideStrip(topRailForSideB);
 								addSideStrip(botRailForSideB);
 								// דופן התחלה (קאפ) – מיישר את תחילת הפלטה עם הנורמל
-								{
+								if (!useLandingStart) {
 									const firstT = topRailForSideB[0];
 									// קאפ אנכי: תחתון באותו XZ כמו העליון, Y מתחתון הקיים
 									const firstBy = botRailForSideB[0][1];

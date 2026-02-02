@@ -3386,6 +3386,117 @@ function Staircase3D({
 									// (בוטל) מלבן לאורך צד הפודסט העליון
 								}
 
+								// אם אין פודסט המשך – סגור בקאפ כמו ב‑B (בצד הנגדי)
+								if (!extTopAtL && !extBotAtL && shouldRenderClosingCapForFlight(1)) {
+									let lastStep: any = null;
+									for (let ii = treads.length - 1; ii >= 0; ii--) {
+										const tt = treads[ii];
+										if (tt.flight === 1 && !tt.isLanding) { lastStep = tt; break; }
+									}
+									if (lastStep) {
+										const yaw = lastStep.rotation[1] as number;
+										const c = Math.cos(yaw), s = Math.sin(yaw);
+										const dx = lastStep.run / 2, dz = treadWidth / 2;
+										// מועמדים לקו האנכי: דרך P3 (קדמי‑ימני) או דרך P2 (אחורי‑ימני) – נבחר את זה שמתיישר עם כיוון המסילה
+										const lx = dx, lz = dz;
+										const rx = lx * c - lz * s;
+										const rz = lx * s + lz * c;
+										const candT3: [number, number, number] = [
+											lastStep.position[0] + rx,
+											lastStep.position[1] + treadThickness / 2 + offsetY,
+											lastStep.position[2] + rz
+										];
+										const candB3: [number, number, number] = [
+											candT3[0],
+											lastStep.position[1] - treadThickness / 2 - offsetY,
+											candT3[2]
+										];
+										// P2: (+dx, -dz)
+										const rx2 = lx * c - (-lz) * s;
+										const rz2 = lx * s + (-lz) * c;
+										const candT2: [number, number, number] = [
+											lastStep.position[0] + rx2,
+											lastStep.position[1] + treadThickness / 2 + offsetY,
+											lastStep.position[2] + rz2
+										];
+										const candB2: [number, number, number] = [
+											candT2[0],
+											lastStep.position[1] - treadThickness / 2 - offsetY,
+											candT2[2]
+										];
+
+										// כיוון המסילות בקצה
+										const topEnd = topRailB1[topRailB1.length - 1];
+										const topPrev = topRailB1.length >= 2 ? topRailB1[topRailB1.length - 2] : topEnd;
+										const botEnd = botRailB1[botRailB1.length - 1];
+										const botPrev = botRailB1.length >= 2 ? botRailB1[botRailB1.length - 2] : botEnd;
+										let ux = topEnd[0] - topPrev[0], uz = topEnd[2] - topPrev[2], uy = topEnd[1] - topPrev[1];
+										let vx = botEnd[0] - botPrev[0], vz = botEnd[2] - botPrev[2], vy = botEnd[1] - botPrev[1];
+										if (Math.abs(ux) < 1e-9 && Math.abs(uz) < 1e-9) { ux = Math.cos(yaw); uz = Math.sin(yaw); uy = 0; }
+										if (Math.abs(vx) < 1e-9 && Math.abs(vz) < 1e-9) { vx = Math.cos(yaw); vz = Math.sin(yaw); vy = 0; }
+
+										const projT = (pt: [number, number, number]) => {
+											if (Math.abs(ux) >= Math.abs(uz) && Math.abs(ux) > 1e-9) return (pt[0] - topEnd[0]) / ux;
+											if (Math.abs(uz) > 1e-9) return (pt[2] - topEnd[2]) / uz;
+											return 0;
+										};
+										const projB = (pb: [number, number, number]) => {
+											if (Math.abs(vx) >= Math.abs(vz) && Math.abs(vx) > 1e-9) return (pb[0] - botEnd[0]) / vx;
+											if (Math.abs(vz) > 1e-9) return (pb[2] - botEnd[2]) / vz;
+											return 0;
+										};
+										let lastT = candT3, lastB = candB3;
+										const tTop3 = projT(candT3), tBot3 = projB(candB3);
+										const tTop2 = projT(candT2), tBot2 = projB(candB2);
+										const good3 = tTop3 >= -1e-6 && tBot3 >= -1e-6;
+										const good2 = tTop2 >= -1e-6 && tBot2 >= -1e-6;
+										if (!good3 && good2) { lastT = candT2; lastB = candB2; }
+										else if (good3 && good2) {
+											const score3 = Math.abs(tTop3) + Math.abs(tBot3);
+											const score2 = Math.abs(tTop2) + Math.abs(tBot2);
+											if (score2 < score3) { lastT = candT2; lastB = candB2; }
+										}
+										// עדכון גבהים
+										const tTop = projT(lastT), tBot = projB(lastB);
+										const yTop = topEnd[1] + tTop * uy;
+										const yBot = botEnd[1] + tBot * vy;
+										lastT = [lastT[0], yTop, lastT[2]];
+										lastB = [lastB[0], yBot, lastB[2]];
+										// מקטע מגשר + שכבת גב + דפנות
+										{
+											const baseIndex = posB1.length / 3;
+											posB1.push(topEnd[0], topEnd[1], topEnd[2]);
+											posB1.push(botEnd[0], botEnd[1], botEnd[2]);
+											posB1.push(lastT[0], lastT[1], lastT[2]);
+											posB1.push(lastB[0], lastB[1], lastB[2]);
+											idxB1.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
+											idxB1.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
+											const backBase = posB1.length / 3;
+											const t1e: [number, number, number] = [topEnd[0] + offXB, topEnd[1] + offYB, topEnd[2] + offZB];
+											const b1e: [number, number, number] = [botEnd[0] + offXB, botEnd[1] + offYB, botEnd[2] + offZB];
+											const t2e: [number, number, number] = [lastT[0] + offXB, lastT[1] + offYB, lastT[2] + offZB];
+											const b2e: [number, number, number] = [lastB[0] + offXB, lastB[1] + offYB, lastB[2] + offZB];
+											posB1.push(t1e[0], t1e[1], t1e[2],  b1e[0], b1e[1], b1e[2],  t2e[0], t2e[1], t2e[2],  b2e[0], b2e[1], b2e[2]);
+											idxB1.push(backBase + 0, backBase + 2, backBase + 1);
+											idxB1.push(backBase + 2, backBase + 3, backBase + 1);
+											const biTop = posB1.length / 3;
+											posB1.push(topEnd[0], topEnd[1], topEnd[2],  lastT[0], lastT[1], lastT[2],  t2e[0], t2e[1], t2e[2],  t1e[0], t1e[1], t1e[2]);
+											idxB1.push(biTop + 0, biTop + 1, biTop + 2,  biTop + 0, biTop + 2, biTop + 3);
+											const biBot = posB1.length / 3;
+											posB1.push(botEnd[0], botEnd[1], botEnd[2],  lastB[0], lastB[1], lastB[2],  b2e[0], b2e[1], b2e[2],  b1e[0], b1e[1], b1e[2]);
+											idxB1.push(biBot + 0, biBot + 1, biBot + 2,  biBot + 0, biBot + 2, biBot + 3);
+										}
+										// קאפ סופי
+										{
+											const lastTe: [number, number, number] = [lastT[0] + offXB, lastT[1] + offYB, lastT[2] + offZB];
+											const lastBe: [number, number, number] = [lastB[0] + offXB, lastB[1] + offYB, lastB[2] + offZB];
+											const bi = posB1.length / 3;
+											posB1.push(lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
+											idxB1.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+										}
+									}
+								}
+
 								return (
 									<mesh castShadow receiveShadow>
 										<bufferGeometry attach="geometry">

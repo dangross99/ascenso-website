@@ -2000,6 +2000,26 @@ function Staircase3D({
 								}
 							}
 
+							// מדידת סטיית רוחב בקצה הפודסט (דיבאג לקונסול)
+							if (extTopAt30 && extBot30) {
+								const topEndMeas = railTopForSide[railTopForSide.length - 1];
+								const botEndMeas = railBotForSide[railBotForSide.length - 1];
+								const refW = Math.hypot(
+									topEndMeas[0] - botEndMeas[0],
+									topEndMeas[1] - botEndMeas[1],
+									topEndMeas[2] - botEndMeas[2],
+								);
+								const extW = Math.hypot(
+									extTopAt30[0] - extBot30[0],
+									extTopAt30[1] - extBot30[1],
+									extTopAt30[2] - extBot30[2],
+								);
+								const deltaMm = Math.round((extW - refW) * 1000);
+								if (Math.abs(deltaMm) > 0) {
+									console.info('[A1] width delta at landing end (mm):', deltaMm, { refWm: refW, extWm: extW });
+								}
+							}
+
 							// פאנל התחלה אנכי לרצפה (כמו בפלטה A): בין P1 למטה לרצפה ובין P6 למטה לרצפה, כולל עובי
 							let startPanelMesh = null;
 							if (firstP1 && firstP6) {

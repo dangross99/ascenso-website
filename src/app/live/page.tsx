@@ -3176,6 +3176,16 @@ function Staircase3D({
 											startFromLandingBot = slopeBotPoint;
 										}
 									}
+
+									// חשוב לשמור רוחב מלא גם ממש בתחילת השיפוע:
+									// הנקודה התחתונה הראשונה של השיפוע (botP6[0]) חייבת להיות offset של topP1[0] במרחק Wmag בתוך מישור הפלטה,
+									// אחרת מתקבל שינוי עובי/שבירה בסגמנט הראשון אחרי הברך.
+									if (topP1.length >= 1) {
+										const slopeTop0 = topP1[0];
+										const slopeBot0 = add(slopeTop0, scale(pS, -Wmag));
+										if (botP6.length >= 1) botP6[0] = slopeBot0;
+										if (firstP6) firstP6 = slopeBot0;
+									}
 								}
 
 								// יישור זרימה (רק כשאין נקודת עיגון מדויקת מ‑A1):

@@ -3161,15 +3161,14 @@ function Staircase3D({
 									}
 									const uL = normalize([uxL, 0, uzL]);
 
-									// כיוון השיפוע ב"קני" חייב להיגזר מהקטע שמתחיל ב‑Top המשותף (H)
-									// כלומר H -> נקודת המדרגה הראשונה של הגרם (topP1[0]).
-									// שימוש ב‑topP1[0]->topP1[1] עלול לתת כיוון שונה ולשבור את חישוב ה‑miter.
-									const sK0 = H;
-									const sK1 =
-										topP1.length >= 1 ? topP1[0]
-										: (firstYaw !== null ? ([sK0[0] + Math.cos(firstYaw), sK0[1], sK0[2] + Math.sin(firstYaw)] as [number, number, number])
-										: ([sK0[0] + 1, sK0[1], sK0[2]] as [number, number, number]));
-									const uS = normalize(sub(sK1, sK0));
+									// כיוון השיפוע צריך להילקח מקו ה‑Top האמיתי של השיפוע (topP1),
+									// כדי שנוכל לחשב את ה‑Bottom של השיפוע כ‑offset במרחק W מה‑Top (ולא יחסית ל‑H).
+									const slopeTop0 = topP1.length >= 1 ? topP1[0] : H;
+									const slopeTop1 =
+										topP1.length >= 2 ? topP1[1]
+										: (firstYaw !== null ? ([slopeTop0[0] + Math.cos(firstYaw), slopeTop0[1], slopeTop0[2] + Math.sin(firstYaw)] as [number, number, number])
+										: ([slopeTop0[0] + 1, slopeTop0[1], slopeTop0[2]] as [number, number, number]));
+									const uS = normalize(sub(slopeTop1, slopeTop0));
 
 									// נורמל "חזית" הפלטה (ניצב למישור הפלטה) – נדרש כדי להפיק offset בתוך המישור
 									let nFace = cross(uS, wVec);
@@ -3184,39 +3183,48 @@ function Staircase3D({
 									if (dot(pL, wVec) < 0) pL = scale(pL, -1);
 									if (dot(pS, wVec) < 0) pS = scale(pS, -1);
 
-									// נקודות על הקווים התחתונים (offset במרחק Wmag מה‑Top)
-									const landingBotPoint = add(H, scale(pL, -Wmag));
-									const slopeBotPoint = add(H, scale(pS, -Wmag));
-
-									// חיתוך קווים במישור הפלטה: נבצע הקרנה ל‑2D בבסיס (e1,e2) של המישור
+									// חישוב דינמי ב"מישור הפלטה":
+									// 1) חיתוך קווי TOP (פודסט מול שיפוע) כדי להבטיח שהפודסט נשאר ישר, ואז
+									// 2) חיתוך קווי BOTTOM (offset של כל TOP במרחק W) כדי לקבל Bot שמחליק קדימה/מטה לפי הזווית.
 									if (Wmag > 1e-9) {
+										// בסיס 2D במישור הפלטה
 										let e1 = sub(uL, scale(nFace, dot(uL, nFace)));
 										if (norm(e1) < 1e-9) e1 = sub(uS, scale(nFace, dot(uS, nFace)));
 										e1 = normalize(e1);
 										const e2 = normalize(cross(nFace, e1));
 
+										// נשתמש במוצא יציב (קצה רחוק של הפודסט) כדי לקבל חישוב עקבי
+										const O = rawLandingStartTop || H;
 										const to2 = (P: [number, number, number]): [number, number] => {
-											const v = sub(P, H);
+											const v = sub(P, O);
 											return [dot(v, e1), dot(v, e2)];
 										};
+										const from2 = (x: number, y: number): [number, number, number] => add(O, add(scale(e1, x), scale(e2, y)));
 										const d2 = (D: [number, number, number]): [number, number] => [dot(D, e1), dot(D, e2)];
 										const cross2 = (a: [number, number], b: [number, number]) => a[0] * b[1] - a[1] * b[0];
-
-										const p0 = to2(landingBotPoint);
-										const q0 = to2(slopeBotPoint);
-										const r = d2(uL);
-										const s = d2(uS);
-										const denom = cross2(r, s);
-										if (Math.abs(denom) > 1e-9) {
+										const intersect = (P0: [number, number, number], R: [number, number, number], Q0: [number, number, number], S: [number, number, number]) => {
+											const p0 = to2(P0), q0 = to2(Q0);
+											const r = d2(R), s = d2(S);
+											const denom = cross2(r, s);
+											if (Math.abs(denom) < 1e-9) return null;
 											const qp: [number, number] = [q0[0] - p0[0], q0[1] - p0[1]];
 											const t = cross2(qp, s) / denom;
-											const ix = p0[0] + t * r[0];
-											const iy = p0[1] + t * r[1];
-											startFromLandingBot = add(H, add(scale(e1, ix), scale(e2, iy)));
-									} else {
-											// כמעט מקביל – פולבאק: קח את ה‑bottom של השיפוע בנקודת הציר
-											startFromLandingBot = slopeBotPoint;
+											return from2(p0[0] + t * r[0], p0[1] + t * r[1]);
+										};
+
+										// TOP lines
+										const landingTopLinePoint = rawLandingStartTop || H;
+										const Hk = intersect(landingTopLinePoint, uL, slopeTop0, uS);
+										if (Hk) {
+											H = Hk;
+											startFromLandingTop = H;
 										}
+
+										// BOTTOM lines (offset from each TOP by Wmag)
+										const landingBotLinePoint = add(landingTopLinePoint, scale(pL, -Wmag));
+										const slopeBotLinePoint = add(slopeTop0, scale(pS, -Wmag));
+										const Bk = intersect(landingBotLinePoint, uL, slopeBotLinePoint, uS);
+										startFromLandingBot = Bk || slopeBotLinePoint;
 									}
 
 									// פס פודסט ישר: מהקצה הרחוק של הפודסט (rawLandingStartTop) עד ציר הברך (H),

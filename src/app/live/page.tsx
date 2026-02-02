@@ -3109,8 +3109,10 @@ function Staircase3D({
 									startFromLandingTop = hitechBStartRef.current.top;
 									startFromLandingBot = hitechBStartRef.current.bot;
 								}
-								// יישור זרימה: המשך בשיפוע עד מישור הלנדינג (לא הופכי לרוחב) – הארך עד U0
+								// יישור זרימה: המשך אופסטים בשיפוע עד נקודת השקה עם רוחב זהה לפלטת הלנדינג
+								let landingStrip: { t0: [number, number, number]; b0: [number, number, number]; t1: [number, number, number]; b1: [number, number, number] } | null = null;
 								if (startFromLandingTop && startFromLandingBot && topP1.length >= 1 && botP6.length >= 1) {
+									// כיוון שיפוע למסילה העליונה/תחתונה מהשתי נקודות הראשונות של הגרם
 									const pT1 = topP1[0];
 									const pT2 = topP1.length >= 2 ? topP1[1] : pT1;
 									let dTx = pT1[0] - pT2[0], dTy = pT1[1] - pT2[1], dTz = pT1[2] - pT2[2];
@@ -3119,24 +3121,56 @@ function Staircase3D({
 									const pB2 = botP6.length >= 2 ? botP6[1] : pB1;
 									let dBx = pB1[0] - pB2[0], dBy = pB1[1] - pB2[1], dBz = pB1[2] - pB2[2];
 									{ const m = Math.hypot(dBx, dBy, dBz) || 1; dBx /= m; dBy /= m; dBz /= m; }
-									// מישור הלנדינג לפי yaw של הפודסט הקודם (או firstYaw)
+									// וקטור כיוון המישור של הפודסט (לפי yaw של הפודסט הקודם אם קיים; אחרת לפי firstYaw או כיוון המסילה העליונה)
 									let uxL = 1, uzL = 0;
 									if (firstStepIdxInFlight !== null && firstStepIdxInFlight > 0) {
 										const prev = treads[firstStepIdxInFlight - 1];
 										if (prev && prev.isLanding) { uxL = Math.cos(prev.rotation[1] as number); uzL = Math.sin(prev.rotation[1] as number); }
 									} else if (firstYaw !== null) {
 										uxL = Math.cos(firstYaw); uzL = Math.sin(firstYaw);
+									} else {
+										uxL = (Math.abs(dTx) > Math.abs(dTz)) ? Math.sign(dTx) : 0;
+										uzL = (uxL === 0) ? Math.sign(dTz) : 0;
 									}
 									const dotU = (x: [number, number, number]) => (uxL * x[0] + uzL * x[2]);
 									const U0 = dotU(startFromLandingTop);
+									const widthTarget = Math.hypot(
+										startFromLandingTop[0] - startFromLandingBot[0],
+										startFromLandingTop[1] - startFromLandingBot[1],
+										startFromLandingTop[2] - startFromLandingBot[2],
+									);
+									// פונקציה שמייצרת נקודת חיתוך של קו המסילה עם מישור U נתון
 									const pointOnLineAtU = (p: [number, number, number], d: [number, number, number], U: number): [number, number, number] => {
 										const denom = uxL * d[0] + uzL * d[2];
-										if (Math.abs(denom) < 1e-9) return p;
+										if (Math.abs(denom) < 1e-9) return p; // קו כמעט מקביל למישור, נחזיר מקור
 										const t = (U - dotU(p)) / denom;
 										return [p[0] + d[0] * t, p[1] + d[1] * t, p[2] + d[2] * t];
 									};
-									const joinTop = pointOnLineAtU(pT1, [dTx, dTy, dTz], U0);
-									const joinBot = pointOnLineAtU(pB1, [dBx, dBy, dBz], U0);
+									const lengthAtU = (U: number) => {
+										const tP = pointOnLineAtU(pT1, [dTx, dTy, dTz], U);
+										const bP = pointOnLineAtU(pB1, [dBx, dBy, dBz], U);
+										return Math.hypot(tP[0] - bP[0], tP[1] - bP[1], tP[2] - bP[2]);
+									};
+									// מצא U* כך שהמרחק בין שתי המסילות במישור U* שווה בדיוק לרוחב בלנדינג (secant)
+									let Ua = U0, Ub = U0 + 0.05;
+									let Fa = lengthAtU(Ua) - widthTarget;
+									let Fb = lengthAtU(Ub) - widthTarget;
+									for (let it = 0; it < 8; it++) {
+										const den = (Fb - Fa);
+										if (Math.abs(den) < 1e-9) break;
+										const Uc = Ub - Fb * (Ub - Ua) / den;
+										const Fc = lengthAtU(Uc) - widthTarget;
+										Ua = Ub; Fa = Fb; Ub = Uc; Fb = Fc;
+										if (Math.abs(Fb) < 1e-6) break;
+									}
+									const Ustar = Ub;
+									const joinTop = pointOnLineAtU(pT1, [dTx, dTy, dTz], Ustar);
+									const joinBot = pointOnLineAtU(pB1, [dBx, dBy, dBz], Ustar);
+									// סוף מקטע אופקי בלנדינג (במישור U): נקודה על המישור עם Y קבוע של הלנדינג
+									const landTopEnd: [number, number, number] = [startFromLandingTop[0] + (Ustar - U0) * uxL, startFromLandingTop[1], startFromLandingTop[2] + (Ustar - U0) * uzL];
+									const landBotEnd: [number, number, number] = [startFromLandingBot[0] + (Ustar - U0) * uxL, startFromLandingBot[1], startFromLandingBot[2] + (Ustar - U0) * uzL];
+									landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: landTopEnd, b1: landBotEnd };
+									// החלף את נקודות הפתיחה בנקודות המושקות
 									startFromLandingTop = joinTop;
 									startFromLandingBot = joinBot;
 								}
@@ -3156,6 +3190,19 @@ function Staircase3D({
 								// חזית
 								const posB1: number[] = [];
 								const idxB1: number[] = [];
+								// אם חושב מקטע אופקי בלנדינג – הוסף אותו קודם (יועתק לשכבת הגב בהמשך)
+								if (landingStrip) {
+									const base = posB1.length / 3;
+									const { t0, b0, t1, b1 } = landingStrip;
+									posB1.push(
+										t0[0], t0[1], t0[2],
+										b0[0], b0[1], b0[2],
+										t1[0], t1[1], t1[2],
+										b1[0], b1[1], b1[2],
+									);
+									idxB1.push(base + 0, base + 1, base + 2);
+									idxB1.push(base + 2, base + 1, base + 3);
+								}
 								// (בוטל) מקטע אופקי בלנדינג העליון
 								const pickB1 = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
 								for (let i = 0; i < segCountB1 - 1; i++) {

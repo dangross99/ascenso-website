@@ -1891,13 +1891,18 @@ function Staircase3D({
 									bvz = uzDir;
 								}
 								const denomB = uxDir * bvx + uzDir * bvz;
+								const uEnd = dotU(bEnd);
+								const sign = (planeU - uEnd) >= 0 ? +1 : -1;
+								const targetU = planeU - sign * wantGap;
 								if (Math.abs(denomB) > 1e-9) {
-									const uEnd = dotU(bEnd);
-									const sign = (planeU - uEnd) >= 0 ? +1 : -1;
-									const targetU = planeU - sign * wantGap;
 									const tB = (targetU - uEnd) / denomB;
 									extBot30 = [bEnd[0] + bvx * tB, bEnd[1] + bvy * tB, bEnd[2] + bvz * tB];
-									railBot = [...railBot, extBot30];
+								} else {
+									// fallback: הארך ישירות בכיוון הגרם
+									const deltaU = (targetU - uEnd);
+									extBot30 = [bEnd[0] + uxDir * deltaU, bEnd[1], bEnd[2] + uzDir * deltaU];
+								}
+								railBot = [...railBot, extBot30];
 
 									// עליון: נקודת ייחוס באותו U (לצורך קאפ אנכי ושמירת ורטיקליות)
 									const tSrc = closeP1 ? [...topP1, closeP1] : [...topP1];
@@ -1907,19 +1912,21 @@ function Staircase3D({
 									const tvy = tEnd[1] - tPrev[1];
 									const tvz = tEnd[2] - tPrev[2];
 									const denomT = uxDir * tvx + uzDir * tvz;
+									const uTopEnd = dotU(tEnd);
 									if (Math.abs(denomT) > 1e-9) {
-										const uTopEnd = dotU(tEnd);
 										const tT = (targetU - uTopEnd) / denomT;
 										extTopAt30 = [tEnd[0] + tvx * tT, tEnd[1] + tvy * tT, tEnd[2] + tvz * tT];
 									} else {
-										extTopAt30 = tEnd;
+										// fallback: הארך ישירות בכיוון הגרם כדי לשמור אנכיות מול התחתון
+										const deltaU = (targetU - uTopEnd);
+										extTopAt30 = [tEnd[0] + uxDir * deltaU, tEnd[1], tEnd[2] + uzDir * deltaU];
 									}
 
 									// הוסף גם נקודת הארכה ל‑railTop כדי שהחזית תכיל מקטע אמיתי (לא דגנרטיבי)
 									if (extTopAt30) {
 										railTop.push(extTopAt30);
 									}
-								}
+
 							}
 							const segCount = Math.max(railTop.length, railBot.length);
 							if (segCount < 2) return null;

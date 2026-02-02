@@ -3245,18 +3245,7 @@ function Staircase3D({
 									idxB1.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
 								}
 
-								// פס חיבור בין הפודסט לפלטה (אם חושב)
-								if (landingStrip) {
-									const base = posB1.length / 3;
-									posB1.push(
-										landingStrip.t0[0], landingStrip.t0[1], landingStrip.t0[2],
-										landingStrip.b0[0], landingStrip.b0[1], landingStrip.b0[2],
-										landingStrip.t1[0], landingStrip.t1[1], landingStrip.t1[2],
-										landingStrip.b1[0], landingStrip.b1[1], landingStrip.b1[2],
-									);
-									idxB1.push(base + 0, base + 1, base + 2);
-									idxB1.push(base + 2, base + 1, base + 3);
-								}
+								// בוטל: פס חיבור/פודסט בתחילת B1 – הפלטה מתחברת ישירות למסילות
 								// בוטל: מקטע התאמה אל המסילות
 
 								// עובי ונורמל (מישור הפלטה)

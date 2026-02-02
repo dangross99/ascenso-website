@@ -3173,7 +3173,7 @@ function Staircase3D({
 									startFromLandingBot = joinBot;
 								}
 
-								// בניית מסילות B1 (כולל הארכת פתיחה מהפודסט אם קיים)
+								// בניית מסילות B1 (כולל פס פודסט אופקי נפרד אם קיים)
 								const topRailB1: Array<[number, number, number]> = (() => {
 									const arr = closeP1 ? [...topP1, closeP1] : [...topP1];
 									return startFromLandingTop ? [startFromLandingTop, ...arr] : arr;
@@ -3187,6 +3187,9 @@ function Staircase3D({
 								// חזית
 								const posB1: number[] = [];
 								const idxB1: number[] = [];
+								// גיאומטריה לפלטת פודסט אופקית (סלב)
+								const posLS: number[] = [];
+								const idxLS: number[] = [];
 								// (בוטל) מקטע אופקי בלנדינג העליון
 								const pickB1 = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
 								// אם יש פחות משני קטעים – צור קטע גשר מינימלי בין תחילת הפודסט לנקודת המדרגה הראשונה
@@ -3230,17 +3233,38 @@ function Staircase3D({
 									idxB1.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
 								}
 
-								// הוסף פס אופקי של הפודסט אם חושב landingStrip (בלנדינג הראשון בלבד)
+								// בנה סלב אופקי של הפודסט כגיאומטריה נפרדת (עובי כלפי מטה בציר Y)
 								if (landingStrip) {
-									const base = posB1.length / 3;
-									posB1.push(
-										landingStrip.t0[0], landingStrip.t0[1], landingStrip.t0[2],
-										landingStrip.b0[0], landingStrip.b0[1], landingStrip.b0[2],
-										landingStrip.t1[0], landingStrip.t1[1], landingStrip.t1[2],
-										landingStrip.b1[0], landingStrip.b1[1], landingStrip.b1[2],
-									);
-									idxB1.push(base + 0, base + 1, base + 2);
-									idxB1.push(base + 2, base + 1, base + 3);
+									const yTop0 = landingStrip.t0[1];
+									const yTop1 = landingStrip.t1[1];
+									const t0 = landingStrip.t0;
+									const t1 = landingStrip.t1;
+									// הצד הפנימי עליון: מקרב נקודות התחתון ל‑Y של העליון
+									const d0: [number, number, number] = [landingStrip.b0[0], yTop0, landingStrip.b0[2]];
+									const d1: [number, number, number] = [landingStrip.b1[0], yTop1, landingStrip.b1[2]];
+									const th = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
+									// משטח עליון (שתי משולשים): t0,t1,d1,d0
+									let base = posLS.length / 3;
+									posLS.push(t0[0], t0[1], t0[2],  t1[0], t1[1], t1[2],  d1[0], d1[1], d1[2],  d0[0], d0[1], d0[2]);
+									idxLS.push(base + 0, base + 1, base + 2,  base + 0, base + 2, base + 3);
+									// משטח תחתון מוזז מטה ב‑Y
+									const t0e: [number, number, number] = [t0[0], t0[1] - th, t0[2]];
+									const t1e: [number, number, number] = [t1[0], t1[1] - th, t1[2]];
+									const d0e: [number, number, number] = [d0[0], d0[1] - th, d0[2]];
+									const d1e: [number, number, number] = [d1[0], d1[1] - th, d1[2]];
+									base = posLS.length / 3;
+									posLS.push(t0e[0], t0e[1], t0e[2],  t1e[0], t1e[1], t1e[2],  d1e[0], d1e[1], d1e[2],  d0e[0], d0e[1], d0e[2]);
+									idxLS.push(base + 0, base + 2, base + 1,  base + 0, base + 3, base + 2);
+									// דפנות סביב
+									const addSide = (a: [number, number, number], b: [number, number, number], ae: [number, number, number], be: [number, number, number]) => {
+										const bi = posLS.length / 3;
+										posLS.push(a[0], a[1], a[2],  b[0], b[1], b[2],  be[0], be[1], be[2],  ae[0], ae[1], ae[2]);
+										idxLS.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+									};
+									addSide(t0, t1, t0e, t1e);
+									addSide(t1, d1, t1e, d1e);
+									addSide(d1, d0, d1e, d0e);
+									addSide(d0, t0, d0e, t0e);
 								}
 								// בוטל: מקטע התאמה אל המסילות
 
@@ -3493,13 +3517,24 @@ function Staircase3D({
 								}
 
 								return (
-									<mesh castShadow receiveShadow>
-										<bufferGeometry attach="geometry">
-											<bufferAttribute attach="attributes-position" args={[new Float32Array(posB1), 3]} />
-											<bufferAttribute attach="index" args={[new Uint32Array(idxB1), 1]} />
-										</bufferGeometry>
-										<meshBasicMaterial color="#16a34a" side={2} />
-									</mesh>
+									<group>
+										<mesh castShadow receiveShadow>
+											<bufferGeometry attach="geometry">
+												<bufferAttribute attach="attributes-position" args={[new Float32Array(posB1), 3]} />
+												<bufferAttribute attach="index" args={[new Uint32Array(idxB1), 1]} />
+											</bufferGeometry>
+											<meshBasicMaterial color="#16a34a" side={2} />
+										</mesh>
+										{posLS.length > 0 ? (
+											<mesh castShadow receiveShadow>
+												<bufferGeometry attach="geometry">
+													<bufferAttribute attach="attributes-position" args={[new Float32Array(posLS), 3]} />
+													<bufferAttribute attach="index" args={[new Uint32Array(idxLS), 1]} />
+												</bufferGeometry>
+												<meshBasicMaterial color="#16a34a" side={2} />
+											</mesh>
+										) : null}
+									</group>
 								);
 							};
 

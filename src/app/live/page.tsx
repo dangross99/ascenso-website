@@ -3236,6 +3236,48 @@ function Staircase3D({
 								// הקפנו לצד הנגדי (כמו A1) לשמירה על נקרא "חוץ"
 								const offXB = -nmXB * thicknessB1, offYB = -nmYB * thicknessB1, offZB = -nmZB * thicknessB1;
 
+								// מלבן לאורך צד הפודסט התחתון (prev landing) ברוחב סיום A1
+								if (hitechBStartRef.current && firstStepIdxInFlight !== null && firstStepIdxInFlight > 0) {
+									const lnPrev = treads[firstStepIdxInFlight - 1];
+									if (lnPrev && lnPrev.isLanding) {
+										const yawL = lnPrev.rotation[1] as number;
+										const cL = Math.cos(yawL), sL = Math.sin(yawL);
+										const dxL = lnPrev.run / 2, dzL = treadWidth / 2;
+										// צד 2/3: x = +dxL, z = ±dzL
+										const rx2 = (+dxL) * cL - (-dzL) * sL, rz2 = (+dxL) * sL + (-dzL) * cL;
+										const rx3 = (+dxL) * cL - (+dzL) * sL,  rz3 = (+dxL) * sL + (+dzL) * cL;
+										const p2Top: [number, number, number] = [lnPrev.position[0] + rx2, lnPrev.position[1] + treadThickness / 2 + offsetY, lnPrev.position[2] + rz2];
+										const p3Top: [number, number, number] = [lnPrev.position[0] + rx3, lnPrev.position[1] + treadThickness / 2 + offsetY, lnPrev.position[2] + rz3];
+										// רוחב לפי A1
+										const W = hitechBStartRef.current;
+										const Wdx = W.top[0] - W.bot[0], Wdy = W.top[1] - W.bot[1], Wdz = W.top[2] - W.bot[2];
+										const p2Bot: [number, number, number] = [p2Top[0] - Wdx, p2Top[1] - Wdy, p2Top[2] - Wdz];
+										const p3Bot: [number, number, number] = [p3Top[0] - Wdx, p3Top[1] - Wdy, p3Top[2] - Wdz];
+										// חזית
+										{
+											const bi = posB1.length / 3;
+											posB1.push(p2Top[0], p2Top[1], p2Top[2],  p2Bot[0], p2Bot[1], p2Bot[2],  p3Top[0], p3Top[1], p3Top[2],  p3Bot[0], p3Bot[1], p3Bot[2]);
+											idxB1.push(bi + 0, bi + 1, bi + 2);
+											idxB1.push(bi + 2, bi + 1, bi + 3);
+											// שכבת גב
+											const bb = posB1.length / 3;
+											const p2Te: [number, number, number] = [p2Top[0] + offXB, p2Top[1] + offYB, p2Top[2] + offZB];
+											const p2Be: [number, number, number] = [p2Bot[0] + offXB, p2Bot[1] + offYB, p2Bot[2] + offZB];
+											const p3Te: [number, number, number] = [p3Top[0] + offXB, p3Top[1] + offYB, p3Top[2] + offZB];
+											const p3Be: [number, number, number] = [p3Bot[0] + offXB, p3Bot[1] + offYB, p3Bot[2] + offZB];
+											posB1.push(p2Te[0], p2Te[1], p2Te[2],  p2Be[0], p2Be[1], p2Be[2],  p3Te[0], p3Te[1], p3Te[2],  p3Be[0], p3Be[1], p3Be[2]);
+											idxB1.push(bb + 0, bb + 2, bb + 1);
+											idxB1.push(bb + 2, bb + 3, bb + 1);
+											// דפנות קצה
+											const biA = posB1.length / 3;
+											posB1.push(p2Top[0], p2Top[1], p2Top[2],  p2Bot[0], p2Bot[1], p2Bot[2],  p2Be[0], p2Be[1], p2Be[2],  p2Te[0], p2Te[1], p2Te[2]);
+											idxB1.push(biA + 0, biA + 1, biA + 2,  biA + 0, biA + 2, biA + 3);
+											const biB = posB1.length / 3;
+											posB1.push(p3Top[0], p3Top[1], p3Top[2],  p3Bot[0], p3Bot[1], p3Bot[2],  p3Be[0], p3Be[1], p3Be[2],  p3Te[0], p3Te[1], p3Te[2]);
+											idxB1.push(biB + 0, biB + 1, biB + 2,  biB + 0, biB + 2, biB + 3);
+										}
+									}
+								}
 								// שכבת גב
 								{
 									const frontN = posB1.length / 3;

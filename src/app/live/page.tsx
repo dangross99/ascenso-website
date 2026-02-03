@@ -3195,18 +3195,33 @@ function Staircase3D({
 												const dpz = (first.position[2] - prev.position[2]);
 												const projF = dpx * cLx + dpz * cLz;
 												const projR = dpx * rLx + dpz * rLz;
-												// בחר את הקצה הדומיננטי (front/back או left/right)
-												let nx = 0, nz = 0, extent = 0;
-												if (Math.abs(projF) >= Math.abs(projR)) {
-													const s = Math.sign(projF) || 1;
-													nx = cLx * s; nz = cLz * s;
-													extent = dxL;
-												} else {
-													const s = Math.sign(projR) || 1;
-													nx = rLx * s; nz = rLz * s;
-													extent = dzL;
+												// בחר את דופן הפודסט כך שתשמור על אותו היקף חיצוני של A1 (אם יש Ref),
+												// ולא תברח פנימה לכיוון מרכז המדרגה.
+												const ref = (a1Anchor?.top || startFromLandingTop) as [number, number, number];
+												const centerDot = (nx: number, nz: number) => (prev.position[0] * nx + prev.position[2] * nz);
+												const refDot = (nx: number, nz: number) => (ref[0] * nx + ref[2] * nz);
+												type Cand = { nx: number; nz: number; c: number; score: number };
+												const mkCand = (nx: number, nz: number, extent: number): Cand => {
+													const c1 = centerDot(nx, nz) + extent;
+													const c2 = centerDot(nx, nz) - extent;
+													const rd = refDot(nx, nz);
+													const s1 = Math.abs(c1 - rd);
+													const s2 = Math.abs(c2 - rd);
+													return (s1 <= s2) ? { nx, nz, c: c1, score: s1 } : { nx, nz, c: c2, score: s2 };
+												};
+												const cands: Cand[] = [
+													mkCand(cLx, cLz, dxL),
+													mkCand(rLx, rLz, dzL),
+												];
+												// העדף את הציר הדומיננטי לפי projF/projR, אבל עדיין נבחר לפי התאמה להיקף A1
+												const preferForward = Math.abs(projF) >= Math.abs(projR);
+												const cand = cands.sort((a, b) => a.score - b.score)[0];
+												let nx = cand.nx, nz = cand.nz, c = cand.c;
+												// אם ההתאמה להיקף כמעט זהה – השתמש בהעדפה הדומיננטית כדי למנוע "קפיצה"
+												if (cands.length === 2 && Math.abs(cands[0].score - cands[1].score) < 1e-4) {
+													const fallback = preferForward ? mkCand(cLx, cLz, dxL) : mkCand(rLx, rLz, dzL);
+													nx = fallback.nx; nz = fallback.nz; c = fallback.c;
 												}
-												const c = (prev.position[0] * nx + prev.position[2] * nz) + extent;
 												const projectToEdge = (p: [number, number, number]): [number, number, number] => {
 													const t = c - (p[0] * nx + p[2] * nz);
 													return [p[0] + nx * t, p[1], p[2] + nz * t];

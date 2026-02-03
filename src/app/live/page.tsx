@@ -1199,37 +1199,20 @@ function Staircase3D({
 					const { c, s } = cosSin(yaw);
 					const dx = t.run / 2;
 					const dz = treadWidth / 2;
-					// נקודות עליונות בצד החיצוני (z=+dz): כדי לקבל פלטה "מלאה" בלי חורים,
-					// חייבים לכלול שני קודקודים לכל מדרגה (אחורי+קדמי) ולא רק נקודה אחת.
-					// אחרת מתקבל קו עליון אלכסוני שמדלג על עומק המדרך ונוצרים "חלונות" בין המדרגות.
-					let p4w: [number, number, number] | null = null; // (-dx, +dz) אחורי-חיצוני
-					let p3w: [number, number, number] | null = null; // (+dx, +dz) קדמי-חיצוני
+					// נקודה 4 – עליונה שמאל-קדימה: (-dx, +dz, yTop)
+					let p4w: [number, number, number] | null = null;
 					let p7w: [number, number, number] | null = null;
 					{
-						// p4: (-dx, +dz)
-						{
-							const lx = -dx, lz = dz;
-							const rx = lx * c - lz * s;
-							const rz = lx * s + lz * c;
-							const wx = t.position[0] + rx;
-							const wy = t.position[1] + treadThickness / 2;
-							const wz = t.position[2] + rz;
-							p4w = [wx, wy + offsetY, wz];
-						}
-						// p3: (+dx, +dz)
-						{
-							const lx = dx, lz = dz;
-							const rx = lx * c - lz * s;
-							const rz = lx * s + lz * c;
-							const wx = t.position[0] + rx;
-							const wy = t.position[1] + treadThickness / 2;
-							const wz = t.position[2] + rz;
-							p3w = [wx, wy + offsetY, wz];
-						}
-						if (p4w) pts4Off.push(p4w[0], p4w[1], p4w[2]);
-						if (p3w) pts4Off.push(p3w[0], p3w[1], p3w[2]);
-						if (!t.isLanding && p4w && !firstP4) { firstP4 = p4w; if (firstStepIdxInFlight === null) firstStepIdxInFlight = i; }
-						if (!t.isLanding && p4w && p3w) topStepOff.push(p4w, p3w);
+						const lx = -dx, lz = dz;
+						const rx = lx * c - lz * s;
+						const rz = lx * s + lz * c;
+						const wx = t.position[0] + rx;
+						const wy = t.position[1] + treadThickness / 2;
+						const wz = t.position[2] + rz;
+						p4w = [wx, wy + offsetY, wz];
+						pts4Off.push(p4w[0], p4w[1], p4w[2]);
+						if (!t.isLanding && !firstP4) { firstP4 = p4w; if (firstStepIdxInFlight === null) firstStepIdxInFlight = i; }
+						if (!t.isLanding) topStepOff.push(p4w);
 					}
 					// נקודה 7 – תחתונה ימין-קדימה: (+dx, +dz, yBot) – רק אם לא פודסט
 					if (!t.isLanding) {
@@ -2796,6 +2779,23 @@ function Staircase3D({
 									startFromLandingBot = [wx4, wy8, wz4];
 								}
 							}
+							// Vertical Stretch בתחילת גרם B:
+							// בגלל שהפלטה מתחילה בשיפוע מיד אחרי העלייה, נקודת ה-bottom עלולה "לברוח" למעלה ולהיראות דקה.
+							// לכן נכפה שהגובה של startFromLandingBot יתאים בדיוק ל-bottom של ה-Ref מפלטה A (אם קיים).
+							// חשוב: לא משנים XZ (כדי לא לשבש את הטריאנגולציה); רק מותחים למטה בציר Y.
+							{
+								const refA = hitechBStartRef.current;
+								if (refA && startFromLandingTop && startFromLandingBot) {
+									const refBot = refA.bot;
+									const dx = startFromLandingBot[0] - refBot[0];
+									const dz = startFromLandingBot[2] - refBot[2];
+									// אם זה ממש אותו קו חיבור (XZ תואם) – אפשר לאמץ את נקודת ה-ref במלואה,
+									// אחרת ניישר רק את הגובה.
+									startFromLandingBot = (Math.hypot(dx, dz) < 1e-4)
+										? refBot
+										: [startFromLandingBot[0], refBot[1], startFromLandingBot[2]];
+								}
+							}
 							const baseTop: Array<[number, number, number]> = (() => {
 								const arr = closeP4 ? [...topStepOff, closeP4] : [...topStepOff];
 								return startFromLandingTop ? [startFromLandingTop, ...arr] : arr;
@@ -2808,16 +2808,10 @@ function Staircase3D({
 							const dyLanding = Math.abs(
 								(startFromLandingTop?.[1] ?? (firstP4?.[1] ?? 0)) - (startFromLandingBot?.[1] ?? (firstP7?.[1] ?? ((firstP4?.[1] ?? 0) - (treadThickness + 2 * offsetY))))
 							) || (treadThickness + 2 * offsetY);
-							// slopeAngle נגזר מכיוון הרייל העליון (u) בין שתי נקודות שונות בגובה (לא בתוך אותה מדרגה).
-							// אחרי שכוללים 2 נקודות לכל מדרגה (אחורי+קדמי), הזוג הראשון עלול להיות באותו גובה.
-							// לכן נסרוק לזוג הראשון שבו ΔY != 0.
-							let a0 = topRail[0];
-							let a1 = topRail[Math.min(1, topRail.length - 1)];
-							for (let j = 0; j < topRail.length - 1; j++) {
-								const p0 = topRail[j];
-								const p1 = topRail[j + 1];
-								if (Math.abs(p1[1] - p0[1]) > 1e-6) { a0 = p0; a1 = p1; break; }
-							}
+							// slopeAngle נגזר מכיוון הרייל העליון (u) בין שתי נקודות בגרם (לא בפודסט)
+							const idx0 = startFromLandingTop ? 1 : 0;
+							const a0 = topRail[Math.min(idx0, topRail.length - 1)];
+							const a1 = topRail[Math.min(idx0 + 1, topRail.length - 1)];
 							let uxS = a1[0] - a0[0], uyS = a1[1] - a0[1], uzS = a1[2] - a0[2];
 							{ const m = Math.hypot(uxS, uyS, uzS) || 1; uxS /= m; uyS /= m; uzS /= m; }
 							const cosSlope = Math.max(1e-6, Math.hypot(uxS, uzS)); // cos(angle from horizontal)

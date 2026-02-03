@@ -205,6 +205,22 @@ function Staircase3D({
 	const hitechBStartRef = React.useRef<{ top: [number, number, number]; bot: [number, number, number] } | null>(null);
 	// שיתוף נקודת ההתחלה של פלטת C1 (גרם 3, צד נגדי) לפי סוף הפודסט של B1 – לחיבור Flush רציף על הקו החיצוני
 	const hitechCStartRef = React.useRef<{ top: [number, number, number]; bot: [number, number, number] } | null>(null);
+	// סנכרון רינדור: ה-Ref מתעדכן בזמן render (ב-B1), אבל Ref לא גורם לרינדור מחדש.
+	// לכן אנחנו מאזינים לשינוי בערך ה-Ref אחרי commit ומכריחים רינדור אחד נוסף כדי ש-C1 תקבל עוגן נכון,
+	// במקום "לקפוץ" לתחילת הפודסט.
+	const [, bumpHitechCAnchorTick] = React.useState(0);
+	const lastCAnchorKeyRef = React.useRef<string>('');
+	React.useLayoutEffect(() => {
+		const a = hitechCStartRef.current;
+		const k = (n: number) => Math.round(n * 1e6); // יציבות key בלי להשפיע על הגאומטריה
+		const key = a
+			? `${k(a.top[0])},${k(a.top[1])},${k(a.top[2])}|${k(a.bot[0])},${k(a.bot[1])},${k(a.bot[2])}`
+			: '';
+		if (key !== lastCAnchorKeyRef.current) {
+			lastCAnchorKeyRef.current = key;
+			bumpHitechCAnchorTick(v => v + 1);
+		}
+	});
 	// יחידות סצנה: מטרים בקירוב
 	const treadThickness = typeof treadThicknessOverride === 'number' ? treadThicknessOverride : 0.04;
 	const treadDepth = 0.30;
@@ -2662,10 +2678,17 @@ function Staircase3D({
 					}
 					if (topP1.length === 0 || botP6.length === 0) return null;
 
-					// נקודת פתיחה מהפודסט שלפני גרם 3 (אם קיימת)
+					const a2Anchor = hitechCStartRef.current;
+					const hasPrevLanding =
+						(firstStepIdxInFlight !== null && firstStepIdxInFlight > 0 && !!treads[firstStepIdxInFlight - 1]?.isLanding);
+
+					// אם יש פודסט לפני גרם 3 אבל העוגן מ-B1 עדיין לא הגיע – עדיף לא לרנדר מאשר לרנדר במקום לא נכון.
+					if (hasPrevLanding && !a2Anchor) return null;
+
+					// נקודת פתיחה מהפודסט שלפני גרם 3 (אם קיימת) – רק כשאין Ref.
 					let startFromLandingTop: [number, number, number] | null = null;
 					let startFromLandingBot: [number, number, number] | null = null;
-					if (firstStepIdxInFlight !== null && firstStepIdxInFlight > 0) {
+					if (!a2Anchor && firstStepIdxInFlight !== null && firstStepIdxInFlight > 0) {
 						const prev = treads[firstStepIdxInFlight - 1];
 						if (prev && prev.isLanding) {
 							const yawL = prev.rotation[1] as number;
@@ -2682,7 +2705,8 @@ function Staircase3D({
 							startFromLandingBot = [wx1, wy6, wz1];
 						}
 					}
-					const a2Anchor = hitechCStartRef.current;
+
+					// הוראה: אם יש a2Anchor – לא מבצעים חישוב Start ידני בכלל, מתחילים ישירות מה-Ref.
 					const startTop = (a2Anchor?.top || startFromLandingTop || firstP1);
 					const startBot = (a2Anchor?.bot || startFromLandingBot || firstP6);
 					if (!startTop || !startBot) return null;

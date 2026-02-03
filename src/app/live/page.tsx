@@ -3170,7 +3170,61 @@ function Staircase3D({
 										const prev = treads[firstStepIdxInFlight - 1];
 										hasPrevLanding = !!(prev && prev.isLanding);
 									}
-									if (hasPrevLanding) {
+									// במקרה של פנייה ~90° (L‑Shape): אין גרונג/Intersection בקצה הפודסט כי המישורים ניצבים.
+									// במקום זה מתחילים את B1 בחתך אנכי ישר ("butt joint") שצמוד לדופן הפודסט.
+									let isTurn90 = false;
+									let buttTop: [number, number, number] | null = null;
+									let buttBot: [number, number, number] | null = null;
+									if (hasPrevLanding && firstStepIdxInFlight !== null && firstStepIdxInFlight > 0) {
+										const prev = treads[firstStepIdxInFlight - 1];
+										const first = treads[firstStepIdxInFlight];
+										if (prev && prev.isLanding && first && !first.isLanding) {
+											const yawL = prev.rotation[1] as number;
+											const yawS = first.rotation[1] as number;
+											const fLx = Math.cos(yawL), fLz = Math.sin(yawL);
+											const fSx = Math.cos(yawS), fSz = Math.sin(yawS);
+											const dotF = Math.abs(fLx * fSx + fLz * fSz);
+											isTurn90 = dotF < 0.25; // ~75°‑105°
+											if (isTurn90 && startFromLandingTop && startFromLandingBot) {
+												// בנה מישור "דופן הפודסט" שעליו מתחיל הגרם – לפי מיקום המדרגה הראשונה יחסית למרכז הפודסט
+												const cLx = Math.cos(yawL), cLz = Math.sin(yawL);
+												const rLx = -Math.sin(yawL), rLz = Math.cos(yawL); // right
+												const dxL = prev.run / 2;
+												const dzL = treadWidth / 2;
+												const dpx = (first.position[0] - prev.position[0]);
+												const dpz = (first.position[2] - prev.position[2]);
+												const projF = dpx * cLx + dpz * cLz;
+												const projR = dpx * rLx + dpz * rLz;
+												// בחר את הקצה הדומיננטי (front/back או left/right)
+												let nx = 0, nz = 0, extent = 0;
+												if (Math.abs(projF) >= Math.abs(projR)) {
+													const s = Math.sign(projF) || 1;
+													nx = cLx * s; nz = cLz * s;
+													extent = dxL;
+												} else {
+													const s = Math.sign(projR) || 1;
+													nx = rLx * s; nz = rLz * s;
+													extent = dzL;
+												}
+												const c = (prev.position[0] * nx + prev.position[2] * nz) + extent;
+												const projectToEdge = (p: [number, number, number]): [number, number, number] => {
+													const t = c - (p[0] * nx + p[2] * nz);
+													return [p[0] + nx * t, p[1], p[2] + nz * t];
+												};
+												buttTop = projectToEdge(startFromLandingTop);
+												buttBot = projectToEdge(startFromLandingBot);
+											}
+										}
+									}
+
+									if (hasPrevLanding && isTurn90 && buttTop && buttBot) {
+										// פודסט נשאר מלבן ישר עד הדופן, והגרם מתחיל בחתך אנכי ישר על הדופן
+										landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: buttTop, b1: buttBot };
+										// התחלת השיפוע: Top בגובה הפודסט (buttTop.y), Bot בגובה תחתית הפודסט (buttBot.y)
+										// XZ נעולים לדופן הפודסט, כדי שלא תופיע "קובייה ירוקה" על ציר שגוי.
+										slopeStartTop = [buttTop[0], buttTop[1], buttTop[2]];
+										slopeStartBot = [buttBot[0], buttBot[1], buttBot[2]];
+									} else if (hasPrevLanding) {
 										const widthVec: [number, number, number] = [
 											startFromLandingTop[0] - startFromLandingBot[0],
 											startFromLandingTop[1] - startFromLandingBot[1],
@@ -3188,13 +3242,15 @@ function Staircase3D({
 										];
 										// פס אופקי בלנדינג (Y קבוע), הפלטה B1 תתחיל ב‑joinTop/joinBot
 										landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: landTopEnd, b1: landBotEnd };
+										// ה‑intersection משמש רק להתחלת השיפוע
+										slopeStartTop = joinTop;
+										slopeStartBot = joinBot;
 									} else {
 										landingStrip = null;
+										// ללא פודסט קודם – ה‑intersection משמש רק להתחלת השיפוע
+										slopeStartTop = joinTop;
+										slopeStartBot = joinBot;
 									}
-									// חשוב: לא משנים את נקודות הפודסט (startFromLandingTop/Bot) לפי ה‑intersection,
-									// אחרת הפודסט נמשך לאלכסון. ה‑intersection משמש *רק* כנקודת התחלה לשיפוע.
-									slopeStartTop = joinTop;
-									slopeStartBot = joinBot;
 								}
 
 								// בניית מסילות B1 (כולל פס פודסט אופקי נפרד אם קיים)

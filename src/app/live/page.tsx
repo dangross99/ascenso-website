@@ -1548,8 +1548,16 @@ function Staircase3D({
 									idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
 								}
 							};
-							const topRailForSide = firstP4SideShift ? [firstP4SideShift, ...topRail] : topRail;
-							const botRailForSide = firstP7 ? [firstP7, ...botRail] : botRail;
+							// אל תעשה prepend לנקודת inset בתחילת המסילה — זה יוצר מקטע אלכסוני קצר ("חצי רוחב").
+							// מחליפים את נקודה 0 ומיישרים XZ של Bot ל‑Top.
+							const topRailForSide =
+								(firstP4SideShift && topRail.length >= 1)
+									? [firstP4SideShift, ...topRail.slice(1)]
+									: topRail;
+							const botRailForSide =
+								(firstP4SideShift && botRail.length >= 1)
+									? [([firstP4SideShift[0], botRail[0][1], firstP4SideShift[2]] as [number, number, number]), ...botRail.slice(1)]
+									: botRail;
 							addSideStrip(topRailForSide);
 							addSideStrip(botRailForSide);
 							// (בוטל) קאפ אנכי בתחילת הפאנל – הוסר לטובת פתיחה פשוטה בפודסט
@@ -2467,8 +2475,16 @@ function Staircase3D({
 					}
 				};
 				const useLandingStart = !!startFromLandingTop && !!startFromLandingBot;
-				const topRailForSide = useLandingStart ? topRail : (firstP4SideShift ? [firstP4SideShift, ...topRail] : topRail);
-				const botRailForSide = useLandingStart ? botRail : (firstP7 ? [firstP7, ...botRail] : botRail);
+				// כמו בגרם 2: לא לעשות prepend לנקודת inset בתחילת המסילה (יוצר מקטע אלכסוני קצר — "חצי רוחב").
+				// מחליפים את נקודה 0 ומיישרים XZ של Bot ל‑Top.
+				const topRailForSide = useLandingStart
+					? topRail
+					: ((firstP4SideShift && topRail.length >= 1) ? [firstP4SideShift, ...topRail.slice(1)] : topRail);
+				const botRailForSide = useLandingStart
+					? botRail
+					: ((firstP4SideShift && botRail.length >= 1)
+						? [([firstP4SideShift[0], botRail[0][1], firstP4SideShift[2]] as [number, number, number]), ...botRail.slice(1)]
+						: botRail);
 				addSideStrip(topRailForSide);
 				addSideStrip(botRailForSide);
 
@@ -3311,18 +3327,18 @@ function Staircase3D({
 									idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
 								}
 							};
-							// דופן עליונה ותחתונה – אם מתחילים מהפודסט, אל תוסיף אופסטים; אחרת הוסף f4/f7 בתחילת המסילה
+							// דופן עליונה ותחתונה – אם מתחילים מהפודסט, אל תוסיף אופסטים; אחרת הוסף inset בתחילת המסילה
 							const useLandingStart = !!startFromLandingTop && !!startFromLandingBot;
-							const topRailForSideB = useLandingStart ? railTop : (firstP4SideShift ? [firstP4SideShift, ...railTop] : railTop);
-							// חשוב: הדפנות/קאפ חייבים להתחיל מאותו Bot "נגזר‑Top" (XZ lock) כמו החזית,
-							// ולא מ‑firstP7 הגולמי (שיכול ליצור "חצי רוחב" בגלל שינויי גובה רייזר).
-							const derivedFirstBotForSide: [number, number, number] | null =
-								(!useLandingStart && topRailForSideB.length > 0)
-									? [topRailForSideB[0][0], topRailForSideB[0][1] - dySlope, topRailForSideB[0][2]]
-									: null;
+							// חשוב: לא לעשות prepend לנקודת inset בתחילת המסילה (יוצר מקטע אלכסוני קצר – "חצי רוחב").
+							// במקום זה מחליפים את נקודה 0 ומיישרים XZ של Bot ל‑Top תוך שמירה על Y שכבר חושב (railBot[0][1]).
+							const topRailForSideB = useLandingStart
+								? railTop
+								: ((firstP4SideShift && railTop.length >= 1) ? [firstP4SideShift, ...railTop.slice(1)] : railTop);
 							const botRailForSideB = useLandingStart
 								? railBot
-								: (derivedFirstBotForSide ? [derivedFirstBotForSide, ...railBot] : railBot);
+								: ((firstP4SideShift && railBot.length >= 1)
+									? [([firstP4SideShift[0], railBot[0][1], firstP4SideShift[2]] as [number, number, number]), ...railBot.slice(1)]
+									: railBot);
 							// אם אין לפחות מקטע אחד ברצועה – אל תיצור דפנות/קאפ (ימנע "פלטה מוזרה")
 							if (segCount >= 2) {
 								// דפנות החל מהמקטע הראשון

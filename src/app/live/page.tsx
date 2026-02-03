@@ -2863,6 +2863,109 @@ function Staircase3D({
 					addSide(topRail);
 					addSide(botRail);
 
+					// Closing Cap בסוף הגרם (מדרגה אחרונה לקומה) – סגירה אנכית/נקייה מול הריצוף
+					if (shouldRenderClosingCapForFlight(flightIdx)) {
+						// מצא את המדרגה האחרונה בגרם (flight=2) שאינה פודסט
+						let lastStep: any = null;
+						for (let ii = treads.length - 1; ii >= 0; ii--) {
+							const tt = treads[ii];
+							if (tt.flight === flightIdx && !tt.isLanding) { lastStep = tt; break; }
+						}
+						if (lastStep) {
+							const yaw = lastStep.rotation[1] as number;
+							const { c, s } = cosSin(yaw);
+							const dx = lastStep.run / 2;
+							const dz = treadWidth / 2;
+
+							// כיוון המסילות בקצה (להארכה עד הקאפ)
+							const topEnd = topRail[topRail.length - 1];
+							const topPrev = topRail.length >= 2 ? topRail[topRail.length - 2] : topEnd;
+							const botEnd = botRail[botRail.length - 1];
+							const botPrev = botRail.length >= 2 ? botRail[botRail.length - 2] : botEnd;
+							let uxE = topEnd[0] - topPrev[0], uzE = topEnd[2] - topPrev[2], uyE = topEnd[1] - topPrev[1];
+							let vxE = botEnd[0] - botPrev[0], vzE = botEnd[2] - botPrev[2], vyE = botEnd[1] - botPrev[1];
+							// fallback לכיוון אופקי לפי yaw אם חסרות שתי נקודות
+							if (Math.abs(uxE) < 1e-9 && Math.abs(uzE) < 1e-9) { uxE = Math.cos(yaw); uzE = Math.sin(yaw); uyE = 0; }
+							if (Math.abs(vxE) < 1e-9 && Math.abs(vzE) < 1e-9) { vxE = Math.cos(yaw); vzE = Math.sin(yaw); vyE = 0; }
+
+							const projT = (pt: [number, number, number]) => {
+								if (Math.abs(uxE) >= Math.abs(uzE) && Math.abs(uxE) > 1e-9) return (pt[0] - topEnd[0]) / uxE;
+								if (Math.abs(uzE) > 1e-9) return (pt[2] - topEnd[2]) / uzE;
+								return 0;
+							};
+							const projB = (pb: [number, number, number]) => {
+								if (Math.abs(vxE) >= Math.abs(vzE) && Math.abs(vxE) > 1e-9) return (pb[0] - botEnd[0]) / vxE;
+								if (Math.abs(vzE) > 1e-9) return (pb[2] - botEnd[2]) / vzE;
+								return 0;
+							};
+
+							// מועמדים לקו האנכי: בקצה הקדמי (+dx) – על הצד של C1 (-dz) או צד נגדי (+dz) לפי התאמה למסילות
+							const makeCand = (lz: number) => {
+								const lx = dx;
+								const rx = lx * c - lz * s;
+								const rz = lx * s + lz * c;
+								const tCand: [number, number, number] = [
+									lastStep.position[0] + rx,
+									lastStep.position[1] + treadThickness / 2 + offsetY,
+									lastStep.position[2] + rz,
+								];
+								const bCand: [number, number, number] = [
+									tCand[0],
+									lastStep.position[1] - treadThickness / 2 - offsetY,
+									tCand[2],
+								];
+								const tt = projT(tCand);
+								const tb = projB(bCand);
+								const yT = topEnd[1] + tt * uyE;
+								const yB = botEnd[1] + tb * vyE;
+								const tFin: [number, number, number] = [tCand[0], yT, tCand[2]];
+								const bFin: [number, number, number] = [bCand[0], yB, bCand[2]];
+								const penaltyBack = (tt < -1e-6 ? 10 : 0) + (tb < -1e-6 ? 10 : 0);
+								const score = Math.abs(tt) + Math.abs(tb) + penaltyBack;
+								return { tFin, bFin, score };
+							};
+							const cMain = makeCand(-dz); // P2/P6 – הצד של C1
+							const cAlt = makeCand(+dz);  // P3/P7 – צד נגדי (למקרה שהכיוון מתהפך)
+							const pick = (cMain.score <= cAlt.score) ? cMain : cAlt;
+							const lastT = pick.tFin;
+							const lastB = pick.bFin;
+
+							// מקטע מגשר בין קצה המסילות לקאפ + שכבת גב + דפנות + קאפ סופי
+							{
+								// חזית
+								const base = pos.length / 3;
+								pos.push(topEnd[0], topEnd[1], topEnd[2],  botEnd[0], botEnd[1], botEnd[2],  lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2]);
+								idx.push(base + 0, base + 1, base + 2);
+								idx.push(base + 2, base + 1, base + 3);
+
+								// שכבת גב למקטע המגשר
+								const backBase = pos.length / 3;
+								const t1e: [number, number, number] = [topEnd[0] + offX, topEnd[1] + offY, topEnd[2] + offZ];
+								const b1e: [number, number, number] = [botEnd[0] + offX, botEnd[1] + offY, botEnd[2] + offZ];
+								const t2e: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
+								const b2e: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
+								pos.push(t1e[0], t1e[1], t1e[2],  b1e[0], b1e[1], b1e[2],  t2e[0], t2e[1], t2e[2],  b2e[0], b2e[1], b2e[2]);
+								idx.push(backBase + 0, backBase + 2, backBase + 1);
+								idx.push(backBase + 2, backBase + 3, backBase + 1);
+
+								// דפנות עליונה/תחתונה למקטע המגשר
+								const biTop = pos.length / 3;
+								pos.push(topEnd[0], topEnd[1], topEnd[2],  lastT[0], lastT[1], lastT[2],  t2e[0], t2e[1], t2e[2],  t1e[0], t1e[1], t1e[2]);
+								idx.push(biTop + 0, biTop + 1, biTop + 2,  biTop + 0, biTop + 2, biTop + 3);
+								const biBot = pos.length / 3;
+								pos.push(botEnd[0], botEnd[1], botEnd[2],  lastB[0], lastB[1], lastB[2],  b2e[0], b2e[1], b2e[2],  b1e[0], b1e[1], b1e[2]);
+								idx.push(biBot + 0, biBot + 1, biBot + 2,  biBot + 0, biBot + 2, biBot + 3);
+
+								// קאפ סיום אנכי (המלבן הסופי)
+								const lastTe: [number, number, number] = [lastT[0] + offX, lastT[1] + offY, lastT[2] + offZ];
+								const lastBe: [number, number, number] = [lastB[0] + offX, lastB[1] + offY, lastB[2] + offZ];
+								const bi = pos.length / 3;
+								pos.push(lastT[0], lastT[1], lastT[2],  lastB[0], lastB[1], lastB[2],  lastBe[0], lastBe[1], lastBe[2],  lastTe[0], lastTe[1], lastTe[2]);
+								idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
+							}
+						}
+					}
+
 					return (
 						<mesh castShadow receiveShadow>
 							<bufferGeometry attach="geometry">

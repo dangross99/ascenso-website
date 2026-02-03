@@ -2733,38 +2733,34 @@ function Staircase3D({
 					// Prefix עם Breakpoints בתחילת השיפוע (אם יש פודסט לפני הגרם)
 					let topPrefix: Array<[number, number, number]> = [startTop];
 					let botPrefix: Array<[number, number, number]> = [startBot];
-					// אם התחלנו מ-Ref של B1 (a2Anchor):
-					// - לא מחשבים Ltop/Lbot מחדש (לא מזיזים את נקודת ההתחלה)
-					// - אופציונלי: Breakpoint מינימלי (L=0) רק כדי לבצע מעבר עובי dyLanding→dySlope ללא "שפיץ"
-					if (a2Anchor && Math.abs(tanSlope) > 1e-9) {
-						const botOffset = (dySlope - dyLanding) / tanSlope;
-						const Lbot = botOffset; // Ltop=0
-						const breakTop: [number, number, number] = [startTop[0], startTop[1], startTop[2]];
-						const breakBotAtL: [number, number, number] = [breakTop[0], breakTop[1] - dyLanding, breakTop[2]];
-						const breakBotHAtLbot: [number, number, number] = [startTop[0] + uxH * Lbot, startTop[1] - dyLanding, startTop[2] + uzH * Lbot];
-						const breakTopSlopeAtLbot: [number, number, number] = [startTop[0] + uxH * Lbot, startTop[1] + tanSlope * botOffset, startTop[2] + uzH * Lbot];
-						const breakBotSAtLbot: [number, number, number] = [breakTopSlopeAtLbot[0], breakTopSlopeAtLbot[1] - dySlope, breakTopSlopeAtLbot[2]];
-						// סנכרון נקודות: XZ זהים בין top/bot בכל breakpoint
-						topPrefix = [startTop, breakTop, breakTopSlopeAtLbot, breakTopSlopeAtLbot];
-						botPrefix = [startBot, breakBotAtL, breakBotHAtLbot, breakBotSAtLbot];
-					}
-					// אחרת (אין Ref): Prefix מלא מהפודסט לפי הנוסחאות
-					else if (startFromLandingTop && startFromLandingBot && Math.abs(tanSlope) > 1e-9) {
+					// תחילת שיפוע (מישור→שיפוע): אותו עיקרון כמו ב‑B1 גם אם ההתחלה מגיעה מ‑Ref.
+					// מחשבים Ltop (קטע אופקי) מול המדרגה הראשונה, ואז:
+					// Lbot = Ltop + (dySlope - dyLanding) / tanSlope
+					if ((a2Anchor || (startFromLandingTop && startFromLandingBot)) && Math.abs(tanSlope) > 1e-9) {
 						const firstSlopeTop = topP1[0];
 						const deltaY = (firstSlopeTop[1] - startTop[1]);
 						const requiredAlong = deltaY / tanSlope;
 						const dAlong = (dotH(firstSlopeTop) - dotH(startTop));
-						const Ltop = dAlong - requiredAlong;
+						const Ltop = Math.max(0, dAlong - requiredAlong);
 						const botOffset = (dySlope - dyLanding) / tanSlope;
 						const Lbot = Ltop + botOffset;
+
 						const breakTop: [number, number, number] = [startTop[0] + uxH * Ltop, startTop[1], startTop[2] + uzH * Ltop];
-						const breakBotAtL: [number, number, number] = [breakTop[0], breakTop[1] - dyLanding, breakTop[2]];
+						// תחתון על הפודסט בדיוק בנקודת השבירה העליונה (שומר גובה פודסט)
+						const breakBotAtLtop: [number, number, number] = [breakTop[0], breakTop[1] - dyLanding, breakTop[2]];
+						// תחתון ממשיך אופקי עד Lbot בגובה פודסט
 						const breakBotHAtLbot: [number, number, number] = [startTop[0] + uxH * Lbot, startTop[1] - dyLanding, startTop[2] + uzH * Lbot];
-						const breakTopSlopeAtLbot: [number, number, number] = [startTop[0] + uxH * Lbot, startTop[1] + tanSlope * botOffset, startTop[2] + uzH * Lbot];
+						// top על השיפוע ב‑Lbot (הטופ כבר התחיל לעלות ב‑Ltop, אז אחרי (Lbot-Ltop) יעלה ב‑tanSlope*(Lbot-Ltop))
+						const topRise = tanSlope * (Lbot - Ltop);
+						const breakTopSlopeAtLbot: [number, number, number] = [startTop[0] + uxH * Lbot, startTop[1] + topRise, startTop[2] + uzH * Lbot];
 						const breakBotSAtLbot: [number, number, number] = [breakTopSlopeAtLbot[0], breakTopSlopeAtLbot[1] - dySlope, breakTopSlopeAtLbot[2]];
-						// סנכרון נקודות: XZ זהים בין top/bot בכל breakpoint
-						topPrefix = [startTop, breakTop, breakTopSlopeAtLbot, breakTopSlopeAtLbot];
-						botPrefix = [startBot, breakBotAtL, breakBotHAtLbot, breakBotSAtLbot];
+
+						// Prefix לפי דרישת ייצור:
+						// Top:  [startTop, breakTop, breakTopSlopeAtLbot]
+						// Bot:  [startBot, breakBotAtLtop, breakBotHAtLbot, breakBotSAtLbot]
+						// (נאזן אורכים בהמשך ע"י שכפול נק' אחרונה אם צריך, בלי להזיז גיאומטריה)
+						topPrefix = [startTop, breakTop, breakTopSlopeAtLbot];
+						botPrefix = [startBot, breakBotAtLtop, breakBotHAtLbot, breakBotSAtLbot];
 					}
 
 					// Extras בסוף השיפוע (שיפוע→מישור) אם יש פודסט עליון
@@ -2798,7 +2794,13 @@ function Staircase3D({
 
 					const topCore = endTopExtras ? [...topP1, ...endTopExtras] : (closeP1 ? [...topP1, closeP1] : [...topP1]);
 					const botCore = endBotExtras ? [...botP6, ...endBotExtras] : (closeP6 ? [...botP6, closeP6] : [...botP6]);
-					const topRail = [...topPrefix, ...topCore];
+					// שמירה על סנכרון סגמנטים: אם למסילה התחתונה יש נקודה נוספת ב-prefix (כמו כאן) –
+					// נשכפל את הנקודה האחרונה של ה-topPrefix (אותו XZ) כדי למנוע "משיכת" מקטעים.
+					const topPrefixSynced =
+						(topPrefix.length < botPrefix.length)
+							? [...topPrefix, topPrefix[topPrefix.length - 1]]
+							: topPrefix;
+					const topRail = [...topPrefixSynced, ...topCore];
 					const botRail = [...botPrefix, ...botCore];
 
 					const segCount = Math.max(topRail.length, botRail.length);

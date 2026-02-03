@@ -3203,10 +3203,14 @@ function Staircase3D({
 								const isExtensionPoint =
 									(!!startFromLandingTop && i === 0) ||
 									(!!closeP4 && i === topRail.length - 1);
+								// אם גובה הנקודה זהה לגובה הפודסט (start/close) – חייבים dyLanding.
+								// חשוב להשתמש בטולרנס (ולא ===) כדי לא ליפול על floating-point.
 								const epsY = 1e-6;
+								const yStart = startFromLandingTop?.[1];
+								const yClose = closeP4?.[1];
 								const isFlatByY =
-									(!!startFromLandingTop && Math.abs(t[1] - startFromLandingTop[1]) < epsY) ||
-									(!!closeP4 && Math.abs(t[1] - closeP4[1]) < epsY);
+									(typeof yStart === 'number' && Math.abs(t[1] - yStart) < epsY) ||
+									(typeof yClose === 'number' && Math.abs(t[1] - yClose) < epsY);
 								const dy = (isLandingPoint || isExtensionPoint || isFlatByY) ? dyLanding : dySlope;
 								return [t[0], t[1] - dy, t[2]];
 							});
@@ -3534,6 +3538,10 @@ function Staircase3D({
 								}
 								const safeCos = Math.max(0.1, cosSlope);
 								const dySlope = dyLanding / safeCos;
+								// חשוב: botP6 (קודקודי מדרגה "מתחת" למדרך) נותנים הפרש אנכי קבוע dyLanding,
+								// אבל בשיפוע אנחנו צריכים ΔY גדול יותר (dySlope) כדי לשמור עובי ניצב אחיד.
+								// לכן נבנה "רייל תחתון" לשיפוע כנגזרת של topP1 עם dySlope.
+								const botP6Perp: Array<[number, number, number]> = topP1.map((t) => [t[0], t[1] - dySlope, t[2]]);
 
 								// Transition (גרונג) בסוף השיפוע לפני הפודסט העליון:
 								// מוסיפים נקודות "ברך" כדי שהמסילה התחתונה תפסיק שיפוע מוקדם יותר,
@@ -3610,7 +3618,7 @@ function Staircase3D({
 								let botRailB1: Array<[number, number, number]> = (() => {
 									const botTail =
 										(closeP1 && endTopKnee && endBotSlopeKnee && endBotPlaneAtTopBreak)
-											? [...botP6, endBotSlopeKnee, endBotSlopeKnee, endBotPlaneAtTopBreak]
+											? [...botP6Perp, endBotSlopeKnee, endBotSlopeKnee, endBotPlaneAtTopBreak]
 											: (closeP6 ? [...botP6, closeP6] : [...botP6]);
 									// Prefix מדויק (כמו הדרישה): botPrefix=[startBot, breakBotAtL, breakBotHAtLbot, breakBotSAtLbot]
 									if (breakBotAtL && breakBotHAtLbot && breakBotSAtLbot) {
@@ -3665,9 +3673,11 @@ function Staircase3D({
 									uzB = topRailB1A[1][2] - topRailB1A[0][2];
 									{ const m = Math.hypot(uxB, uyB, uzB) || 1; uxB /= m; uyB /= m; uzB /= m; }
 								}
-								let wxB = (firstP1 && firstP6) ? (firstP1[0] - firstP6[0]) : (topRailB1A[0][0] - botRailB1A[0][0]);
-								let wyB = (firstP1 && firstP6) ? (firstP1[1] - firstP6[1]) : (topRailB1A[0][1] - botRailB1A[0][1]);
-								let wzB = (firstP1 && firstP6) ? (firstP1[2] - firstP6[2]) : (topRailB1A[0][2] - botRailB1A[0][2]);
+								// רוחב בין המסילות – חובה להשתמש בריילים עצמם (אחרי dySlope/dyLanding),
+								// כדי שהנורמל לא "יקפוץ" בגלל שימוש בקודקודי מדרגה (dyLanding קבוע) בשיפוע.
+								let wxB = (topRailB1A[0][0] - botRailB1A[0][0]);
+								let wyB = (topRailB1A[0][1] - botRailB1A[0][1]);
+								let wzB = (topRailB1A[0][2] - botRailB1A[0][2]);
 								let nmXB = uyB * wzB - uzB * wyB;
 								let nmYB = uzB * wxB - uxB * wzB;
 								let nmZB = uxB * wyB - uyB * wxB;

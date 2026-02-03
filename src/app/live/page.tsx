@@ -3092,121 +3092,11 @@ function Staircase3D({
 								// הוא מחושב כמפגש (miter) בין:
 								// 1) הקו התחתון של הפודסט (offset במרחק W מה‑Top לאורך הניצב בתוך מישור הפלטה)
 								// 2) הקו התחתון של השיפוע (offset במרחק W מה‑Top לאורך הניצב בתוך מישור הפלטה)
+								// NOTE: hitechBStartRef נועד כאן רק כדי להעביר "רוחב יעד" (widthTarget) לחישוב ה‑Ustar,
+								// ולא כדי לדרוס startFromLandingTop/Bot של הפודסט. דריסה כזו מושכת את הפודסט לאלכסון.
 								const a1Anchor = hitechBStartRef.current;
-								const hasExactLandingAnchor = !!a1Anchor;
-								if (a1Anchor) {
-									// H (Top knee) צריך לשבת על חיתוך ה‑Top של הפודסט עם ה‑Top של השיפוע,
-									// אחרת הפודסט "נשאב" לשיפוע ונוצר אלכסון (כמו שאתה רואה בירוק).
-									const H0: [number, number, number] = a1Anchor.top;
-									const wVec: [number, number, number] = [
-										a1Anchor.top[0] - a1Anchor.bot[0],
-										a1Anchor.top[1] - a1Anchor.bot[1],
-										a1Anchor.top[2] - a1Anchor.bot[2],
-									];
-									const Wmag = Math.hypot(wVec[0], wVec[1], wVec[2]);
-									// חשוב: הפודסט חייב להישאר "פלס" ולא לשנות עומק (Z) בעקבות חישובי הברך.
-									// לכן: ננעל את Z של הפודסט לערך המקורי של החיבור (Z של H0),
-									// ונבצע החלטות/התאמות ב‑2D (X,Y) בלבד.
-									const zLock = H0[2];
-									const lockZ = (p: [number, number, number]): [number, number, number] => [p[0], p[1], zLock];
-
-									// H הוא ציר ה‑Top המשותף (נקודת החיבור לפלטה A) – עם Z נעול
-									let H: [number, number, number] = lockZ(H0);
-									startFromLandingTop = H;
-
-									// עזרי וקטורים
-									const dot = (a: [number, number, number], b: [number, number, number]) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-									const sub = (a: [number, number, number], b: [number, number, number]): [number, number, number] => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
-									const add = (a: [number, number, number], b: [number, number, number]): [number, number, number] => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
-									const scale = (a: [number, number, number], s: number): [number, number, number] => [a[0] * s, a[1] * s, a[2] * s];
-									const cross = (a: [number, number, number], b: [number, number, number]): [number, number, number] => [
-										a[1] * b[2] - a[2] * b[1],
-										a[2] * b[0] - a[0] * b[2],
-										a[0] * b[1] - a[1] * b[0],
-									];
-									const norm = (a: [number, number, number]) => Math.hypot(a[0], a[1], a[2]);
-									const normalize = (a: [number, number, number]): [number, number, number] => {
-										const m = norm(a) || 1;
-										return [a[0] / m, a[1] / m, a[2] / m];
-									};
-
-									// כיוון הפודסט (ב‑XZ) לפי yaw של הפודסט הקודם אם קיים, אחרת fallback לפי firstYaw/שיפוע
-									let uxL = 1, uzL = 0;
-									if (firstStepIdxInFlight !== null && firstStepIdxInFlight > 0) {
-										const prev = treads[firstStepIdxInFlight - 1];
-										if (prev && prev.isLanding) { uxL = Math.cos(prev.rotation[1] as number); uzL = Math.sin(prev.rotation[1] as number); }
-									} else if (firstYaw !== null) {
-										uxL = Math.cos(firstYaw); uzL = Math.sin(firstYaw);
-									} else if (topP1.length >= 2) {
-										const d = sub(topP1[1], topP1[0]);
-										uxL = d[0]; uzL = d[2];
-										const m = Math.hypot(uxL, uzL) || 1; uxL /= m; uzL /= m;
-									}
-									const uL = normalize([uxL, 0, uzL]);
-
-									// כיוון השיפוע צריך להילקח מקו ה‑Top האמיתי של השיפוע (topP1),
-									// כדי שנוכל לחשב את ה‑Bottom של השיפוע כ‑offset במרחק W מה‑Top (ולא יחסית ל‑H).
-									const slopeTop0 = topP1.length >= 1 ? topP1[0] : H;
-									const slopeTop1 =
-										topP1.length >= 2 ? topP1[1]
-										: (firstYaw !== null ? ([slopeTop0[0] + Math.cos(firstYaw), slopeTop0[1], slopeTop0[2] + Math.sin(firstYaw)] as [number, number, number])
-										: ([slopeTop0[0] + 1, slopeTop0[1], slopeTop0[2]] as [number, number, number]));
-									const uS = normalize(sub(slopeTop1, slopeTop0));
-
-									// נורמל "חזית" הפלטה (ניצב למישור הפלטה) – נדרש כדי להפיק offset בתוך המישור
-									let nFace = cross(uS, wVec);
-									if (norm(nFace) < 1e-9) nFace = cross(uL, wVec);
-									if (norm(nFace) < 1e-9) nFace = [0, 1, 0];
-									nFace = normalize(nFace);
-
-									// וקטור offset בתוך מישור הפלטה לכל כיוון: p = normalize(nFace × u)
-									let pL = normalize(cross(nFace, uL));
-									let pS = normalize(cross(nFace, uS));
-									// קיבוע כיוון ה‑offset כדי למנוע "בריחה" בקצה החיבור:
-									// בוחרים את הסימן כך ש‑Top + (-p*W) יהיה הכי קרוב לנקודת Bot הרפרנס.
-									const chooseByClosestBot = (p: [number, number, number], top: [number, number, number], botRef: [number, number, number] | null) => {
-										// החלטה ב‑2D בלבד (X,Y) כדי למנוע "פזילה" עקב סטיות Z
-										if (!botRef || Wmag <= 1e-9) return (dot(p, wVec) < 0) ? scale(p, -1) : p;
-										const candA = add(top, scale(p, -Wmag));
-										const candB = add(top, scale(p, +Wmag));
-										const dA = Math.hypot(candA[0] - botRef[0], candA[1] - botRef[1]);
-										const dB = Math.hypot(candB[0] - botRef[0], candB[1] - botRef[1]);
-										return (dA <= dB) ? p : scale(p, -1);
-									};
-									// בפודסט: ודא ש‑bottom line בנקודת הברך עובר דרך ה‑bot של A1 (אחרת רואים פער/בריחה ליד A)
-									pL = chooseByClosestBot(pL, H, a1Anchor.bot);
-									// בשיפוע: כוון כך שיתאים ל‑bot של המדרגה הראשונה (לפני שנחליף אותו)
-									const slopeTopHint: [number, number, number] | null = (topP1.length >= 1 ? topP1[0] : null);
-									const slopeBotHint: [number, number, number] | null = (botP6.length >= 1 ? botP6[0] : null);
-									if (slopeTopHint) pS = chooseByClosestBot(pS, slopeTopHint, slopeBotHint);
-
-									// נעילה קשיחה לחיבור לפלטה A:
-									// ה‑Bot בצד הפודסט חייב להיות בדיוק bot של A1 (אחרת תמיד תראה "בריחה" בקצה).
-									// את ה"גלישה" שומרי בצד השיפוע בלבד.
-									if (Wmag > 1e-9) {
-										// Bot בצד הפודסט – עם Z נעול כדי לשמור על מישור ישר/מקביל לקיר
-										startFromLandingBot = lockZ(a1Anchor.bot);
-										const kneeSlopeBot = add(H, scale(pS, -Wmag)); // bottom של השיפוע בנקודת הברך (Pivot)
-										if (botP6.length >= 1) botP6[0] = kneeSlopeBot;
-										if (firstP6) firstP6 = kneeSlopeBot;
-									}
-
-									// פס פודסט ישר: מהקצה הרחוק של הפודסט (rawLandingStartTop) עד ציר הברך (H),
-									// כאשר ה‑bottom בקצה הברך הוא נקודת ה‑miter (startFromLandingBot).
-									if (rawLandingStartTop && Wmag > 1e-9 && startFromLandingBot) {
-										// הפודסט (landingStrip) חייב להישאר באותו Z לכל אורכו
-										const t0 = lockZ(rawLandingStartTop);
-										// בקצה ההתחלתי של הפודסט: שני הקודקודים חייבים להיות "אנכיים" (90°) – אותו X וגם אותו Z.
-										// אנחנו לא נותנים לוקטור offset (pL) להזיז את הקצה הזה ימינה/שמאלה/לעומק.
-										const b0Cand = lockZ(add(t0, scale(pL, -Wmag)));
-										const b0: [number, number, number] = [t0[0], b0Cand[1], t0[2]];
-										const t1 = H; // כבר נעול Z
-										const b1 = lockZ(startFromLandingBot);
-										landingStrip = { t0, b0, t1, b1 };
-									}
-
-									// נקודת השיפוע הראשונה (botP6[0]) ננעלת ל‑kneeSlopeBot כדי לשמור עובי מלא בתחילת השיפוע.
-								}
+								const hasExactLandingAnchor = false;
+								// (הוסר) בלוק anchor: אין לדרוס startFromLandingTop/Bot מה‑Ref. ה‑Ref משמש רק ל‑widthTarget בחישוב Ustar.
 
 								// יישור זרימה (רק כשאין נקודת עיגון מדויקת מ‑A1):
 								// המשך אופסטים בשיפוע עד נקודת השקה עם רוחב זהה לפלטת הלנדינג
@@ -3233,11 +3123,18 @@ function Staircase3D({
 									}
 									const dotU = (x: [number, number, number]) => (uxL * x[0] + uzL * x[2]);
 									const U0 = dotU(startFromLandingTop);
-									const widthTarget = Math.hypot(
-										startFromLandingTop[0] - startFromLandingBot[0],
-										startFromLandingTop[1] - startFromLandingBot[1],
-										startFromLandingTop[2] - startFromLandingBot[2],
-									);
+									// widthTarget: אל תדרוס את נקודות הפודסט מה‑Ref. אם יש Ref – השתמש בו רק כ"רוחב יעד" לחישוב Ustar.
+									const widthTarget = a1Anchor
+										? Math.hypot(
+												a1Anchor.top[0] - a1Anchor.bot[0],
+												a1Anchor.top[1] - a1Anchor.bot[1],
+												a1Anchor.top[2] - a1Anchor.bot[2],
+											)
+										: Math.hypot(
+												startFromLandingTop[0] - startFromLandingBot[0],
+												startFromLandingTop[1] - startFromLandingBot[1],
+												startFromLandingTop[2] - startFromLandingBot[2],
+											);
 									// פונקציה שמייצרת נקודת חיתוך של קו המסילה עם מישור U נתון
 									const pointOnLineAtU = (p: [number, number, number], d: [number, number, number], U: number): [number, number, number] => {
 										const denom = uxL * d[0] + uzL * d[2];

@@ -3193,7 +3193,10 @@ function Staircase3D({
 									if (rawLandingStartTop && Wmag > 1e-9 && startFromLandingBot) {
 										// הפודסט (landingStrip) חייב להישאר באותו Z לכל אורכו
 										const t0 = lockZ(rawLandingStartTop);
-										const b0 = lockZ(add(t0, scale(pL, -Wmag)));
+										// בקצה ההתחלתי של הפודסט: שני הקודקודים חייבים להיות "אנכיים" (90°) – אותו X וגם אותו Z.
+										// אנחנו לא נותנים לוקטור offset (pL) להזיז את הקצה הזה ימינה/שמאלה/לעומק.
+										const b0Cand = lockZ(add(t0, scale(pL, -Wmag)));
+										const b0: [number, number, number] = [t0[0], b0Cand[1], t0[2]];
 										const t1 = H; // כבר נעול Z
 										const b1 = lockZ(startFromLandingBot);
 										landingStrip = { t0, b0, t1, b1 };

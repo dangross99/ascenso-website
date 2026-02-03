@@ -19,7 +19,7 @@ function CanvasLoadingOverlay() {
 		</div>
 	);
 }
-import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, LinearMipmapLinearFilter, BufferGeometry, Float32BufferAttribute, Cache, NoToneMapping, Vector3, Shape, ExtrudeGeometry } from 'three';
+import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, LinearMipmapLinearFilter, BufferGeometry, Float32BufferAttribute, Cache, NoToneMapping, Vector3, Shape, ExtrudeGeometry, Matrix4 } from 'three';
 
 // הפעלת קאש של three עבור טעינות חלקות
 Cache.enabled = true;
@@ -172,7 +172,7 @@ function Staircase3D({
 	uvInset?: number;
 	railingUvInset?: number;
 	treadThicknessOverride?: number;
-	boxModel?: 'rect' | 'wedge' | 'ridge';
+	boxModel?: 'rect' | 'wedge' | 'ridge' | 'accordion';
 	wedgeFrontFraction?: number;
 	wedgeFrontThicknessM?: number;
 	ridgeFrontCenterThicknessM?: number;
@@ -696,6 +696,107 @@ function Staircase3D({
 					const rotateFrontBack = (axis === 'x');
 					const rotateSides = (axis === 'z');
 					return { axis, forwardSign, innerSignLocal, rotateFrontBack, rotateSides } as const;
+				}
+				// דגם Accordion: משטח רציף מקופל (זיגזג) במקום מדרגות נפרדות
+				const buildAccordionFlights = () => {
+					type P2 = { x: number; y: number };
+					const out: React.ReactNode[] = [];
+					const thick = 0.04; // 40mm – עובי אחיד
+					const flights = Array.from(new Set(treads.map(tt => tt.flight))).sort((a, b) => a - b);
+					for (const flightIdx of flights) {
+						const ft = treads.filter(tt => tt.flight === flightIdx);
+						if (ft.length < 1) continue;
+						// בחר כיוון קדימה לפי שתי מדרגות ראשונות (עמיד לשינויי yaw/forwardSign)
+						let fx = 1, fz = 0;
+						if (ft.length >= 2) {
+							const dx = ft[1].position[0] - ft[0].position[0];
+							const dz = ft[1].position[2] - ft[0].position[2];
+							const hm = Math.hypot(dx, dz);
+							if (hm > 1e-6) { fx = dx / hm; fz = dz / hm; }
+							else {
+								const yaw = (ft[0].rotation[1] as number) || 0;
+								fx = Math.cos(yaw); fz = Math.sin(yaw);
+							}
+						} else {
+							const yaw = (ft[0].rotation[1] as number) || 0;
+							fx = Math.cos(yaw); fz = Math.sin(yaw);
+						}
+						const rx = -fz, rz = fx; // right = cross(Up, forward)
+						const run0 = ft[0].run || treadDepth;
+						const backX = ft[0].position[0] - fx * (run0 / 2);
+						const backZ = ft[0].position[2] - fz * (run0 / 2);
+						const y0 = ft[0].position[1] + treadThickness / 2;
+
+						// Outer zig-zag ב-2D (s,yRel)
+						const outer: P2[] = [];
+						let s = 0;
+						outer.push({ x: 0, y: 0 });
+						for (let i = 0; i < ft.length; i++) {
+							const cur = ft[i];
+							const yTop = (cur.position[1] + treadThickness / 2) - y0;
+							outer[outer.length - 1].y = yTop;
+							const run = cur.run || treadDepth;
+							s += run;
+							outer.push({ x: s, y: yTop });
+							const next = ft[i + 1];
+							if (next) {
+								const yTopN = (next.position[1] + treadThickness / 2) - y0;
+								if (Math.abs(yTopN - yTop) > 1e-6) {
+									outer.push({ x: s, y: yTopN });
+								}
+							}
+						}
+						if (outer.length < 2) continue;
+
+						const isH = (a: P2, b: P2) => Math.abs(a.y - b.y) < 1e-9;
+						const isV = (a: P2, b: P2) => Math.abs(a.x - b.x) < 1e-9;
+						// inner דרך offset+miter עבור מקטעים מאונכים
+						const inner: P2[] = [];
+						{
+							const a = outer[0], b = outer[1];
+							inner.push(isH(a, b) ? { x: a.x, y: a.y - thick } : { x: a.x - thick, y: a.y });
+						}
+						for (let i = 1; i < outer.length - 1; i++) {
+							const pPrev = outer[i - 1], p = outer[i], pNext = outer[i + 1];
+							const prevH = isH(pPrev, p), prevV = isV(pPrev, p);
+							const nextH = isH(p, pNext), nextV = isV(p, pNext);
+							if (prevH && nextV) inner.push({ x: p.x - thick, y: p.y - thick });
+							else if (prevV && nextH) inner.push({ x: p.x - thick, y: p.y - thick });
+							else if (prevH) inner.push({ x: p.x, y: p.y - thick });
+							else inner.push({ x: p.x - thick, y: p.y });
+						}
+						{
+							const a = outer[outer.length - 2], b = outer[outer.length - 1];
+							inner.push(isH(a, b) ? { x: b.x, y: b.y - thick } : { x: b.x - thick, y: b.y });
+						}
+
+						const shape = new Shape();
+						shape.moveTo(outer[0].x, outer[0].y);
+						for (let i = 1; i < outer.length; i++) shape.lineTo(outer[i].x, outer[i].y);
+						for (let i = inner.length - 1; i >= 0; i--) shape.lineTo(inner[i].x, inner[i].y);
+						shape.closePath();
+
+						const geo = new ExtrudeGeometry(shape, { depth: treadWidth, steps: 1, bevelEnabled: false });
+						geo.translate(0, 0, -treadWidth / 2);
+						const m = new Matrix4().makeBasis(
+							new Vector3(fx, 0, fz),
+							new Vector3(0, 1, 0),
+							new Vector3(rx, 0, rz),
+						);
+						m.setPosition(new Vector3(backX, y0, backZ));
+						geo.applyMatrix4(m);
+						geo.computeVertexNormals();
+
+						out.push(
+							<mesh key={`accordion-${flightIdx}`} geometry={geo} receiveShadow>
+								<meshBasicMaterial color={useSolidMat ? solidSideColor : (materialKind === 'metal' ? '#8f8f8f' : '#b3a59a')} side={2} />
+							</mesh>
+						);
+					}
+					return <group>{out}</group>;
+				};
+				if (boxModel === 'accordion') {
+					return buildAccordionFlights();
 				}
 				let sIdx = 0; let lIdx = 0; 
 				return treads.map((t, idx) => (
@@ -5164,7 +5265,7 @@ function LivePageInner() {
 	const qShape = (search.get('shape') as 'straight' | 'L' | 'U') || 'straight';
 	const qSteps = parseInt(search.get('steps') || '', 10);
 	const qTex = search.get('tex') || '';
-	let qBox = (search.get('box') as 'thick' | 'thin' | 'wedge' | 'ridge' | 'plates') || 'thick';
+	let qBox = (search.get('box') as 'thick' | 'thin' | 'wedge' | 'ridge' | 'hitech' | 'accordion' | 'plates') || 'thick';
 	if (qBox === 'plates') { qBox = 'thick'; }
 	const qPath = search.get('path') || '';
 
@@ -5176,7 +5277,7 @@ function LivePageInner() {
 	// מזהים ייעודיים לכל קטגוריה כדי לשמר בחירה בין מעברים
 	const [activeMetalTexId, setActiveMetalTexId] = React.useState<string | null>(activeMaterial === 'metal' ? (qTex || null) : null);
 	const [activeStoneTexId, setActiveStoneTexId] = React.useState<string | null>(activeMaterial === 'stone' ? (qTex || null) : null);
-	const [box, setBox] = React.useState<'thick' | 'thin' | 'wedge' | 'ridge' | 'hitech'>(qBox as any);
+	const [box, setBox] = React.useState<'thick' | 'thin' | 'wedge' | 'ridge' | 'hitech' | 'accordion'>(qBox as any);
 	const [railing, setRailing] = React.useState<'none' | 'glass' | 'metal' | 'cable'>('none');
 	const [glassTone, setGlassTone] = React.useState<'extra' | 'smoked' | 'bronze'>('extra');
 	const [stepRailing, setStepRailing] = React.useState<boolean[]>([]);
@@ -5970,6 +6071,8 @@ function LivePageInner() {
 			? 'דגם אלכסוני'
 			: box === 'ridge'
 			? 'דגם רכס מרכזי'
+			: box === 'accordion'
+			? 'דגם אקורדיון'
 			: box === 'hitech'
 			? 'דגם הייטק'
 			: '';
@@ -6064,6 +6167,8 @@ function LivePageInner() {
 			? 'דגם אלכסוני'
 			: box === 'ridge'
 			? 'דגם רכס מרכזי'
+			: box === 'accordion'
+			? 'דגם אקורדיון'
 			: box === 'hitech'
 			? 'דגם הייטק'
 			: '';
@@ -6196,11 +6301,12 @@ function LivePageInner() {
 												{ id: 'wedge', label: 'דגם אלכסוני' as const },
 												{ id: 'ridge', label: 'דגם רכס מרכזי' as const },
 												{ id: 'hitech', label: 'דגם הייטק' as const },
+												{ id: 'accordion', label: 'דגם אקורדיון' as const },
 											] as const).map(opt => (
 												<div key={opt.id} className="flex flex-col items-center">
 													<button
-														aria-label={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : opt.id === 'wedge' ? 'דגם אלכסוני' : opt.id === 'ridge' ? 'דגם רכס מרכזי' : 'דגם הייטק'}
-														title={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : opt.id === 'wedge' ? 'דגם אלכסוני' : opt.id === 'ridge' ? 'דגם רכס מרכזי' : 'דגם הייטק'}
+														aria-label={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : opt.id === 'wedge' ? 'דגם אלכסוני' : opt.id === 'ridge' ? 'דגם רכס מרכזי' : opt.id === 'accordion' ? 'דגם אקורדיון' : 'דגם הייטק'}
+														title={opt.id === 'thick' ? 'דגם עבה' : opt.id === 'thin' ? 'דגם דק' : opt.id === 'wedge' ? 'דגם אלכסוני' : opt.id === 'ridge' ? 'דגם רכס מרכזי' : opt.id === 'accordion' ? 'דגם אקורדיון' : 'דגם הייטק'}
 														className={`w-[52px] h-[52px] inline-flex items-center justify-center bg-transparent border-0 ${box === opt.id ? 'text-[#1a1a2e]' : 'text-gray-500 hover:text-gray-700'}`}
 														onClick={() => setBox(opt.id)}
 													>
@@ -6234,6 +6340,13 @@ function LivePageInner() {
 																<rect x="1" y="16" width="50" height="20" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
 																<path d="M2 26 L26 18 L50 26" stroke="currentColor" strokeWidth="2" fill="none" />
 															</svg>
+														) : opt.id === 'accordion' ? (
+															<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
+																<rect x="1" y="14" width="50" height="24" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
+																<path d="M8 20 L20 20 L20 30 L32 30 L32 22 L44 22" stroke="currentColor" strokeWidth="2" fill="none" />
+																<path d="M8 32 L20 32 L20 22 L32 22 L32 30 L44 30" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.6" />
+																<rect x="1" y="14" width="50" height="24" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
+															</svg>
 														) : (
 															<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
 																<rect x="6" y="18" width="40" height="16" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
@@ -6245,7 +6358,7 @@ function LivePageInner() {
 														<span className="sr-only">{opt.label}</span>
 													</button>
 													<span className="mt-1 text-xs text-gray-600">
-										{opt.id === 'thick' ? 'עבה' : opt.id === 'thin' ? 'דק' : opt.id === 'wedge' ? 'אלכסוני' : opt.id === 'ridge' ? 'רכס' : 'הייטק'}
+										{opt.id === 'thick' ? 'עבה' : opt.id === 'thin' ? 'דק' : opt.id === 'wedge' ? 'אלכסוני' : opt.id === 'ridge' ? 'רכס' : opt.id === 'accordion' ? 'אקורדיון' : 'הייטק'}
 													</span>
 												</div>
 											))}
@@ -6714,7 +6827,7 @@ function LivePageInner() {
 									stepCableSpanModes={stepCableSpanMode}
 									landingCableSpanModes={landingCableSpanMode}
 									treadThicknessOverride={box === 'thick' ? 0.11 : (box === 'wedge' ? 0.11 : (box === 'ridge' ? 0.02 : 0.07))}
-									boxModel={box === 'wedge' ? 'wedge' : (box === 'ridge' ? 'ridge' : 'rect')}
+									boxModel={box === 'accordion' ? 'accordion' : (box === 'wedge' ? 'wedge' : (box === 'ridge' ? 'ridge' : 'rect'))}
 									wedgeFrontThicknessM={0.035}
 									ridgeFrontCenterThicknessM={0.09}
 									ridgeFrontEdgeThicknessM={0.03}
@@ -7539,6 +7652,7 @@ function LivePageInner() {
 										{([
 											{ id: 'thick', label: 'תיבה עבה‑דופן' },
 											{ id: 'thin', label: 'תיבה דקה‑דופן' },
+									{ id: 'accordion', label: 'דגם אקורדיון' },
 											{ id: 'hitech', label: 'דגם הייטק' },
 										] as const).map(opt => (
 											<button

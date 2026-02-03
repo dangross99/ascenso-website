@@ -1862,52 +1862,8 @@ function Staircase3D({
 							}
 
 							// מסילות עבור חזית
-							// Transition (גרונג) בסוף השיפוע לפני הפודסט הראשון (A1→Landing):
-							// Reverse Bot Offset + סנכרון קודקודים כדי למנוע "שפיץ" בטריאנגולציה.
-							const dyLandingA1 = treadThickness + 2 * offsetY;
-							let tanSlopeA1 = (riser / treadDepth);
-							let cosSlopeA1 = 1 / Math.sqrt(1 + tanSlopeA1 * tanSlopeA1);
-							if (topP1.length >= 2) {
-								const u0 = topP1[0], u1 = topP1[1];
-								const dx = u1[0] - u0[0], dy = u1[1] - u0[1], dz = u1[2] - u0[2];
-								const horiz = Math.hypot(dx, dz);
-								if (horiz > 1e-9) {
-									tanSlopeA1 = Math.abs(dy) / horiz;
-									cosSlopeA1 = horiz / Math.hypot(horiz, dy);
-								}
-							}
-							const dySlopeA1 = dyLandingA1 / Math.max(1e-9, cosSlopeA1);
-							let endTopKneeA1: [number, number, number] | null = null;
-							let endBotSlopeKneeA1: [number, number, number] | null = null;
-							let endBotPlaneAtTopBreakA1: [number, number, number] | null = null;
-							if (closeP1 && topP1.length >= 1 && tanSlopeA1 > 1e-9) {
-								const topBreak = closeP1; // עליון בתחילת הפודסט
-								const prevTop = topP1[topP1.length - 1];
-								const dxE = topBreak[0] - prevTop[0];
-								const dzE = topBreak[2] - prevTop[2];
-								const horizE = Math.hypot(dxE, dzE);
-								if (horizE > 1e-9) {
-									const uxE = dxE / horizE;
-									const uzE = dzE / horizE;
-									const botOffsetEnd = (dySlopeA1 - dyLandingA1) / tanSlopeA1;
-									endTopKneeA1 = [
-										topBreak[0] - uxE * botOffsetEnd,
-										topBreak[1] - tanSlopeA1 * botOffsetEnd,
-										topBreak[2] - uzE * botOffsetEnd,
-									];
-									endBotSlopeKneeA1 = [endTopKneeA1[0], endTopKneeA1[1] - dySlopeA1, endTopKneeA1[2]];
-									endBotPlaneAtTopBreakA1 = [topBreak[0], topBreak[1] - dyLandingA1, topBreak[2]];
-								}
-							}
-
-							const railTop: Array<[number, number, number]> =
-								(closeP1 && endTopKneeA1 && endBotSlopeKneeA1 && endBotPlaneAtTopBreakA1)
-									? [...topP1, endTopKneeA1, closeP1, closeP1]
-									: (closeP1 ? [...topP1, closeP1] : [...topP1]);
-							let railBot: Array<[number, number, number]> =
-								(closeP1 && endTopKneeA1 && endBotSlopeKneeA1 && endBotPlaneAtTopBreakA1)
-									? [...botP6, endBotSlopeKneeA1, endBotSlopeKneeA1, endBotPlaneAtTopBreakA1]
-									: (closeP6 ? [...botP6, closeP6] : [...botP6]);
+							const railTop: Array<[number, number, number]> = closeP1 ? [...topP1, closeP1] : [...topP1];
+							let railBot: Array<[number, number, number]> = closeP6 ? [...botP6, closeP6] : [...botP6];
 							const segCount = Math.max(railTop.length, railBot.length);
 							if (segCount < 2) return null;
 
@@ -2007,9 +1963,78 @@ function Staircase3D({
 							addSide(railTopForSide);
 							addSide(railBotForSide);
 
-							// המשך על הפודסט הראשון חייב להיות אופקי: תחתון הוא Offset אנכי קבוע (dyLandingA1) מתחת ל-Top.
+							// התאמת המסילה התחתונה בקצה: הקרנה לאורך השיפוע עד מישור קצה הפודסט (לתיקון רוחב מדויק)
 							if (extTopAt30) {
-								extBot30 = [extTopAt30[0], extTopAt30[1] - dyLandingA1, extTopAt30[2]];
+								const botEndW = railBotForSide[railBotForSide.length - 1];
+								const botPrevW = railBotForSide.length >= 2 ? railBotForSide[railBotForSide.length - 2] : botEndW;
+								// כיוון שיפוע המסילה התחתונה
+								let vx = botEndW[0] - botPrevW[0];
+								let vy = botEndW[1] - botPrevW[1];
+								let vz = botEndW[2] - botPrevW[2];
+								// אם הכיוון כמעט אפס – קח כיוון לפי yaw של הפודסט
+								let landingYaw: number | null = null;
+								for (let i = 0; i < treads.length; i++) {
+									const t = treads[i];
+									if (t.flight === 0 && t.isLanding) { landingYaw = t.rotation[1] as number; break; }
+								}
+								if (Math.abs(vx) < 1e-9 && Math.abs(vz) < 1e-9 && landingYaw !== null) {
+									vx = Math.cos(landingYaw); vz = Math.sin(landingYaw); vy = 0;
+								}
+								// מישור קצה הפודסט: נקבע לפי רכיב dot(u, x) עם u = (cos(yaw), sin(yaw)) של הפודסט
+								let ux = 1, uz = 0;
+								if (landingYaw !== null) { ux = Math.cos(landingYaw); uz = Math.sin(landingYaw); }
+								const dotU = (x: [number, number, number]) => (ux * x[0] + uz * x[2]);
+								const planeU = dotU(extTopAt30);
+								// נרצה לעבוד עם וקטור יחידה לאורך המסילה התחתונה
+								const vmag = Math.hypot(vx, vy, vz) || 1;
+								const vUx = vx / vmag, vUy = vy / vmag, vUz = vz / vmag;
+								const denomU = ux * vUx + uz * vUz;
+								let t0U = 0; // פרמטר לאורך וקטור היחידה
+								if (Math.abs(denomU) > 1e-9) {
+									t0U = (planeU - dotU(botEndW)) / denomU;
+									extBot30 = [botEndW[0] + vUx * t0U, botEndW[1] + vUy * t0U, botEndW[2] + vUz * t0U];
+								} else {
+									// פולבאק: שמור רוחב לפי הווקטור בקצה הפלטה
+									const topEndW = railTopForSide[railTopForSide.length - 1];
+									const wdx = topEndW[0] - botEndW[0];
+									const wdy = topEndW[1] - botEndW[1];
+									const wdz = topEndW[2] - botEndW[2];
+									extBot30 = [extTopAt30[0] - wdx, extTopAt30[1] - wdy, extTopAt30[2] - wdz];
+								}
+								// שלב עדין: אם הרוחב לא מדויק – המשך באותו שיפוע כלפי מעלה עד שהרוחב שווה לרוחב בקצה הפלטה
+								if (extBot30) {
+									const topEndW = railTopForSide[railTopForSide.length - 1];
+									const botEndW2 = railBotForSide[railBotForSide.length - 1];
+									const refW =
+										Math.hypot(
+											topEndW[0] - botEndW2[0],
+											topEndW[1] - botEndW2[1],
+											topEndW[2] - botEndW2[2],
+										);
+									// פתרון אנליטי ל-|w0 - t*vU| = refW, כאשר w0 = extTopAt30 - botEndW2
+									const w0x = extTopAt30[0] - botEndW2[0];
+									const w0y = extTopAt30[1] - botEndW2[1];
+									const w0z = extTopAt30[2] - botEndW2[2];
+									const w0dotv = w0x * vUx + w0y * vUy + w0z * vUz;
+									const w0norm2 = w0x * w0x + w0y * w0y + w0z * w0z;
+									const disc = (w0dotv * w0dotv) - (w0norm2 - refW * refW);
+									if (disc >= 0) {
+										const r1 = w0dotv + Math.sqrt(disc);
+										const r2 = w0dotv - Math.sqrt(disc);
+										// בחר פתרון שממשיך "כלפי מעלה" יחסית ל-t0U (כלומר vUy * (t - t0U) > 0) ובעל סטייה מינימלית
+										const choose = (tCand: number) => {
+											const scoreDir = vUy * (tCand - t0U);
+											return { t: tCand, ok: scoreDir > -1e-9, dist: Math.abs(tCand - t0U) };
+										};
+										const c1 = choose(r1), c2 = choose(r2);
+										let tBest = t0U;
+										if (c1.ok && c2.ok) tBest = (c1.dist <= c2.dist) ? c1.t : c2.t;
+										else if (c1.ok) tBest = c1.t;
+										else if (c2.ok) tBest = c2.t;
+										// עדכן נקודת תחתית
+										extBot30 = [botEndW2[0] + vUx * tBest, botEndW2[1] + vUy * tBest, botEndW2[2] + vUz * tBest];
+									}
+								}
 							}
 
 							// מדידת סטיית רוחב בקצה הפודסט (דיבאג לקונסול)
@@ -2687,7 +2712,8 @@ function Staircase3D({
 					if (!startTop || !startBot) return null;
 
 					// tan/cos שיפוע ועובי ניצב
-					const dyLanding = Math.abs(startTop[1] - startBot[1]);
+					// IMPORTANT: dyLanding חייב להיות קבוע על מישור (פודסט): treadThickness + 2*offsetY
+					const dyLanding = (treadThickness + 2 * offsetY);
 					const yawS = (firstStepIdxInFlight !== null ? (treads[firstStepIdxInFlight]?.rotation[1] as number) : (firstYaw ?? 0)) || 0;
 					const uxH = Math.cos(yawS);
 					const uzH = Math.sin(yawS);
@@ -2703,7 +2729,8 @@ function Staircase3D({
 							cosSlope = horiz / Math.hypot(horiz, dy);
 						}
 					}
-					const dySlope = dyLanding / cosSlope;
+					const safeCos = Math.max(0.1, cosSlope);
+					const dySlope = dyLanding / safeCos;
 
 					// Prefix עם Breakpoints בתחילת השיפוע (אם יש פודסט לפני הגרם)
 					let topPrefix: Array<[number, number, number]> = [startTop];
@@ -3136,23 +3163,6 @@ function Staircase3D({
 									startFromLandingBot = [wx4, wy8, wz4];
 								}
 							}
-							// Vertical Stretch בתחילת גרם B:
-							// בגלל שהפלטה מתחילה בשיפוע מיד אחרי העלייה, נקודת ה-bottom עלולה "לברוח" למעלה ולהיראות דקה.
-							// לכן נכפה שהגובה של startFromLandingBot יתאים בדיוק ל-bottom של ה-Ref מפלטה A (אם קיים).
-							// חשוב: לא משנים XZ (כדי לא לשבש את הטריאנגולציה); רק מותחים למטה בציר Y.
-							{
-								const refA = hitechBStartRef.current;
-								if (refA && startFromLandingTop && startFromLandingBot) {
-									const refBot = refA.bot;
-									const dx = startFromLandingBot[0] - refBot[0];
-									const dz = startFromLandingBot[2] - refBot[2];
-									// אם זה ממש אותו קו חיבור (XZ תואם) – אפשר לאמץ את נקודת ה-ref במלואה,
-									// אחרת ניישר רק את הגובה.
-									startFromLandingBot = (Math.hypot(dx, dz) < 1e-4)
-										? refBot
-										: [startFromLandingBot[0], refBot[1], startFromLandingBot[2]];
-								}
-							}
 							const baseTop: Array<[number, number, number]> = (() => {
 								const arr = closeP4 ? [...topStepOff, closeP4] : [...topStepOff];
 								return startFromLandingTop ? [startFromLandingTop, ...arr] : arr;
@@ -3162,17 +3172,17 @@ function Staircase3D({
 							// תיקון עובי פלטה בגרם משופע:
 							// בפודסט העובי "אנכי" (ΔY), ובשיפוע נדרש ΔY גדול יותר כדי לשמר עובי ניצב זהה.
 							// dySlope = dyLanding / cos(slopeAngle)
-							const dyLanding = Math.abs(
-								(startFromLandingTop?.[1] ?? (firstP4?.[1] ?? 0)) - (startFromLandingBot?.[1] ?? (firstP7?.[1] ?? ((firstP4?.[1] ?? 0) - (treadThickness + 2 * offsetY))))
-							) || (treadThickness + 2 * offsetY);
+							// IMPORTANT: dyLanding חייב להיות קבוע (פודסט/מישור): treadThickness + 2*offsetY
+							const dyLanding = (treadThickness + 2 * offsetY);
 							// slopeAngle נגזר מכיוון הרייל העליון (u) בין שתי נקודות בגרם (לא בפודסט)
 							const idx0 = startFromLandingTop ? 1 : 0;
 							const a0 = topRail[Math.min(idx0, topRail.length - 1)];
 							const a1 = topRail[Math.min(idx0 + 1, topRail.length - 1)];
 							let uxS = a1[0] - a0[0], uyS = a1[1] - a0[1], uzS = a1[2] - a0[2];
 							{ const m = Math.hypot(uxS, uyS, uzS) || 1; uxS /= m; uyS /= m; uzS /= m; }
-							const cosSlope = Math.max(1e-6, Math.hypot(uxS, uzS)); // cos(angle from horizontal)
-							const dySlope = dyLanding / cosSlope;
+							const cosSlope = Math.hypot(uxS, uzS); // cos(angle from horizontal)
+							const safeCos = Math.max(0.1, cosSlope);
+							const dySlope = dyLanding / safeCos;
 							const botRail: Array<[number, number, number]> = topRail.map((t, i) => {
 								const isLandingPoint =
 									(!!startFromLandingTop && i === 0) ||
@@ -3483,7 +3493,8 @@ function Staircase3D({
 								// דיוק תחילת B1:
 								// מוסיפים קטע אופקי קצר (Horizontal Extension) לפני תחילת השיפוע, כדי שהשיפוע לא יתחיל מוקדם מדי
 								// ושהחיבור ל‑A1 יישאר "יצוק" עם רוחב אחיד.
-								const dyLanding = Math.abs(startTop[1] - startBot[1]);
+								// IMPORTANT: dyLanding חייב להיות קבוע על מישור (פודסט): treadThickness + 2*offsetY
+								const dyLanding = (treadThickness + 2 * offsetY);
 								// כיוון אופקי של הגרם (ב‑XZ) לפי ה‑yaw של המדרגה הראשונה
 								const yawS = (firstStepIdxInFlight !== null ? (treads[firstStepIdxInFlight]?.rotation[1] as number) : (firstYaw ?? 0)) || 0;
 								const uxH = Math.cos(yawS);
@@ -3501,7 +3512,8 @@ function Staircase3D({
 										cosSlope = horiz / Math.hypot(horiz, dy);
 									}
 								}
-								const dySlope = (cosSlope > 1e-6) ? (dyLanding / cosSlope) : dyLanding;
+								const safeCos = Math.max(0.1, cosSlope);
+								const dySlope = dyLanding / safeCos;
 
 								// Transition (גרונג) בסוף השיפוע לפני הפודסט העליון:
 								// מוסיפים נקודות "ברך" כדי שהמסילה התחתונה תפסיק שיפוע מוקדם יותר,

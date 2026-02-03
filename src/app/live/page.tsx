@@ -3143,8 +3143,10 @@ function Staircase3D({
 								// חישוב נקודת שבירה: בוחרים L כך שהאלכסון מ‑breakTop יפגוש את המדרגה הראשונה בזווית השיפוע הנכונה
 								// מבלי "לחנוק" את עובי הפלטה. (דחיית תחילת השיפוע)
 								let breakTop: [number, number, number] | null = null;
-								let breakBotH: [number, number, number] | null = null; // סוף קטע אופקי (dyLanding)
-								let breakBotS: [number, number, number] | null = null; // תחילת קטע שיפוע (dySlope)
+								let breakTopSlopeAtLbot: [number, number, number] | null = null; // נקודת top על השיפוע ב-Lbot
+								let breakBotAtL: [number, number, number] | null = null; // תחתון בקצה העליון (ב-L) עם dyLanding
+								let breakBotHAtLbot: [number, number, number] | null = null; // תחתון אופקי עד Lbot (dyLanding)
+								let breakBotSAtLbot: [number, number, number] | null = null; // תחילת השיפוע בתחתון (dySlope) ב-Lbot
 								const firstSlopeTop = topP1.length >= 1 ? topP1[0] : null;
 								if (firstSlopeTop && tanSlope > 1e-6) {
 									const deltaY = (firstSlopeTop[1] - startTop[1]);
@@ -3152,19 +3154,26 @@ function Staircase3D({
 									const dAlong = (dotH(firstSlopeTop) - dotH(startTop)); // כמה רחוק המדרגה הראשונה קדימה ביחס ל‑startTop
 									const L = Math.max(0, dAlong - requiredAlong);
 									breakTop = [startTop[0] + uxH * L, startTop[1], startTop[2] + uzH * L];
-									breakBotH = [breakTop[0], breakTop[1] - dyLanding, breakTop[2]];
-									breakBotS = [breakTop[0], breakTop[1] - dySlope, breakTop[2]];
+									// כדי למנוע "שפיץ" בתחתית: מתחילים את השיפוע בתחתון מאוחר יותר ב-offset אופקי:
+									// Bot_Offset = (dySlope - dyLanding) / tanSlope
+									const botOffset = Math.max(0, (dySlope - dyLanding) / tanSlope);
+									const Lbot = L + botOffset;
+									breakBotAtL = [breakTop[0], breakTop[1] - dyLanding, breakTop[2]];
+									breakBotHAtLbot = [startTop[0] + uxH * Lbot, startTop[1] - dyLanding, startTop[2] + uzH * Lbot];
+									// top על השיפוע ב-Lbot (הטופ כבר התחיל לעלות ב-L, אז אחרי botOffset יעלה ב-tanSlope*botOffset)
+									breakTopSlopeAtLbot = [startTop[0] + uxH * Lbot, startTop[1] + tanSlope * botOffset, startTop[2] + uzH * Lbot];
+									breakBotSAtLbot = [breakTopSlopeAtLbot[0], breakTopSlopeAtLbot[1] - dySlope, breakTopSlopeAtLbot[2]];
 								}
 
 								// בניית מסילות B1 (שומרים את מספר הנקודות המקורי של המדרגות; מוסיפים רק את "קטע 0→1" האופקי בתחילה)
 								const topRailB1: Array<[number, number, number]> = (() => {
 									const arr = closeP1 ? [...topP1, closeP1] : [...topP1];
-									if (breakTop) return [startTop, breakTop, breakTop, ...arr];
+									if (breakTop && breakTopSlopeAtLbot) return [startTop, breakTop, breakTopSlopeAtLbot, breakTopSlopeAtLbot, ...arr];
 									return [startTop, ...arr];
 								})();
 								let botRailB1: Array<[number, number, number]> = (() => {
 									const arr = closeP6 ? [...botP6, closeP6] : [...botP6];
-									if (breakBotH && breakBotS) return [startBot, breakBotH, breakBotS, ...arr];
+									if (breakBotAtL && breakBotHAtLbot && breakBotSAtLbot) return [startBot, breakBotAtL, breakBotHAtLbot, breakBotSAtLbot, ...arr];
 									return [startBot, ...arr];
 								})();
 								const segCountB1 = Math.max(topRailB1.length, botRailB1.length);

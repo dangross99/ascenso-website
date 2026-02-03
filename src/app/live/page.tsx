@@ -3314,7 +3314,15 @@ function Staircase3D({
 							// דופן עליונה ותחתונה – אם מתחילים מהפודסט, אל תוסיף אופסטים; אחרת הוסף f4/f7 בתחילת המסילה
 							const useLandingStart = !!startFromLandingTop && !!startFromLandingBot;
 							const topRailForSideB = useLandingStart ? railTop : (firstP4SideShift ? [firstP4SideShift, ...railTop] : railTop);
-							const botRailForSideB = useLandingStart ? railBot : (firstP7 ? [firstP7, ...railBot] : railBot);
+							// חשוב: הדפנות/קאפ חייבים להתחיל מאותו Bot "נגזר‑Top" (XZ lock) כמו החזית,
+							// ולא מ‑firstP7 הגולמי (שיכול ליצור "חצי רוחב" בגלל שינויי גובה רייזר).
+							const derivedFirstBotForSide: [number, number, number] | null =
+								(!useLandingStart && topRailForSideB.length > 0)
+									? [topRailForSideB[0][0], topRailForSideB[0][1] - dySlope, topRailForSideB[0][2]]
+									: null;
+							const botRailForSideB = useLandingStart
+								? railBot
+								: (derivedFirstBotForSide ? [derivedFirstBotForSide, ...railBot] : railBot);
 							// אם אין לפחות מקטע אחד ברצועה – אל תיצור דפנות/קאפ (ימנע "פלטה מוזרה")
 							if (segCount >= 2) {
 								// דפנות החל מהמקטע הראשון

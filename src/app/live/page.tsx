@@ -3240,7 +3240,7 @@ function Staircase3D({
 								if (extTopAtL && extBotAtL) {
 									const topEnd = topRailB1[topRailB1.length - 1];
 									const botEnd = botRailB1[botRailB1.length - 1];
-							A		{
+									{
 										const base = posB1.length / 3;
 										posB1.push(topEnd[0], topEnd[1], topEnd[2]);
 										posB1.push(botEnd[0], botEnd[1], botEnd[2]);

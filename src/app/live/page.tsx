@@ -3604,7 +3604,12 @@ function Staircase3D({
 									}
 									return [startBot, ...botTail];
 								})();
-								const segCountB1 = Math.max(topRailB1.length, botRailB1.length);
+								// יישור אורכים דטרמיניסטי: מונע טריאנגולציה באלכסון כשיש #נקודות שונה (גורם "שפיץ" ויזואלי)
+								const topRailB1A: Array<[number, number, number]> = [...topRailB1];
+								const botRailB1A: Array<[number, number, number]> = [...botRailB1];
+								while (topRailB1A.length < botRailB1A.length) topRailB1A.push(topRailB1A[topRailB1A.length - 1]);
+								while (botRailB1A.length < topRailB1A.length) botRailB1A.push(botRailB1A[botRailB1A.length - 1]);
+								const segCountB1 = topRailB1A.length;
 
 								// חזית
 								const posB1: number[] = [];
@@ -3614,10 +3619,10 @@ function Staircase3D({
 								if (segCountB1 < 2) return null;
 
 								for (let i = 0; i < segCountB1 - 1; i++) {
-									let t1 = pickB1(topRailB1, i);
-									let b1 = pickB1(botRailB1, i);
-									const t2 = pickB1(topRailB1, i + 1);
-									const b2 = pickB1(botRailB1, i + 1);
+									let t1 = pickB1(topRailB1A, i);
+									let b1 = pickB1(botRailB1A, i);
+									const t2 = pickB1(topRailB1A, i + 1);
+									const b2 = pickB1(botRailB1A, i + 1);
 									const baseIndex = posB1.length / 3;
 									posB1.push(t1[0], t1[1], t1[2],  b1[0], b1[1], b1[2],  t2[0], t2[1], t2[2],  b2[0], b2[1], b2[2]);
 									idxB1.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
@@ -3625,9 +3630,9 @@ function Staircase3D({
 								}
 
 								// fallback נוסף: אם משום מה לא נוצרו משולשים (לדוגמה נקודות חופפות) – צור סגמנט ראשון מינימלי
-								if (posB1.length === 0 && topRailB1.length >= 2 && botRailB1.length >= 2) {
-									const t1 = topRailB1[0], t2 = topRailB1[1];
-									const b1 = botRailB1[0], b2 = botRailB1[1];
+								if (posB1.length === 0 && topRailB1A.length >= 2 && botRailB1A.length >= 2) {
+									const t1 = topRailB1A[0], t2 = topRailB1A[1];
+									const b1 = botRailB1A[0], b2 = botRailB1A[1];
 									const baseIndex = posB1.length / 3;
 									posB1.push(t1[0], t1[1], t1[2],  b1[0], b1[1], b1[2],  t2[0], t2[1], t2[2],  b2[0], b2[1], b2[2]);
 									idxB1.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
@@ -3639,15 +3644,15 @@ function Staircase3D({
 								// עובי ונורמל (מישור הפלטה)
 								const thicknessB1 = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
 								let uxB = 1, uyB = 0, uzB = 0;
-								if (topRailB1.length >= 2) {
-									uxB = topRailB1[1][0] - topRailB1[0][0];
-									uyB = topRailB1[1][1] - topRailB1[0][1];
-									uzB = topRailB1[1][2] - topRailB1[0][2];
+								if (topRailB1A.length >= 2) {
+									uxB = topRailB1A[1][0] - topRailB1A[0][0];
+									uyB = topRailB1A[1][1] - topRailB1A[0][1];
+									uzB = topRailB1A[1][2] - topRailB1A[0][2];
 									{ const m = Math.hypot(uxB, uyB, uzB) || 1; uxB /= m; uyB /= m; uzB /= m; }
 								}
-								let wxB = (firstP1 && firstP6) ? (firstP1[0] - firstP6[0]) : (topRailB1[0][0] - botRailB1[0][0]);
-								let wyB = (firstP1 && firstP6) ? (firstP1[1] - firstP6[1]) : (topRailB1[0][1] - botRailB1[0][1]);
-								let wzB = (firstP1 && firstP6) ? (firstP1[2] - firstP6[2]) : (topRailB1[0][2] - botRailB1[0][2]);
+								let wxB = (firstP1 && firstP6) ? (firstP1[0] - firstP6[0]) : (topRailB1A[0][0] - botRailB1A[0][0]);
+								let wyB = (firstP1 && firstP6) ? (firstP1[1] - firstP6[1]) : (topRailB1A[0][1] - botRailB1A[0][1]);
+								let wzB = (firstP1 && firstP6) ? (firstP1[2] - firstP6[2]) : (topRailB1A[0][2] - botRailB1A[0][2]);
 								let nmXB = uyB * wzB - uzB * wyB;
 								let nmYB = uzB * wxB - uxB * wzB;
 								let nmZB = uxB * wyB - uyB * wxB;
@@ -3682,8 +3687,8 @@ function Staircase3D({
 										idxB1.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
 									}
 								};
-								addSideB1(topRailB1);
-								addSideB1(botRailB1);
+								addSideB1(topRailB1A);
+								addSideB1(botRailB1A);
 
 								// הארכה לסוף הפודסט הבא אם יש (בדומה ל‑A1): שמור אופסט עליון, התאם תחתון בשיפוע
 								let extTopAtL: [number, number, number] | null = null;

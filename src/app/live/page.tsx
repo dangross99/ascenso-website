@@ -137,6 +137,7 @@ function Staircase3D({
 	ridgeFrontCenterThicknessM,
 	ridgeFrontEdgeThicknessM,
 	pathSegments,
+	landingWidthM,
 	glassTone,
 	stepRailingStates,
 	landingRailingStates,
@@ -178,6 +179,8 @@ function Staircase3D({
 	ridgeFrontCenterThicknessM?: number;
 	ridgeFrontEdgeThicknessM?: number;
 	pathSegments?: PathSegment[] | null;
+	// אורך/עומק הפודסט במטרים (מהקונפיגורטור). אם לא סופק – ברירת מחדל לפי treadWidth.
+	landingWidthM?: number;
 	glassTone?: 'extra' | 'smoked' | 'bronze';
 	stepRailingStates?: boolean[];
 	landingRailingStates?: boolean[];
@@ -256,7 +259,7 @@ function Staircase3D({
 				} else {
 					// פודסט: שלב שה"שלח" שלו שווה לאורך המדרגה (רוחב), כלומר ריבוע 1x1מ׳
 					const [dx, dz] = dirs[dirIndex];
-					const run = treadWidth;
+					const run = (typeof landingWidthM === 'number' && landingWidthM > 0) ? landingWidthM : treadWidth;
 					const cx = sx + dx * (run / 2);
 					const cz = sz + dz * (run / 2);
 					treads.push({
@@ -329,7 +332,7 @@ function Staircase3D({
 				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, 0, 0], run: treadDepth, isLanding: false, flight: 0, axis: 'x' });
 			}
 			// פודסט עם "שלח" באורך המדרגה (ריבוע 1x1מ׳) + פנייה ימינה
-			const runL = treadWidth;
+			const runL = (typeof landingWidthM === 'number' && landingWidthM > 0) ? landingWidthM : treadWidth;
 			const lxStart = half * treadDepth;
 			treads.push({
 				position: [lxStart + runL / 2, half * riser, 0],
@@ -358,7 +361,7 @@ function Staircase3D({
 				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, 0, 0], run: treadDepth, isLanding: false, flight: 0, axis: 'x' });
 			}
 			// פודסט 1x1מ׳ + פנייה ראשונה
-			const runL1 = treadWidth;
+			const runL1 = (typeof landingWidthM === 'number' && landingWidthM > 0) ? landingWidthM : treadWidth;
 			const l1xStart = third * treadDepth;
 			treads.push({
 				position: [l1xStart + runL1 / 2, third * riser, 0],
@@ -380,7 +383,7 @@ function Staircase3D({
 				});
 			}
 			// פודסט שני 1x1מ׳ + פנייה שנייה
-			const runL2 = treadWidth;
+			const runL2 = (typeof landingWidthM === 'number' && landingWidthM > 0) ? landingWidthM : treadWidth;
 			const rStartX = l1xStart + runL1;
 			const rStartZ = -third * treadDepth;
 			treads.push({
@@ -2236,7 +2239,7 @@ function Staircase3D({
 									{startPanelMesh}
 								</group>
 							);
-						})(undefined)}
+						})(landingWidthM)}
 					</group>
 				);
 			})() : null}
@@ -2782,10 +2785,27 @@ function Staircase3D({
 							})();
 							// שמור את הרייל העליון המקורי לשימור השיפוע
 							const topRail: Array<[number, number, number]> = baseTop;
-							const botRail: Array<[number, number, number]> = (() => {
-								const arr = [...bottomStepOff];
-								return startFromLandingBot ? [startFromLandingBot, ...arr] : arr;
-							})();
+							// תיקון עובי פלטה בגרם משופע:
+							// בפודסט העובי "אנכי" (ΔY), ובשיפוע נדרש ΔY גדול יותר כדי לשמר עובי ניצב זהה.
+							// dySlope = dyLanding / cos(slopeAngle)
+							const dyLanding = Math.abs(
+								(startFromLandingTop?.[1] ?? (firstP4?.[1] ?? 0)) - (startFromLandingBot?.[1] ?? (firstP7?.[1] ?? ((firstP4?.[1] ?? 0) - (treadThickness + 2 * offsetY))))
+							) || (treadThickness + 2 * offsetY);
+							// slopeAngle נגזר מכיוון הרייל העליון (u) בין שתי נקודות בגרם (לא בפודסט)
+							const idx0 = startFromLandingTop ? 1 : 0;
+							const a0 = topRail[Math.min(idx0, topRail.length - 1)];
+							const a1 = topRail[Math.min(idx0 + 1, topRail.length - 1)];
+							let uxS = a1[0] - a0[0], uyS = a1[1] - a0[1], uzS = a1[2] - a0[2];
+							{ const m = Math.hypot(uxS, uyS, uzS) || 1; uxS /= m; uyS /= m; uzS /= m; }
+							const cosSlope = Math.max(1e-6, Math.hypot(uxS, uzS)); // cos(angle from horizontal)
+							const dySlope = dyLanding / cosSlope;
+							const botRail: Array<[number, number, number]> = topRail.map((t, i) => {
+								const isLandingPoint =
+									(!!startFromLandingTop && i === 0) ||
+									(!!closeP4 && i === topRail.length - 1);
+								const dy = isLandingPoint ? dyLanding : dySlope;
+								return [t[0], t[1] - dy, t[2]];
+							});
 							// בחר אורך מקסימלי – אם מסילה אחת ארוכה יותר (למשל כוללת פודסט), נשכפל את הנקודה האחרונה של הקצרה
 							const count = Math.max(topRail.length, botRail.length);
 
@@ -2822,7 +2842,8 @@ function Staircase3D({
 									const hasLandingStart = !!startFromLandingTop && !!startFromLandingBot;
 									if (!hasLandingStart) {
 										if (firstP4SideShift) t1 = firstP4SideShift;
-										if (firstP7) b1 = firstP7;
+										// תחתון תמיד אנכי מתחת לעליון (ΔY לפי dySlope) כדי לשמור עובי ניצב זהה בשיפוע
+										b1 = [t1[0], t1[1] - dySlope, t1[2]];
 									}
 								}
 								const baseIndex = pos.length / 3;
@@ -2847,9 +2868,10 @@ function Staircase3D({
 							}
 							const um = Math.hypot(ux, uy, uz) || 1; ux /= um; uy /= um; uz /= um;
 							// רוחב בין המסילות (w)
-							let wx = (firstP4 && firstP7) ? (firstP4[0] - firstP7[0]) : (railTop[0][0] - railBot[0][0]);
-							let wy = (firstP4 && firstP7) ? (firstP4[1] - firstP7[1]) : (railTop[0][1] - railBot[0][1]);
-							let wz = (firstP4 && firstP7) ? (firstP4[2] - firstP7[2]) : (railTop[0][2] - railBot[0][2]);
+							// רוחב בין המסילות (w) – אחרי התיקון הוא אנכי (אותו XZ), ולכן מדידה ישירה מהריילים יציבה יותר
+							let wx = (railTop[0][0] - railBot[0][0]);
+							let wy = (railTop[0][1] - railBot[0][1]);
+							let wz = (railTop[0][2] - railBot[0][2]);
 							const nmX = uy * wz - uz * wy;
 							const nmY = uz * wx - ux * wz;
 							const nmZ = ux * wy - uy * wx;
@@ -3218,7 +3240,7 @@ function Staircase3D({
 								if (extTopAtL && extBotAtL) {
 									const topEnd = topRailB1[topRailB1.length - 1];
 									const botEnd = botRailB1[botRailB1.length - 1];
-									{
+							A		{
 										const base = posB1.length / 3;
 										posB1.push(topEnd[0], topEnd[1], topEnd[2]);
 										posB1.push(botEnd[0], botEnd[1], botEnd[2]);
@@ -4686,6 +4708,8 @@ function LivePageInner() {
 	// קונפיגורטור מדרגות
 	const [shape, setShape] = React.useState<'straight' | 'L' | 'U'>(qShape);
 	const [steps, setSteps] = React.useState<number>(Number.isFinite(qSteps) ? Math.min(25, Math.max(5, qSteps)) : 15);
+	// אורך/עומק פודסט (במטרים) – נשלט מהקונפיגורטור ומוזן לבניית A1 והגיאומטריה של הפודסטים
+	const [landingWidthM, setLandingWidthM] = React.useState<number>(0.90);
 
 	// (שחזור מצב מובייל יתווסף אחרי יצירת pathSegments)
 	const [pathSegments, setPathSegments] = React.useState<PathSegment[]>(() => {
@@ -5866,6 +5890,32 @@ function LivePageInner() {
 											);
 										})()}
 
+										{/* אורך/עומק פודסט (במטרים) */}
+										<div className="border rounded-md p-3 mb-3 bg-white">
+											<div className="text-sm text-gray-700 mb-2">אורך פודסט (מ׳)</div>
+											<div className="flex items-center gap-3">
+												<input
+													type="range"
+													min={0.6}
+													max={1.8}
+													step={0.01}
+													value={landingWidthM}
+													onChange={(e) => setLandingWidthM(Math.max(0.6, Math.min(1.8, parseFloat(e.target.value) || 0.9)))}
+													className="w-full"
+												/>
+												<input
+													type="number"
+													min={0.6}
+													max={1.8}
+													step={0.01}
+													value={Number(landingWidthM.toFixed(2))}
+													onChange={(e) => setLandingWidthM(Math.max(0.6, Math.min(1.8, parseFloat(e.target.value) || 0.9)))}
+													className="w-24 border rounded px-2 py-1 text-sm"
+												/>
+											</div>
+											<div className="text-xs text-gray-500 mt-1">משפיע על אורך ההמשך של A1 על הפודסט ועל אורך הפודסט במודל.</div>
+										</div>
+
 										{(() => {
 											// הצגת עמודות לכל גרם (ריצה ישרה), עם כפתורי +/- למדרגות, ומתג פנייה בין הגרמים
 											const straightIdxs: number[] = [];
@@ -6154,6 +6204,7 @@ function LivePageInner() {
 									ridgeFrontCenterThicknessM={0.09}
 									ridgeFrontEdgeThicknessM={0.03}
 									pathSegments={pathSegments}
+										landingWidthM={landingWidthM}
 									// דגם "הייטק" – מופעל רק כאשר box==='hitech'
 									hitech={box === 'hitech'}
 									hitechPlateThickness={0.012}

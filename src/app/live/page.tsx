@@ -3101,9 +3101,14 @@ function Staircase3D({
 										a1Anchor.top[2] - a1Anchor.bot[2],
 									];
 									const Wmag = Math.hypot(wVec[0], wVec[1], wVec[2]);
-									// חשוב: כדי להישאר "על אותה מסילה" עם פלטה A, לא מזיזים את H.
-									// H הוא ציר ה‑Top המשותף (נקודת החיבור לפלטה A).
-									let H: [number, number, number] = H0;
+									// חשוב: הפודסט חייב להישאר "פלס" ולא לשנות עומק (Z) בעקבות חישובי הברך.
+									// לכן: ננעל את Z של הפודסט לערך המקורי של החיבור (Z של H0),
+									// ונבצע החלטות/התאמות ב‑2D (X,Y) בלבד.
+									const zLock = H0[2];
+									const lockZ = (p: [number, number, number]): [number, number, number] => [p[0], p[1], zLock];
+
+									// H הוא ציר ה‑Top המשותף (נקודת החיבור לפלטה A) – עם Z נעול
+									let H: [number, number, number] = lockZ(H0);
 									startFromLandingTop = H;
 
 									// עזרי וקטורים
@@ -3157,11 +3162,12 @@ function Staircase3D({
 									// קיבוע כיוון ה‑offset כדי למנוע "בריחה" בקצה החיבור:
 									// בוחרים את הסימן כך ש‑Top + (-p*W) יהיה הכי קרוב לנקודת Bot הרפרנס.
 									const chooseByClosestBot = (p: [number, number, number], top: [number, number, number], botRef: [number, number, number] | null) => {
+										// החלטה ב‑2D בלבד (X,Y) כדי למנוע "פזילה" עקב סטיות Z
 										if (!botRef || Wmag <= 1e-9) return (dot(p, wVec) < 0) ? scale(p, -1) : p;
 										const candA = add(top, scale(p, -Wmag));
 										const candB = add(top, scale(p, +Wmag));
-										const dA = Math.hypot(candA[0] - botRef[0], candA[1] - botRef[1], candA[2] - botRef[2]);
-										const dB = Math.hypot(candB[0] - botRef[0], candB[1] - botRef[1], candB[2] - botRef[2]);
+										const dA = Math.hypot(candA[0] - botRef[0], candA[1] - botRef[1]);
+										const dB = Math.hypot(candB[0] - botRef[0], candB[1] - botRef[1]);
 										return (dA <= dB) ? p : scale(p, -1);
 									};
 									// בפודסט: ודא ש‑bottom line בנקודת הברך עובר דרך ה‑bot של A1 (אחרת רואים פער/בריחה ליד A)
@@ -3175,7 +3181,8 @@ function Staircase3D({
 									// ה‑Bot בצד הפודסט חייב להיות בדיוק bot של A1 (אחרת תמיד תראה "בריחה" בקצה).
 									// את ה"גלישה" שומרי בצד השיפוע בלבד.
 									if (Wmag > 1e-9) {
-										startFromLandingBot = a1Anchor.bot;
+										// Bot בצד הפודסט – עם Z נעול כדי לשמור על מישור ישר/מקביל לקיר
+										startFromLandingBot = lockZ(a1Anchor.bot);
 										const kneeSlopeBot = add(H, scale(pS, -Wmag)); // bottom של השיפוע בנקודת הברך (Pivot)
 										if (botP6.length >= 1) botP6[0] = kneeSlopeBot;
 										if (firstP6) firstP6 = kneeSlopeBot;
@@ -3184,10 +3191,11 @@ function Staircase3D({
 									// פס פודסט ישר: מהקצה הרחוק של הפודסט (rawLandingStartTop) עד ציר הברך (H),
 									// כאשר ה‑bottom בקצה הברך הוא נקודת ה‑miter (startFromLandingBot).
 									if (rawLandingStartTop && Wmag > 1e-9 && startFromLandingBot) {
-										const t0 = rawLandingStartTop;
-										const b0 = add(t0, scale(pL, -Wmag));
-										const t1 = H;
-										const b1 = startFromLandingBot;
+										// הפודסט (landingStrip) חייב להישאר באותו Z לכל אורכו
+										const t0 = lockZ(rawLandingStartTop);
+										const b0 = lockZ(add(t0, scale(pL, -Wmag)));
+										const t1 = H; // כבר נעול Z
+										const b1 = lockZ(startFromLandingBot);
 										landingStrip = { t0, b0, t1, b1 };
 									}
 

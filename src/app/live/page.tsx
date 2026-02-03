@@ -1732,8 +1732,10 @@ function Staircase3D({
 								</group>
 							);
 						})()}
-						{/* פלטה A1 – נגדי לפלטה A: עליון P1 ותחתון P6 */}
-						{(() => {
+						{/* פלטה A1 – נגדי לפלטה A: עליון P1 ותחתון P6
+						    NOTE: A1 עכשיו נבנית כיחידה רציפה שכוללת גם הארכה על הפודסט.
+						    landingWidth (אופציונלי) מאפשר לשלוט באורך ההארכה האופקית על הפודסט. */}
+						{((landingWidth?: number) => {
 							// אסוף נקודות צד נגדי (P1 למעלה, P6 למטה) עבור גרם ראשון
 							const topP1: Array<[number, number, number]> = [];
 							const botP6: Array<[number, number, number]> = [];
@@ -1869,7 +1871,7 @@ function Staircase3D({
 							// הכנה להארכה עד סוף הפודסט (פלטה A1) – נשמור אופסט עליון קבוע, רוחב ייקבע מלמטה בהמשך
 							let extTopAt30: [number, number, number] | null = null;
 							let extBot30: [number, number, number] | null = null;
-							(() => {
+							((landingWidthOverride?: number) => {
 								// מצא את הפודסט הראשון בגרם 0
 								let landing: typeof treads[number] | null = null;
 								for (let i = 0; i < treads.length; i++) {
@@ -1879,7 +1881,8 @@ function Staircase3D({
 								if (!landing) return;
 								const yawL = landing.rotation[1] as number;
 								const cL = Math.cos(yawL), sL = Math.sin(yawL);
-								const dxL = landing.run / 2, dzL = treadWidth / 2;
+								const landingWidthM = (typeof landingWidthOverride === 'number' && landingWidthOverride > 0) ? landingWidthOverride : landing.run;
+								const dxL = landingWidthM / 2, dzL = treadWidth / 2;
 								// קצה רחוק של הפודסט לאורך כיוון הגרם, בצד A1 (lz = -dzL)
 								const lxFar = +dxL, lzFar = -dzL;
 								const rxFar = lxFar * cL - lzFar * sL;
@@ -1890,7 +1893,7 @@ function Staircase3D({
 								const yTop = landing.position[1] + treadThickness / 2 + offsetY;
 								extTopAt30 = [xFar, yTop, zFar];
 								// extBot30 יחושב בהמשך משימור רוחב הפלטה (כל הרוחב מגיע מלמטה)
-							})();
+							})(landingWidth);
 
 							// עובי קבוע לפי נורמל המישור
 							const thickness = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
@@ -2233,7 +2236,7 @@ function Staircase3D({
 									{startPanelMesh}
 								</group>
 							);
-						})()}
+						})(undefined)}
 					</group>
 				);
 			})() : null}
@@ -3086,16 +3089,15 @@ function Staircase3D({
 								// נקודת התחלה לחלק המשופע (Slope) — אם מחשבים joinTop/joinBot, נשתמש בהן רק לשיפוע ולא לפודסט
 								let slopeStartTop: [number, number, number] | null = null;
 								let slopeStartBot: [number, number, number] | null = null;
-								// אם קיימת הפניה מה‑A1 (דרך ref) – השתמש בדיוק בנקודות הסיום של A1 לשמירת רוחב זהה
-								// חיבור "ברך" נכון בתחילת גרם 2:
-								// Top הוא ציר משותף (נלקח מ‑A1), אבל Bot אינו "נעול" לאותה נקודת פודסט —
-								// הוא מחושב כמפגש (miter) בין:
-								// 1) הקו התחתון של הפודסט (offset במרחק W מה‑Top לאורך הניצב בתוך מישור הפלטה)
-								// 2) הקו התחתון של השיפוע (offset במרחק W מה‑Top לאורך הניצב בתוך מישור הפלטה)
-								// NOTE: hitechBStartRef נועד כאן רק כדי להעביר "רוחב יעד" (widthTarget) לחישוב ה‑Ustar,
-								// ולא כדי לדרוס startFromLandingTop/Bot של הפודסט. דריסה כזו מושכת את הפודסט לאלכסון.
+								// חיבור חדש ל‑Hitech: A1 מוארכת וכוללת את הפודסט.
+								// לכן כשיש Ref (קצה A1 המורחבת), B1 פשוט נצמד לקצה הזה (butt/vertical cut) בלי ציור פודסט נפרד ובלי Ustar.
 								const a1Anchor = hitechBStartRef.current;
-								const hasExactLandingAnchor = false;
+								const hasExactLandingAnchor = !!a1Anchor;
+								if (a1Anchor) {
+									slopeStartTop = a1Anchor.top;
+									slopeStartBot = a1Anchor.bot;
+									landingStrip = null;
+								}
 								// (הוסר) בלוק anchor: אין לדרוס startFromLandingTop/Bot מה‑Ref. ה‑Ref משמש רק ל‑widthTarget בחישוב Ustar.
 
 								// יישור זרימה (רק כשאין נקודת עיגון מדויקת מ‑A1):
@@ -3123,18 +3125,13 @@ function Staircase3D({
 									}
 									const dotU = (x: [number, number, number]) => (uxL * x[0] + uzL * x[2]);
 									const U0 = dotU(startFromLandingTop);
-									// widthTarget: אל תדרוס את נקודות הפודסט מה‑Ref. אם יש Ref – השתמש בו רק כ"רוחב יעד" לחישוב Ustar.
-									const widthTarget = a1Anchor
-										? Math.hypot(
-												a1Anchor.top[0] - a1Anchor.bot[0],
-												a1Anchor.top[1] - a1Anchor.bot[1],
-												a1Anchor.top[2] - a1Anchor.bot[2],
-											)
-										: Math.hypot(
-												startFromLandingTop[0] - startFromLandingBot[0],
-												startFromLandingTop[1] - startFromLandingBot[1],
-												startFromLandingTop[2] - startFromLandingBot[2],
-											);
+									// widthTarget: כאן אנחנו במסלול שאין בו עוגן A1 (hasExactLandingAnchor=false),
+									// לכן הרוחב נמדד מהפודסט המקומי בלבד.
+									const widthTarget = Math.hypot(
+										startFromLandingTop[0] - startFromLandingBot[0],
+										startFromLandingTop[1] - startFromLandingBot[1],
+										startFromLandingTop[2] - startFromLandingBot[2],
+									);
 									// פונקציה שמייצרת נקודת חיתוך של קו המסילה עם מישור U נתון
 									const pointOnLineAtU = (p: [number, number, number], d: [number, number, number], U: number): [number, number, number] => {
 										const denom = uxL * d[0] + uzL * d[2];
@@ -3197,7 +3194,8 @@ function Staircase3D({
 												const projR = dpx * rLx + dpz * rLz;
 												// בחר את דופן הפודסט כך שתשמור על אותו היקף חיצוני של A1 (אם יש Ref),
 												// ולא תברח פנימה לכיוון מרכז המדרגה.
-												const ref = (a1Anchor?.top || startFromLandingTop) as [number, number, number];
+												// במסלול זה אין עוגן A1 (hasExactLandingAnchor=false), לכן הרפרנס להיקף החיצוני הוא נקודת הפודסט המקומית.
+												const ref = startFromLandingTop as [number, number, number];
 												const centerDot = (nx: number, nz: number) => (prev.position[0] * nx + prev.position[2] * nz);
 												const refDot = (nx: number, nz: number) => (ref[0] * nx + ref[2] * nz);
 												type Cand = { nx: number; nz: number; c: number; score: number };

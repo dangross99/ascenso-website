@@ -3533,7 +3533,7 @@ function Staircase3D({
 								// אין ציור פודסט נפרד עבור B1 ואין חישובי intersection/גרונג בתחילת הגרם.
 								const a1Anchor = hitechBStartRef.current;
 								const startTop = (a1Anchor?.top || startFromLandingTop || firstP1);
-								const startBot = (a1Anchor?.bot || startFromLandingBot || firstP6);
+								let startBot = (a1Anchor?.bot || startFromLandingBot || firstP6);
 								if (!startTop || !startBot) return null;
 
 								// דיוק תחילת B1:
@@ -3560,6 +3560,11 @@ function Staircase3D({
 								}
 								const safeCos = Math.max(0.1, cosSlope);
 								const dySlope = dyLanding / safeCos;
+								// Start XZ lock + עובי נכון בתחילת המסילה:
+								// אם נקודת ההתחלה מגיעה מהפודסט/הארכה (A1 anchor או landing start) — Bot חייב להיות Top - dyLanding.
+								// אחרת (התחלה בשיפוע) — Bot חייב להיות Top - dySlope.
+								const startIsFlat = !!a1Anchor?.top || !!startFromLandingTop;
+								startBot = [startTop[0], startTop[1] - (startIsFlat ? dyLanding : dySlope), startTop[2]];
 								// חשוב: botP6 (קודקודי מדרגה "מתחת" למדרך) נותנים הפרש אנכי קבוע dyLanding,
 								// אבל בשיפוע אנחנו צריכים ΔY גדול יותר (dySlope) כדי לשמור עובי ניצב אחיד.
 								// לכן נבנה "רייל תחתון" לשיפוע כנגזרת של topP1 עם dySlope.

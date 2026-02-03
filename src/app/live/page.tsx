@@ -3177,7 +3177,9 @@ function Staircase3D({
 									if (Wmag > 1e-9) {
 										const P = a1Anchor.bot; // קו ה‑bottom של הפודסט חייב לעבור דרך הבוט של A1 כדי שלא יברח
 										const D = uL; // קו הפודסט אופקי
-										const Q = add(slopeTop0, scale(pS, -Wmag)); // bottom של השיפוע = offset אמיתי מה‑top של השיפוע
+										// חשוב: קו ה‑bottom של השיפוע צריך לעבור דרך ציר הברך (H) – זה ה‑Top המשותף.
+										// אם מתחילים את הקו מ‑slopeTop0 (נקודת מדרגה) מתקבל "בריחה" כי הקווים skew.
+										const Q = add(H, scale(pS, -Wmag)); // bottom של השיפוע בנקודת הברך = offset אמיתי מה‑pivot
 										const E = uS; // קו השיפוע (כולל רכיב Y)
 
 										// closest points בין שני קווים תלת‑ממדיים (D ו‑E מנורמלים)

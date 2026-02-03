@@ -2709,8 +2709,23 @@ function Staircase3D({
 					// Prefix עם Breakpoints בתחילת השיפוע (אם יש פודסט לפני הגרם)
 					let topPrefix: Array<[number, number, number]> = [startTop];
 					let botPrefix: Array<[number, number, number]> = [startBot];
-					// אם התחלנו מ-Ref של B1 (a2Anchor) – אל תוסיף Prefix נוסף, כדי לא ליצור "כפל" מרחק.
-					if (!a2Anchor && startFromLandingTop && startFromLandingBot && Math.abs(tanSlope) > 1e-9) {
+					// אם התחלנו מ-Ref של B1 (a2Anchor):
+					// - לא מחשבים Ltop/Lbot מחדש (לא מזיזים את נקודת ההתחלה)
+					// - אופציונלי: Breakpoint מינימלי (L=0) רק כדי לבצע מעבר עובי dyLanding→dySlope ללא "שפיץ"
+					if (a2Anchor && Math.abs(tanSlope) > 1e-9) {
+						const botOffset = (dySlope - dyLanding) / tanSlope;
+						const Lbot = botOffset; // Ltop=0
+						const breakTop: [number, number, number] = [startTop[0], startTop[1], startTop[2]];
+						const breakBotAtL: [number, number, number] = [breakTop[0], breakTop[1] - dyLanding, breakTop[2]];
+						const breakBotHAtLbot: [number, number, number] = [startTop[0] + uxH * Lbot, startTop[1] - dyLanding, startTop[2] + uzH * Lbot];
+						const breakTopSlopeAtLbot: [number, number, number] = [startTop[0] + uxH * Lbot, startTop[1] + tanSlope * botOffset, startTop[2] + uzH * Lbot];
+						const breakBotSAtLbot: [number, number, number] = [breakTopSlopeAtLbot[0], breakTopSlopeAtLbot[1] - dySlope, breakTopSlopeAtLbot[2]];
+						// סנכרון נקודות: XZ זהים בין top/bot בכל breakpoint
+						topPrefix = [startTop, breakTop, breakTopSlopeAtLbot, breakTopSlopeAtLbot];
+						botPrefix = [startBot, breakBotAtL, breakBotHAtLbot, breakBotSAtLbot];
+					}
+					// אחרת (אין Ref): Prefix מלא מהפודסט לפי הנוסחאות
+					else if (startFromLandingTop && startFromLandingBot && Math.abs(tanSlope) > 1e-9) {
 						const firstSlopeTop = topP1[0];
 						const deltaY = (firstSlopeTop[1] - startTop[1]);
 						const requiredAlong = deltaY / tanSlope;

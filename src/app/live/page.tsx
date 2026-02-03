@@ -3083,6 +3083,9 @@ function Staircase3D({
 									t1: [number, number, number];
 									b1: [number, number, number];
 								} | null = null;
+								// נקודת התחלה לחלק המשופע (Slope) — אם מחשבים joinTop/joinBot, נשתמש בהן רק לשיפוע ולא לפודסט
+								let slopeStartTop: [number, number, number] | null = null;
+								let slopeStartBot: [number, number, number] | null = null;
 								// אם קיימת הפניה מה‑A1 (דרך ref) – השתמש בדיוק בנקודות הסיום של A1 לשמירת רוחב זהה
 								// חיבור "ברך" נכון בתחילת גרם 2:
 								// Top הוא ציר משותף (נלקח מ‑A1), אבל Bot אינו "נעול" לאותה נקודת פודסט —
@@ -3291,19 +3294,22 @@ function Staircase3D({
 									} else {
 										landingStrip = null;
 									}
-									// תחילת הפלטה תהיה בנקודות ההצמדה כדי לשמור רוחב זהה
-									startFromLandingTop = joinTop;
-									startFromLandingBot = joinBot;
+									// חשוב: לא משנים את נקודות הפודסט (startFromLandingTop/Bot) לפי ה‑intersection,
+									// אחרת הפודסט נמשך לאלכסון. ה‑intersection משמש *רק* כנקודת התחלה לשיפוע.
+									slopeStartTop = joinTop;
+									slopeStartBot = joinBot;
 								}
 
 								// בניית מסילות B1 (כולל פס פודסט אופקי נפרד אם קיים)
 								const topRailB1: Array<[number, number, number]> = (() => {
 									const arr = closeP1 ? [...topP1, closeP1] : [...topP1];
-									return startFromLandingTop ? [startFromLandingTop, ...arr] : arr;
+									const s0 = (slopeStartTop || startFromLandingTop);
+									return s0 ? [s0, ...arr] : arr;
 								})();
 								let botRailB1: Array<[number, number, number]> = (() => {
 									const arr = closeP6 ? [...botP6, closeP6] : [...botP6];
-									return startFromLandingBot ? [startFromLandingBot, ...arr] : arr;
+									const s0 = (slopeStartBot || startFromLandingBot);
+									return s0 ? [s0, ...arr] : arr;
 								})();
 								const segCountB1 = Math.max(topRailB1.length, botRailB1.length);
 

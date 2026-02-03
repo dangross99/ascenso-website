@@ -1270,36 +1270,35 @@ function Staircase3D({
 						}
 					}
 				}
-				// אופסט צידי בתוך מישור הפלטה – מחושב רק עבור נקודת 4 של המדרגה הראשונה (מניעת "שפיץ")
+				// אופסט צידי ב‑XZ (Inset מהקצה) – חייב להיות יציב גם כשה‑Y משתנה בין רייזרים.
+				// לכן לא נבנה אותו מ"עובי" שנגזר מחפיפות/נק׳ תחתונות, אלא רק מכיוון הגרם ב‑XZ + Up.
 				let firstP4SideShift: [number, number, number] | null = null;
 				let firstSideShiftVec: [number, number, number] | null = null;
-				if (firstP4 && firstP7) {
-					// u: כיוון הרייל (ניחש מהמדרגה השנייה אם קיימת, אחרת מהyaw של הראשונה)
-					let ux = 1, uy = 0, uz = 0;
+				if (firstP4) {
+					// u: כיוון קדימה של הגרם (מ‑firstP4 לנק׳ הבאה אם יש; אחרת לפי yaw)
+					let ux = 1, uz = 0;
 					if (pts4Off.length >= 6) {
-						const x0 = firstP4[0], y0 = firstP4[1], z0 = firstP4[2];
-						const x1 = pts4Off[3], y1 = pts4Off[4], z1 = pts4Off[5];
-						ux = x1 - x0; uy = y1 - y0; uz = z1 - z0;
+						const x0 = firstP4[0], z0 = firstP4[2];
+						const x1 = pts4Off[3], z1 = pts4Off[5];
+						ux = x1 - x0; uz = z1 - z0;
 					} else if (firstYaw !== null) {
-						ux = Math.cos(firstYaw); uy = 0; uz = Math.sin(firstYaw);
+						ux = Math.cos(firstYaw); uz = Math.sin(firstYaw);
 					}
-					const um = Math.hypot(ux, uy, uz) || 1; ux /= um; uy /= um; uz /= um;
-					// נורמל למישור הפלטה: n = normalize(u × (firstP4-firstP7))
-					const wx = firstP4[0] - firstP7[0];
-					const wy = firstP4[1] - firstP7[1];
-					const wz = firstP4[2] - firstP7[2];
-					const nx = uy * wz - uz * wy;
-					const ny = uz * wx - ux * wz;
-					const nz = ux * wy - uy * wx;
-					const nm = Math.hypot(nx, ny, nz) || 1;
-					const nxN = nx / nm, nyN = ny / nm, nzN = nz / nm;
-					// כיוון צד במישור: s = normalize(n × u)
-					let sx = nyN * uz - nzN * uy;
-					let sy = nzN * ux - nxN * uz;
-					let sz = nxN * uy - nyN * ux;
-					const sm = Math.hypot(sx, sy, sz) || 1; sx /= sm; sy /= sm; sz /= sm;
+					// uH = normalize([ux,0,uz])
+					const hm = Math.hypot(ux, uz) || 1;
+					const uxH = ux / hm, uzH = uz / hm;
+					// sBase = normalize(cross(Up, uH)) = [uzH, 0, -uxH]
+					let sx = uzH, sz = -uxH;
+					const sm = Math.hypot(sx, sz) || 1;
+					sx /= sm; sz /= sm;
+					// בחר כיוון יציב "פנימה" ע"י התאמה לוקטור XZ מ‑P4 אל P7 (ללא תלות ב‑Y)
+					if (firstP7) {
+						const vx = firstP7[0] - firstP4[0];
+						const vz = firstP7[2] - firstP4[2];
+						const d = sx * vx + sz * vz;
+						if (d < 0) { sx = -sx; sz = -sz; }
+					}
 					const side = Math.max(0, (typeof hitechPlateInsetFromEdge === 'number' ? hitechPlateInsetFromEdge : 0.03));
-					// אופסט צידי נטו (רק ב‑XZ), ללא שינוי בגובה Y
 					firstSideShiftVec = [sx * side, 0, sz * side];
 					firstP4SideShift = [firstP4[0] + firstSideShiftVec[0], firstP4[1], firstP4[2] + firstSideShiftVec[2]];
 				}
@@ -2337,31 +2336,30 @@ function Staircase3D({
 					}
 				}
 
-				// אופסט צידי למניעת "שפיץ" – כמו ב‑B
+				// אופסט צידי ב‑XZ (Inset מהקצה) – יציב גם כשה‑Y משתנה בין רייזרים (לא נשען על "חפיפה" כעובי).
 				let firstP4SideShift: [number, number, number] | null = null;
-				if (firstP4 && firstP7) {
-					// כיוון לאורך המסילה u
-					let ux = 1, uy = 0, uz = 0;
+				if (firstP4) {
+					// u: כיוון קדימה של הגרם ב‑XZ (מ‑firstP4 לנק׳ הבאה אם יש; אחרת לפי yaw)
+					let ux = 1, uz = 0;
 					if (topStepOff.length >= 2) {
-						const x0 = firstP4[0], y0 = firstP4[1], z0 = firstP4[2];
-						const x1 = topStepOff[1][0], y1 = topStepOff[1][1], z1 = topStepOff[1][2];
-						ux = x1 - x0; uy = y1 - y0; uz = z1 - z0;
-						const m = Math.hypot(ux, uy, uz) || 1; ux /= m; uy /= m; uz /= m;
+						const x0 = firstP4[0], z0 = firstP4[2];
+						const x1 = topStepOff[1][0], z1 = topStepOff[1][2];
+						ux = x1 - x0; uz = z1 - z0;
 					} else if (firstYaw !== null) {
-						ux = Math.cos(firstYaw); uy = 0; uz = Math.sin(firstYaw);
+						ux = Math.cos(firstYaw); uz = Math.sin(firstYaw);
 					}
-					// נורמל + כיוון צד
-					const wx = firstP4[0] - firstP7[0];
-					const wy = firstP4[1] - firstP7[1];
-					const wz = firstP4[2] - firstP7[2];
-					let nx = uy * wz - uz * wy;
-					let ny = uz * wx - ux * wz;
-					let nz = ux * wy - uy * wx;
-					{ const m = Math.hypot(nx, ny, nz) || 1; nx /= m; ny /= m; nz /= m; }
-					let sx = ny * uz - nz * uy;
-					let sy = nz * ux - nx * uz;
-					let sz = nx * uy - ny * ux;
-					{ const m = Math.hypot(sx, sy, sz) || 1; sx /= m; sy /= m; sz /= m; }
+					const hm = Math.hypot(ux, uz) || 1;
+					const uxH = ux / hm, uzH = uz / hm;
+					// sBase = normalize(cross(Up, uH)) = [uzH, 0, -uxH]
+					let sx = uzH, sz = -uxH;
+					{ const m = Math.hypot(sx, sz) || 1; sx /= m; sz /= m; }
+					// כיוון "פנימה" לפי וקטור XZ מ‑P4 אל P7 (ללא תלות ב‑Y)
+					if (firstP7) {
+						const vx = firstP7[0] - firstP4[0];
+						const vz = firstP7[2] - firstP4[2];
+						const d = sx * vx + sz * vz;
+						if (d < 0) { sx = -sx; sz = -sz; }
+					}
 					const side = Math.max(0, (typeof hitechPlateInsetFromEdge === 'number' ? hitechPlateInsetFromEdge : 0.03));
 					firstP4SideShift = [firstP4[0] + sx * side, firstP4[1], firstP4[2] + sz * side];
 				}

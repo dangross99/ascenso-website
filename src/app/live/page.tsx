@@ -137,7 +137,6 @@ function Staircase3D({
 	ridgeFrontCenterThicknessM,
 	ridgeFrontEdgeThicknessM,
 	pathSegments,
-	landingWidthM,
 	glassTone,
 	stepRailingStates,
 	landingRailingStates,
@@ -179,8 +178,6 @@ function Staircase3D({
 	ridgeFrontCenterThicknessM?: number;
 	ridgeFrontEdgeThicknessM?: number;
 	pathSegments?: PathSegment[] | null;
-	// אורך/עומק הפודסט במטרים (מהקונפיגורטור). אם לא סופק – ברירת מחדל לפי treadWidth.
-	landingWidthM?: number;
 	glassTone?: 'extra' | 'smoked' | 'bronze';
 	stepRailingStates?: boolean[];
 	landingRailingStates?: boolean[];
@@ -259,7 +256,7 @@ function Staircase3D({
 				} else {
 					// פודסט: שלב שה"שלח" שלו שווה לאורך המדרגה (רוחב), כלומר ריבוע 1x1מ׳
 					const [dx, dz] = dirs[dirIndex];
-					const run = (typeof landingWidthM === 'number' && landingWidthM > 0) ? landingWidthM : treadWidth;
+					const run = treadWidth;
 					const cx = sx + dx * (run / 2);
 					const cz = sz + dz * (run / 2);
 					treads.push({
@@ -332,7 +329,7 @@ function Staircase3D({
 				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, 0, 0], run: treadDepth, isLanding: false, flight: 0, axis: 'x' });
 			}
 			// פודסט עם "שלח" באורך המדרגה (ריבוע 1x1מ׳) + פנייה ימינה
-			const runL = (typeof landingWidthM === 'number' && landingWidthM > 0) ? landingWidthM : treadWidth;
+			const runL = treadWidth;
 			const lxStart = half * treadDepth;
 			treads.push({
 				position: [lxStart + runL / 2, half * riser, 0],
@@ -361,7 +358,7 @@ function Staircase3D({
 				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, 0, 0], run: treadDepth, isLanding: false, flight: 0, axis: 'x' });
 			}
 			// פודסט 1x1מ׳ + פנייה ראשונה
-			const runL1 = (typeof landingWidthM === 'number' && landingWidthM > 0) ? landingWidthM : treadWidth;
+			const runL1 = treadWidth;
 			const l1xStart = third * treadDepth;
 			treads.push({
 				position: [l1xStart + runL1 / 2, third * riser, 0],
@@ -383,7 +380,7 @@ function Staircase3D({
 				});
 			}
 			// פודסט שני 1x1מ׳ + פנייה שנייה
-			const runL2 = (typeof landingWidthM === 'number' && landingWidthM > 0) ? landingWidthM : treadWidth;
+			const runL2 = treadWidth;
 			const rStartX = l1xStart + runL1;
 			const rStartZ = -third * treadDepth;
 			treads.push({
@@ -2239,7 +2236,7 @@ function Staircase3D({
 									{startPanelMesh}
 								</group>
 							);
-						})(landingWidthM)}
+						})(treadWidth)}
 					</group>
 				);
 			})() : null}
@@ -4725,8 +4722,6 @@ function LivePageInner() {
 	// קונפיגורטור מדרגות
 	const [shape, setShape] = React.useState<'straight' | 'L' | 'U'>(qShape);
 	const [steps, setSteps] = React.useState<number>(Number.isFinite(qSteps) ? Math.min(25, Math.max(5, qSteps)) : 15);
-	// אורך/עומק פודסט (במטרים) – נשלט מהקונפיגורטור ומוזן לבניית A1 והגיאומטריה של הפודסטים
-	const [landingWidthM, setLandingWidthM] = React.useState<number>(0.90);
 
 	// (שחזור מצב מובייל יתווסף אחרי יצירת pathSegments)
 	const [pathSegments, setPathSegments] = React.useState<PathSegment[]>(() => {
@@ -5907,32 +5902,6 @@ function LivePageInner() {
 											);
 										})()}
 
-										{/* אורך/עומק פודסט (במטרים) */}
-										<div className="border rounded-md p-3 mb-3 bg-white">
-											<div className="text-sm text-gray-700 mb-2">אורך פודסט (מ׳)</div>
-											<div className="flex items-center gap-3">
-												<input
-													type="range"
-													min={0.6}
-													max={1.8}
-													step={0.01}
-													value={landingWidthM}
-													onChange={(e) => setLandingWidthM(Math.max(0.6, Math.min(1.8, parseFloat(e.target.value) || 0.9)))}
-													className="w-full"
-												/>
-												<input
-													type="number"
-													min={0.6}
-													max={1.8}
-													step={0.01}
-													value={Number(landingWidthM.toFixed(2))}
-													onChange={(e) => setLandingWidthM(Math.max(0.6, Math.min(1.8, parseFloat(e.target.value) || 0.9)))}
-													className="w-24 border rounded px-2 py-1 text-sm"
-												/>
-											</div>
-											<div className="text-xs text-gray-500 mt-1">משפיע על אורך ההמשך של A1 על הפודסט ועל אורך הפודסט במודל.</div>
-										</div>
-
 										{(() => {
 											// הצגת עמודות לכל גרם (ריצה ישרה), עם כפתורי +/- למדרגות, ומתג פנייה בין הגרמים
 											const straightIdxs: number[] = [];
@@ -6221,7 +6190,6 @@ function LivePageInner() {
 									ridgeFrontCenterThicknessM={0.09}
 									ridgeFrontEdgeThicknessM={0.03}
 									pathSegments={pathSegments}
-										landingWidthM={landingWidthM}
 									// דגם "הייטק" – מופעל רק כאשר box==='hitech'
 									hitech={box === 'hitech'}
 									hitechPlateThickness={0.012}

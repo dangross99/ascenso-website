@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { BufferGeometry, Float32BufferAttribute } from 'three';
 
 export function buildAccordionFlightsOpenPlates(params: {

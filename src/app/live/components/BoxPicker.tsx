@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 
-type BoxId = 'thick' | 'thin' | 'wedge' | 'ridge' | 'hitech' | 'accordion';
+type BoxId = 'thick' | 'thin' | 'wedge' | 'ridge' | 'hitech' | 'accordion' | 'sawtooth';
 
 export function BoxPicker(props: {
 	box: BoxId;
@@ -8,29 +8,44 @@ export function BoxPicker(props: {
 }) {
 	const { box, setBox } = props;
 	const options: Array<{ id: BoxId; label: string }> = [
-		{ id: 'thick', label: '׳×׳™׳‘׳” ׳¢׳‘׳”ג€‘׳“׳•׳₪׳' },
-		{ id: 'thin', label: '׳×׳™׳‘׳” ׳“׳§׳”ג€‘׳“׳•׳₪׳' },
-		{ id: 'wedge', label: '׳“׳’׳ ׳׳׳›׳¡׳•׳ ׳™' },
-		{ id: 'ridge', label: '׳“׳’׳ ׳¨׳›׳¡ ׳׳¨׳›׳–׳™' },
-		{ id: 'hitech', label: '׳“׳’׳ ׳”׳™׳™׳˜׳§' },
-		{ id: 'accordion', label: '׳“׳’׳ ׳׳§׳•׳¨׳“׳™׳•׳' },
+		{ id: 'thick', label: 'תיבה עבה‑דופן' },
+		{ id: 'thin', label: 'תיבה דקה‑דופן' },
+		{ id: 'wedge', label: 'דגם אלכסוני' },
+		{ id: 'ridge', label: 'דגם רכס מרכזי' },
+		{ id: 'hitech', label: 'דגם הייטק' },
+		{ id: 'accordion', label: 'דגם אקורדיון' },
+		{ id: 'sawtooth', label: 'דגם זיג‑זג' },
 	];
 
 	const a11y = (id: BoxId) =>
 		id === 'thick'
-			? '׳“׳’׳ ׳¢׳‘׳”'
+			? 'דגם עבה'
 			: id === 'thin'
-			? '׳“׳’׳ ׳“׳§'
+			? 'דגם דק'
 			: id === 'wedge'
-			? '׳“׳’׳ ׳׳׳›׳¡׳•׳ ׳™'
+			? 'דגם אלכסוני'
 			: id === 'ridge'
-			? '׳“׳’׳ ׳¨׳›׳¡ ׳׳¨׳›׳–׳™'
+			? 'דגם רכס מרכזי'
 			: id === 'accordion'
-			? '׳“׳’׳ ׳׳§׳•׳¨׳“׳™׳•׳'
-			: '׳“׳’׳ ׳”׳™׳™׳˜׳§';
+			? 'דגם אקורדיון'
+			: id === 'sawtooth'
+			? 'דגם זיג‑זג'
+			: 'דגם הייטק';
 
 	const short = (id: BoxId) =>
-		id === 'thick' ? '׳¢׳‘׳”' : id === 'thin' ? '׳“׳§' : id === 'wedge' ? '׳׳׳›׳¡׳•׳ ׳™' : id === 'ridge' ? '׳¨׳›׳¡' : id === 'accordion' ? '׳׳§׳•׳¨׳“׳™׳•׳' : '׳”׳™׳™׳˜׳§';
+		id === 'thick'
+			? 'עבה'
+			: id === 'thin'
+			? 'דק'
+			: id === 'wedge'
+			? 'אלכסוני'
+			: id === 'ridge'
+			? 'רכס'
+			: id === 'accordion'
+			? 'אקורדיון'
+			: id === 'sawtooth'
+			? 'זיג‑זג'
+			: 'הייטק';
 
 	return (
 		<div className="p-2 pt-1">
@@ -69,6 +84,12 @@ export function BoxPicker(props: {
 									<rect x="1" y="14" width="50" height="24" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
 									<path d="M8 20 L20 20 L20 30 L32 30 L32 22 L44 22" stroke="currentColor" strokeWidth="2" fill="none" />
 									<path d="M8 32 L20 32 L20 22 L32 22 L32 30 L44 30" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.6" />
+									<rect x="1" y="14" width="50" height="24" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
+								</svg>
+							) : opt.id === 'sawtooth' ? (
+								<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
+									<rect x="1" y="14" width="50" height="24" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
+									<path d="M10 34 L18 18 L26 34 L34 18 L42 34" stroke="currentColor" strokeWidth="2" fill="none" />
 									<rect x="1" y="14" width="50" height="24" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
 								</svg>
 							) : (

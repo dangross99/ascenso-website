@@ -9,6 +9,7 @@ import { buildAccordionFlightsOpenPlates } from './models/accordion';
 import { buildRectTreads } from './models/rect';
 import { buildWedgeTreads } from './models/wedge';
 import { buildRidgeTreads } from './models/ridge';
+import { buildSawtoothFlights } from './models/sawtooth';
 import { HitechPlates } from './models/hitech';
 
 // ׳”׳₪׳¢׳׳× ׳§׳׳© ׳©׳ three ׳¢׳‘׳•׳¨ ׳˜׳¢׳™׳ ׳•׳× ׳—׳׳§׳•׳×
@@ -68,7 +69,7 @@ function Staircase3D({
 	uvInset?: number;
 	railingUvInset?: number;
 	treadThicknessOverride?: number;
-	boxModel?: 'rect' | 'wedge' | 'ridge' | 'accordion';
+	boxModel?: 'rect' | 'wedge' | 'ridge' | 'accordion' | 'sawtooth';
 	wedgeFrontFraction?: number;
 	wedgeFrontThicknessM?: number;
 	ridgeFrontCenterThicknessM?: number;
@@ -570,6 +571,21 @@ function Staircase3D({
 						useSolidMat,
 						solidSideColor,
 						buildFaceTextures,
+					});
+				}
+				if (boxModel === 'sawtooth') {
+					return buildSawtoothFlights({
+						treads: treads as any,
+						treadWidth,
+						treadDepth,
+						treadThickness,
+						materialKind,
+						useSolidMat,
+						solidTopColor,
+						solidSideColor,
+						buildFaceTextures,
+						stepRailingSides,
+						landingRailingSides,
 					});
 				}
 				if (boxModel === 'wedge') {

@@ -3545,6 +3545,7 @@ function Staircase3D({
 											topBreak[1] - tanSlope * botOffsetEnd,
 											topBreak[2] - uzE * botOffsetEnd,
 										];
+										// XZ lock: knee בתחתון חייב לשבת בדיוק מתחת לעליון (אותו XZ)
 										endBotSlopeKnee = [endTopKnee[0], endTopKnee[1] - dySlope, endTopKnee[2]];
 										endBotPlaneAtTopBreak = [topBreak[0], topBreak[1] - dyLanding, topBreak[2]];
 									}
@@ -3568,9 +3569,11 @@ function Staircase3D({
 									const botOffset = Math.max(0, (dySlope - dyLanding) / tanSlope);
 									const Lbot = L + botOffset;
 									breakBotAtL = [breakTop[0], breakTop[1] - dyLanding, breakTop[2]];
-									breakBotHAtLbot = [startTop[0] + uxH * Lbot, startTop[1] - dyLanding, startTop[2] + uzH * Lbot];
 									// top על השיפוע ב-Lbot (הטופ כבר התחיל לעלות ב-L, אז אחרי botOffset יעלה ב-tanSlope*botOffset)
 									breakTopSlopeAtLbot = [startTop[0] + uxH * Lbot, startTop[1] + tanSlope * botOffset, startTop[2] + uzH * Lbot];
+									// XZ lock: נקודת "ברך" אופקית בתחתון חייבת לשבת בדיוק מתחת ל-top ב-Lbot (אותו XZ)
+									breakBotHAtLbot = [breakTopSlopeAtLbot[0], startTop[1] - dyLanding, breakTopSlopeAtLbot[2]];
+									// XZ lock: knee בתחתון חייב לשבת בדיוק מתחת לעליון (אותו XZ)
 									breakBotSAtLbot = [breakTopSlopeAtLbot[0], breakTopSlopeAtLbot[1] - dySlope, breakTopSlopeAtLbot[2]];
 								}
 

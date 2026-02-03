@@ -203,6 +203,8 @@ function Staircase3D({
 }) {
 	// שיתוף נקודת ההתחלה של פלטת B (גרם 2) עבור המחבר – כדי למנוע סדקים/פערים בין B למחבר
 	const hitechBStartRef = React.useRef<{ top: [number, number, number]; bot: [number, number, number] } | null>(null);
+	// שיתוף נקודת ההתחלה של פלטת C1 (גרם 3, צד נגדי) לפי סוף הפודסט של B1 – לחיבור Flush רציף על הקו החיצוני
+	const hitechCStartRef = React.useRef<{ top: [number, number, number]; bot: [number, number, number] } | null>(null);
 	// יחידות סצנה: מטרים בקירוב
 	const treadThickness = typeof treadThicknessOverride === 'number' ? treadThicknessOverride : 0.04;
 	const treadDepth = 0.30;
@@ -2680,8 +2682,9 @@ function Staircase3D({
 							startFromLandingBot = [wx1, wy6, wz1];
 						}
 					}
-					const startTop = startFromLandingTop || firstP1;
-					const startBot = startFromLandingBot || firstP6;
+					const a2Anchor = hitechCStartRef.current;
+					const startTop = (a2Anchor?.top || startFromLandingTop || firstP1);
+					const startBot = (a2Anchor?.bot || startFromLandingBot || firstP6);
 					if (!startTop || !startBot) return null;
 
 					// tan/cos שיפוע ועובי ניצב
@@ -3535,6 +3538,9 @@ function Staircase3D({
 										}
 									}
 								}
+
+								// חשיפה לגרם הבא: C1 תתחיל בדיוק בנקודות הסיום של B1 על הפודסט השני (קו חיצוני רציף/Flush)
+								hitechCStartRef.current = (extTopAtL && extBotAtL) ? { top: extTopAtL, bot: extBotAtL } : null;
 
 								// אם יש הארכה לפודסט – הוסף מקטע מגשר וקאפ סופי
 								if (extTopAtL && extBotAtL) {

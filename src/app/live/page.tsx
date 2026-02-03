@@ -2727,8 +2727,10 @@ function Staircase3D({
 
 					// tan/cos שיפוע ועובי ניצב
 					// IMPORTANT: dyLanding חייב להיות קבוע על מישור (פודסט).
-					// בדגם Hitech הגובה/רוחב הויזואלי של הפלטה נשלט ע"י hitechPlateHeight (ולא ע"י עובי המדרך + offsets).
-					const dyLanding = Math.max(0.001, (typeof hitechPlateHeight === 'number' ? hitechPlateHeight : (treadThickness + 2 * offsetY)));
+					// דרישה: A1 מכתיבה את רוחב/עובי הפלטות B/B1 — dyLanding נגזר מה‑Ref של סוף A1 על הפודסט.
+					const a1W = hitech ? hitechBStartRef.current : null;
+					const dyFromA1 = a1W ? Math.abs(a1W.top[1] - a1W.bot[1]) : null;
+					const dyLanding = Math.max(0.001, (dyFromA1 ?? (treadThickness + 2 * offsetY)));
 					const yawS = (firstStepIdxInFlight !== null ? (treads[firstStepIdxInFlight]?.rotation[1] as number) : (firstYaw ?? 0)) || 0;
 					const uxH = Math.cos(yawS);
 					const uzH = Math.sin(yawS);
@@ -3192,8 +3194,10 @@ function Staircase3D({
 							// בפודסט העובי "אנכי" (ΔY), ובשיפוע נדרש ΔY גדול יותר כדי לשמר עובי ניצב זהה.
 							// dySlope = dyLanding / cos(slopeAngle)
 							// IMPORTANT: dyLanding חייב להיות קבוע (פודסט/מישור).
-							// בדגם Hitech הגובה/רוחב הויזואלי של הפלטה נשלט ע"י hitechPlateHeight (ולא ע"י עובי המדרך + offsets).
-							const dyLanding = Math.max(0.001, (typeof hitechPlateHeight === 'number' ? hitechPlateHeight : (treadThickness + 2 * offsetY)));
+							// דרישה: A1 מכתיבה את רוחב/עובי הפלטות B/B1 — dyLanding נגזר מה‑Ref של סוף A1 על הפודסט.
+							const a1W = hitech ? hitechBStartRef.current : null;
+							const dyFromA1 = a1W ? Math.abs(a1W.top[1] - a1W.bot[1]) : null;
+							const dyLanding = Math.max(0.001, (dyFromA1 ?? (treadThickness + 2 * offsetY)));
 							// XZ lock (Start): אחרי שיש לנו dyLanding, עדיף להגדיר Bot בדיוק כ-Top - dyLanding
 							if (startFromLandingTop) {
 								startFromLandingBot = [startFromLandingTop[0], startFromLandingTop[1] - dyLanding, startFromLandingTop[2]];
@@ -3542,8 +3546,10 @@ function Staircase3D({
 								// מוסיפים קטע אופקי קצר (Horizontal Extension) לפני תחילת השיפוע, כדי שהשיפוע לא יתחיל מוקדם מדי
 								// ושהחיבור ל‑A1 יישאר "יצוק" עם רוחב אחיד.
 								// IMPORTANT: dyLanding חייב להיות קבוע על מישור (פודסט).
-								// בדגם Hitech הגובה/רוחב הויזואלי של הפלטה נשלט ע"י hitechPlateHeight (ולא ע"י עובי המדרך + offsets).
-								const dyLanding = Math.max(0.001, (typeof hitechPlateHeight === 'number' ? hitechPlateHeight : (treadThickness + 2 * offsetY)));
+								// דרישה: A1 מכתיבה את רוחב/עובי הפלטות B/B1 — dyLanding נגזר מה‑Ref של סוף A1 על הפודסט.
+								const a1W = hitech ? hitechBStartRef.current : null;
+								const dyFromA1 = a1W ? Math.abs(a1W.top[1] - a1W.bot[1]) : null;
+								const dyLanding = Math.max(0.001, (dyFromA1 ?? (treadThickness + 2 * offsetY)));
 								// כיוון אופקי של הגרם (ב‑XZ) לפי ה‑yaw של המדרגה הראשונה
 								const yawS = (firstStepIdxInFlight !== null ? (treads[firstStepIdxInFlight]?.rotation[1] as number) : (firstYaw ?? 0)) || 0;
 								const uxH = Math.cos(yawS);

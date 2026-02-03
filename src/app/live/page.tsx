@@ -3187,7 +3187,15 @@ function Staircase3D({
 								const isLandingPoint =
 									(!!startFromLandingTop && i === 0) ||
 									(!!closeP4 && i === topRail.length - 1);
-								const dy = isLandingPoint ? dyLanding : dySlope;
+								// גם נקודות פודסט/הארכה חייבות להישאר בעובי dyLanding (אופקי נקי)
+								const isExtensionPoint =
+									(!!startFromLandingTop && i === 0) ||
+									(!!closeP4 && i === topRail.length - 1);
+								const epsY = 1e-6;
+								const isFlatByY =
+									(!!startFromLandingTop && Math.abs(t[1] - startFromLandingTop[1]) < epsY) ||
+									(!!closeP4 && Math.abs(t[1] - closeP4[1]) < epsY);
+								const dy = (isLandingPoint || isExtensionPoint || isFlatByY) ? dyLanding : dySlope;
 								return [t[0], t[1] - dy, t[2]];
 							});
 							// בחר אורך מקסימלי – אם מסילה אחת ארוכה יותר (למשל כוללת פודסט), נשכפל את הנקודה האחרונה של הקצרה
@@ -3571,20 +3579,30 @@ function Staircase3D({
 									// סנכרון קודקודים לסוף השיפוע (מניעת "שפיץ" בטריאנגולציה):
 									// Top: [..., endTopKnee, closeP1, closeP1]
 									// Bot: [..., endBotSlopeKnee, endBotSlopeKnee, endBotPlaneAtTopBreak]
-									const arr =
+									const topTail =
 										(closeP1 && endTopKnee && endBotSlopeKnee && endBotPlaneAtTopBreak)
 											? [...topP1, endTopKnee, closeP1, closeP1]
 											: (closeP1 ? [...topP1, closeP1] : [...topP1]);
-									if (breakTop && breakTopSlopeAtLbot) return [startTop, breakTop, breakTopSlopeAtLbot, breakTopSlopeAtLbot, ...arr];
-									return [startTop, ...arr];
+									// Prefix מדויק (כמו הדרישה): topPrefix=[startTop, breakTop, breakTopSlopeAtLbot]
+									// וסנכרון: שכפול נקודה אחת בלבד ב-Top כדי להשוות לאורך ה-Bot prefix.
+									if (breakTop && breakTopSlopeAtLbot) {
+										const topPrefix: Array<[number, number, number]> = [startTop, breakTop, breakTopSlopeAtLbot];
+										const topPrefixSynced: Array<[number, number, number]> = [...topPrefix, topPrefix[topPrefix.length - 1]];
+										return [...topPrefixSynced, ...topTail];
+									}
+									return [startTop, ...topTail];
 								})();
 								let botRailB1: Array<[number, number, number]> = (() => {
-									const arr =
+									const botTail =
 										(closeP1 && endTopKnee && endBotSlopeKnee && endBotPlaneAtTopBreak)
 											? [...botP6, endBotSlopeKnee, endBotSlopeKnee, endBotPlaneAtTopBreak]
 											: (closeP6 ? [...botP6, closeP6] : [...botP6]);
-									if (breakBotAtL && breakBotHAtLbot && breakBotSAtLbot) return [startBot, breakBotAtL, breakBotHAtLbot, breakBotSAtLbot, ...arr];
-									return [startBot, ...arr];
+									// Prefix מדויק (כמו הדרישה): botPrefix=[startBot, breakBotAtL, breakBotHAtLbot, breakBotSAtLbot]
+									if (breakBotAtL && breakBotHAtLbot && breakBotSAtLbot) {
+										const botPrefix: Array<[number, number, number]> = [startBot, breakBotAtL, breakBotHAtLbot, breakBotSAtLbot];
+										return [...botPrefix, ...botTail];
+									}
+									return [startBot, ...botTail];
 								})();
 								const segCountB1 = Math.max(topRailB1.length, botRailB1.length);
 
@@ -3688,7 +3706,7 @@ function Staircase3D({
 										extTopAtL = [xFar, yTop, zFar];
 										// אחרי ה-Transition (גרונג) בנקודת closeP1, ההמשך לפודסט הוא אופקי,
 										// לכן תחתון בקצה הרחוק הוא פשוט Offset אנכי (dyLanding) מתחת ל-Top.
-										extBotAtL = [extTopAtL[0], extTopAtL[1] - dyLanding, extTopAtL[2]];
+										extBotAtL = [xFar, yTop - dyLanding, zFar];
 									}
 								}
 

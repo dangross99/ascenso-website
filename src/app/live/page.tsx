@@ -2709,7 +2709,8 @@ function Staircase3D({
 					// Prefix עם Breakpoints בתחילת השיפוע (אם יש פודסט לפני הגרם)
 					let topPrefix: Array<[number, number, number]> = [startTop];
 					let botPrefix: Array<[number, number, number]> = [startBot];
-					if (startFromLandingTop && startFromLandingBot && Math.abs(tanSlope) > 1e-9) {
+					// אם התחלנו מ-Ref של B1 (a2Anchor) – אל תוסיף Prefix נוסף, כדי לא ליצור "כפל" מרחק.
+					if (!a2Anchor && startFromLandingTop && startFromLandingBot && Math.abs(tanSlope) > 1e-9) {
 						const firstSlopeTop = topP1[0];
 						const deltaY = (firstSlopeTop[1] - startTop[1]);
 						const requiredAlong = deltaY / tanSlope;
@@ -3280,6 +3281,7 @@ function Staircase3D({
 								let firstStepIdxInFlight: number | null = null;
 								let closeP1: [number, number, number] | null = null; // נקודת 1 של הפודסט (עליונה)
 								let closeP6: [number, number, number] | null = null; // נקודת 6 של המדרגה שלפני הפודסט (תחתונה)
+								let closeLanding: typeof treads[number] | null = null; // הפודסט שאליו B1 נסגרת (בסוף הגרם)
 
 								for (let i = 0; i < treads.length; i++) {
 									const t = treads[i];
@@ -3315,6 +3317,7 @@ function Staircase3D({
 										const next = treads[i + 1];
 										if (next && next.flight === 1 && next.isLanding) {
 											closeP6 = p6;
+											closeLanding = next;
 											const yawL = next.rotation[1] as number;
 											const cL = Math.cos(yawL), sL = Math.sin(yawL);
 											const dxL = next.run / 2, dzL = treadWidth / 2;
@@ -3501,12 +3504,9 @@ function Staircase3D({
 								let extTopAtL: [number, number, number] | null = null;
 								let extBotAtL: [number, number, number] | null = null;
 								if (closeP1) {
-									// מצא את הפודסט שאליו נסגרנו (הבא אחרי הגרם)
-									let nextLanding: typeof treads[number] | null = null;
-									for (let i = 0; i < treads.length; i++) {
-										const t = treads[i];
-										if (t.flight === 1 && t.isLanding) { nextLanding = t; break; }
-									}
+									// השתמש בפודסט שאליו נסגרנו בפועל (closeLanding) כדי לשמור Ref בקצה הרחוק הנכון.
+									// אחרת, אם ניקח "הפודסט הראשון ב-flight=1" נקבל בטעות את תחילת הפודסט (איפה ש‑B1 נגמרת לעלות).
+									const nextLanding = closeLanding;
 									if (nextLanding) {
 										const yawL = nextLanding.rotation[1] as number;
 										const cL = Math.cos(yawL), sL = Math.sin(yawL);

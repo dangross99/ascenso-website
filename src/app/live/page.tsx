@@ -3581,9 +3581,12 @@ function Staircase3D({
 
 								// בניית מסילות B1 (שומרים את מספר הנקודות המקורי של המדרגות; מוסיפים רק את "קטע 0→1" האופקי בתחילה)
 								const topRailB1: Array<[number, number, number]> = (() => {
+									// סנכרון קודקודים לסוף השיפוע (מניעת "שפיץ" בטריאנגולציה):
+									// Top: [..., endTopKnee, closeP1, closeP1]
+									// Bot: [..., endBotSlopeKnee, endBotSlopeKnee, endBotPlaneAtTopBreak]
 									const arr =
 										(closeP1 && endTopKnee && endBotSlopeKnee && endBotPlaneAtTopBreak)
-											? [...topP1, endTopKnee, closeP1]
+											? [...topP1, endTopKnee, closeP1, closeP1]
 											: (closeP1 ? [...topP1, closeP1] : [...topP1]);
 									if (breakTop && breakTopSlopeAtLbot) return [startTop, breakTop, breakTopSlopeAtLbot, breakTopSlopeAtLbot, ...arr];
 									return [startTop, ...arr];
@@ -3591,7 +3594,7 @@ function Staircase3D({
 								let botRailB1: Array<[number, number, number]> = (() => {
 									const arr =
 										(closeP1 && endTopKnee && endBotSlopeKnee && endBotPlaneAtTopBreak)
-											? [...botP6, endBotSlopeKnee, endBotPlaneAtTopBreak]
+											? [...botP6, endBotSlopeKnee, endBotSlopeKnee, endBotPlaneAtTopBreak]
 											: (closeP6 ? [...botP6, closeP6] : [...botP6]);
 									if (breakBotAtL && breakBotHAtLbot && breakBotSAtLbot) return [startBot, breakBotAtL, breakBotHAtLbot, breakBotSAtLbot, ...arr];
 									return [startBot, ...arr];

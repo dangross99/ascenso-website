@@ -3163,6 +3163,10 @@ function Staircase3D({
 									startFromLandingBot = [wx4, wy8, wz4];
 								}
 							}
+							// XZ lock (Start): ודא שה-Bot יושב בדיוק מתחת ל-Top (אותו XZ) גם אם חישובי המקור ישתנו בעתיד
+							if (startFromLandingTop && startFromLandingBot) {
+								startFromLandingBot = [startFromLandingTop[0], startFromLandingBot[1], startFromLandingTop[2]];
+							}
 							const baseTop: Array<[number, number, number]> = (() => {
 								const arr = closeP4 ? [...topStepOff, closeP4] : [...topStepOff];
 								return startFromLandingTop ? [startFromLandingTop, ...arr] : arr;
@@ -3174,6 +3178,10 @@ function Staircase3D({
 							// dySlope = dyLanding / cos(slopeAngle)
 							// IMPORTANT: dyLanding חייב להיות קבוע (פודסט/מישור): treadThickness + 2*offsetY
 							const dyLanding = (treadThickness + 2 * offsetY);
+							// XZ lock (Start): אחרי שיש לנו dyLanding, עדיף להגדיר Bot בדיוק כ-Top - dyLanding
+							if (startFromLandingTop) {
+								startFromLandingBot = [startFromLandingTop[0], startFromLandingTop[1] - dyLanding, startFromLandingTop[2]];
+							}
 							// slopeAngle נגזר מכיוון הרייל העליון (u) בין שתי נקודות בגרם (לא בפודסט)
 							const idx0 = startFromLandingTop ? 1 : 0;
 							const a0 = topRail[Math.min(idx0, topRail.length - 1)];
@@ -3183,7 +3191,11 @@ function Staircase3D({
 							const cosSlope = Math.hypot(uxS, uzS); // cos(angle from horizontal)
 							const safeCos = Math.max(0.1, cosSlope);
 							const dySlope = dyLanding / safeCos;
+							// XZ lock (Extension/Suffix): נקודת הקצה על הפודסט (closeP4) חייבת לקבל Bot נעול-Top - dyLanding
+							const extTopAtL: [number, number, number] | null = closeP4 ? closeP4 : null;
+							const extBotAtL: [number, number, number] | null = extTopAtL ? [extTopAtL[0], extTopAtL[1] - dyLanding, extTopAtL[2]] : null;
 							const botRail: Array<[number, number, number]> = topRail.map((t, i) => {
+								if (extBotAtL && i === topRail.length - 1) return extBotAtL;
 								const isLandingPoint =
 									(!!startFromLandingTop && i === 0) ||
 									(!!closeP4 && i === topRail.length - 1);

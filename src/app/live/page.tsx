@@ -3171,37 +3171,14 @@ function Staircase3D({
 									const slopeBotHint: [number, number, number] | null = (botP6.length >= 1 ? botP6[0] : null);
 									if (slopeTopHint) pS = chooseByClosestBot(pS, slopeTopHint, slopeBotHint);
 
-									// חישוב דינמי "על אותה מסילה" ב‑3D:
-									// במקום להניח שהקווים נחתכים באותו מישור (שגורם ל"בריחה"), מחשבים את נקודת החיבור
-									// כנקודת האמצע בין שתי הנקודות הקרובות ביותר של שני קווים תלת‑ממדיים (closest points).
+									// נעילה קשיחה לחיבור לפלטה A:
+									// ה‑Bot בצד הפודסט חייב להיות בדיוק bot של A1 (אחרת תמיד תראה "בריחה" בקצה).
+									// את ה"גלישה" שומרי בצד השיפוע בלבד.
 									if (Wmag > 1e-9) {
-										const P = a1Anchor.bot; // קו ה‑bottom של הפודסט חייב לעבור דרך הבוט של A1 כדי שלא יברח
-										const D = uL; // קו הפודסט אופקי
-										// חשוב: קו ה‑bottom של השיפוע צריך לעבור דרך ציר הברך (H) – זה ה‑Top המשותף.
-										// אם מתחילים את הקו מ‑slopeTop0 (נקודת מדרגה) מתקבל "בריחה" כי הקווים skew.
-										const Q = add(H, scale(pS, -Wmag)); // bottom של השיפוע בנקודת הברך = offset אמיתי מה‑pivot
-										const E = uS; // קו השיפוע (כולל רכיב Y)
-
-										// closest points בין שני קווים תלת‑ממדיים (D ו‑E מנורמלים)
-										const b = dot(D, E);
-										const w0 = sub(P, Q);
-										const d = dot(D, w0);
-										const e = dot(E, w0);
-										const denom = 1 - b * b;
-										if (Math.abs(denom) > 1e-9) {
-											const sc = (b * e - d) / denom;
-											const tc = (e - b * d) / denom;
-											const Pc = add(P, scale(D, sc));
-											const Qc = add(Q, scale(E, tc));
-											// חשוב: כדי שהפודסט "יישב על אותה מסילה", נקודת הברך התחתונה של הפודסט חייבת להיות על הקו P + t*D.
-											// לכן נשתמש ב‑Pc (ולא באמצע), ובמקביל ננעול את נקודת השיפוע הראשונה ל‑Qc.
-											startFromLandingBot = Pc;
-											if (botP6.length >= 1) botP6[0] = Qc;
-											if (firstP6) firstP6 = Qc;
-										} else {
-											// כמעט מקבילים – פולבאק: שמור על הבוט של השיפוע
-											startFromLandingBot = Q;
-										}
+										startFromLandingBot = a1Anchor.bot;
+										const kneeSlopeBot = add(H, scale(pS, -Wmag)); // bottom של השיפוע בנקודת הברך (Pivot)
+										if (botP6.length >= 1) botP6[0] = kneeSlopeBot;
+										if (firstP6) firstP6 = kneeSlopeBot;
 									}
 
 									// פס פודסט ישר: מהקצה הרחוק של הפודסט (rawLandingStartTop) עד ציר הברך (H),
@@ -3214,7 +3191,7 @@ function Staircase3D({
 										landingStrip = { t0, b0, t1, b1 };
 									}
 
-									// נקודת השיפוע הראשונה (botP6[0]) מנוהלת ע"י closest-points למעלה כדי למנוע "בריחה" בקצה.
+									// נקודת השיפוע הראשונה (botP6[0]) ננעלת ל‑kneeSlopeBot כדי לשמור עובי מלא בתחילת השיפוע.
 								}
 
 								// יישור זרימה (רק כשאין נקודת עיגון מדויקת מ‑A1):

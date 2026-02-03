@@ -3075,243 +3075,36 @@ function Staircase3D({
 										startFromLandingBot = [wx1, wy6, wz1];
 									}
 								}
-								// נקודת התחלה "גולמית" של הפודסט (הקצה הרחוק) — נשמרת גם כש‑Top מוחלף בעוגן המדויק מ‑A1
-								const rawLandingStartTop = startFromLandingTop;
-								const rawLandingStartBot = startFromLandingBot;
-
-								// פס פודסט ישר (landing strip) — נבנה או לפי חישוב ה‑miter (כשיש עוגן מ‑A1) או לפי לוגיקת ה‑secant (כשאין)
-								let landingStrip: {
-									t0: [number, number, number];
-									b0: [number, number, number];
-									t1: [number, number, number];
-									b1: [number, number, number];
-								} | null = null;
-								// נקודת התחלה לחלק המשופע (Slope) — אם מחשבים joinTop/joinBot, נשתמש בהן רק לשיפוע ולא לפודסט
-								let slopeStartTop: [number, number, number] | null = null;
-								let slopeStartBot: [number, number, number] | null = null;
-								// חיבור חדש ל‑Hitech: A1 מוארכת וכוללת את הפודסט.
-								// לכן כשיש Ref (קצה A1 המורחבת), B1 פשוט נצמד לקצה הזה (butt/vertical cut) בלי ציור פודסט נפרד ובלי Ustar.
+								// חיבור Hitech חדש: A1 מוארכת וכוללת את הפודסט, לכן נקודת ההתחלה של B1 מגיעה ישירות מקצה A1.
+								// אין ציור פודסט נפרד עבור B1 ואין חישובי intersection/גרונג בתחילת הגרם.
 								const a1Anchor = hitechBStartRef.current;
-								const hasExactLandingAnchor = !!a1Anchor;
-								if (a1Anchor) {
-									slopeStartTop = a1Anchor.top;
-									slopeStartBot = a1Anchor.bot;
-									landingStrip = null;
-								}
-								// (הוסר) בלוק anchor: אין לדרוס startFromLandingTop/Bot מה‑Ref. ה‑Ref משמש רק ל‑widthTarget בחישוב Ustar.
-
-								// יישור זרימה (רק כשאין נקודת עיגון מדויקת מ‑A1):
-								// המשך אופסטים בשיפוע עד נקודת השקה עם רוחב זהה לפלטת הלנדינג
-								if (startFromLandingTop && startFromLandingBot && !hasExactLandingAnchor) {
-									// כיוון שיפוע למסילות: אם אין מספיק נקודות מדרגות, נשתמש ב‑firstYaw או בכיוון ברירת מחדל
-									const pT1 = topP1.length >= 1 ? topP1[0] : startFromLandingTop;
-									const pT2 = topP1.length >= 2 ? topP1[1] : (firstYaw !== null ? [pT1[0] + Math.cos(firstYaw), pT1[1], pT1[2] + Math.sin(firstYaw)] as [number, number, number] : [pT1[0] + 1, pT1[1], pT1[2]] as [number, number, number]);
-									let dTx = pT1[0] - pT2[0], dTy = pT1[1] - pT2[1], dTz = pT1[2] - pT2[2];
-									{ const m = Math.hypot(dTx, dTy, dTz) || 1; dTx /= m; dTy /= m; dTz /= m; }
-									const pB1 = botP6.length >= 1 ? botP6[0] : startFromLandingBot;
-									const pB2 = botP6.length >= 2 ? botP6[1] : (firstYaw !== null ? [pB1[0] + Math.cos(firstYaw), pB1[1], pB1[2] + Math.sin(firstYaw)] as [number, number, number] : [pB1[0] + 1, pB1[1], pB1[2]] as [number, number, number]);
-									let dBx = pB1[0] - pB2[0], dBy = pB1[1] - pB2[1], dBz = pB1[2] - pB2[2];
-									{ const m = Math.hypot(dBx, dBy, dBz) || 1; dBx /= m; dBy /= m; dBz /= m; }
-									// וקטור כיוון המישור של הפודסט (לפי yaw של הפודסט הקודם אם קיים; אחרת לפי firstYaw או כיוון המסילה העליונה)
-									let uxL = 1, uzL = 0;
-									if (firstStepIdxInFlight !== null && firstStepIdxInFlight > 0) {
-										const prev = treads[firstStepIdxInFlight - 1];
-										if (prev && prev.isLanding) { uxL = Math.cos(prev.rotation[1] as number); uzL = Math.sin(prev.rotation[1] as number); }
-									} else if (firstYaw !== null) {
-										uxL = Math.cos(firstYaw); uzL = Math.sin(firstYaw);
-									} else {
-										uxL = (Math.abs(dTx) > Math.abs(dTz)) ? Math.sign(dTx) : 0;
-										uzL = (uxL === 0) ? Math.sign(dTz) : 0;
-									}
-									const dotU = (x: [number, number, number]) => (uxL * x[0] + uzL * x[2]);
-									const U0 = dotU(startFromLandingTop);
-									// widthTarget: כאן אנחנו במסלול שאין בו עוגן A1 (hasExactLandingAnchor=false),
-									// לכן הרוחב נמדד מהפודסט המקומי בלבד.
-									const widthTarget = Math.hypot(
-										startFromLandingTop[0] - startFromLandingBot[0],
-										startFromLandingTop[1] - startFromLandingBot[1],
-										startFromLandingTop[2] - startFromLandingBot[2],
-									);
-									// פונקציה שמייצרת נקודת חיתוך של קו המסילה עם מישור U נתון
-									const pointOnLineAtU = (p: [number, number, number], d: [number, number, number], U: number): [number, number, number] => {
-										const denom = uxL * d[0] + uzL * d[2];
-										if (Math.abs(denom) < 1e-9) return p; // קו כמעט מקביל למישור, נחזיר מקור
-										const t = (U - dotU(p)) / denom;
-										return [p[0] + d[0] * t, p[1] + d[1] * t, p[2] + d[2] * t];
-									};
-									const lengthAtU = (U: number) => {
-										const tP = pointOnLineAtU(pT1, [dTx, dTy, dTz], U);
-										const bP = pointOnLineAtU(pB1, [dBx, dBy, dBz], U);
-										return Math.hypot(tP[0] - bP[0], tP[1] - bP[1], tP[2] - bP[2]);
-									};
-									// מצא U* כך שהמרחק בין שתי המסילות במישור U* שווה בדיוק לרוחב בלנדינג (secant)
-									let Ua = U0, Ub = U0 + 0.05;
-									let Fa = lengthAtU(Ua) - widthTarget;
-									let Fb = lengthAtU(Ub) - widthTarget;
-									for (let it = 0; it < 8; it++) {
-										const den = (Fb - Fa);
-										if (Math.abs(den) < 1e-9) break;
-										const Uc = Ub - Fb * (Ub - Ua) / den;
-										const Fc = lengthAtU(Uc) - widthTarget;
-										Ua = Ub; Fa = Fb; Ub = Uc; Fb = Fc;
-										if (Math.abs(Fb) < 1e-6) break;
-									}
-									let Ustar = Ub;
-									// מניעת פס באורך 0: אם U* קרוב מדי ל‑U0, דחוף אותו מעט קדימה
-									if (Math.abs(Ustar - U0) < 1e-4) Ustar = U0 + 0.02;
-									const joinTop = pointOnLineAtU(pT1, [dTx, dTy, dTz], Ustar);
-									const joinBot = pointOnLineAtU(pB1, [dBx, dBy, dBz], Ustar);
-									// אם זה אכן הפודסט הראשון לפני הגרם – נצייר פס אופקי בלנדינג עצמו (ללא גשר משופע)
-									let hasPrevLanding = false;
-									if (firstStepIdxInFlight !== null && firstStepIdxInFlight > 0) {
-										const prev = treads[firstStepIdxInFlight - 1];
-										hasPrevLanding = !!(prev && prev.isLanding);
-									}
-									// במקרה של פנייה ~90° (L‑Shape): אין גרונג/Intersection בקצה הפודסט כי המישורים ניצבים.
-									// במקום זה מתחילים את B1 בחתך אנכי ישר ("butt joint") שצמוד לדופן הפודסט.
-									let isTurn90 = false;
-									let buttTop: [number, number, number] | null = null;
-									let buttBot: [number, number, number] | null = null;
-									if (hasPrevLanding && firstStepIdxInFlight !== null && firstStepIdxInFlight > 0) {
-										const prev = treads[firstStepIdxInFlight - 1];
-										const first = treads[firstStepIdxInFlight];
-										if (prev && prev.isLanding && first && !first.isLanding) {
-											const yawL = prev.rotation[1] as number;
-											const yawS = first.rotation[1] as number;
-											const fLx = Math.cos(yawL), fLz = Math.sin(yawL);
-											const fSx = Math.cos(yawS), fSz = Math.sin(yawS);
-											const dotF = Math.abs(fLx * fSx + fLz * fSz);
-											isTurn90 = dotF < 0.25; // ~75°‑105°
-											if (isTurn90 && startFromLandingTop && startFromLandingBot) {
-												// בנה מישור "דופן הפודסט" שעליו מתחיל הגרם – לפי מיקום המדרגה הראשונה יחסית למרכז הפודסט
-												const cLx = Math.cos(yawL), cLz = Math.sin(yawL);
-												const rLx = -Math.sin(yawL), rLz = Math.cos(yawL); // right
-												const dxL = prev.run / 2;
-												const dzL = treadWidth / 2;
-												const dpx = (first.position[0] - prev.position[0]);
-												const dpz = (first.position[2] - prev.position[2]);
-												const projF = dpx * cLx + dpz * cLz;
-												const projR = dpx * rLx + dpz * rLz;
-												// בחר את דופן הפודסט כך שתשמור על אותו היקף חיצוני של A1 (אם יש Ref),
-												// ולא תברח פנימה לכיוון מרכז המדרגה.
-												// במסלול זה אין עוגן A1 (hasExactLandingAnchor=false), לכן הרפרנס להיקף החיצוני הוא נקודת הפודסט המקומית.
-												const ref = startFromLandingTop as [number, number, number];
-												const centerDot = (nx: number, nz: number) => (prev.position[0] * nx + prev.position[2] * nz);
-												const refDot = (nx: number, nz: number) => (ref[0] * nx + ref[2] * nz);
-												type Cand = { nx: number; nz: number; c: number; score: number };
-												const mkCand = (nx: number, nz: number, extent: number): Cand => {
-													const c1 = centerDot(nx, nz) + extent;
-													const c2 = centerDot(nx, nz) - extent;
-													const rd = refDot(nx, nz);
-													const s1 = Math.abs(c1 - rd);
-													const s2 = Math.abs(c2 - rd);
-													return (s1 <= s2) ? { nx, nz, c: c1, score: s1 } : { nx, nz, c: c2, score: s2 };
-												};
-												const cands: Cand[] = [
-													mkCand(cLx, cLz, dxL),
-													mkCand(rLx, rLz, dzL),
-												];
-												// העדף את הציר הדומיננטי לפי projF/projR, אבל עדיין נבחר לפי התאמה להיקף A1
-												const preferForward = Math.abs(projF) >= Math.abs(projR);
-												const cand = cands.sort((a, b) => a.score - b.score)[0];
-												let nx = cand.nx, nz = cand.nz, c = cand.c;
-												// אם ההתאמה להיקף כמעט זהה – השתמש בהעדפה הדומיננטית כדי למנוע "קפיצה"
-												if (cands.length === 2 && Math.abs(cands[0].score - cands[1].score) < 1e-4) {
-													const fallback = preferForward ? mkCand(cLx, cLz, dxL) : mkCand(rLx, rLz, dzL);
-													nx = fallback.nx; nz = fallback.nz; c = fallback.c;
-												}
-												const projectToEdge = (p: [number, number, number]): [number, number, number] => {
-													const t = c - (p[0] * nx + p[2] * nz);
-													return [p[0] + nx * t, p[1], p[2] + nz * t];
-												};
-												buttTop = projectToEdge(startFromLandingTop);
-												buttBot = projectToEdge(startFromLandingBot);
-											}
-										}
-									}
-
-									if (hasPrevLanding && isTurn90 && buttTop && buttBot) {
-										// פודסט נשאר מלבן ישר עד הדופן, והגרם מתחיל בחתך אנכי ישר על הדופן
-										landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: buttTop, b1: buttBot };
-										// התחלת השיפוע: Top בגובה הפודסט (buttTop.y), Bot בגובה תחתית הפודסט (buttBot.y)
-										// XZ נעולים לדופן הפודסט, כדי שלא תופיע "קובייה ירוקה" על ציר שגוי.
-										slopeStartTop = [buttTop[0], buttTop[1], buttTop[2]];
-										slopeStartBot = [buttBot[0], buttBot[1], buttBot[2]];
-									} else if (hasPrevLanding) {
-										const widthVec: [number, number, number] = [
-											startFromLandingTop[0] - startFromLandingBot[0],
-											startFromLandingTop[1] - startFromLandingBot[1],
-											startFromLandingTop[2] - startFromLandingBot[2],
-										];
-										const landTopEnd: [number, number, number] = [
-											startFromLandingTop[0] + (Ustar - U0) * uxL,
-											startFromLandingTop[1],
-											startFromLandingTop[2] + (Ustar - U0) * uzL,
-										];
-										const landBotEnd: [number, number, number] = [
-											landTopEnd[0] - widthVec[0],
-											landTopEnd[1] - widthVec[1],
-											landTopEnd[2] - widthVec[2],
-										];
-										// פס אופקי בלנדינג (Y קבוע), הפלטה B1 תתחיל ב‑joinTop/joinBot
-										landingStrip = { t0: startFromLandingTop, b0: startFromLandingBot, t1: landTopEnd, b1: landBotEnd };
-										// ה‑intersection משמש רק להתחלת השיפוע
-										slopeStartTop = joinTop;
-										slopeStartBot = joinBot;
-									} else {
-										landingStrip = null;
-										// ללא פודסט קודם – ה‑intersection משמש רק להתחלת השיפוע
-										slopeStartTop = joinTop;
-										slopeStartBot = joinBot;
-									}
-								}
+								const startTop = (a1Anchor?.top || startFromLandingTop || firstP1);
+								const startBot = (a1Anchor?.bot || startFromLandingBot || firstP6);
+								if (!startTop || !startBot) return null;
 
 								// בניית מסילות B1 (כולל פס פודסט אופקי נפרד אם קיים)
 								const topRailB1: Array<[number, number, number]> = (() => {
 									const arr = closeP1 ? [...topP1, closeP1] : [...topP1];
-									const s0 = (slopeStartTop || startFromLandingTop);
-									return s0 ? [s0, ...arr] : arr;
+									return [startTop, ...arr];
 								})();
 								let botRailB1: Array<[number, number, number]> = (() => {
 									const arr = closeP6 ? [...botP6, closeP6] : [...botP6];
-									const s0 = (slopeStartBot || startFromLandingBot);
-									return s0 ? [s0, ...arr] : arr;
+									return [startBot, ...arr];
 								})();
 								const segCountB1 = Math.max(topRailB1.length, botRailB1.length);
 
 								// חזית
 								const posB1: number[] = [];
 								const idxB1: number[] = [];
-								// גיאומטריה לפלטת פודסט אופקית (סלב)
-								const posLS: number[] = [];
-								const idxLS: number[] = [];
 								// (בוטל) מקטע אופקי בלנדינג העליון
 								const pickB1 = (arr: Array<[number, number, number]>, i: number) => arr[Math.min(i, arr.length - 1)];
-								// אם יש פחות משני קטעים – צור קטע גשר מינימלי בין תחילת הפודסט לנקודת המדרגה הראשונה
-								if (segCountB1 < 2) {
-									const t1 = startFromLandingTop || topRailB1[0];
-									const b1 = startFromLandingBot || botRailB1[0];
-									// מניעת רצועה דקה באורך 0: אם יש לפחות מדרגה אחת – השתמש בנקודת המדרגה הראשונה בתור קצה שני
-									const t2 = (topRailB1.length >= 2 ? topRailB1[1] : (topP1.length >= 1 ? topP1[0] : (topRailB1[topRailB1.length - 1] || t1)));
-									const b2 = (botRailB1.length >= 2 ? botRailB1[1] : (botP6.length >= 1 ? botP6[0] : (botRailB1[botRailB1.length - 1] || b1)));
-									const baseIndex = posB1.length / 3;
-									posB1.push(t1[0], t1[1], t1[2],  b1[0], b1[1], b1[2],  t2[0], t2[1], t2[2],  b2[0], b2[1], b2[2]);
-									idxB1.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
-									idxB1.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
-								}
+								if (segCountB1 < 2) return null;
 
 								for (let i = 0; i < segCountB1 - 1; i++) {
 									let t1 = pickB1(topRailB1, i);
 									let b1 = pickB1(botRailB1, i);
 									const t2 = pickB1(topRailB1, i + 1);
 									const b2 = pickB1(botRailB1, i + 1);
-									// ייצוב המקטע הראשון אם אין פתיחה מהפודסט
-									const hasLandingStart = !!startFromLandingTop && !!startFromLandingBot;
-									if (i === 0 && !hasLandingStart) {
-										if (firstP1 && firstP6 && firstYaw !== null) {
-											t1 = firstP1; b1 = firstP6;
-										}
-									}
 									const baseIndex = posB1.length / 3;
 									posB1.push(t1[0], t1[1], t1[2],  b1[0], b1[1], b1[2],  t2[0], t2[1], t2[2],  b2[0], b2[1], b2[2]);
 									idxB1.push(baseIndex + 0, baseIndex + 1, baseIndex + 2);
@@ -3328,51 +3121,7 @@ function Staircase3D({
 									idxB1.push(baseIndex + 2, baseIndex + 1, baseIndex + 3);
 								}
 
-								// בנה סלב משופע של הפודסט באותו מישור של B1 (u×w), עם עובי לאורך הנורמל
-								if (landingStrip) {
-									const t0 = landingStrip.t0; // עליון בתחילת הפודסט
-									const b0 = landingStrip.b0; // תחתון בתחילת הפודסט
-									const t1 = landingStrip.t1; // עליון בנקודת ההצמדה
-									const b1 = landingStrip.b1; // תחתון בנקודת ההצמדה
-									// u לאורך החיבור (מ‑t0 אל t1); w רוחב (מ‑b0 אל t0)
-									let ux = t1[0] - t0[0], uy = t1[1] - t0[1], uz = t1[2] - t0[2];
-									let wx = t0[0] - b0[0], wy = t0[1] - b0[1], wz = t0[2] - b0[2];
-									{ const m = Math.hypot(ux, uy, uz) || 1; ux /= m; uy /= m; uz /= m; }
-									{ const m = Math.hypot(wx, wy, wz) || 1; wx /= m; wy /= m; wz /= m; }
-									// נורמל למישור (כמו B1): n = normalize(u × w), וניקח היסט שלילי לשמירה על "חוץ"
-									let nx = uy * wz - uz * wy;
-									let ny = uz * wx - ux * wz;
-									let nz = ux * wy - uy * wx;
-									{ const m = Math.hypot(nx, ny, nz) || 1; nx /= m; ny /= m; nz /= m; }
-									const th = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
-									const offX = -nx * th, offY = -ny * th, offZ = -nz * th;
-
-									// משטח קדמי (ארבע נקודות): t0, b0, t1, b1
-									let base = posLS.length / 3;
-									posLS.push(t0[0], t0[1], t0[2],  b0[0], b0[1], b0[2],  t1[0], t1[1], t1[2],  b1[0], b1[1], b1[2]);
-									idxLS.push(base + 0, base + 1, base + 2,  base + 2, base + 1, base + 3);
-
-									// משטח אחורי מוזז לפי הנורמל
-									const t0e: [number, number, number] = [t0[0] + offX, t0[1] + offY, t0[2] + offZ];
-									const b0e: [number, number, number] = [b0[0] + offX, b0[1] + offY, b0[2] + offZ];
-									const t1e: [number, number, number] = [t1[0] + offX, t1[1] + offY, t1[2] + offZ];
-									const b1e: [number, number, number] = [b1[0] + offX, b1[1] + offY, b1[2] + offZ];
-									base = posLS.length / 3;
-									posLS.push(t0e[0], t0e[1], t0e[2],  b0e[0], b0e[1], b0e[2],  t1e[0], t1e[1], t1e[2],  b1e[0], b1e[1], b1e[2]);
-									idxLS.push(base + 0, base + 2, base + 1,  base + 2, base + 3, base + 1);
-
-									// דפנות סביב (4 צלעות)
-									const addSide = (a: [number, number, number], b: [number, number, number], ae: [number, number, number], be: [number, number, number]) => {
-										const bi = posLS.length / 3;
-										posLS.push(a[0], a[1], a[2],  b[0], b[1], b[2],  be[0], be[1], be[2],  ae[0], ae[1], ae[2]);
-										idxLS.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
-									};
-									addSide(t0, b0, t0e, b0e);
-									addSide(b0, b1, b0e, b1e);
-									addSide(b1, t1, b1e, t1e);
-									addSide(t1, t0, t1e, t0e);
-								}
-								// בוטל: מקטע התאמה אל המסילות
+								// A1 כבר מכסה את הפודסט, לכן B1 לא מייצרת משטח/סלב נפרד של פודסט.
 
 								// עובי ונורמל (מישור הפלטה)
 								const thicknessB1 = Math.max(0.001, (typeof hitechPlateThickness === 'number' ? hitechPlateThickness : 0.012));
@@ -3631,15 +3380,6 @@ function Staircase3D({
 											</bufferGeometry>
 											<meshBasicMaterial color="#16a34a" side={2} />
 										</mesh>
-										{posLS.length > 0 ? (
-											<mesh castShadow receiveShadow>
-												<bufferGeometry attach="geometry">
-													<bufferAttribute attach="attributes-position" args={[new Float32Array(posLS), 3]} />
-													<bufferAttribute attach="index" args={[new Uint32Array(idxLS), 1]} />
-												</bufferGeometry>
-												<meshBasicMaterial color="#16a34a" side={2} />
-											</mesh>
-										) : null}
 									</group>
 								);
 							};

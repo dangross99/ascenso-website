@@ -3118,13 +3118,53 @@ function Staircase3D({
 								const startBot = (a1Anchor?.bot || startFromLandingBot || firstP6);
 								if (!startTop || !startBot) return null;
 
-								// בניית מסילות B1 (כולל פס פודסט אופקי נפרד אם קיים)
+								// דיוק תחילת B1:
+								// מוסיפים קטע אופקי קצר (Horizontal Extension) לפני תחילת השיפוע, כדי שהשיפוע לא יתחיל מוקדם מדי
+								// ושהחיבור ל‑A1 יישאר "יצוק" עם רוחב אחיד.
+								const dyLanding = Math.abs(startTop[1] - startBot[1]);
+								// כיוון אופקי של הגרם (ב‑XZ) לפי ה‑yaw של המדרגה הראשונה
+								const yawS = (firstStepIdxInFlight !== null ? (treads[firstStepIdxInFlight]?.rotation[1] as number) : (firstYaw ?? 0)) || 0;
+								const uxH = Math.cos(yawS);
+								const uzH = Math.sin(yawS);
+								const dotH = (p: [number, number, number]) => (p[0] * uxH + p[2] * uzH);
+								// טנגנס השיפוע וה‑cos לצורך עובי ניצב
+								let tanSlope = (riser / treadDepth);
+								let cosSlope = 1 / Math.sqrt(1 + tanSlope * tanSlope);
+								if (topP1.length >= 2) {
+									const u0 = topP1[0], u1 = topP1[1];
+									const dx = u1[0] - u0[0], dy = u1[1] - u0[1], dz = u1[2] - u0[2];
+									const horiz = Math.hypot(dx, dz);
+									if (horiz > 1e-6) {
+										tanSlope = Math.abs(dy) / horiz;
+										cosSlope = horiz / Math.hypot(horiz, dy);
+									}
+								}
+								const dySlope = (cosSlope > 1e-6) ? (dyLanding / cosSlope) : dyLanding;
+								// חישוב נקודת שבירה: בוחרים L כך שהאלכסון מ‑breakTop יפגוש את המדרגה הראשונה בזווית השיפוע הנכונה
+								// מבלי "לחנוק" את עובי הפלטה. (דחיית תחילת השיפוע)
+								let breakTop: [number, number, number] | null = null;
+								let breakBotH: [number, number, number] | null = null; // סוף קטע אופקי (dyLanding)
+								let breakBotS: [number, number, number] | null = null; // תחילת קטע שיפוע (dySlope)
+								const firstSlopeTop = topP1.length >= 1 ? topP1[0] : null;
+								if (firstSlopeTop && tanSlope > 1e-6) {
+									const deltaY = (firstSlopeTop[1] - startTop[1]);
+									const requiredAlong = Math.max(0, deltaY / tanSlope);
+									const dAlong = (dotH(firstSlopeTop) - dotH(startTop)); // כמה רחוק המדרגה הראשונה קדימה ביחס ל‑startTop
+									const L = Math.max(0, dAlong - requiredAlong);
+									breakTop = [startTop[0] + uxH * L, startTop[1], startTop[2] + uzH * L];
+									breakBotH = [breakTop[0], breakTop[1] - dyLanding, breakTop[2]];
+									breakBotS = [breakTop[0], breakTop[1] - dySlope, breakTop[2]];
+								}
+
+								// בניית מסילות B1 (שומרים את מספר הנקודות המקורי של המדרגות; מוסיפים רק את "קטע 0→1" האופקי בתחילה)
 								const topRailB1: Array<[number, number, number]> = (() => {
 									const arr = closeP1 ? [...topP1, closeP1] : [...topP1];
+									if (breakTop) return [startTop, breakTop, breakTop, ...arr];
 									return [startTop, ...arr];
 								})();
 								let botRailB1: Array<[number, number, number]> = (() => {
 									const arr = closeP6 ? [...botP6, closeP6] : [...botP6];
+									if (breakBotH && breakBotS) return [startBot, breakBotH, breakBotS, ...arr];
 									return [startBot, ...arr];
 								})();
 								const segCountB1 = Math.max(topRailB1.length, botRailB1.length);

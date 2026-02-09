@@ -16,21 +16,23 @@ function buildSawtoothPlateShape(params: {
 	const outer: P2[] = [];
 	let s = 0;
 
-	// ב‑Sawtooth: הקו העליון של הפלטה צריך לתמוך במדרכים → יושב בגובה תחתית המדרך
-	const ySupport0 = flightTreads[0].position[1] - treadThickness / 2;
+	// ב‑Sawtooth: הקו העליון של הזיגזג צריך להיות Flush עם פני המדרך העליונים
+	// כך שהמדרך "נכנס" לתוך עובי הסטרינגר (Boolean-like)
+	const ySupport0 = flightTreads[0].position[1] + treadThickness / 2;
 	const y0 = ySupport0;
 	outer.push({ x: 0, y: 0 }); // y יחסית ל‑y0
 
 	for (let i = 0; i < flightTreads.length; i++) {
 		const cur = flightTreads[i];
-		const ySupport = (cur.position[1] - treadThickness / 2) - y0;
+		// ללא מרווחים: הצמדה מדויקת לפנים המדרך העליונים
+		const ySupport = (cur.position[1] + treadThickness / 2) - y0;
 		outer[outer.length - 1].y = ySupport;
 		const run = cur.run || treadDepth;
 		s += run;
 		outer.push({ x: s, y: ySupport });
 		const next = flightTreads[i + 1];
 		if (next) {
-			const ySupportN = (next.position[1] - treadThickness / 2) - y0;
+			const ySupportN = (next.position[1] + treadThickness / 2) - y0;
 			if (Math.abs(ySupportN - ySupport) > 1e-6) {
 				outer.push({ x: s, y: ySupportN });
 			}
@@ -115,12 +117,15 @@ export function buildSawtoothFlights(params: {
 	} = params;
 
 	const plateTh = typeof params.stringerPlateThickness === 'number' ? params.stringerPlateThickness : 0.012; // 12mm
-	const stringerH = typeof params.stringerHeight === 'number' ? params.stringerHeight : 0.28; // 280mm גובה מיתר
+	// 10–15cm כדי לקבל "רצועה עדינה"
+	const stringerH = typeof params.stringerHeight === 'number' ? params.stringerHeight : 0.12; // 120mm
 
 	const stringerColor = useSolidMat ? solidSideColor : '#4b5563';
 
 	const flights = Array.from(new Set(treads.map(tt => tt.flight))).sort((a, b) => a - b);
 	const stringers: React.ReactNode[] = [];
+	// המדרכים צריכים להיות "כלואים" בין שני הסטרינגרים בלי חפיפה (למניעת Z-fighting)
+	const innerTreadWidth = Math.max(0.05, treadWidth - 2 * plateTh);
 
 	for (const flightIdx of flights) {
 		const ftAll = treads.filter(tt => tt.flight === flightIdx);
@@ -178,7 +183,7 @@ export function buildSawtoothFlights(params: {
 				solidSideColor,
 				buildFaceTextures,
 				treadThickness,
-				treadWidth,
+				treadWidth: innerTreadWidth,
 				stepRailingSides,
 				landingRailingSides,
 				hitech: false,

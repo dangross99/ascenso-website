@@ -4,67 +4,50 @@ import { ExtrudeGeometry, Matrix4, Shape, Vector3 } from 'three';
 import type { Side, Tread, BuildFaceTextures } from './boxShared';
 import { buildRectTreads } from './rect';
 
-function buildZigzagRibbonShape(params: {
+function buildSawtoothPlateShape(params: {
 	flightTreads: Tread[];
 	treadThickness: number;
 	treadDepth: number;
-	ribbonWidth: number; // thickness of the ribbon in the 2D profile (meters)
+	stringerHeight: number; // vertical height of the plate (meters)
 }) {
-	const { flightTreads, treadThickness, treadDepth, ribbonWidth } = params;
+	const { flightTreads, treadThickness, treadDepth, stringerHeight } = params;
 	type P2 = { x: number; y: number };
 
 	const outer: P2[] = [];
 	let s = 0;
 
-	const y0 = flightTreads[0].position[1] + treadThickness / 2;
-	outer.push({ x: 0, y: 0 });
+	// ב‑Sawtooth: הקו העליון של הפלטה צריך לתמוך במדרכים → יושב בגובה תחתית המדרך
+	const ySupport0 = flightTreads[0].position[1] - treadThickness / 2;
+	const y0 = ySupport0;
+	outer.push({ x: 0, y: 0 }); // y יחסית ל‑y0
 
 	for (let i = 0; i < flightTreads.length; i++) {
 		const cur = flightTreads[i];
-		const yTop = (cur.position[1] + treadThickness / 2) - y0;
-		outer[outer.length - 1].y = yTop;
+		const ySupport = (cur.position[1] - treadThickness / 2) - y0;
+		outer[outer.length - 1].y = ySupport;
 		const run = cur.run || treadDepth;
 		s += run;
-		outer.push({ x: s, y: yTop });
+		outer.push({ x: s, y: ySupport });
 		const next = flightTreads[i + 1];
 		if (next) {
-			const yTopN = (next.position[1] + treadThickness / 2) - y0;
-			if (Math.abs(yTopN - yTop) > 1e-6) {
-				outer.push({ x: s, y: yTopN });
+			const ySupportN = (next.position[1] - treadThickness / 2) - y0;
+			if (Math.abs(ySupportN - ySupport) > 1e-6) {
+				outer.push({ x: s, y: ySupportN });
 			}
 		}
 	}
 
 	if (outer.length < 2) return null;
 
-	const thick = ribbonWidth;
-	const isH = (a: P2, b: P2) => Math.abs(a.y - b.y) < 1e-9;
-	const isV = (a: P2, b: P2) => Math.abs(a.x - b.x) < 1e-9;
-
-	// inner דרך offset+miter עבור מקטעים מאונכים
-	const inner: P2[] = [];
-	{
-		const a = outer[0], b = outer[1];
-		inner.push(isH(a, b) ? { x: a.x, y: a.y - thick } : { x: a.x - thick, y: a.y });
-	}
-	for (let i = 1; i < outer.length - 1; i++) {
-		const pPrev = outer[i - 1], p = outer[i], pNext = outer[i + 1];
-		const prevH = isH(pPrev, p), prevV = isV(pPrev, p);
-		const nextH = isH(p, pNext), nextV = isV(p, pNext);
-		if (prevH && nextV) inner.push({ x: p.x - thick, y: p.y - thick });
-		else if (prevV && nextH) inner.push({ x: p.x - thick, y: p.y - thick });
-		else if (prevH) inner.push({ x: p.x, y: p.y - thick });
-		else inner.push({ x: p.x - thick, y: p.y });
-	}
-	{
-		const a = outer[outer.length - 2], b = outer[outer.length - 1];
-		inner.push(isH(a, b) ? { x: b.x, y: b.y - thick } : { x: b.x - thick, y: b.y });
-	}
+	// קו תחתון: Offset אנכי של כל הזיגזג העליון (עובי אנכי קבוע לכל האורך)
+	const bottom: P2[] = outer.map(p => ({ x: p.x, y: p.y - stringerHeight }));
 
 	const shape = new Shape();
 	shape.moveTo(outer[0].x, outer[0].y);
 	for (let i = 1; i < outer.length; i++) shape.lineTo(outer[i].x, outer[i].y);
-	for (let i = inner.length - 1; i >= 0; i--) shape.lineTo(inner[i].x, inner[i].y);
+	// סגירה בתחתית: ירידה לקו התחתון בקצה, ואז חזרה לאורך הזיגזג התחתון
+	shape.lineTo(bottom[bottom.length - 1].x, bottom[bottom.length - 1].y);
+	for (let i = bottom.length - 2; i >= 0; i--) shape.lineTo(bottom[i].x, bottom[i].y);
 	shape.closePath();
 
 	return { shape, y0 };
@@ -105,7 +88,7 @@ export function buildSawtoothFlights(params: {
 
 	// stringers
 	stringerPlateThickness?: number; // Extrude depth (m)
-	stringerRibbonWidth?: number; // 2D ribbon width (m)
+	stringerHeight?: number; // 2D plate height (m)
 
 	// materials
 	materialKind: 'wood' | 'metal' | 'stone';
@@ -132,7 +115,7 @@ export function buildSawtoothFlights(params: {
 	} = params;
 
 	const plateTh = typeof params.stringerPlateThickness === 'number' ? params.stringerPlateThickness : 0.012; // 12mm
-	const ribbonW = typeof params.stringerRibbonWidth === 'number' ? params.stringerRibbonWidth : 0.04; // 40mm "גובה" רצועה
+	const stringerH = typeof params.stringerHeight === 'number' ? params.stringerHeight : 0.28; // 280mm גובה מיתר
 
 	const stringerColor = useSolidMat ? solidSideColor : '#4b5563';
 
@@ -143,11 +126,11 @@ export function buildSawtoothFlights(params: {
 		const ftAll = treads.filter(tt => tt.flight === flightIdx);
 		if (!ftAll.length) continue;
 
-		const prof = buildZigzagRibbonShape({
+		const prof = buildSawtoothPlateShape({
 			flightTreads: ftAll,
 			treadThickness,
 			treadDepth,
-			ribbonWidth: ribbonW,
+			stringerHeight: stringerH,
 		});
 		if (!prof) continue;
 

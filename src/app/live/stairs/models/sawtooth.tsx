@@ -118,7 +118,7 @@ export function buildSawtoothFlights(params: {
 
 	const plateTh = typeof params.stringerPlateThickness === 'number' ? params.stringerPlateThickness : 0.012; // 12mm
 	// 10–15cm כדי לקבל "רצועה עדינה"
-	const stringerH = typeof params.stringerHeight === 'number' ? params.stringerHeight : 0.12; // 120mm
+	const stringerH = typeof params.stringerHeight === 'number' ? params.stringerHeight : 0.10; // 100mm
 
 	const stringerColor = useSolidMat ? solidSideColor : '#4b5563';
 

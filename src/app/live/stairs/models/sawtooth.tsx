@@ -27,16 +27,25 @@ function buildSawtoothPlateShape(params: {
 		// ללא מרווחים: הצמדה מדויקת לפנים המדרך העליונים
 		const ySupport = (cur.position[1] + treadThickness / 2) - y0;
 		outer[outer.length - 1].y = ySupport;
+
 		const run = cur.run || treadDepth;
 		s += run;
-		outer.push({ x: s, y: ySupport });
+
 		const next = flightTreads[i + 1];
 		if (next) {
 			const ySupportN = (next.position[1] + treadThickness / 2) - y0;
-			if (Math.abs(ySupportN - ySupport) > 1e-6) {
+			const hasRise = Math.abs(ySupportN - ySupport) > 1e-6;
+			if (hasRise) {
+				// עידון "הפלח האנכי": במקום קטע אנכי 90°, הוסף שיפוע קטן (1–2 ס״מ)
+				const chamferX = Math.min(0.02, Math.max(0.01, run * 0.08));
+				outer.push({ x: Math.max(0, s - chamferX), y: ySupport });
 				outer.push({ x: s, y: ySupportN });
+				continue;
 			}
 		}
+
+		// אין עליה – המשך אופקי רגיל
+		outer.push({ x: s, y: ySupport });
 	}
 
 	if (outer.length < 2) return null;
@@ -118,14 +127,15 @@ export function buildSawtoothFlights(params: {
 
 	const plateTh = typeof params.stringerPlateThickness === 'number' ? params.stringerPlateThickness : 0.012; // 12mm
 	// 10–15cm כדי לקבל "רצועה עדינה"
-	const stringerH = typeof params.stringerHeight === 'number' ? params.stringerHeight : 0.10; // 100mm
+	const stringerH = typeof params.stringerHeight === 'number' ? params.stringerHeight : 0.12; // 120mm
 
 	const stringerColor = useSolidMat ? solidSideColor : '#4b5563';
 
 	const flights = Array.from(new Set(treads.map(tt => tt.flight))).sort((a, b) => a - b);
 	const stringers: React.ReactNode[] = [];
 	// המדרכים צריכים להיות "כלואים" בין שני הסטרינגרים בלי חפיפה (למניעת Z-fighting)
-	const innerTreadWidth = Math.max(0.05, treadWidth - 2 * plateTh);
+	const safetyGap = 0.002; // 2mm – מרווח ביטחון ויזואלי
+	const innerTreadWidth = Math.max(0.05, treadWidth - 2 * plateTh - safetyGap);
 
 	for (const flightIdx of flights) {
 		const ftAll = treads.filter(tt => tt.flight === flightIdx);
@@ -141,7 +151,15 @@ export function buildSawtoothFlights(params: {
 
 		const { fx, fz, rx, rz, backX, backZ } = computeFlightBasis(ftAll, treadDepth);
 
-		const geo0 = new ExtrudeGeometry(prof.shape, { depth: plateTh, steps: 1, bevelEnabled: false });
+		const geo0 = new ExtrudeGeometry(prof.shape, {
+			depth: plateTh,
+			steps: 1,
+			// Bevel קטן (2mm) לעידון קצה המתכת כמו במציאות
+			bevelEnabled: true,
+			bevelThickness: 0.002,
+			bevelSize: 0.002,
+			bevelSegments: 1,
+		});
 		// center extrude
 		geo0.translate(0, 0, -plateTh / 2);
 		geo0.computeVertexNormals();

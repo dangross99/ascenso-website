@@ -579,6 +579,9 @@ function Staircase3D({
 						treadWidth,
 						treadDepth,
 						treadThickness,
+						// פרופורציות קבועות לדגם זיג‑זג
+						stringerPlateThickness: 0.012, // 12mm
+						stringerHeight: 0.12, // 12cm
 						materialKind,
 						useSolidMat,
 						solidTopColor,
@@ -634,7 +637,7 @@ function Staircase3D({
 					landingRailingSides,
 					hitech,
 				});
-			})()}
+						})()}
 
 
 			{/* Hitech plates */}

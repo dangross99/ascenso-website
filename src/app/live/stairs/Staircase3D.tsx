@@ -582,6 +582,8 @@ function Staircase3D({
 						// פרופורציות קבועות לדגם זיג‑זג
 						stringerPlateThickness: 0.012, // 12mm
 						stringerHeight: 0.12, // 12cm
+						// עוד 2mm Inset מעבר לברירת המחדל כדי למנוע Z-fighting בטופ
+						treadSafetyGap: 0.004,
 						materialKind,
 						useSolidMat,
 						solidTopColor,

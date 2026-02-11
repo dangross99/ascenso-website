@@ -35,13 +35,10 @@ function buildSawtoothPlateShape(params: {
 		if (next) {
 			const ySupportN = (next.position[1] + treadThickness / 2) - y0;
 			const hasRise = Math.abs(ySupportN - ySupport) > 1e-6;
-			if (hasRise) {
-				// עידון "הפלח האנכי": במקום קטע אנכי 90°, הוסף שיפוע קטן (1–2 ס״מ)
-				const chamferX = Math.min(0.02, Math.max(0.01, run * 0.08));
-				outer.push({ x: Math.max(0, s - chamferX), y: ySupport });
-				outer.push({ x: s, y: ySupportN });
-				continue;
-			}
+			// נקודת "שבירה" אנכית: בסוף ה‑run, הוסף נקודה באותו X עם Y של המדרגה הבאה
+			outer.push({ x: s, y: ySupport });
+			if (hasRise) outer.push({ x: s, y: ySupportN });
+			continue;
 		}
 
 		// אין עליה – המשך אופקי רגיל
@@ -100,6 +97,7 @@ export function buildSawtoothFlights(params: {
 	// stringers
 	stringerPlateThickness?: number; // Extrude depth (m)
 	stringerHeight?: number; // 2D plate height (m)
+	treadSafetyGap?: number; // extra inset to avoid z-fighting at top seam (m)
 
 	// materials
 	materialKind: 'wood' | 'metal' | 'stone';
@@ -134,7 +132,7 @@ export function buildSawtoothFlights(params: {
 	const flights = Array.from(new Set(treads.map(tt => tt.flight))).sort((a, b) => a - b);
 	const stringers: React.ReactNode[] = [];
 	// המדרכים צריכים להיות "כלואים" בין שני הסטרינגרים בלי חפיפה (למניעת Z-fighting)
-	const safetyGap = 0.002; // 2mm – מרווח ביטחון ויזואלי
+	const safetyGap = typeof params.treadSafetyGap === 'number' ? params.treadSafetyGap : 0.002; // 2mm ברירת מחדל
 	const innerTreadWidth = Math.max(0.05, treadWidth - 2 * plateTh - safetyGap);
 
 	for (const flightIdx of flights) {

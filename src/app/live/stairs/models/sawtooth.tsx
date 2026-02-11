@@ -47,36 +47,15 @@ function buildSawtoothPlateShape(params: {
 
 	if (outer.length < 2) return null;
 
-	// "Ribbon" אמיתי: Offset אורתוגונלי של הזיגזג
-	// אופקי: יורדים ב‑Y ב‑stringerHeight
-	// אנכי: מוסיפים "בשר" ב‑X ב‑stringerHeight
-	// כך הרצועה יוצאת ברוחב קבוע (~12 ס"מ) גם בקטעים האופקיים וגם באנכיים (לא רק plateThickness).
-	const thick = stringerHeight;
-	const isH = (a: P2, b: P2) => Math.abs(a.y - b.y) < 1e-9;
-	const isV = (a: P2, b: P2) => Math.abs(a.x - b.x) < 1e-9;
-	const inner: P2[] = [];
-	{
-		const a = outer[0], b = outer[1];
-		inner.push(isH(a, b) ? { x: a.x, y: a.y - thick } : { x: a.x - thick, y: a.y });
-	}
-	for (let i = 1; i < outer.length - 1; i++) {
-		const pPrev = outer[i - 1], p = outer[i], pNext = outer[i + 1];
-		const prevH = isH(pPrev, p), prevV = isV(pPrev, p);
-		const nextH = isH(p, pNext), nextV = isV(p, pNext);
-		if ((prevH && nextV) || (prevV && nextH)) inner.push({ x: p.x - thick, y: p.y - thick });
-		else if (prevH) inner.push({ x: p.x, y: p.y - thick });
-		else inner.push({ x: p.x - thick, y: p.y });
-	}
-	{
-		const a = outer[outer.length - 2], b = outer[outer.length - 1];
-		inner.push(isH(a, b) ? { x: b.x, y: b.y - thick } : { x: b.x - thick, y: b.y });
-	}
+	// קו תחתון: Offset אנכי של כל הזיגזג העליון (עובי אנכי קבוע לכל האורך)
+	const bottom: P2[] = outer.map(p => ({ x: p.x, y: p.y - stringerHeight }));
 
 	const shape = new Shape();
 	shape.moveTo(outer[0].x, outer[0].y);
 	for (let i = 1; i < outer.length; i++) shape.lineTo(outer[i].x, outer[i].y);
-	// חזרה לאורך ה‑inner (יוצר רצועה בעובי קבוע גם בקטעים אנכיים)
-	for (let i = inner.length - 1; i >= 0; i--) shape.lineTo(inner[i].x, inner[i].y);
+	// סגירה בתחתית: ירידה לקו התחתון בקצה, ואז חזרה לאורך הזיגזג התחתון
+	shape.lineTo(bottom[bottom.length - 1].x, bottom[bottom.length - 1].y);
+	for (let i = bottom.length - 2; i >= 0; i--) shape.lineTo(bottom[i].x, bottom[i].y);
 	shape.closePath();
 
 	return { shape, y0 };

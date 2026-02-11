@@ -97,7 +97,6 @@ export function buildSawtoothFlights(params: {
 	// stringers
 	stringerPlateThickness?: number; // Extrude depth (m)
 	stringerHeight?: number; // 2D plate height (m)
-	treadSafetyGap?: number; // extra inset to avoid z-fighting at top seam (m)
 
 	// materials
 	materialKind: 'wood' | 'metal' | 'stone';
@@ -131,9 +130,14 @@ export function buildSawtoothFlights(params: {
 
 	const flights = Array.from(new Set(treads.map(tt => tt.flight))).sort((a, b) => a - b);
 	const stringers: React.ReactNode[] = [];
-	// המדרכים צריכים להיות "כלואים" בין שני הסטרינגרים בלי חפיפה (למניעת Z-fighting)
-	const safetyGap = typeof params.treadSafetyGap === 'number' ? params.treadSafetyGap : 0.002; // 2mm ברירת מחדל
-	const innerTreadWidth = Math.max(0.05, treadWidth - 2 * plateTh - safetyGap);
+	// ללא Gaps: המדרכים ברוחב מלא כדי להיראות כחלק מהסטרינגרים
+	const innerTreadWidth = treadWidth;
+
+	const faceMat = (dimU: number, dimV: number, rot: boolean, flipU: boolean = false) => {
+		if (useSolidMat) return <meshBasicMaterial color={solidSideColor} side={2} />;
+		const ft = buildFaceTextures(dimU, dimV, rot, flipU);
+		return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />;
+	};
 
 	for (const flightIdx of flights) {
 		const ftAll = treads.filter(tt => tt.flight === flightIdx);
@@ -158,8 +162,7 @@ export function buildSawtoothFlights(params: {
 			bevelSize: 0.002,
 			bevelSegments: 1,
 		});
-		// center extrude
-		geo0.translate(0, 0, -plateTh / 2);
+		// Extrude "מהחוץ פנימה": שמור על טווח Z=[0..plateTh] ונמקם כך שהפנים החיצוניות יהיו Flush עם קצה המדרך
 		geo0.computeVertexNormals();
 
 		const basis = new Matrix4().makeBasis(
@@ -169,7 +172,8 @@ export function buildSawtoothFlights(params: {
 		);
 		basis.setPosition(new Vector3(backX, prof.y0, backZ));
 
-		const edgeOffset = (treadWidth / 2) - (plateTh / 2);
+		const rightOuterZ = (treadWidth / 2);
+		const leftOuterZ = -(treadWidth / 2);
 
 		const makeStringer = (zOffset: number, key: string) => {
 			const g = geo0.clone();
@@ -179,13 +183,22 @@ export function buildSawtoothFlights(params: {
 			g.computeVertexNormals();
 			return (
 				<mesh key={key} geometry={g} receiveShadow>
-					<meshBasicMaterial color={stringerColor} side={2} />
+					<meshBasicMaterial
+						color={stringerColor}
+						side={2}
+						// polygonOffset כדי למנוע Z-fighting כאשר המדרגה והסטרינגר באותו מישור
+						polygonOffset
+						polygonOffsetFactor={-2}
+						polygonOffsetUnits={-2}
+					/>
 				</mesh>
 			);
 		};
 
-		stringers.push(makeStringer(+edgeOffset, `sawtooth-stringer-r-${flightIdx}`));
-		stringers.push(makeStringer(-edgeOffset, `sawtooth-stringer-l-${flightIdx}`));
+		// ימין: הטווח הוא [rightOuterZ - plateTh, rightOuterZ]
+		stringers.push(makeStringer(rightOuterZ - plateTh, `sawtooth-stringer-r-${flightIdx}`));
+		// שמאל: הטווח הוא [leftOuterZ, leftOuterZ + plateTh]
+		stringers.push(makeStringer(leftOuterZ, `sawtooth-stringer-l-${flightIdx}`));
 	}
 
 	return (
@@ -204,6 +217,49 @@ export function buildSawtoothFlights(params: {
 				landingRailingSides,
 				hitech: false,
 			})}
+			{/* Risers – סגירה אנכית מלאה בין מדרגות (מבנה אטום) */}
+			{(() => {
+				const out: React.ReactNode[] = [];
+				for (const flightIdx of flights) {
+					const ftAll = treads.filter(tt => tt.flight === flightIdx);
+					for (let i = 0; i < ftAll.length - 1; i++) {
+						const cur = ftAll[i];
+						const next = ftAll[i + 1];
+						const yTop = cur.position[1] + treadThickness / 2;
+						const yTopN = next.position[1] + treadThickness / 2;
+						const rise = yTopN - yTop;
+						if (Math.abs(rise) < 1e-6) continue;
+
+						const yaw = (cur.rotation[1] as number) || 0;
+						const axis: 'x' | 'z' = (Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z');
+						const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
+						const forwardSignBase = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
+						const forwardSign = (cur.flight === 0 ? -forwardSignBase : forwardSignBase) as 1 | -1;
+
+						const run = cur.run || treadDepth;
+						const xFront = forwardSign * (run / 2) + forwardSign * 0.0008;
+						const yMid = (yTop + yTopN) / 2;
+						const h = Math.abs(rise);
+						const rotY = forwardSign > 0 ? Math.PI / 2 : -Math.PI / 2;
+						const rotFrontBack = (axis === 'x');
+
+						out.push(
+							<mesh
+								key={`sawtooth-riser-${flightIdx}-${i}`}
+								position={[cur.position[0], cur.position[1], cur.position[2]]}
+								rotation={[0, yaw, 0]}
+								receiveShadow
+							>
+								<mesh position={[xFront, yMid - cur.position[1], 0]} rotation={[0, rotY, 0]}>
+									<planeGeometry args={[innerTreadWidth, h, 8, 2]} />
+									{faceMat(innerTreadWidth, h, rotFrontBack, forwardSign < 0)}
+								</mesh>
+							</mesh>
+						);
+					}
+				}
+				return <group>{out}</group>;
+			})()}
 			{/* הקורות (Stringers) – שתי רצועות זיגזג מפלדה משני צדי המדרגה */}
 			{stringers}
 		</group>

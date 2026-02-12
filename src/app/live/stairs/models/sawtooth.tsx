@@ -24,10 +24,9 @@ function buildSawtoothPlateShape(params: {
 	};
 
 	const outer: P2[] = [];
-	// xCursor מתקדם תמיד קדימה (ללא backtracking) כדי למנוע Self‑Intersection של ה‑Shape
-	let xCursor = 0;
-	// overlap שנצרך כבר בתחילת המדרך הנוכחי (כי המדרך הקודם "נכנס" לתוכו)
-	let carryOverlap = 0;
+	let s = 0;
+	// חפיפה אופקית קבועה בין אופקי לאנכי (כדי שהקטע האנכי לא ייראה "דק")
+	const OVERLAP_X = 0.12; // 12cm
 
 	// ב‑Sawtooth: הקו העליון של הזיגזג צריך להיות Flush עם פני המדרך העליונים
 	// כך שהמדרך "נכנס" לתוך עובי הסטרינגר (Boolean-like)
@@ -42,32 +41,27 @@ function buildSawtoothPlateShape(params: {
 		outer[outer.length - 1].y = ySupport;
 
 		const run = cur.run || treadDepth;
-		const runVisible = Math.max(0, run - carryOverlap);
-		xCursor += runVisible;
-		carryOverlap = 0;
+		s += run;
 
 		const next = flightTreads[i + 1];
 		if (next) {
 			const ySupportN = (next.position[1] + treadThickness / 2) - y0;
 			const hasRise = Math.abs(ySupportN - ySupport) > 1e-6;
-			// נקודת קצה המדרך הנוכחי
-			outer.push({ x: xCursor, y: ySupport });
+			// קצה מדרך נוכחי
+			outer.push({ x: s, y: ySupport });
 			if (hasRise) {
-				// חפיפה אופקית "אמיתית" של 12 ס"מ – אבל כחלק מפרופיל רציף אחד (בלי לחזור אחורה).
-				// אנחנו מוסיפים עוד overlap קדימה ואז עולים לגובה הבא; את ה‑overlap הזה נחסיר מה‑run של המדרך הבא.
-				const overlapTarget = stringerHeight; // בד"כ 0.12m
-				const nextRun = next.run || treadDepth;
-				const overlap = Math.min(overlapTarget, run * 0.9, nextRun * 0.9);
-				xCursor += overlap;
-				outer.push({ x: xCursor, y: ySupport });
-				outer.push({ x: xCursor, y: ySupportN });
-				carryOverlap = overlap;
+				// "פלטה אנכית" אמיתית: יוצרים מלבן (כיס) בעומק 12 ס"מ כחלק מאותה צורה:
+				// (s, y0) -> (s+ov, y0) -> (s+ov, y1) -> (s, y1)
+				const overlap = Math.min(OVERLAP_X, run * 0.9);
+				outer.push({ x: s + overlap, y: ySupport });
+				outer.push({ x: s + overlap, y: ySupportN });
+				outer.push({ x: s, y: ySupportN });
 			}
 			continue;
 		}
 
 		// אין עליה – המשך אופקי רגיל
-		outer.push({ x: xCursor, y: ySupport });
+		outer.push({ x: s, y: ySupport });
 	}
 
 	const outerClean = dedupe(outer);

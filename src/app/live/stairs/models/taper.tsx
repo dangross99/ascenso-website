@@ -93,6 +93,28 @@ export function buildTaperBoxTreads(params: {
 	let stepIdx = 0;
 	let landingIdx = 0;
 
+	const quadGeo = (p0: [number, number, number], p1: [number, number, number], p2: [number, number, number], p3: [number, number, number], uvFor: (p: [number, number, number]) => [number, number]) => {
+		const geo = new BufferGeometry();
+		const pos = new Float32Array([
+			p0[0], p0[1], p0[2],
+			p1[0], p1[1], p1[2],
+			p2[0], p2[1], p2[2],
+			p3[0], p3[1], p3[2],
+		]);
+		const uv0 = uvFor(p0), uv1 = uvFor(p1), uv2 = uvFor(p2), uv3 = uvFor(p3);
+		const uvs = new Float32Array([
+			uv0[0], uv0[1],
+			uv1[0], uv1[1],
+			uv2[0], uv2[1],
+			uv3[0], uv3[1],
+		]);
+		geo.setAttribute('position', new Float32BufferAttribute(pos, 3));
+		geo.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
+		geo.setIndex([0, 1, 2, 0, 2, 3]);
+		geo.computeVertexNormals();
+		return geo;
+	};
+
 	return (
 		<>
 			{treads.map((t, idx) => {
@@ -114,34 +136,106 @@ export function buildTaperBoxTreads(params: {
 					innerIsRight,
 				});
 
-				const bodyGeo = buildWidthTaperBodyGeo({
-					run,
-					width: treadWidth,
-					thickOuter: thickStart,
-					thickInner: thin,
-					innerSignLocal,
+				const { forwardSign, rotateFrontBack, rotateSides } = computeLocalFrame({
+					yaw,
+					isLanding: t.isLanding,
+					flight: t.flight,
+					axis,
+					innerIsRight,
 				});
 
-				const topMat = (() => {
-					if (useSolidMat) return <meshBasicMaterial color={solidTopColor} side={2} />;
+				const matTop = (() => {
+					if (useSolidMat) return (<meshBasicMaterial color={solidTopColor} side={2} />);
 					const ft = buildFaceTextures(run, treadWidth, rotTop);
-					return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />;
+					return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
 				})();
-				const sideMat = (
-					<meshBasicMaterial
-						color={solidSideColor}
-						side={2}
-						polygonOffset
-						polygonOffsetFactor={1}
-						polygonOffsetUnits={1}
-					/>
+				const matBottom = (() => {
+					if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
+					const ft = buildFaceTextures(run, treadWidth, rotTop);
+					return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
+				})();
+				const matFrontBack = (flipU: boolean = false) => {
+					if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
+					const ft = buildFaceTextures(treadWidth, thickStart, rotateFrontBack, flipU);
+					return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
+				};
+				const matSides = (flipU: boolean = false) => {
+					if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
+					const ft = buildFaceTextures(run, thickStart, rotateSides, flipU);
+					return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
+				};
+
+				// Geometry points (local)
+				const dx = run / 2;
+				const dz = treadWidth / 2;
+				const zInner = innerSignLocal * dz;
+				const zOuter = -innerSignLocal * dz;
+				const yTop = thickStart / 2;
+				const yBotOuter = yTop - thickStart;
+				const yBotInner = yTop - thin;
+
+				// Bottom (sloped across width)
+				const geoBottom = quadGeo(
+					[-dx, yBotOuter, zOuter],
+					[ dx, yBotOuter, zOuter],
+					[ dx, yBotInner, zInner],
+					[-dx, yBotInner, zInner],
+					(p) => [(p[0] + dx) / run, (p[2] + dz) / (2 * dz)],
+				);
+
+				// Front/back trapezoids (use Z for U, Y for V)
+				const geoFront = quadGeo(
+					[ dx, yTop, zOuter],
+					[ dx, yTop, zInner],
+					[ dx, yBotInner, zInner],
+					[ dx, yBotOuter, zOuter],
+					(p) => [(p[2] + dz) / (2 * dz), (p[1] - yBotOuter) / thickStart],
+				);
+				const geoBack = quadGeo(
+					[-dx, yTop, zInner],
+					[-dx, yTop, zOuter],
+					[-dx, yBotOuter, zOuter],
+					[-dx, yBotInner, zInner],
+					(p) => [(p[2] + dz) / (2 * dz), (p[1] - yBotOuter) / thickStart],
+				);
+
+				// Outer/inner sides (rectangles)
+				const geoOuter = quadGeo(
+					[-dx, yTop, zOuter],
+					[ dx, yTop, zOuter],
+					[ dx, yBotOuter, zOuter],
+					[-dx, yBotOuter, zOuter],
+					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
+				);
+				const geoInner = quadGeo(
+					[-dx, yTop, zInner],
+					[ dx, yTop, zInner],
+					[ dx, yBotInner, zInner],
+					[-dx, yBotInner, zInner],
+					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>
-						{/* גוף/רום: קופסה אחידה לכל מדרך, עובי משתנה לאורך המדרגות */}
-						<mesh geometry={bodyGeo} receiveShadow castShadow={materialKind !== 'metal'}>
-							{sideMat}
+						{/* Bottom */}
+						<mesh geometry={geoBottom} receiveShadow castShadow={materialKind !== 'metal'}>
+							{matBottom}
+						</mesh>
+
+						{/* Front / Back */}
+						<mesh geometry={geoFront} receiveShadow castShadow={materialKind !== 'metal'}>
+							{matFrontBack(forwardSign < 0)}
+						</mesh>
+						<mesh geometry={geoBack} receiveShadow castShadow={materialKind !== 'metal'}>
+							{matFrontBack(forwardSign > 0)}
+						</mesh>
+
+						{/* Outer / Inner sides */}
+						<mesh geometry={geoOuter} receiveShadow castShadow={materialKind !== 'metal'}>
+							{matSides(forwardSign < 0)}
+						</mesh>
+						<mesh geometry={geoInner} receiveShadow castShadow={materialKind !== 'metal'}>
+							{matSides(forwardSign > 0)}
 						</mesh>
 
 						{/* Top face עם UV רציף */}
@@ -151,7 +245,7 @@ export function buildTaperBoxTreads(params: {
 							receiveShadow={materialKind !== 'metal'}
 						>
 							<boxGeometry args={[run, 0.004, treadWidth]} />
-							{topMat}
+							{matTop}
 						</mesh>
 					</group>
 				);

@@ -47,15 +47,34 @@ function buildSawtoothPlateShape(params: {
 
 	if (outer.length < 2) return null;
 
-	// קו תחתון: Offset אנכי של כל הזיגזג העליון (עובי אנכי קבוע לכל האורך)
-	const bottom: P2[] = outer.map(p => ({ x: p.x, y: p.y - stringerHeight }));
+	// Parallel Offset (Ribbon): היסט אורתוגונלי כך שהרוחב יהיה קבוע בכל מקטע
+	// אופקי: יורדים ב‑Y
+	// אנכי: זזים ב‑X
+	const thick = stringerHeight;
+	const isH = (a: P2, b: P2) => Math.abs(a.y - b.y) < 1e-9;
+	const isV = (a: P2, b: P2) => Math.abs(a.x - b.x) < 1e-9;
+	const inner: P2[] = [];
+	{
+		const a = outer[0], b = outer[1];
+		inner.push(isH(a, b) ? { x: a.x, y: a.y - thick } : { x: a.x - thick, y: a.y });
+	}
+	for (let i = 1; i < outer.length - 1; i++) {
+		const pPrev = outer[i - 1], p = outer[i], pNext = outer[i + 1];
+		const prevH = isH(pPrev, p), prevV = isV(pPrev, p);
+		const nextH = isH(p, pNext), nextV = isV(p, pNext);
+		if ((prevH && nextV) || (prevV && nextH)) inner.push({ x: p.x - thick, y: p.y - thick });
+		else if (prevH) inner.push({ x: p.x, y: p.y - thick });
+		else inner.push({ x: p.x - thick, y: p.y });
+	}
+	{
+		const a = outer[outer.length - 2], b = outer[outer.length - 1];
+		inner.push(isH(a, b) ? { x: b.x, y: b.y - thick } : { x: b.x - thick, y: b.y });
+	}
 
 	const shape = new Shape();
 	shape.moveTo(outer[0].x, outer[0].y);
 	for (let i = 1; i < outer.length; i++) shape.lineTo(outer[i].x, outer[i].y);
-	// סגירה בתחתית: ירידה לקו התחתון בקצה, ואז חזרה לאורך הזיגזג התחתון
-	shape.lineTo(bottom[bottom.length - 1].x, bottom[bottom.length - 1].y);
-	for (let i = bottom.length - 2; i >= 0; i--) shape.lineTo(bottom[i].x, bottom[i].y);
+	for (let i = inner.length - 1; i >= 0; i--) shape.lineTo(inner[i].x, inner[i].y);
 	shape.closePath();
 
 	return { shape, y0 };
@@ -217,60 +236,6 @@ export function buildSawtoothFlights(params: {
 				landingRailingSides,
 				hitech: false,
 			})}
-			{/* Risers – סגירה אנכית מלאה בין מדרגות (מבנה אטום) */}
-			{(() => {
-				const out: React.ReactNode[] = [];
-				for (let i = 0; i < treads.length - 1; i++) {
-					const cur = treads[i];
-					const next = treads[i + 1];
-
-					// סגירה הרמטית: מהרום של המדרך התחתון (Top face) ועד תחתית המדרך העליון (Bottom face)
-					const yLowerTop = cur.position[1] + treadThickness / 2;
-					const yUpperBot = next.position[1] - treadThickness / 2;
-					const h = yUpperBot - yLowerTop;
-					if (!(h > 1e-5)) continue;
-
-					const run = cur.run || treadDepth;
-
-					// forward (XZ) עבור זוג נקודות – עובד גם במעברים בין גרמים
-					let fx = 1, fz = 0;
-					{
-						const dx = next.position[0] - cur.position[0];
-						const dz = next.position[2] - cur.position[2];
-						const hm = Math.hypot(dx, dz);
-						if (hm > 1e-6) {
-							fx = dx / hm;
-							fz = dz / hm;
-						} else {
-							const yaw0 = (cur.rotation[1] as number) || 0;
-							fx = Math.cos(yaw0);
-							fz = Math.sin(yaw0);
-						}
-					}
-					const yaw = Math.atan2(fz, fx);
-
-					const frontX = cur.position[0] + fx * (run / 2 + 0.0008);
-					const frontZ = cur.position[2] + fz * (run / 2 + 0.0008);
-					const yMid = (yLowerTop + yUpperBot) / 2;
-
-					// plane normal צריך להצביע קדימה (forward); planeGeometry normal הוא +Z
-					const rotY = yaw - Math.PI / 2;
-					const rotFrontBack = (Math.abs(Math.cos(yaw)) > 0.5); // לשמירת סיבוב UV דומה ל‑rect
-
-					out.push(
-						<mesh
-							key={`sawtooth-riser-${i}`}
-							position={[frontX, yMid, frontZ]}
-							rotation={[0, rotY, 0]}
-							receiveShadow
-						>
-							<planeGeometry args={[innerTreadWidth, h, 8, 2]} />
-							{faceMat(innerTreadWidth, h, rotFrontBack, false)}
-						</mesh>
-					);
-				}
-				return <group>{out}</group>;
-			})()}
 			{/* הקורות (Stringers) – שתי רצועות זיגזג מפלדה משני צדי המדרגה */}
 			{stringers}
 		</group>

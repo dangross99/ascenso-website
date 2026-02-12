@@ -492,9 +492,9 @@ const Header: React.FC = () => {
           <span className="flex items-center gap-2">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>
-            </svg>
+              </svg>
             <span>אחריות יצרן</span>
-          </span>
+            </span>
           <span className="hidden sm:inline text-white/50">|</span>
           <span className="flex items-center gap-2">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -1159,21 +1159,21 @@ const Header: React.FC = () => {
         <div className="w-full relative grid grid-cols-3 items-center px-0 md:px-8 pt-8 pb-7 md:py-3">
           {/* left - phone and links */}
           <div className="hidden md:flex items-center space-x-4 md:space-x-6 text-gray-700 text-sm min-w-0 justify-start md:col-start-1 md:justify-self-start">
-            <a
+              <a
               href={`https://api.whatsapp.com/send?phone=972539994995&text=${whatsappMessage}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center hover:underline space-x-1 cursor-pointer"
+                className="flex items-center hover:underline space-x-1 cursor-pointer"
               title="פנייה ב‑WhatsApp"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="#25D366">
                 <path d="M20.52 3.48A11.86 11.86 0 0012.07 0C5.7 0 .57 5.13.57 11.5c0 2.03.54 4 .1 5.38L0 24l7.3-1.9a12.02 12.02 0 004.77.97h.01c6.37 0 11.5-5.13 11.5-11.5 0-3.07-1.2-5.96-3.06-8.09zM12.08 21.5h-.01a9.96 9.96 0 01-5.08-1.4l-.36-.21-4.34 1.13 1.16-4.22-.23-.43a9.97 9.97 0 01-1.45-5.14C1.77 6.24 6.01 2 11.06 2c2.67 0 5.17 1.04 7.06 2.93a9.94 9.94 0 012.93 7.06c0 5.05-4.24 9.51-9.97 9.51zm5.75-7.2c-.32-.16-1.9-.94-2.19-1.05-.29-.11-.5-.16-.72.16-.21.32-.83 1.05-1.02 1.27-.19.21-.37.24-.7.08-.32-.16-1.35-.5-2.57-1.6-.95-.85-1.59-1.9-1.78-2.22-.19-.32-.02-.49.14-.65.15-.15.32-.37.48-.56.16-.19.21-.32.32-.53.11-.21.05-.4-.03-.56-.08-.16-.72-1.74-.99-2.39-.26-.63-.53-.54-.72-.55h-.62c-.21 0-.55.08-.84.4-.29.32-1.1 1.08-1.1 2.63 0 1.55 1.13 3.05 1.29 3.27.16.21 2.22 3.38 5.38 4.73.75.32 1.34.51 1.79.65.75.24 1.44.21 1.98.13.6-.09 1.9-.78 2.17-1.53.27-.75.27-1.39.19-1.53-.08-.13-.29-.21-.61-.37z"/>
-              </svg>
+                </svg>
               <span className="hidden sm:inline">WhatsApp</span>
-            </a>
-            <a
+              </a>
+              <a
               href="tel:+972539994995"
-              className="flex items-center hover:underline space-x-1 cursor-pointer"
+                className="flex items-center hover:underline space-x-1 cursor-pointer"
               title="התקשר עכשיו"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -1209,18 +1209,18 @@ const Header: React.FC = () => {
                   <path d="M20.52 3.48A11.86 11.86 0 0012.07 0C5.7 0 .57 5.13.57 11.5c0 2.03.54 4 .1 5.38L0 24l7.3-1.9a12.02 12.02 0 004.77.97h.01c6.37 0 11.5-5.13 11.5-11.5 0-3.07-1.2-5.96-3.06-8.09zM12.08 21.5h-.01a9.96 9.96 0 01-5.08-1.4l-.36-.21-4.34 1.13 1.16-4.22-.23-.43a9.97 9.97 0 01-1.45-5.14C1.77 6.24 6.01 2 11.06 2c2.67 0 5.17 1.04 7.06 2.93a9.94 9.94 0 012.93 7.06c0 5.05-4.24 9.51-9.97 9.51zm5.75-7.2c-.32-.16-1.9-.94-2.19-1.05-.29-.11-.5-.16-.72.16-.21.32-.83 1.05-1.02 1.27-.19.21-.37.24-.7.08-.32-.16-1.35-.5-2.57-1.6-.95-.85-1.59-1.9-1.78-2.22-.19-.32-.02-.49.14-.65.15-.15.32-.37.48-.56.16-.19.21-.32.32-.53.11-.21.05-.4-.03-.56-.08-.16-.72-1.74-.99-2.39-.26-.63-.53-.54-.72-.55h-.62c-.21 0-.55.08-.84.4-.29.32-1.1 1.08-1.1 2.63 0 1.55 1.13 3.05 1.29 3.27.16.21 2.22 3.38 5.38 4.73.75.32 1.34.51 1.79.65.75.24 1.44.21 1.98.13.6-.09 1.9-.78 2.17-1.53.27-.75.27-1.39.19-1.53-.08-.13-.29-.21-.61-.37z"/>
                 </svg>
               </a>
-              <a
+            <a
                 href="tel:+972539994995"
                 aria-label="התקשר עכשיו"
                 title="התקשר עכשיו"
                 className="cursor-pointer text-[#1a1a2e] transition-transform duration-150 active:scale-90 active:opacity-80 select-none touch-manipulation"
                 onClick={() => vibrate(30)}
-              >
+            >
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.8 19.8 0 0 1 3.11 5.18 2 2 0 0 1 5.1 3h3a2 2 0 0 1 2 1.72c.12.89.32 1.76.6 2.59a2 2 0 0 1-.45 2.11L9.1 10.9a16 16 0 0 0 7 7l1.48-1.15a2 2 0 0 1 2.11-.45c.83.28 1.7.48 2.59.6A2 2 0 0 1 22 16.92z"/>
-                </svg>
-              </a>
-            </div>
+              </svg>
+            </a>
+          </div>
             {/* Search field */}
             <div className="relative w-64 hidden md:block group">
               <input
@@ -1416,19 +1416,19 @@ const Header: React.FC = () => {
               <h3 className="text-sm font-medium text-[#1a1a2e] mb-2">הדמיות שמורות</h3>
               {savedSims.length === 0 ? (
                 <div className="text-sm text-gray-500">אין הדמיות שמורות</div>
-              ) : (
+            ) : (
                 <ul className="space-y-2">
                   {savedSims.map(s => (
                     <li key={s.id} className="flex items-center justify-between gap-2">
                       <div>
                         <div className="text-sm font-medium text-[#1a1a2e]">{s.name}</div>
                         <div className="text-xs text-gray-500">{new Date(s.createdAt).toLocaleString('he-IL')}</div>
-                      </div>
+                        </div>
                       <div className="flex items-center gap-2">
                         <a href={`/live?sim=${encodeURIComponent(s.id)}`} className="px-3 py-1 text-xs border hover:bg-gray-100 cursor-pointer">
                           פתח
                         </a>
-                        <button
+                          <button
                           className="px-2 py-1 text-xs text-red-600 hover:bg-red-50 border cursor-pointer"
                           onClick={() => {
                             try {
@@ -1439,15 +1439,15 @@ const Header: React.FC = () => {
                               window.dispatchEvent(new StorageEvent('storage', { key: 'ascenso:sims' } as any));
                             } catch {}
                           }}
-                        >
+                          >
                           מחק
-                        </button>
-                      </div>
+                          </button>
+                        </div>
                     </li>
                   ))}
                 </ul>
-              )}
-            </div>
+                      )}
+                  </div>
           </div>
         </>
       )}

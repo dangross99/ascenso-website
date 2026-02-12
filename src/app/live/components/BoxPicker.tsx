@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 
-type BoxId = 'thick' | 'thin' | 'rounded' | 'taper' | 'chamfer' | 'wedge' | 'ridge';
+type BoxId = 'thick' | 'thin' | 'rounded' | 'taper' | 'wedge' | 'ridge';
 
 export function BoxPicker(props: {
 	box: BoxId;
@@ -12,7 +12,6 @@ export function BoxPicker(props: {
 		{ id: 'thin', label: 'תיבה דקה‑דופן' },
 		{ id: 'rounded', label: 'תיבה מעוגלת' },
 		{ id: 'taper', label: 'תיבה מצטמצמת' },
-		{ id: 'chamfer', label: 'תיבה עם פאזה' },
 		{ id: 'wedge', label: 'דגם אלכסוני' },
 		{ id: 'ridge', label: 'דגם רכס מרכזי' },
 	];
@@ -26,8 +25,6 @@ export function BoxPicker(props: {
 			? 'דגם מעוגל'
 			: id === 'taper'
 			? 'דגם מצטמצם'
-			: id === 'chamfer'
-			? 'דגם עם פאזה'
 			: id === 'wedge'
 			? 'דגם אלכסוני'
 			: id === 'ridge'
@@ -43,8 +40,6 @@ export function BoxPicker(props: {
 			? 'מעוגל'
 			: id === 'taper'
 			? 'מצטמצם'
-			: id === 'chamfer'
-			? 'פאזה'
 			: id === 'wedge'
 			? 'אלכסוני'
 			: id === 'ridge'
@@ -81,11 +76,6 @@ export function BoxPicker(props: {
 								<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
 									<polygon points="6,34 46,30 46,20 6,18" fill={box === opt.id ? '#F2E9E3' : 'none'} />
 									<polygon points="6,34 46,30 46,20 6,18" fill="none" stroke="currentColor" strokeWidth="2" />
-								</svg>
-							) : opt.id === 'chamfer' ? (
-								<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
-									<polygon points="6,34 46,34 42,18 10,18" fill={box === opt.id ? '#F2E9E3' : 'none'} />
-									<polygon points="6,34 46,34 42,18 10,18" fill="none" stroke="currentColor" strokeWidth="2" />
 								</svg>
 							) : opt.id === 'wedge' ? (
 								<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">

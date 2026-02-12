@@ -5,7 +5,6 @@ import { useLoader } from '@react-three/fiber';
 import { useTexture, Text } from '@react-three/drei';
 import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, LinearMipmapLinearFilter, BufferGeometry, Float32BufferAttribute, Cache, NoToneMapping, Vector3 } from 'three';
 import type { PathSegment } from '../shared/path';
-import { buildAccordionFlightsOpenPlates } from './models/accordion';
 import { buildRectTreads } from './models/rect';
 import { buildWedgeTreads } from './models/wedge';
 import { buildRidgeTreads } from './models/ridge';
@@ -68,7 +67,7 @@ function Staircase3D({
 	uvInset?: number;
 	railingUvInset?: number;
 	treadThicknessOverride?: number;
-	boxModel?: 'rect' | 'wedge' | 'ridge' | 'accordion';
+	boxModel?: 'rect' | 'wedge' | 'ridge';
 	wedgeFrontFraction?: number;
 	wedgeFrontThicknessM?: number;
 	ridgeFrontCenterThicknessM?: number;
@@ -89,7 +88,7 @@ function Staircase3D({
 	cableSpanMode?: 'floor' | 'tread';
 	stepCableSpanModes?: Array<'floor' | 'tread'>;
 	landingCableSpanModes?: Array<'floor' | 'tread'>;
-	// דגם "הייטק" – לוחות צד דקים כמסד תמיכה
+	// דגם "הייטק" מוסתר כרגע
 	hitech?: boolean;
 	hitechPlateThickness?: number;
 	hitechPlateHeight?: number;
@@ -561,17 +560,6 @@ function Staircase3D({
 	return (
 		<group position={[-1.5, 0, 0]}>
 			{(() => { 
-				if (boxModel === 'accordion') {
-					return buildAccordionFlightsOpenPlates({
-						treads: treads as any,
-						treadWidth,
-						treadDepth,
-						treadThickness,
-						useSolidMat,
-						solidSideColor,
-						buildFaceTextures,
-					});
-				}
 				if (boxModel === 'wedge') {
 					return buildWedgeTreads({
 						treads: treads as any,
@@ -587,7 +575,7 @@ function Staircase3D({
 						stepRailingSides,
 						landingRailingSides,
 						debugLabels: false,
-						hitech,
+						hitech: false,
 					});
 				}
 				if (boxModel === 'ridge') {
@@ -602,7 +590,7 @@ function Staircase3D({
 						stepRailingSides,
 						landingRailingSides,
 						debugLabels: false,
-						hitech,
+						hitech: false,
 					});
 				}
 				return buildRectTreads({
@@ -616,14 +604,14 @@ function Staircase3D({
 					treadWidth,
 					stepRailingSides,
 					landingRailingSides,
-					hitech,
+					hitech: false,
 				});
 						})()}
 
 
-			{/* Hitech plates */}
+			{/* Hitech plates (מוסתר) */}
 			<HitechPlates
-				hitech={hitech}
+				hitech={false}
 				treads={treads as any}
 				treadWidth={treadWidth}
 				treadDepth={treadDepth}

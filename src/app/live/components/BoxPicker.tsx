@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 
-type BoxId = 'thick' | 'thin' | 'wedge' | 'ridge' | 'hitech' | 'accordion';
+type BoxId = 'thick' | 'thin' | 'wedge' | 'ridge';
 
 export function BoxPicker(props: {
 	box: BoxId;
@@ -12,8 +12,6 @@ export function BoxPicker(props: {
 		{ id: 'thin', label: 'תיבה דקה‑דופן' },
 		{ id: 'wedge', label: 'דגם אלכסוני' },
 		{ id: 'ridge', label: 'דגם רכס מרכזי' },
-		{ id: 'hitech', label: 'דגם הייטק' },
-		{ id: 'accordion', label: 'דגם אקורדיון' },
 	];
 
 	const a11y = (id: BoxId) =>
@@ -25,9 +23,7 @@ export function BoxPicker(props: {
 			? 'דגם אלכסוני'
 			: id === 'ridge'
 			? 'דגם רכס מרכזי'
-			: id === 'accordion'
-			? 'דגם אקורדיון'
-			: 'דגם הייטק';
+			: 'דגם תיבה';
 
 	const short = (id: BoxId) =>
 		id === 'thick'
@@ -38,9 +34,7 @@ export function BoxPicker(props: {
 			? 'אלכסוני'
 			: id === 'ridge'
 			? 'רכס'
-			: id === 'accordion'
-			? 'אקורדיון'
-			: 'הייטק';
+			: 'תיבה';
 
 	return (
 		<div className="p-2 pt-1">
@@ -73,13 +67,6 @@ export function BoxPicker(props: {
 									<rect x="1" y="16" width="50" height="20" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
 									<rect x="1" y="16" width="50" height="20" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
 									<path d="M2 26 L26 18 L50 26" stroke="currentColor" strokeWidth="2" fill="none" />
-								</svg>
-							) : opt.id === 'accordion' ? (
-								<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
-									<rect x="1" y="14" width="50" height="24" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
-									<path d="M8 20 L20 20 L20 30 L32 30 L32 22 L44 22" stroke="currentColor" strokeWidth="2" fill="none" />
-									<path d="M8 32 L20 32 L20 22 L32 22 L32 30 L44 30" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.6" />
-									<rect x="1" y="14" width="50" height="24" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
 								</svg>
 							) : (
 								<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">

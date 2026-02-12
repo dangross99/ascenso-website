@@ -786,9 +786,10 @@ export function HitechPlates(props: {
 								uz = railTop[1][2] - railTop[0][2];
 								const m = Math.hypot(ux, uy, uz) || 1; ux /= m; uy /= m; uz /= m;
 							}
-							let wx = (firstP1 && firstP6) ? (firstP1[0] - firstP6[0]) : (railTop[0][0] - railBot[0][0]);
-							let wy = (firstP1 && firstP6) ? (firstP1[1] - firstP6[1]) : (railTop[0][1] - railBot[0][1]);
-							let wz = (firstP1 && firstP6) ? (firstP1[2] - firstP6[2]) : (railTop[0][2] - railBot[0][2]);
+							// רוחב בין המסילות – חייב להיגזר מהריילים עצמם (Bot נגזר מ-Top) כדי למנוע שינוי מישור/נורמל לא יציב
+							let wx = (railTop[0][0] - railBot[0][0]);
+							let wy = (railTop[0][1] - railBot[0][1]);
+							let wz = (railTop[0][2] - railBot[0][2]);
 							let nmX = uy * wz - uz * wy;
 							let nmY = uz * wx - ux * wz;
 							let nmZ = ux * wy - uy * wx;

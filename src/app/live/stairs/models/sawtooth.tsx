@@ -24,9 +24,10 @@ function buildSawtoothPlateShape(params: {
 	};
 
 	const outer: P2[] = [];
-	let s = 0;
-	// חפיפה אופקית קבועה בין אופקי לאנכי (כדי שהקטע האנכי לא ייראה "דק")
-	const OVERLAP_X = 0.12; // 12cm
+	// xCursor מתקדם תמיד קדימה (ללא backtracking) כדי למנוע Self‑Intersection של ה‑Shape
+	let xCursor = 0;
+	// overlap שנצרך כבר בתחילת המדרך הנוכחי (כי המדרך הקודם "נכנס" לתוכו)
+	let carryOverlap = 0;
 
 	// ב‑Sawtooth: הקו העליון של הזיגזג צריך להיות Flush עם פני המדרך העליונים
 	// כך שהמדרך "נכנס" לתוך עובי הסטרינגר (Boolean-like)
@@ -41,40 +42,77 @@ function buildSawtoothPlateShape(params: {
 		outer[outer.length - 1].y = ySupport;
 
 		const run = cur.run || treadDepth;
-		s += run;
+		const runVisible = Math.max(0, run - carryOverlap);
+		xCursor += runVisible;
+		carryOverlap = 0;
 
 		const next = flightTreads[i + 1];
 		if (next) {
 			const ySupportN = (next.position[1] + treadThickness / 2) - y0;
 			const hasRise = Math.abs(ySupportN - ySupport) > 1e-6;
-			// קצה מדרך נוכחי
-			outer.push({ x: s, y: ySupport });
+			// נקודת קצה המדרך הנוכחי
+			outer.push({ x: xCursor, y: ySupport });
 			if (hasRise) {
-				// "פלטה אנכית" אמיתית: יוצרים מלבן (כיס) בעומק 12 ס"מ כחלק מאותה צורה:
-				// (s, y0) -> (s+ov, y0) -> (s+ov, y1) -> (s, y1)
-				const overlap = Math.min(OVERLAP_X, run * 0.9);
-				outer.push({ x: s + overlap, y: ySupport });
-				outer.push({ x: s + overlap, y: ySupportN });
-				outer.push({ x: s, y: ySupportN });
+				// חפיפה אופקית "אמיתית" של 12 ס"מ – אבל כחלק מפרופיל רציף אחד (בלי לחזור אחורה).
+				// אנחנו מוסיפים עוד overlap קדימה ואז עולים לגובה הבא; את ה‑overlap הזה נחסיר מה‑run של המדרך הבא.
+				const overlapTarget = stringerHeight; // בד"כ 0.12m
+				const nextRun = next.run || treadDepth;
+				const overlap = Math.min(overlapTarget, run * 0.9, nextRun * 0.9);
+				xCursor += overlap;
+				outer.push({ x: xCursor, y: ySupport });
+				outer.push({ x: xCursor, y: ySupportN });
+				carryOverlap = overlap;
 			}
 			continue;
 		}
 
 		// אין עליה – המשך אופקי רגיל
-		outer.push({ x: s, y: ySupport });
+		outer.push({ x: xCursor, y: ySupport });
 	}
 
 	const outerClean = dedupe(outer);
 	if (outerClean.length < 2) return null;
 
-	// Offset פשוט (לפי דרישה): שכפול מלא של הזיגזג העליון בהיסט אנכי קבוע.
-	// זה מבטיח שהקו התחתון מקביל בדיוק לקו העליון (ללא פינות "חכמות" שעלולות להתעוות).
-	const bottom = outerClean.map(p => ({ x: p.x, y: p.y - stringerHeight }));
+	// Offset "אמיתי" לרצועה ברוחב קבוע (120mm) גם בקטעים אנכיים:
+	// במקום רק Y-offset, אנחנו מחשבים inner כ־offset קבוע עם אינטרסקשן של קווים מוזזים בכל פינה.
+	// מאחר והפרופיל כאן אורתוגונלי (אופקי/אנכי), זה יציב ולא אמור לעוות את הצורה.
+	const h = stringerHeight;
+	const sgn = (v: number) => (v > 0 ? 1 : v < 0 ? -1 : 0);
+	const dirOf = (a: P2, b: P2) => ({ dx: sgn(b.x - a.x), dy: sgn(b.y - a.y) });
+	const shiftedLineThrough = (p: P2, d: { dx: number; dy: number }) => {
+		if (Math.abs(d.dx) > 0) {
+			// Horizontal segment → offset is downward (in the profile)
+			return { hasX: false as const, x: 0, hasY: true as const, y: p.y - h };
+		}
+		// Vertical segment → offset is sideways (left for up, right for down)
+		const xShift = d.dy >= 0 ? -h : +h;
+		return { hasX: true as const, x: p.x + xShift, hasY: false as const, y: 0 };
+	};
+	const intersectShifted = (p: P2, a: { dx: number; dy: number }, b: { dx: number; dy: number }) => {
+		const la = shiftedLineThrough(p, a);
+		const lb = shiftedLineThrough(p, b);
+		if (la.hasX && lb.hasY) return { x: la.x, y: lb.y };
+		if (lb.hasX && la.hasY) return { x: lb.x, y: la.y };
+		if (la.hasY && lb.hasY) return { x: p.x, y: la.y };
+		if (la.hasX && lb.hasX) return { x: la.x, y: p.y };
+		// fallback (shouldn't happen)
+		return { x: p.x, y: p.y - h };
+	};
+	const innerRaw: P2[] = [];
+	for (let i = 0; i < outerClean.length; i++) {
+		const p = outerClean[i];
+		const pPrev = outerClean[i - 1] ?? outerClean[i];
+		const pNext = outerClean[i + 1] ?? outerClean[i];
+		const din = (i > 0 ? dirOf(pPrev, p) : dirOf(p, pNext));
+		const dout = (i < outerClean.length - 1 ? dirOf(p, pNext) : dirOf(pPrev, p));
+		innerRaw.push(intersectShifted(p, din, dout));
+	}
+	const innerClean = dedupe(innerRaw);
 
 	const shape = new Shape();
 	shape.moveTo(outerClean[0].x, outerClean[0].y);
 	for (let i = 1; i < outerClean.length; i++) shape.lineTo(outerClean[i].x, outerClean[i].y);
-	for (let i = bottom.length - 1; i >= 0; i--) shape.lineTo(bottom[i].x, bottom[i].y);
+	for (let i = innerClean.length - 1; i >= 0; i--) shape.lineTo(innerClean[i].x, innerClean[i].y);
 	shape.closePath();
 
 	return { shape, y0 };

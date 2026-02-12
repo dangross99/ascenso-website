@@ -9,7 +9,6 @@ import { buildAccordionFlightsOpenPlates } from './models/accordion';
 import { buildRectTreads } from './models/rect';
 import { buildWedgeTreads } from './models/wedge';
 import { buildRidgeTreads } from './models/ridge';
-import { buildSawtoothFlights } from './models/sawtooth';
 import { HitechPlates } from './models/hitech';
 
 // ׳”׳₪׳¢׳׳× ׳§׳׳© ׳©׳ three ׳¢׳‘׳•׳¨ ׳˜׳¢׳™׳ ׳•׳× ׳—׳׳§׳•׳×
@@ -69,7 +68,7 @@ function Staircase3D({
 	uvInset?: number;
 	railingUvInset?: number;
 	treadThicknessOverride?: number;
-	boxModel?: 'rect' | 'wedge' | 'ridge' | 'accordion' | 'sawtooth';
+	boxModel?: 'rect' | 'wedge' | 'ridge' | 'accordion';
 	wedgeFrontFraction?: number;
 	wedgeFrontThicknessM?: number;
 	ridgeFrontCenterThicknessM?: number;
@@ -571,24 +570,6 @@ function Staircase3D({
 						useSolidMat,
 						solidSideColor,
 						buildFaceTextures,
-					});
-				}
-				if (boxModel === 'sawtooth') {
-					return buildSawtoothFlights({
-						treads: treads as any,
-						treadWidth,
-						treadDepth,
-						treadThickness,
-						// פרופורציות קבועות לדגם זיג‑זג
-						stringerPlateThickness: 0.012, // 12mm
-						stringerHeight: 0.12, // 12cm
-						materialKind,
-						useSolidMat,
-						solidTopColor,
-						solidSideColor,
-						buildFaceTextures,
-						stepRailingSides,
-						landingRailingSides,
 					});
 				}
 				if (boxModel === 'wedge') {

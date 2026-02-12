@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 
-type BoxId = 'thick' | 'thin' | 'wedge' | 'ridge' | 'hitech' | 'accordion' | 'sawtooth';
+type BoxId = 'thick' | 'thin' | 'wedge' | 'ridge' | 'hitech' | 'accordion';
 
 export function BoxPicker(props: {
 	box: BoxId;
@@ -14,7 +14,6 @@ export function BoxPicker(props: {
 		{ id: 'ridge', label: 'דגם רכס מרכזי' },
 		{ id: 'hitech', label: 'דגם הייטק' },
 		{ id: 'accordion', label: 'דגם אקורדיון' },
-		{ id: 'sawtooth', label: 'דגם זיג‑זג' },
 	];
 
 	const a11y = (id: BoxId) =>
@@ -28,8 +27,6 @@ export function BoxPicker(props: {
 			? 'דגם רכס מרכזי'
 			: id === 'accordion'
 			? 'דגם אקורדיון'
-			: id === 'sawtooth'
-			? 'דגם זיג‑זג'
 			: 'דגם הייטק';
 
 	const short = (id: BoxId) =>
@@ -43,8 +40,6 @@ export function BoxPicker(props: {
 			? 'רכס'
 			: id === 'accordion'
 			? 'אקורדיון'
-			: id === 'sawtooth'
-			? 'זיג‑זג'
 			: 'הייטק';
 
 	return (
@@ -84,12 +79,6 @@ export function BoxPicker(props: {
 									<rect x="1" y="14" width="50" height="24" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
 									<path d="M8 20 L20 20 L20 30 L32 30 L32 22 L44 22" stroke="currentColor" strokeWidth="2" fill="none" />
 									<path d="M8 32 L20 32 L20 22 L32 22 L32 30 L44 30" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.6" />
-									<rect x="1" y="14" width="50" height="24" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
-								</svg>
-							) : opt.id === 'sawtooth' ? (
-								<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
-									<rect x="1" y="14" width="50" height="24" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
-									<path d="M10 34 L18 18 L26 34 L34 18 L42 34" stroke="currentColor" strokeWidth="2" fill="none" />
 									<rect x="1" y="14" width="50" height="24" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
 								</svg>
 							) : (

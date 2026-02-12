@@ -434,8 +434,9 @@ function LivePageInner() {
 	const qShape = (search.get('shape') as 'straight' | 'L' | 'U') || 'straight';
 	const qSteps = parseInt(search.get('steps') || '', 10);
 	const qTex = search.get('tex') || '';
-	let qBox = (search.get('box') as 'thick' | 'thin' | 'wedge' | 'ridge' | 'hitech' | 'accordion' | 'sawtooth' | 'plates') || 'thick';
-	if (qBox === 'plates') { qBox = 'thick'; }
+	let qBox = (search.get('box') as 'thick' | 'thin' | 'wedge' | 'ridge' | 'hitech' | 'accordion' | 'plates' | 'sawtooth') || 'thick';
+	// תאימות לאחור: אם יש קישור ישן ל-plates / sawtooth – ניפול ל-"thick"
+	if (qBox === 'plates' || qBox === 'sawtooth') { qBox = 'thick'; }
 	const qPath = search.get('path') || '';
 
 	const [records, setRecords] = React.useState<MaterialRecord[]>([]);
@@ -446,7 +447,7 @@ function LivePageInner() {
 	// מזהים ייעודיים לכל קטגוריה כדי לשמר בחירה בין מעברים
 	const [activeMetalTexId, setActiveMetalTexId] = React.useState<string | null>(activeMaterial === 'metal' ? (qTex || null) : null);
 	const [activeStoneTexId, setActiveStoneTexId] = React.useState<string | null>(activeMaterial === 'stone' ? (qTex || null) : null);
-	const [box, setBox] = React.useState<'thick' | 'thin' | 'wedge' | 'ridge' | 'hitech' | 'accordion' | 'sawtooth'>(qBox as any);
+	const [box, setBox] = React.useState<'thick' | 'thin' | 'wedge' | 'ridge' | 'hitech' | 'accordion'>(qBox as any);
 	const [railing, setRailing] = React.useState<'none' | 'glass' | 'metal' | 'cable'>('none');
 	const [glassTone, setGlassTone] = React.useState<'extra' | 'smoked' | 'bronze'>('extra');
 	const [stepRailing, setStepRailing] = React.useState<boolean[]>([]);
@@ -1571,8 +1572,8 @@ function LivePageInner() {
 									cableSpanMode={cableSpanMode}
 									stepCableSpanModes={stepCableSpanMode}
 									landingCableSpanModes={landingCableSpanMode}
-									treadThicknessOverride={box === 'thick' ? 0.11 : (box === 'wedge' ? 0.11 : (box === 'ridge' ? 0.02 : (box === 'sawtooth' ? 0.07 : 0.07)))}
-									boxModel={box === 'accordion' ? 'accordion' : (box === 'sawtooth' ? 'sawtooth' : (box === 'wedge' ? 'wedge' : (box === 'ridge' ? 'ridge' : 'rect')))}
+									treadThicknessOverride={box === 'thick' ? 0.11 : (box === 'wedge' ? 0.11 : (box === 'ridge' ? 0.02 : 0.07))}
+									boxModel={box === 'accordion' ? 'accordion' : (box === 'wedge' ? 'wedge' : (box === 'ridge' ? 'ridge' : 'rect'))}
 									wedgeFrontThicknessM={0.035}
 									ridgeFrontCenterThicknessM={0.09}
 									ridgeFrontEdgeThicknessM={0.03}

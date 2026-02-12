@@ -1237,6 +1237,10 @@ function LivePageInner() {
 			? 'תיבה עבה‑דופן'
 			: box === 'thin'
 			? 'תיבה דקה‑דופן'
+			: box === 'rounded'
+			? 'תיבה מעוגלת'
+			: box === 'taper'
+			? 'תיבה מצטמצמת'
 			: box === 'wedge'
 			? 'דגם אלכסוני'
 			: box === 'ridge'
@@ -1329,6 +1333,10 @@ function LivePageInner() {
 			? 'תיבה עבה‑דופן'
 			: box === 'thin'
 			? 'תיבה דקה‑דופן'
+			: box === 'rounded'
+			? 'תיבה מעוגלת'
+			: box === 'taper'
+			? 'תיבה מצטמצמת'
 			: box === 'wedge'
 			? 'דגם אלכסוני'
 			: box === 'ridge'
@@ -1944,7 +1952,19 @@ function LivePageInner() {
 											aria-expanded={mobileOpenCat === 'box'}
 										>
 											<span className="font-medium">דגם תיבה</span>
-											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : box === 'wedge' ? 'דגם אלכסוני' : 'דגם רכס מרכזי'}</span>
+											<span className="text-sm text-gray-600">
+												{box === 'thick'
+													? 'תיבה עבה‑דופן'
+													: box === 'thin'
+													? 'תיבה דקה‑דופן'
+													: box === 'rounded'
+													? 'תיבה מעוגלת'
+													: box === 'taper'
+													? 'תיבה מצטמצמת'
+													: box === 'wedge'
+													? 'דגם אלכסוני'
+													: 'דגם רכס מרכזי'}
+											</span>
 										</button>
 										)}
 										{mobileOpenCat === 'box' && (
@@ -2383,7 +2403,19 @@ function LivePageInner() {
 								aria-expanded={desktopOpenCat === 'box'}
 							>
 								<span className="text-sm font-medium">דגם תיבה</span>
-											<span className="text-sm text-gray-600">{box === 'thick' ? 'תיבה עבה‑דופן' : box === 'thin' ? 'תיבה דקה‑דופן' : box === 'wedge' ? 'דגם אלכסוני' : 'דגם רכס מרכזי'}</span>
+								<span className="text-sm text-gray-600">
+									{box === 'thick'
+										? 'תיבה עבה‑דופן'
+										: box === 'thin'
+										? 'תיבה דקה‑דופן'
+										: box === 'rounded'
+										? 'תיבה מעוגלת'
+										: box === 'taper'
+										? 'תיבה מצטמצמת'
+										: box === 'wedge'
+										? 'דגם אלכסוני'
+										: 'דגם רכס מרכזי'}
+								</span>
 							</button>
 							{desktopOpenCat === 'box' && (
 								<div className="p-3 bg-white border border-t-0 rounded-b-md">

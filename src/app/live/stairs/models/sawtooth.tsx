@@ -209,10 +209,13 @@ export function buildSawtoothFlights(params: {
 			);
 		};
 
-		// ימין: הטווח הוא [rightOuterZ - plateTh, rightOuterZ]
-		stringers.push(makeStringer(rightOuterZ - plateTh, `sawtooth-stringer-r-${flightIdx}`));
-		// שמאל: הטווח הוא [leftOuterZ, leftOuterZ + plateTh]
-		stringers.push(makeStringer(leftOuterZ, `sawtooth-stringer-l-${flightIdx}`));
+		// יישור לפאה של המדרגה: הפאה של הסטרינגר Flush עם קצה המדרגה,
+		// והעובי (plateTh) יוצא החוצה (לא נכנס לתוך המדרגה).
+		// (ה־Extrude המקומי הוא Z=[0..plateTh])
+		// ימין: הטווח הוא [rightOuterZ, rightOuterZ + plateTh]
+		stringers.push(makeStringer(rightOuterZ, `sawtooth-stringer-r-${flightIdx}`));
+		// שמאל: הטווח הוא [leftOuterZ - plateTh, leftOuterZ]
+		stringers.push(makeStringer(leftOuterZ - plateTh, `sawtooth-stringer-l-${flightIdx}`));
 	}
 
 	return (

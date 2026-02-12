@@ -1,7 +1,7 @@
 import React from 'react';
 import { ExtrudeGeometry, Shape } from 'three';
 
-import type { Side, Tread, BuildFaceTextures } from './boxShared';
+import type { Tread, BuildFaceTextures } from './boxShared';
 import { axisFromYaw } from './boxShared';
 
 function roundedRectShape(w: number, h: number, r: number) {
@@ -32,8 +32,6 @@ export function buildRoundedTreads(params: {
 	treadThickness: number;
 	treadWidth: number;
 	cornerRadiusM?: number;
-	stepRailingSides?: Array<Side>;
-	landingRailingSides?: Array<Side>;
 }) {
 	const {
 		treads,
@@ -57,17 +55,16 @@ export function buildRoundedTreads(params: {
 				const yaw = t.rotation[1] as number;
 				const axisTop = axisFromYaw(yaw);
 				const rotTop = (axisTop === 'z');
-				// רדיוס מוחל על כל ההיקף (כל 4 פינות). הפונקציה עצמה כבר מקלמפת אוטומטית לחצי הממד הקצר כדי לא לשבור גיאומטריה.
-				const shape = roundedRectShape(run, treadWidth, r);
+				// IMPORTANT: רדיוס "ברום" = עיגול בחתך Run×Thickness (הפרופיל הצדדי),
+				// ואז Extrude לרוחב (treadWidth). כך ה-Top נשאר מלבן, אבל הרום/חזית מקבל פינות מעוגלות.
+				const shape = roundedRectShape(run, treadThickness, r);
 				const geo = new ExtrudeGeometry(shape, {
-					depth: treadThickness,
+					depth: treadWidth,
 					steps: 1,
 					bevelEnabled: false,
 				});
-				// Extrude יוצא על ציר Z; מסובבים כדי שעובי יהיה על ציר Y
-				geo.rotateX(-Math.PI / 2);
-				// מרכז עובי סביב Y=0 כמו בשאר המודלים
-				geo.translate(0, -treadThickness / 2, 0);
+				// Extrude יוצא על ציר Z: נמרכז לרוחב סביב Z=0 כמו boxGeometry
+				geo.translate(0, 0, -treadWidth / 2);
 				geo.computeVertexNormals();
 
 				const mat = (() => {

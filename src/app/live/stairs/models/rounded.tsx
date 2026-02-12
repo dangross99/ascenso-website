@@ -67,16 +67,30 @@ export function buildRoundedTreads(params: {
 				geo.translate(0, 0, -treadWidth / 2);
 				geo.computeVertexNormals();
 
-				const mat = (() => {
-					if (useSolidMat) return <meshBasicMaterial color={solidTopColor || solidSideColor} side={2} />;
+				// טקסטורה "יושבת" נכון על ה-Top ע"י משטח עליון נפרד עם UV רציף (כמו בדגם rect),
+				// ולא ע"י שימוש ב-UV של ExtrudeGeometry (שמייצר חלוקה לפאות/סגמנטים).
+				const topMat = (() => {
+					if (useSolidMat) return <meshBasicMaterial color={solidTopColor} side={2} />;
 					const ft = buildFaceTextures(run, treadWidth, rotTop);
 					return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />;
 				})();
+				const sideMat = <meshBasicMaterial color={solidSideColor} side={2} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />;
 
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>
+						{/* גוף/רום (פינות מעוגלות בחתך) */}
 						<mesh geometry={geo} receiveShadow castShadow={materialKind !== 'metal'}>
-							{mat}
+							{sideMat}
+						</mesh>
+
+						{/* Top face עם UV רציף כדי שהטקסטורה לא תיראה "בחלקים" */}
+						<mesh
+							position={[0, treadThickness / 2 + 0.002, 0]}
+							castShadow={materialKind !== 'metal'}
+							receiveShadow={materialKind !== 'metal'}
+						>
+							<boxGeometry args={[run, 0.004, treadWidth]} />
+							{topMat}
 						</mesh>
 					</group>
 				);

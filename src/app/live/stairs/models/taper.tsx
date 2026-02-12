@@ -138,8 +138,10 @@ export function buildTaperBoxTreads(params: {
 				let rightLocal: 1 | -1 = (axis === 'x' ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
 				// פודסטים לאורך Z – היפוך כדי לשמור "פנימה" עקבי בין גרמים (כמו ב-boxShared)
 				if (t.isLanding && axis === 'z') rightLocal = (rightLocal === 1 ? -1 : 1) as 1 | -1;
-				// "חוץ" אצלנו = צד ה-sidePref (כמו לוגיקת המעקה). עובי 12cm תמיד בחוץ.
-				const outerSignLocal = (sidePref === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
+				// שים לב: stepRailingSide/landingRailingSide אצלנו מוגדרים כברירת מחדל כ*צד פנימי* (ראו LivePageInner.tsx).
+				// לכן sidePref מייצג "פנים". החוץ הוא הצד ההפוך.
+				const innerSignLocal = (sidePref === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
+				const outerSignLocal = (-innerSignLocal as 1 | -1);
 				const rotateFrontBack = (axis === 'x');
 				const rotateSides = (axis === 'z');
 
@@ -168,7 +170,7 @@ export function buildTaperBoxTreads(params: {
 				const dx = run / 2;
 				const dz = treadWidth / 2;
 				const zOuter = outerSignLocal * dz;
-				const zInner = -zOuter;
+				const zInner = innerSignLocal * dz;
 				const yTop = thickStart / 2;
 				const yBotOuter = yTop - thickStart;
 				const yBotInner = yTop - thin;

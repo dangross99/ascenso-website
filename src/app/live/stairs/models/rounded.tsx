@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExtrudeGeometry, Shape } from 'three';
+import { ExtrudeGeometry, Float32BufferAttribute, Shape } from 'three';
 
 import type { Tread, BuildFaceTextures } from './boxShared';
 import { axisFromYaw } from './boxShared';
@@ -20,6 +20,48 @@ function roundedRectShape(w: number, h: number, r: number) {
 	s.absarc(-hw + rr, -hh + rr, rr, Math.PI, (3 * Math.PI) / 2, false);
 	s.closePath();
 	return s;
+}
+
+function applyProjectedUVsForBoxLike(geo: ExtrudeGeometry, dims: { run: number; thickness: number; width: number }, rotateTop90: boolean) {
+	const pos = geo.getAttribute('position');
+	const norm = geo.getAttribute('normal');
+	if (!pos || !norm) return;
+	const uvs = new Float32Array(pos.count * 2);
+	const run = dims.run || 1;
+	const th = dims.thickness || 1;
+	const w = dims.width || 1;
+
+	for (let i = 0; i < pos.count; i++) {
+		const x = (pos as any).getX(i) as number;
+		const y = (pos as any).getY(i) as number;
+		const z = (pos as any).getZ(i) as number;
+		const nx = Math.abs((norm as any).getX(i) as number);
+		const ny = Math.abs((norm as any).getY(i) as number);
+		const nz = Math.abs((norm as any).getZ(i) as number);
+
+		let u = 0, v = 0;
+		if (ny >= nx && ny >= nz) {
+			// Top/Bottom: XZ projection
+			u = (x / run) + 0.5;
+			v = (z / w) + 0.5;
+			if (rotateTop90) {
+				const tmp = u; u = v; v = tmp;
+			}
+		} else if (nz >= nx && nz >= ny) {
+			// Side faces (±Z): XY projection
+			u = (x / run) + 0.5;
+			v = (y / th) + 0.5;
+		} else {
+			// Front/Back faces (±X): ZY projection
+			u = (z / w) + 0.5;
+			v = (y / th) + 0.5;
+		}
+
+		uvs[i * 2 + 0] = u;
+		uvs[i * 2 + 1] = v;
+	}
+
+	geo.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
 }
 
 export function buildRoundedTreads(params: {
@@ -66,31 +108,20 @@ export function buildRoundedTreads(params: {
 				// Extrude יוצא על ציר Z: נמרכז לרוחב סביב Z=0 כמו boxGeometry
 				geo.translate(0, 0, -treadWidth / 2);
 				geo.computeVertexNormals();
+				applyProjectedUVsForBoxLike(geo, { run, thickness: treadThickness, width: treadWidth }, rotTop);
 
-				// טקסטורה "יושבת" נכון על ה-Top ע"י משטח עליון נפרד עם UV רציף (כמו בדגם rect),
-				// ולא ע"י שימוש ב-UV של ExtrudeGeometry (שמייצר חלוקה לפאות/סגמנטים).
-				const topMat = (() => {
-					if (useSolidMat) return <meshBasicMaterial color={solidTopColor} side={2} />;
+				// חומר יחיד לכל המדרגה (Top+Sides) כדי שהטקסטורה תיראה "מחוברת" לגוף ולרום.
+				// ה-UV נקבעים ידנית ע"י projection (למעלה) כדי למנוע מראה "מפורק לחלקים".
+				const matAll = (() => {
+					if (useSolidMat) return <meshBasicMaterial color={solidTopColor || solidSideColor} side={2} />;
 					const ft = buildFaceTextures(run, treadWidth, rotTop);
 					return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />;
 				})();
-				const sideMat = <meshBasicMaterial color={solidSideColor} side={2} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />;
 
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>
-						{/* גוף/רום (פינות מעוגלות בחתך) */}
 						<mesh geometry={geo} receiveShadow castShadow={materialKind !== 'metal'}>
-							{sideMat}
-						</mesh>
-
-						{/* Top face עם UV רציף כדי שהטקסטורה לא תיראה "בחלקים" */}
-						<mesh
-							position={[0, treadThickness / 2 + 0.002, 0]}
-							castShadow={materialKind !== 'metal'}
-							receiveShadow={materialKind !== 'metal'}
-						>
-							<boxGeometry args={[run, 0.004, treadWidth]} />
-							{topMat}
+							{matAll}
 						</mesh>
 					</group>
 				);

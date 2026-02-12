@@ -611,10 +611,12 @@ export function HitechPlates(props: {
 						{((landingWidth?: number) => {
 							// אסוף נקודות צד נגדי (P1 למעלה, P6 למטה) עבור גרם ראשון
 							const topP1: Array<[number, number, number]> = [];
+							const botP6: Array<[number, number, number]> = [];
 							let firstP1: [number, number, number] | null = null;
-							let firstStepCenter: [number, number, number] | null = null;
+							let firstP6: [number, number, number] | null = null;
 							let firstYaw: number | null = null;
 							let closeP1: [number, number, number] | null = null; // נקודת 1 של הפודסט (עליונה)
+							let closeP6: [number, number, number] | null = null; // נקודת 6 של המדרגה שלפני הפודסט (תחתונה)
 
 							for (let i = 0; i < treads.length; i++) {
 								const t = treads[i];
@@ -632,13 +634,24 @@ export function HitechPlates(props: {
 									const wy = t.position[1] + treadThickness / 2;
 									const wz = t.position[2] + rz;
 									const p1: [number, number, number] = [wx, wy + offsetY, wz];
-									if (!t.isLanding && !firstP1) { firstP1 = p1; firstStepCenter = t.position; }
+									if (!t.isLanding && !firstP1) firstP1 = p1;
 									if (!t.isLanding) topP1.push(p1);
 								}
-								// זיהוי פודסט ראשון (לסגירת A1): אם המדרגה הבאה היא פודסט – שמור את P1 של הפודסט
+								// P6 – תחתונה ימין-אחורה: (+dx, -dz) רק אם אינה פודסט
 								if (!t.isLanding) {
+									const lx = +dx, lz = -dz;
+									const rx = lx * c - lz * s;
+									const rz = lx * s + lz * c;
+									const wx = t.position[0] + rx;
+									const wy = t.position[1] - treadThickness / 2;
+									const wz = t.position[2] + rz;
+									const p6: [number, number, number] = [wx, wy - offsetY, wz];
+									if (!firstP6) { firstP6 = p6; firstYaw = yaw; }
+									botP6.push(p6);
+									// אם הבאה היא פודסט – זו המדרגה שלפני פודסט: שמור 6 תחתון והוסף 1 עליון מפודסט
 									const next = treads[i + 1];
 									if (next && next.flight === 0 && next.isLanding) {
+										closeP6 = p6;
 										const yawL = next.rotation[1] as number;
 										const cL = Math.cos(yawL), sL = Math.sin(yawL);
 										const dxL = next.run / 2, dzL = treadWidth / 2;
@@ -650,7 +663,6 @@ export function HitechPlates(props: {
 										const wz1 = next.position[2] + rz1;
 										closeP1 = [wx1, wy1, wz1];
 									}
-									if (firstYaw === null) firstYaw = yaw;
 								}
 							}
 							// אם לא נמצאה נקודת פודסט קרובה בלולאה – חפש פודסט ראשון בגרם 0 כדי לאפשר הארכה ל‑30 מ״מ
@@ -672,59 +684,41 @@ export function HitechPlates(props: {
 									}
 								}
 							}
-							if (topP1.length === 0) return null;
-
-							// עובי/גובה הפלטה במישור (פודסט) ובשיפוע (לשמירת עובי ניצב)
-							const dyLanding = Math.max(0.001, (treadThickness + 2 * offsetY));
-							let tanSlope = (riser / treadDepth);
-							let cosSlope = 1 / Math.sqrt(1 + tanSlope * tanSlope);
-							if (topP1.length >= 2) {
-								const a0 = topP1[0], a1 = topP1[1];
-								const dx = a1[0] - a0[0], dy = a1[1] - a0[1], dz = a1[2] - a0[2];
-								const horiz = Math.hypot(dx, dz);
-								if (horiz > 1e-9) {
-									tanSlope = Math.abs(dy) / horiz;
-									cosSlope = horiz / Math.hypot(horiz, dy);
-								}
-							}
-							const safeCos = Math.max(0.1, cosSlope);
-							const dySlope = dyLanding / safeCos;
+							if (topP1.length === 0 || botP6.length === 0) return null;
 
 							// אופסט צידי כדי למנוע "שפיץ" בתחילת הפלטה
 							let firstP1Side: [number, number, number] | null = null;
-							if (firstP1) {
-								// צד (XZ) יציב: sBase = normalize(cross(Up, uH))
-								let uxH = 1, uzH = 0;
+							if (firstP1 && firstP6) {
+								// כיוון לאורך המסילה u
+								let ux = 1, uy = 0, uz = 0;
 								if (topP1.length >= 2) {
-									const dx = topP1[1][0] - topP1[0][0];
-									const dz = topP1[1][2] - topP1[0][2];
-									const hm = Math.hypot(dx, dz);
-									if (hm > 1e-9) { uxH = dx / hm; uzH = dz / hm; }
+									ux = topP1[1][0] - topP1[0][0];
+									uy = topP1[1][1] - topP1[0][1];
+									uz = topP1[1][2] - topP1[0][2];
+									const m = Math.hypot(ux, uy, uz) || 1; ux /= m; uy /= m; uz /= m;
 								} else if (firstYaw !== null) {
-									uxH = Math.cos(firstYaw); uzH = Math.sin(firstYaw);
+									ux = Math.cos(firstYaw); uy = 0; uz = Math.sin(firstYaw);
 								}
-								let sx = uzH, sz = -uxH;
-								const sm = Math.hypot(sx, sz) || 1; sx /= sm; sz /= sm;
-								// בחר כיוון "פנימה" לפי וקטור XZ מהקודקוד למרכז המדרגה
-								if (firstStepCenter) {
-									const vx = firstStepCenter[0] - firstP1[0];
-									const vz = firstStepCenter[2] - firstP1[2];
-									const d = sx * vx + sz * vz;
-									if (d < 0) { sx = -sx; sz = -sz; }
-								}
+								// נורמל למישור: n = u × (P1-P6)
+								const wx = firstP1[0] - firstP6[0];
+								const wy = firstP1[1] - firstP6[1];
+								const wz = firstP1[2] - firstP6[2];
+								let nx = uy * wz - uz * wy;
+								let ny = uz * wx - ux * wz;
+								let nz = ux * wy - uy * wx;
+								{ const m = Math.hypot(nx, ny, nz) || 1; nx /= m; ny /= m; nz /= m; }
+								// כיוון צד: s = n × u
+								let sx = ny * uz - nz * uy;
+								let sy = nz * ux - nx * uz;
+								let sz = nx * uy - ny * ux;
+								{ const m = Math.hypot(sx, sy, sz) || 1; sx /= m; sy /= m; sz /= m; }
 								const sideInset = Math.max(0, (typeof hitechPlateInsetFromEdge === 'number' ? hitechPlateInsetFromEdge : 0.03));
 								firstP1Side = [firstP1[0] + sx * sideInset, firstP1[1], firstP1[2] + sz * sideInset];
 							}
 
 							// מסילות עבור חזית
 							const railTop: Array<[number, number, number]> = closeP1 ? [...topP1, closeP1] : [...topP1];
-							const epsY = 1e-6;
-							const yClose = closeP1?.[1];
-							let railBot: Array<[number, number, number]> = railTop.map((t) => {
-								const isFlat = (typeof yClose === 'number') ? (Math.abs(t[1] - yClose) < epsY) : false;
-								const dy = isFlat ? dyLanding : dySlope;
-								return [t[0], t[1] - dy, t[2]];
-							});
+							let railBot: Array<[number, number, number]> = closeP6 ? [...botP6, closeP6] : [...botP6];
 							const segCount = Math.max(railTop.length, railBot.length);
 							if (segCount < 2) return null;
 
@@ -738,11 +732,8 @@ export function HitechPlates(props: {
 								const t2 = pick(railTop, i + 1);
 								const b2 = pick(railBot, i + 1);
 								if (i === 0) {
-									if (firstP1Side) {
-										t1 = firstP1Side;
-										// XZ-lock: תחתון חייב לשבת בדיוק מתחת לעליון בתחילת הפלטה כדי למנוע "בריחה במישור"
-										b1 = [t1[0], t1[1] - dySlope, t1[2]];
-									}
+									if (firstP1Side) t1 = firstP1Side;
+									if (firstP6) b1 = firstP6;
 								}
 								const base = pos.length / 3;
 								pos.push(t1[0], t1[1], t1[2],  b1[0], b1[1], b1[2],  t2[0], t2[1], t2[2],  b2[0], b2[1], b2[2]);
@@ -786,10 +777,9 @@ export function HitechPlates(props: {
 								uz = railTop[1][2] - railTop[0][2];
 								const m = Math.hypot(ux, uy, uz) || 1; ux /= m; uy /= m; uz /= m;
 							}
-							// רוחב בין המסילות – חייב להיגזר מהריילים עצמם (Bot נגזר מ-Top) כדי למנוע שינוי מישור/נורמל לא יציב
-							let wx = (railTop[0][0] - railBot[0][0]);
-							let wy = (railTop[0][1] - railBot[0][1]);
-							let wz = (railTop[0][2] - railBot[0][2]);
+							let wx = (firstP1 && firstP6) ? (firstP1[0] - firstP6[0]) : (railTop[0][0] - railBot[0][0]);
+							let wy = (firstP1 && firstP6) ? (firstP1[1] - firstP6[1]) : (railTop[0][1] - railBot[0][1]);
+							let wz = (firstP1 && firstP6) ? (firstP1[2] - firstP6[2]) : (railTop[0][2] - railBot[0][2]);
 							let nmX = uy * wz - uz * wy;
 							let nmY = uz * wx - ux * wz;
 							let nmZ = ux * wy - uy * wx;
@@ -829,9 +819,7 @@ export function HitechPlates(props: {
 							const railTopForSide =
 								(firstP1Side && railTop.length >= 1) ? [firstP1Side, ...railTop.slice(1)] : railTop;
 							const railBotForSide =
-								(firstP1Side && railBot.length >= 1)
-									? [([firstP1Side[0], railBot[0][1], firstP1Side[2]] as [number, number, number]), ...railBot.slice(1)]
-									: railBot;
+								(firstP6 && railBot.length >= 1) ? [firstP6, ...railBot.slice(1)] : railBot;
 							addSide(railTopForSide);
 							addSide(railBotForSide);
 
@@ -908,10 +896,6 @@ export function HitechPlates(props: {
 									}
 								}
 							}
-							// XZ-lock בקצה הפודסט: כדי למנוע "בריחה" קלה במישור, ננעל את תחתון ההארכה ישר מתחת לעליון (עובי פודסט קבוע).
-							if (extTopAt30) {
-								extBot30 = [extTopAt30[0], extTopAt30[1] - dyLanding, extTopAt30[2]];
-							}
 
 							// מדידת סטיית רוחב בקצה הפודסט (דיבאג לקונסול)
 							if (extTopAt30 && extBot30) {
@@ -939,9 +923,9 @@ export function HitechPlates(props: {
 
 							// פאנל התחלה אנכי לרצפה (כמו בפלטה A): בין P1 למטה לרצפה ובין P6 למטה לרצפה, כולל עובי
 							let startPanelMesh = null;
-							if (firstP1) {
+							if (firstP1 && firstP6) {
 								const pTop = firstP1Side || firstP1;
-								const pBot: [number, number, number] = [pTop[0], pTop[1] - dySlope, pTop[2]];
+								const pBot = firstP6;
 								const v0: [number, number, number] = [pTop[0], pTop[1], pTop[2]];
 								const v1: [number, number, number] = [pBot[0], pBot[1], pBot[2]];
 								const v2: [number, number, number] = [pTop[0], floorBounds.y, pTop[2]];

@@ -2,7 +2,7 @@ import React from 'react';
 import { BufferGeometry, Float32BufferAttribute } from 'three';
 
 import type { Side, Tread, BuildFaceTextures } from './boxShared';
-import { axisFromYaw, computeLocalFrame, getInnerIsRight } from './boxShared';
+import { axisFromYaw } from './boxShared';
 
 function buildWidthTaperBodyGeo(params: {
 	run: number;
@@ -126,23 +126,22 @@ export function buildTaperBoxTreads(params: {
 				// ההצטמצמות היא לאורך כל הגרם (לא בתוך כל מדרך): לכל מדרך עובי אחיד,
 				// כאן זה טייפר לרוחב: כל המדרגות זהות, 12cm בחוץ → 5cm בפנים.
 				const curStepIdx = !t.isLanding ? (stepIdx++) : -1;
-				const innerIsRight = getInnerIsRight({ t, curStepIdx, stepRailingSides, landingRailingSides, landingIdx });
+				const sidePref: Side = t.isLanding
+					? (landingRailingSides?.[landingIdx] ?? 'right')
+					: (stepRailingSides?.[curStepIdx] ?? 'right');
 				if (t.isLanding) landingIdx++;
-				const { innerSignLocal } = computeLocalFrame({
-					yaw,
-					isLanding: t.isLanding,
-					flight: t.flight,
-					axis,
-					innerIsRight,
-				});
 
-				const { forwardSign, rotateFrontBack, rotateSides } = computeLocalFrame({
-					yaw,
-					isLanding: t.isLanding,
-					flight: t.flight,
-					axis,
-					innerIsRight,
-				});
+				// שחזור זהה ל-boxShared: forwardSign מתהפך בגרם הראשון; rightLocal נקבע לפי yaw+axis.
+				const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
+				const forwardSignBase = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
+				const forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase) as 1 | -1;
+				let rightLocal: 1 | -1 = (axis === 'x' ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
+				// פודסטים לאורך Z – היפוך כדי לשמור "פנימה" עקבי בין גרמים (כמו ב-boxShared)
+				if (t.isLanding && axis === 'z') rightLocal = (rightLocal === 1 ? -1 : 1) as 1 | -1;
+				// "חוץ" אצלנו = צד ה-sidePref (כמו לוגיקת המעקה). עובי 12cm תמיד בחוץ.
+				const outerSignLocal = (sidePref === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
+				const rotateFrontBack = (axis === 'x');
+				const rotateSides = (axis === 'z');
 
 				const matTop = (() => {
 					if (useSolidMat) return (<meshBasicMaterial color={solidTopColor} side={2} />);
@@ -168,8 +167,8 @@ export function buildTaperBoxTreads(params: {
 				// Geometry points (local)
 				const dx = run / 2;
 				const dz = treadWidth / 2;
-				const zInner = innerSignLocal * dz;
-				const zOuter = -innerSignLocal * dz;
+				const zOuter = outerSignLocal * dz;
+				const zInner = -zOuter;
 				const yTop = thickStart / 2;
 				const yBotOuter = yTop - thickStart;
 				const yBotInner = yTop - thin;

@@ -220,43 +220,54 @@ export function buildSawtoothFlights(params: {
 			{/* Risers – סגירה אנכית מלאה בין מדרגות (מבנה אטום) */}
 			{(() => {
 				const out: React.ReactNode[] = [];
-				for (const flightIdx of flights) {
-					const ftAll = treads.filter(tt => tt.flight === flightIdx);
-					for (let i = 0; i < ftAll.length - 1; i++) {
-						const cur = ftAll[i];
-						const next = ftAll[i + 1];
-						const yTop = cur.position[1] + treadThickness / 2;
-						const yTopN = next.position[1] + treadThickness / 2;
-						const rise = yTopN - yTop;
-						if (Math.abs(rise) < 1e-6) continue;
+				for (let i = 0; i < treads.length - 1; i++) {
+					const cur = treads[i];
+					const next = treads[i + 1];
 
-						const yaw = (cur.rotation[1] as number) || 0;
-						const axis: 'x' | 'z' = (Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z');
-						const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
-						const forwardSignBase = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
-						const forwardSign = (cur.flight === 0 ? -forwardSignBase : forwardSignBase) as 1 | -1;
+					// סגירה הרמטית: מהרום של המדרך התחתון (Top face) ועד תחתית המדרך העליון (Bottom face)
+					const yLowerTop = cur.position[1] + treadThickness / 2;
+					const yUpperBot = next.position[1] - treadThickness / 2;
+					const h = yUpperBot - yLowerTop;
+					if (!(h > 1e-5)) continue;
 
-						const run = cur.run || treadDepth;
-						const xFront = forwardSign * (run / 2) + forwardSign * 0.0008;
-						const yMid = (yTop + yTopN) / 2;
-						const h = Math.abs(rise);
-						const rotY = forwardSign > 0 ? Math.PI / 2 : -Math.PI / 2;
-						const rotFrontBack = (axis === 'x');
+					const run = cur.run || treadDepth;
 
-						out.push(
-							<mesh
-								key={`sawtooth-riser-${flightIdx}-${i}`}
-								position={[cur.position[0], cur.position[1], cur.position[2]]}
-								rotation={[0, yaw, 0]}
-								receiveShadow
-							>
-								<mesh position={[xFront, yMid - cur.position[1], 0]} rotation={[0, rotY, 0]}>
-									<planeGeometry args={[innerTreadWidth, h, 8, 2]} />
-									{faceMat(innerTreadWidth, h, rotFrontBack, forwardSign < 0)}
-								</mesh>
-							</mesh>
-						);
+					// forward (XZ) עבור זוג נקודות – עובד גם במעברים בין גרמים
+					let fx = 1, fz = 0;
+					{
+						const dx = next.position[0] - cur.position[0];
+						const dz = next.position[2] - cur.position[2];
+						const hm = Math.hypot(dx, dz);
+						if (hm > 1e-6) {
+							fx = dx / hm;
+							fz = dz / hm;
+						} else {
+							const yaw0 = (cur.rotation[1] as number) || 0;
+							fx = Math.cos(yaw0);
+							fz = Math.sin(yaw0);
+						}
 					}
+					const yaw = Math.atan2(fz, fx);
+
+					const frontX = cur.position[0] + fx * (run / 2 + 0.0008);
+					const frontZ = cur.position[2] + fz * (run / 2 + 0.0008);
+					const yMid = (yLowerTop + yUpperBot) / 2;
+
+					// plane normal צריך להצביע קדימה (forward); planeGeometry normal הוא +Z
+					const rotY = yaw - Math.PI / 2;
+					const rotFrontBack = (Math.abs(Math.cos(yaw)) > 0.5); // לשמירת סיבוב UV דומה ל‑rect
+
+					out.push(
+						<mesh
+							key={`sawtooth-riser-${i}`}
+							position={[frontX, yMid, frontZ]}
+							rotation={[0, rotY, 0]}
+							receiveShadow
+						>
+							<planeGeometry args={[innerTreadWidth, h, 8, 2]} />
+							{faceMat(innerTreadWidth, h, rotFrontBack, false)}
+						</mesh>
+					);
 				}
 				return <group>{out}</group>;
 			})()}

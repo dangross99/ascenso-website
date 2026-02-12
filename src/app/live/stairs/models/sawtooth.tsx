@@ -187,9 +187,11 @@ export function buildSawtoothFlights(params: {
 		const geo0 = new ExtrudeGeometry(prof.shape, {
 			depth: plateTh,
 			steps: 1,
-			// NOTE: bevel על Shape קעור (כמו ribbon של sawtooth) גורם לעיתים לחורים/ארטיפקטים ב‑Three.
-			// כדי להגיע למראה נקי כמו ברפרנס – מבטלים bevel כאן.
-			bevelEnabled: false,
+			// Bevel קטן (2mm) לעידון קצה המתכת כמו במציאות
+			bevelEnabled: true,
+			bevelThickness: 0.002,
+			bevelSize: 0.002,
+			bevelSegments: 1,
 		});
 		// Extrude "מהחוץ פנימה": שמור על טווח Z=[0..plateTh] ונמקם כך שהפנים החיצוניות יהיו Flush עם קצה המדרך
 		geo0.computeVertexNormals();

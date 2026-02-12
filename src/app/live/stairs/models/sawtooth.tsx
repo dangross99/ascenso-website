@@ -58,35 +58,14 @@ function buildSawtoothPlateShape(params: {
 	const outerClean = dedupe(outer);
 	if (outerClean.length < 2) return null;
 
-	// Parallel Offset (Ribbon): היסט אורתוגונלי כך שהרוחב יהיה קבוע בכל מקטע
-	// אופקי: יורדים ב‑Y
-	// אנכי: זזים ב‑X
-	const thick = stringerHeight;
-	const isH = (a: P2, b: P2) => Math.abs(a.y - b.y) < EPS;
-	const isV = (a: P2, b: P2) => Math.abs(a.x - b.x) < EPS;
-	const inner: P2[] = [];
-	{
-		const a = outerClean[0], b = outerClean[1];
-		inner.push(isH(a, b) ? { x: a.x, y: a.y - thick } : { x: a.x - thick, y: a.y });
-	}
-	for (let i = 1; i < outerClean.length - 1; i++) {
-		const pPrev = outerClean[i - 1], p = outerClean[i], pNext = outerClean[i + 1];
-		const prevH = isH(pPrev, p), prevV = isV(pPrev, p);
-		const nextH = isH(p, pNext), nextV = isV(p, pNext);
-		if ((prevH && nextV) || (prevV && nextH)) inner.push({ x: p.x - thick, y: p.y - thick });
-		else if (prevH) inner.push({ x: p.x, y: p.y - thick });
-		else inner.push({ x: p.x - thick, y: p.y });
-	}
-	{
-		const a = outerClean[outerClean.length - 2], b = outerClean[outerClean.length - 1];
-		inner.push(isH(a, b) ? { x: b.x, y: b.y - thick } : { x: b.x - thick, y: b.y });
-	}
-	const innerClean = dedupe(inner);
+	// Offset פשוט (לפי דרישה): שכפול מלא של הזיגזג העליון בהיסט אנכי קבוע.
+	// זה מבטיח שהקו התחתון מקביל בדיוק לקו העליון (ללא פינות "חכמות" שעלולות להתעוות).
+	const bottom = outerClean.map(p => ({ x: p.x, y: p.y - stringerHeight }));
 
 	const shape = new Shape();
 	shape.moveTo(outerClean[0].x, outerClean[0].y);
 	for (let i = 1; i < outerClean.length; i++) shape.lineTo(outerClean[i].x, outerClean[i].y);
-	for (let i = innerClean.length - 1; i >= 0; i--) shape.lineTo(innerClean[i].x, innerClean[i].y);
+	for (let i = bottom.length - 1; i >= 0; i--) shape.lineTo(bottom[i].x, bottom[i].y);
 	shape.closePath();
 
 	return { shape, y0 };

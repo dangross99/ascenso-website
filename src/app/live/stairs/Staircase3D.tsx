@@ -8,6 +8,7 @@ import type { PathSegment } from '../shared/path';
 import { buildRectTreads } from './models/rect';
 import { buildWedgeTreads } from './models/wedge';
 import { buildRidgeTreads } from './models/ridge';
+import { buildRoundedTreads } from './models/rounded';
 import { HitechPlates } from './models/hitech';
 
 // ׳”׳₪׳¢׳׳× ׳§׳׳© ׳©׳ three ׳¢׳‘׳•׳¨ ׳˜׳¢׳™׳ ׳•׳× ׳—׳׳§׳•׳×
@@ -67,7 +68,7 @@ function Staircase3D({
 	uvInset?: number;
 	railingUvInset?: number;
 	treadThicknessOverride?: number;
-	boxModel?: 'rect' | 'wedge' | 'ridge';
+	boxModel?: 'rect' | 'rounded' | 'wedge' | 'ridge';
 	wedgeFrontFraction?: number;
 	wedgeFrontThicknessM?: number;
 	ridgeFrontCenterThicknessM?: number;
@@ -560,6 +561,18 @@ function Staircase3D({
 	return (
 		<group position={[-1.5, 0, 0]}>
 			{(() => { 
+				if (boxModel === 'rounded') {
+					return buildRoundedTreads({
+						treads: treads as any,
+						materialKind,
+						useSolidMat,
+						solidTopColor,
+						solidSideColor,
+						buildFaceTextures,
+						treadThickness,
+						treadWidth,
+					});
+				}
 				if (boxModel === 'wedge') {
 					return buildWedgeTreads({
 						treads: treads as any,

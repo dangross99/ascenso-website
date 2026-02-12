@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 
-type BoxId = 'thick' | 'thin' | 'wedge' | 'ridge';
+type BoxId = 'thick' | 'thin' | 'rounded' | 'wedge' | 'ridge';
 
 export function BoxPicker(props: {
 	box: BoxId;
@@ -10,6 +10,7 @@ export function BoxPicker(props: {
 	const options: Array<{ id: BoxId; label: string }> = [
 		{ id: 'thick', label: 'תיבה עבה‑דופן' },
 		{ id: 'thin', label: 'תיבה דקה‑דופן' },
+		{ id: 'rounded', label: 'תיבה מעוגלת' },
 		{ id: 'wedge', label: 'דגם אלכסוני' },
 		{ id: 'ridge', label: 'דגם רכס מרכזי' },
 	];
@@ -19,6 +20,8 @@ export function BoxPicker(props: {
 			? 'דגם עבה'
 			: id === 'thin'
 			? 'דגם דק'
+			: id === 'rounded'
+			? 'דגם מעוגל'
 			: id === 'wedge'
 			? 'דגם אלכסוני'
 			: id === 'ridge'
@@ -30,6 +33,8 @@ export function BoxPicker(props: {
 			? 'עבה'
 			: id === 'thin'
 			? 'דק'
+			: id === 'rounded'
+			? 'מעוגל'
 			: id === 'wedge'
 			? 'אלכסוני'
 			: id === 'ridge'
@@ -56,6 +61,11 @@ export function BoxPicker(props: {
 								<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
 									<rect x="1" y="20" width="50" height="12" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
 									<rect x="1" y="20" width="50" height="12" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
+								</svg>
+							) : opt.id === 'rounded' ? (
+								<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
+									<rect x="4" y="18" width="44" height="16" rx="8" fill={box === opt.id ? '#F2E9E3' : 'none'} />
+									<rect x="4" y="18" width="44" height="16" rx="8" stroke="currentColor" strokeWidth="2" fill="none" />
 								</svg>
 							) : opt.id === 'wedge' ? (
 								<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">

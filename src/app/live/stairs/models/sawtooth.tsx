@@ -58,49 +58,14 @@ function buildSawtoothPlateShape(params: {
 	const outerClean = dedupe(outer);
 	if (outerClean.length < 2) return null;
 
-	// Parallel / Miter Offset: יצירת innerClean במרחק קבוע מה‑outerClean.
-	// כדי לקבל "סרט" בעובי אחיד גם במקטעים האופקיים וגם באנכיים:
-	// - מקטע אופקי: היסט ב‑Y (למטה)
-	// - מקטע אנכי: היסט ב‑X (שמאלה)
-	// - פינות: miter ב‑(x-thick, y-thick)
-	const thick = stringerHeight;
-	const snapHV = (pts: P2[]) => {
-		const out = pts.map(p => ({ ...p }));
-		for (let i = 1; i < out.length; i++) {
-			const a = out[i - 1], b = out[i];
-			const dx = b.x - a.x;
-			const dy = b.y - a.y;
-			if (Math.abs(dx) < EPS) b.x = a.x;
-			if (Math.abs(dy) < EPS) b.y = a.y;
-		}
-		return out;
-	};
-	const outerHV = snapHV(outerClean);
-	const isH = (a: P2, b: P2) => Math.abs(a.y - b.y) < EPS;
-	const isV = (a: P2, b: P2) => Math.abs(a.x - b.x) < EPS;
-	const inner: P2[] = [];
-	{
-		const a = outerHV[0], b = outerHV[1];
-		inner.push(isH(a, b) ? { x: a.x, y: a.y - thick } : { x: a.x - thick, y: a.y });
-	}
-	for (let i = 1; i < outerHV.length - 1; i++) {
-		const pPrev = outerHV[i - 1], p = outerHV[i], pNext = outerHV[i + 1];
-		const prevH = isH(pPrev, p), prevV = isV(pPrev, p);
-		const nextH = isH(p, pNext), nextV = isV(p, pNext);
-		if ((prevH && nextV) || (prevV && nextH)) inner.push({ x: p.x - thick, y: p.y - thick });
-		else if (prevH) inner.push({ x: p.x, y: p.y - thick });
-		else inner.push({ x: p.x - thick, y: p.y });
-	}
-	{
-		const a = outerHV[outerHV.length - 2], b = outerHV[outerHV.length - 1];
-		inner.push(isH(a, b) ? { x: b.x, y: b.y - thick } : { x: b.x - thick, y: b.y });
-	}
-	const innerClean = dedupe(inner);
+	// Offset פשוט (לפי דרישה): שכפול מלא של הזיגזג העליון בהיסט אנכי קבוע.
+	// זה מבטיח שהקו התחתון מקביל בדיוק לקו העליון (ללא פינות "חכמות" שעלולות להתעוות).
+	const bottom = outerClean.map(p => ({ x: p.x, y: p.y - stringerHeight }));
 
 	const shape = new Shape();
-	shape.moveTo(outerHV[0].x, outerHV[0].y);
-	for (let i = 1; i < outerHV.length; i++) shape.lineTo(outerHV[i].x, outerHV[i].y);
-	for (let i = innerClean.length - 1; i >= 0; i--) shape.lineTo(innerClean[i].x, innerClean[i].y);
+	shape.moveTo(outerClean[0].x, outerClean[0].y);
+	for (let i = 1; i < outerClean.length; i++) shape.lineTo(outerClean[i].x, outerClean[i].y);
+	for (let i = bottom.length - 1; i >= 0; i--) shape.lineTo(bottom[i].x, bottom[i].y);
 	shape.closePath();
 
 	return { shape, y0 };
@@ -201,11 +166,9 @@ export function buildSawtoothFlights(params: {
 		const geo0 = new ExtrudeGeometry(prof.shape, {
 			depth: plateTh,
 			steps: 1,
-			// Bevel קטן (2mm) לעידון קצה המתכת כמו במציאות
-			bevelEnabled: true,
-			bevelThickness: 0.002,
-			bevelSize: 0.002,
-			bevelSegments: 1,
+			// Bevel על Shape קעור (ribbon זיגזג) גורם לעיתים לחורים/ארטיפקטים בטסלציה של Three,
+			// ולכן מכובה כאן כדי לקבל סטרינגר "נקי" ולא מעוות.
+			bevelEnabled: false,
 		});
 		// Extrude "מהחוץ פנימה": שמור על טווח Z=[0..plateTh] ונמקם כך שהפנים החיצוניות יהיו Flush עם קצה המדרך
 		geo0.computeVertexNormals();

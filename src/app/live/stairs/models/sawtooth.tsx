@@ -45,9 +45,15 @@ function buildSawtoothPlateShape(params: {
 		if (next) {
 			const ySupportN = (next.position[1] + treadThickness / 2) - y0;
 			const hasRise = Math.abs(ySupportN - ySupport) > 1e-6;
-			// נקודת "שבירה" אנכית: בסוף ה‑run, הוסף נקודה באותו X עם Y של המדרגה הבאה
+			// חפיפה (Overlap) של 12 ס"מ בין הפלטה האופקית לפלטה שאחריה:
+			// ממשיכים עוד overlap ב-X, עולים שם לגובה הבא, ואז חוזרים ל-X של קצה המדרגה.
 			outer.push({ x: s, y: ySupport });
-			if (hasRise) outer.push({ x: s, y: ySupportN });
+			if (hasRise) {
+				const overlap = Math.min(stringerHeight, run * 0.9); // בפועל stringerHeight=0.12 → 12cm
+				outer.push({ x: s + overlap, y: ySupport });
+				outer.push({ x: s + overlap, y: ySupportN });
+				outer.push({ x: s, y: ySupportN });
+			}
 			continue;
 		}
 

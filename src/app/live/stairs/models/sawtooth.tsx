@@ -12,6 +12,16 @@ function buildSawtoothPlateShape(params: {
 }) {
 	const { flightTreads, treadThickness, treadDepth, stringerHeight } = params;
 	type P2 = { x: number; y: number };
+	const EPS = 1e-6;
+	const dedupe = (pts: P2[]) => {
+		const out: P2[] = [];
+		for (const p of pts) {
+			const last = out[out.length - 1];
+			if (last && Math.abs(last.x - p.x) < EPS && Math.abs(last.y - p.y) < EPS) continue;
+			out.push(p);
+		}
+		return out;
+	};
 
 	const outer: P2[] = [];
 	let s = 0;
@@ -45,21 +55,22 @@ function buildSawtoothPlateShape(params: {
 		outer.push({ x: s, y: ySupport });
 	}
 
-	if (outer.length < 2) return null;
+	const outerClean = dedupe(outer);
+	if (outerClean.length < 2) return null;
 
 	// Parallel Offset (Ribbon): היסט אורתוגונלי כך שהרוחב יהיה קבוע בכל מקטע
 	// אופקי: יורדים ב‑Y
 	// אנכי: זזים ב‑X
 	const thick = stringerHeight;
-	const isH = (a: P2, b: P2) => Math.abs(a.y - b.y) < 1e-9;
-	const isV = (a: P2, b: P2) => Math.abs(a.x - b.x) < 1e-9;
+	const isH = (a: P2, b: P2) => Math.abs(a.y - b.y) < EPS;
+	const isV = (a: P2, b: P2) => Math.abs(a.x - b.x) < EPS;
 	const inner: P2[] = [];
 	{
-		const a = outer[0], b = outer[1];
+		const a = outerClean[0], b = outerClean[1];
 		inner.push(isH(a, b) ? { x: a.x, y: a.y - thick } : { x: a.x - thick, y: a.y });
 	}
-	for (let i = 1; i < outer.length - 1; i++) {
-		const pPrev = outer[i - 1], p = outer[i], pNext = outer[i + 1];
+	for (let i = 1; i < outerClean.length - 1; i++) {
+		const pPrev = outerClean[i - 1], p = outerClean[i], pNext = outerClean[i + 1];
 		const prevH = isH(pPrev, p), prevV = isV(pPrev, p);
 		const nextH = isH(p, pNext), nextV = isV(p, pNext);
 		if ((prevH && nextV) || (prevV && nextH)) inner.push({ x: p.x - thick, y: p.y - thick });
@@ -67,14 +78,15 @@ function buildSawtoothPlateShape(params: {
 		else inner.push({ x: p.x - thick, y: p.y });
 	}
 	{
-		const a = outer[outer.length - 2], b = outer[outer.length - 1];
+		const a = outerClean[outerClean.length - 2], b = outerClean[outerClean.length - 1];
 		inner.push(isH(a, b) ? { x: b.x, y: b.y - thick } : { x: b.x - thick, y: b.y });
 	}
+	const innerClean = dedupe(inner);
 
 	const shape = new Shape();
-	shape.moveTo(outer[0].x, outer[0].y);
-	for (let i = 1; i < outer.length; i++) shape.lineTo(outer[i].x, outer[i].y);
-	for (let i = inner.length - 1; i >= 0; i--) shape.lineTo(inner[i].x, inner[i].y);
+	shape.moveTo(outerClean[0].x, outerClean[0].y);
+	for (let i = 1; i < outerClean.length; i++) shape.lineTo(outerClean[i].x, outerClean[i].y);
+	for (let i = innerClean.length - 1; i >= 0; i--) shape.lineTo(innerClean[i].x, innerClean[i].y);
 	shape.closePath();
 
 	return { shape, y0 };
@@ -172,14 +184,12 @@ export function buildSawtoothFlights(params: {
 
 		const { fx, fz, rx, rz, backX, backZ } = computeFlightBasis(ftAll, treadDepth);
 
+		// NOTE: bevel על צורה קעורה (sawtooth ribbon) עלול לייצר חורים/ארטיפקטים ב‑Three.
+		// לכן מבוטל כאן לטובת גאומטריה נקייה.
 		const geo0 = new ExtrudeGeometry(prof.shape, {
 			depth: plateTh,
 			steps: 1,
-			// Bevel קטן (2mm) לעידון קצה המתכת כמו במציאות
-			bevelEnabled: true,
-			bevelThickness: 0.002,
-			bevelSize: 0.002,
-			bevelSegments: 1,
+			bevelEnabled: false,
 		});
 		// Extrude "מהחוץ פנימה": שמור על טווח Z=[0..plateTh] ונמקם כך שהפנים החיצוניות יהיו Flush עם קצה המדרך
 		geo0.computeVertexNormals();

@@ -813,8 +813,13 @@ export function HitechPlates(props: {
 									idx.push(bi + 0, bi + 1, bi + 2,  bi + 0, bi + 2, bi + 3);
 								}
 							};
-							const railTopForSide = firstP1Side ? [firstP1Side, ...railTop] : railTop;
-							const railBotForSide = firstP6 ? [firstP6, ...railBot] : railBot;
+							// חשוב: לא לעשות prepend לנקודת inset בתחילת המסילה (יוצר מקטע אלכסוני קצר – "חצי רוחב"),
+							// כי זה עלול לגרום לפלטה להיראות כאילו היא "בורחת" למישור אחר.
+							// במקום זה מחליפים את נקודה 0 בלבד ושומרים על אותו מספר סגמנטים.
+							const railTopForSide =
+								(firstP1Side && railTop.length >= 1) ? [firstP1Side, ...railTop.slice(1)] : railTop;
+							const railBotForSide =
+								(firstP6 && railBot.length >= 1) ? [firstP6, ...railBot.slice(1)] : railBot;
 							addSide(railTopForSide);
 							addSide(railBotForSide);
 

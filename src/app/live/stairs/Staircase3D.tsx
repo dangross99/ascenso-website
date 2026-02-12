@@ -9,6 +9,7 @@ import { buildRectTreads } from './models/rect';
 import { buildWedgeTreads } from './models/wedge';
 import { buildRidgeTreads } from './models/ridge';
 import { buildRoundedTreads } from './models/rounded';
+import { buildTaperBoxTreads } from './models/taper';
 import { HitechPlates } from './models/hitech';
 
 // ׳”׳₪׳¢׳׳× ׳§׳׳© ׳©׳ three ׳¢׳‘׳•׳¨ ׳˜׳¢׳™׳ ׳•׳× ׳—׳׳§׳•׳×
@@ -68,7 +69,7 @@ function Staircase3D({
 	uvInset?: number;
 	railingUvInset?: number;
 	treadThicknessOverride?: number;
-	boxModel?: 'rect' | 'rounded' | 'wedge' | 'ridge';
+	boxModel?: 'rect' | 'rounded' | 'taper' | 'wedge' | 'ridge';
 	wedgeFrontFraction?: number;
 	wedgeFrontThicknessM?: number;
 	ridgeFrontCenterThicknessM?: number;
@@ -571,6 +572,21 @@ function Staircase3D({
 						buildFaceTextures,
 						treadThickness,
 						treadWidth,
+					});
+				}
+				if (boxModel === 'taper') {
+					return buildTaperBoxTreads({
+						treads: treads as any,
+						materialKind,
+						useSolidMat,
+						solidTopColor,
+						solidSideColor,
+						buildFaceTextures,
+						treadThickness,
+						treadWidth,
+						thickEnd: 0.05, // 5cm בקצה
+						stepRailingSides,
+						landingRailingSides,
 					});
 				}
 				if (boxModel === 'wedge') {

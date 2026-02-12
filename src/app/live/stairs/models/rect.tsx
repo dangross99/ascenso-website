@@ -50,15 +50,22 @@ export function buildRectTreads(params: {
 						{materialKind === 'wood' ? (
 							(() => {
 								const axisTop = axisFromYaw(t.rotation[1] as number);
-								const ft = buildFaceTextures(t.run, treadWidth, axisTop === 'z');
-								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
+								// שמור כיוון טקסטורה עקבי בין גרמים (במיוחד בגרם הראשון שבו הכיוון מתהפך)
+								const yaw = t.rotation[1] as number;
+								const forwardSignBase = axisTop === 'x' ? (Math.cos(yaw) >= 0 ? 1 : -1) : (Math.sin(yaw) >= 0 ? 1 : -1);
+								const forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase) as 1 | -1;
+								const ft = buildFaceTextures(t.run, treadWidth, axisTop === 'z', forwardSign < 0);
+								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} polygonOffset polygonOffsetFactor={-2} polygonOffsetUnits={-2} />);
 							})()
 						) : (
 							(() => {
 								if (useSolidMat) return (<meshBasicMaterial color={solidTopColor} side={2} />);
 								const axisTop = axisFromYaw(t.rotation[1] as number);
-								const ft = buildFaceTextures(t.run, treadWidth, axisTop === 'z');
-								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
+								const yaw = t.rotation[1] as number;
+								const forwardSignBase = axisTop === 'x' ? (Math.cos(yaw) >= 0 ? 1 : -1) : (Math.sin(yaw) >= 0 ? 1 : -1);
+								const forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase) as 1 | -1;
+								const ft = buildFaceTextures(t.run, treadWidth, axisTop === 'z', forwardSign < 0);
+								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} polygonOffset polygonOffsetFactor={-2} polygonOffsetUnits={-2} />);
 							})()
 						)}
 					</mesh>

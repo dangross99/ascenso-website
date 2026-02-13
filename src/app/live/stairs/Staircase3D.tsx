@@ -719,6 +719,9 @@ function Staircase3D({
 							return (
 								<group>
 						{treads.map((t, i) => {
+								const yaw = t.rotation[1] as number;
+							const axis = (Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z') as 'x' | 'z';
+
 							const isLanding = !!t.isLanding;
 							// @ts-ignore
 							const hasTurn = !!(isLanding && t.turn);
@@ -729,11 +732,17 @@ function Staircase3D({
 								: (stepRailingSides?.[sIdx] ?? 'right');
 							if (isLanding) lIdx++; else sIdx++;
 
-							// קירות: "ימין" ביחס לכיוון ההליכה תמיד יושב על ‎-Z המקומי,
-							// כי הגאומטריה של כל מדרגה/פודסט בנויה לאורך +X מקומי ואז הקבוצה מסתובבת עם yaw.
-							// זה מבטל היפוכים בין פודסט ראשון/שני ומונע טעויות בפניות.
-							const rightLocal: 1 | -1 = -1;
-							const innerSignLocal = (innerSide === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
+							// rightLocalSignFor + חריג פודסטים לאורך Z (כמו boxShared)
+							const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
+							let rightLocal: 1 | -1 =
+								(axis === 'x' ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
+							if (t.isLanding && axis === 'z') rightLocal = (rightLocal === 1 ? -1 : 1) as 1 | -1;
+
+							// אצלנו innerSide הוא "פנים" (LivePageInner), לכן החוץ הוא ההיפוך.
+							const innerSignLocalRaw = (innerSide === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
+							// בגרם הראשון (flight=0) כיוון המסע הפוך אצלנו, וזה הופך גם את צד "ימין מקומי" ביחס לפנים/חוץ.
+							// כדי שהקיר יישב תמיד על החוץ של הגרם – נהפוך רק בגרם הראשון.
+							const innerSignLocal = (t.flight === 0 ? (-innerSignLocalRaw as 1 | -1) : innerSignLocalRaw);
 							const outerSignLocal = (-innerSignLocal as 1 | -1);
 
 							// מרכז הקיר ב-local coords של המדרך (הקבוצה כבר מסובבת לפי t.rotation)

@@ -1,11 +1,11 @@
-﻿'use client';
+'use client';
 
 import Image from 'next/image';
 import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useProgress } from '@react-three/drei';
-import { ACESFilmicToneMapping, SRGBColorSpace } from 'three';
+import { ACESFilmicToneMapping, PCFSoftShadowMap, SRGBColorSpace } from 'three';
 import { Bloom, EffectComposer, N8AO } from '@react-three/postprocessing';
 import Footer from '@/components/Footer';
 import Staircase3D from './stairs/Staircase3D';
@@ -1555,9 +1555,9 @@ function LivePageInner() {
 						<div className="lg:col-span-2">
 					<div ref={canvasWrapRef} className="w-full aspect-[16/9] lg:aspect-auto lg:h-[60vh] bg-white border overflow-hidden rounded fixed inset-x-0 z-30 lg:relative" style={{ height: mobileCanvasH || undefined, top: (mobileHeaderH + mobileTabsH) || 0 }}>
 						<Canvas
-							shadows={false}
+							shadows={isDesktopViewport ? { type: PCFSoftShadowMap } : false}
 							camera={{ position: [-2.494, 1.897, 3.259], fov: 45 }}
-							dpr={[1, 1.5]}
+							dpr={[1, isDesktopViewport ? 2 : 1.5]}
 							gl={{
 								toneMapping: ACESFilmicToneMapping,
 								toneMappingExposure: 1.05,
@@ -1676,8 +1676,8 @@ function LivePageInner() {
 								{/* Post‑Processing: דסקטופ בלבד */}
 								{isDesktopViewport ? (
 									<EffectComposer multisampling={0}>
-										<N8AO halfRes aoRadius={0.28} intensity={0.9} distanceFalloff={1.0} />
-										<Bloom intensity={0.18} luminanceThreshold={0.85} luminanceSmoothing={0.15} />
+										<N8AO halfRes aoRadius={0.36} intensity={1.15} distanceFalloff={1.15} />
+										<Bloom intensity={0.16} luminanceThreshold={0.88} luminanceSmoothing={0.18} />
 									</EffectComposer>
 								) : null}
 								<OrbitControls ref={orbitRef} enableDamping makeDefault zoomToCursor target={[0.304, 0.930, -0.053]} />

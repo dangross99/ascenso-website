@@ -251,7 +251,7 @@
     ],
     "price": 4000,
     "images": [
-      "/images/materials/Antique Gold.jpeg"
+      "/images/materials/Antique Gold.png"
     ]
   },
   {
@@ -263,7 +263,7 @@
     ],
     "price": 4800,
     "images": [
-      "/images/materials/Antique Silver.jpeg"
+      "/images/materials/Antique Silver.png"
     ]
   },
   {
@@ -299,7 +299,7 @@
     ],
     "price": 3500,
     "images": [
-      "/images/materials/Gold Silver.jpeg"
+      "/images/materials/Gold Silver.png"
     ]
   },
   {

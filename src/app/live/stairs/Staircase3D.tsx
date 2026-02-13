@@ -566,18 +566,25 @@ function Staircase3D({
 	const { camera } = useThree();
 	useFrame(() => {
 		if (followLightRef.current) {
-			followLightRef.current.position.copy(camera.position);
+			// שים את האור מעט *קדימה* מהמצלמה כדי למנוע דעיכה/כיבוי בזוויות,
+			// ושמור על תאורה יציבה בזמן תנועה.
+			const dir = camera.getWorldDirection(new Vector3());
+			followLightRef.current.position
+				.copy(camera.position)
+				.add(dir.multiplyScalar(2.0))
+				.add(new Vector3(0, 0.6, 0));
 		}
 	});
 
 	return (
 		<group position={[-1.5, 0, 0]}>
 			{/* תאורה + Environment (Studio setup) – אחיד, נקי, אור עוקב מצלמה */}
-			<ambientLight intensity={0.7} />
+			<ambientLight intensity={0.75} />
 			{/* מעט שמיים/קרקע כדי לשמור על תחושת נפח בלי דרמה */}
 			<hemisphereLight args={['#ffffff', '#d7dde5', 0.25]} />
 			{/* אור דינמי שמעתיק את מיקום המצלמה בכל פריים */}
-			<pointLight ref={followLightRef} position={[0, 8, 5]} intensity={1.5} decay={2} distance={60} color="#ffffff" />
+			{/* Fill ללא דעיכה (כדי שלא "יפול חושך" כשהמרחקים משתנים בזמן סיבוב) */}
+			<pointLight ref={followLightRef} position={[0, 8, 5]} intensity={1.15} decay={0} distance={0} color="#ffffff" />
 
 			{/* Environment פשוט עם השתקפויות רכות */}
 			<Environment preset="studio" resolution={64} blur={0.35} />

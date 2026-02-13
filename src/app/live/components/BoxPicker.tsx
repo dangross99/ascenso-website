@@ -79,14 +79,20 @@ export function BoxPicker(props: {
 								</svg>
 							) : opt.id === 'wedge' ? (
 								<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
-									<polygon points="6,36 46,30 46,22 6,16" fill={box === opt.id ? '#F2E9E3' : 'none'} />
-									<polygon points="6,36 46,30 46,22 6,16" fill="none" stroke="currentColor" strokeWidth="2" />
+									{/* טריז: צד שמאל גבוה, צד ימין נמוך */}
+									<polygon points="6,14 46,22 46,38 6,38" fill={box === opt.id ? '#F2E9E3' : 'none'} />
+									<polygon points="6,14 46,22 46,38 6,38" fill="none" stroke="currentColor" strokeWidth="2" />
+									{/* קו עזר עליון כדי להדגיש את האלכסון */}
+									<path d="M6 14 L46 22" stroke="currentColor" strokeWidth="2" fill="none" />
 								</svg>
 							) : opt.id === 'ridge' ? (
 								<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
+									{/* תיבה עם רכס מרכזי: פס בולט באמצע */}
 									<rect x="1" y="16" width="50" height="20" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
 									<rect x="1" y="16" width="50" height="20" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
-									<path d="M2 26 L26 18 L50 26" stroke="currentColor" strokeWidth="2" fill="none" />
+									{/* רכס כ"פס" אנכי במרכז + שני קווי שיפוע עדינים אליו */}
+									<rect x="25" y="18" width="2" height="16" fill="currentColor" />
+									<path d="M2 34 L26 18 L50 34" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.9" />
 								</svg>
 							) : (
 								<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">

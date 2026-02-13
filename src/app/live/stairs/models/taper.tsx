@@ -148,24 +148,93 @@ export function buildTaperBoxTreads(params: {
 				const rotateSides = (axis === 'z');
 
 				const matTop = (() => {
-					if (useSolidMat) return (<meshBasicMaterial color={solidTopColor} side={2} />);
 					const ft = buildFaceTextures(run, treadWidth, rotTop);
-					return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
+					const metalness = materialKind === 'metal' ? 1 : 0;
+					const roughness = materialKind === 'metal' ? 0.22 : materialKind === 'stone' ? 0.55 : 0.7;
+					const envMapIntensity = materialKind === 'metal' ? 1.35 : 0.9;
+					if (useSolidMat) return (<meshStandardMaterial color={solidTopColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} />);
+					return (
+						<meshStandardMaterial
+							color={'#ffffff'}
+							map={ft.color}
+							roughnessMap={ft.rough as any}
+							bumpMap={ft.bump as any}
+							bumpScale={materialKind === 'stone' ? 0.012 : 0.008}
+							metalness={metalness}
+							roughness={roughness}
+							envMapIntensity={envMapIntensity}
+							side={2}
+						/>
+					);
 				})();
 				const matBottom = (() => {
-					if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 					const ft = buildFaceTextures(run, treadWidth, rotTop);
-					return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
+					const metalness = materialKind === 'metal' ? 1 : 0;
+					const roughness = materialKind === 'metal' ? 0.22 : materialKind === 'stone' ? 0.55 : 0.7;
+					const envMapIntensity = materialKind === 'metal' ? 1.35 : 0.9;
+					if (useSolidMat) return (<meshStandardMaterial color={solidSideColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
+					return (
+						<meshStandardMaterial
+							color={'#ffffff'}
+							map={ft.color}
+							roughnessMap={ft.rough as any}
+							bumpMap={ft.bump as any}
+							bumpScale={materialKind === 'stone' ? 0.012 : 0.008}
+							metalness={metalness}
+							roughness={roughness}
+							envMapIntensity={envMapIntensity}
+							side={2}
+							polygonOffset
+							polygonOffsetFactor={-1}
+							polygonOffsetUnits={-1}
+						/>
+					);
 				})();
 				const matFrontBack = (flipU: boolean = false) => {
-					if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 					const ft = buildFaceTextures(treadWidth, thickStart, rotateFrontBack, flipU);
-					return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
+					const metalness = materialKind === 'metal' ? 1 : 0;
+					const roughness = materialKind === 'metal' ? 0.22 : materialKind === 'stone' ? 0.55 : 0.7;
+					const envMapIntensity = materialKind === 'metal' ? 1.35 : 0.9;
+					if (useSolidMat) return (<meshStandardMaterial color={solidSideColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
+					return (
+						<meshStandardMaterial
+							color={'#ffffff'}
+							map={ft.color}
+							roughnessMap={ft.rough as any}
+							bumpMap={ft.bump as any}
+							bumpScale={materialKind === 'stone' ? 0.012 : 0.008}
+							metalness={metalness}
+							roughness={roughness}
+							envMapIntensity={envMapIntensity}
+							side={2}
+							polygonOffset
+							polygonOffsetFactor={-1}
+							polygonOffsetUnits={-1}
+						/>
+					);
 				};
 				const matSides = (flipU: boolean = false) => {
-					if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 					const ft = buildFaceTextures(run, thickStart, rotateSides, flipU);
-					return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
+					const metalness = materialKind === 'metal' ? 1 : 0;
+					const roughness = materialKind === 'metal' ? 0.22 : materialKind === 'stone' ? 0.55 : 0.7;
+					const envMapIntensity = materialKind === 'metal' ? 1.35 : 0.9;
+					if (useSolidMat) return (<meshStandardMaterial color={solidSideColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
+					return (
+						<meshStandardMaterial
+							color={'#ffffff'}
+							map={ft.color}
+							roughnessMap={ft.rough as any}
+							bumpMap={ft.bump as any}
+							bumpScale={materialKind === 'stone' ? 0.012 : 0.008}
+							metalness={metalness}
+							roughness={roughness}
+							envMapIntensity={envMapIntensity}
+							side={2}
+							polygonOffset
+							polygonOffsetFactor={-1}
+							polygonOffsetUnits={-1}
+						/>
+					);
 				};
 
 				// Geometry points (local)

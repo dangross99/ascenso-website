@@ -84,9 +84,24 @@ export function buildWedgeTreads(params: {
 						const yBottomFront = yTop - frontTh - seam;
 
 						const faceMat = (dimU: number, dimV: number, rot: boolean, flipU: boolean = false, flipV: boolean = false) => {
-							if (useSolidMat) return <meshBasicMaterial color={solidSideColor} side={2} />;
 							const ft = buildFaceTextures(dimU, dimV, rot, flipU, flipV);
-							return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />;
+							const metalness = materialKind === 'metal' ? 1 : 0;
+							const roughness = materialKind === 'metal' ? 0.22 : materialKind === 'stone' ? 0.55 : 0.7;
+							const envMapIntensity = materialKind === 'metal' ? 1.35 : 0.9;
+							if (useSolidMat) return <meshStandardMaterial color={solidSideColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} />;
+							return (
+								<meshStandardMaterial
+									color={'#ffffff'}
+									map={ft.color}
+									roughnessMap={ft.rough as any}
+									bumpMap={ft.bump as any}
+									bumpScale={materialKind === 'stone' ? 0.012 : 0.008}
+									metalness={metalness}
+									roughness={roughness}
+									envMapIntensity={envMapIntensity}
+									side={2}
+								/>
+							);
 						};
 
 						const yCenterFront = (yTop + yBottomFront) / 2;

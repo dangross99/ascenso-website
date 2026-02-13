@@ -52,14 +52,41 @@ export function buildRectTreads(params: {
 								const axisTop = axisFromYaw(t.rotation[1] as number);
 								// Top: טקסטורה יציבה לפי ציר בלבד (ללא flip), כדי לא "להתהפך" בין גרמים
 								const ft = buildFaceTextures(t.run, treadWidth, axisTop === 'z');
-								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
+								return (
+									<meshStandardMaterial
+										color={'#ffffff'}
+										map={ft.color}
+										roughnessMap={ft.rough as any}
+										bumpMap={ft.bump as any}
+										bumpScale={0.008}
+										metalness={0}
+										roughness={0.65}
+										envMapIntensity={0.95}
+										side={2}
+									/>
+								);
 							})()
 						) : (
 							(() => {
-								if (useSolidMat) return (<meshBasicMaterial color={solidTopColor} side={2} />);
+								const metalness = materialKind === 'metal' ? 1 : 0;
+								const roughness = materialKind === 'metal' ? 0.22 : materialKind === 'stone' ? 0.55 : 0.7;
+								const envMapIntensity = materialKind === 'metal' ? 1.35 : 0.9;
+								if (useSolidMat) return (<meshStandardMaterial color={solidTopColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} />);
 								const axisTop = axisFromYaw(t.rotation[1] as number);
 								const ft = buildFaceTextures(t.run, treadWidth, axisTop === 'z');
-								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
+								return (
+									<meshStandardMaterial
+										color={'#ffffff'}
+										map={ft.color}
+										roughnessMap={ft.rough as any}
+										bumpMap={ft.bump as any}
+										bumpScale={materialKind === 'stone' ? 0.012 : 0.008}
+										metalness={metalness}
+										roughness={roughness}
+										envMapIntensity={envMapIntensity}
+										side={2}
+									/>
+								);
 							})()
 						)}
 					</mesh>
@@ -68,10 +95,24 @@ export function buildRectTreads(params: {
 					<mesh rotation={[Math.PI / 2, 0, 0]} position={[0, -treadThickness / 2 - 0.0005, 0]} receiveShadow>
 						<planeGeometry args={[t.run, treadWidth, 8, 8]} />
 						{(() => {
-							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} />);
 							const axisBottom = axisFromYaw(t.rotation[1] as number);
 							const ft = buildFaceTextures(t.run, treadWidth, axisBottom === 'z');
-							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} />);
+							const metalness = materialKind === 'metal' ? 1 : 0;
+							const roughness = materialKind === 'metal' ? 0.22 : materialKind === 'stone' ? 0.55 : 0.7;
+							const envMapIntensity = materialKind === 'metal' ? 1.35 : 0.9;
+							if (useSolidMat) return (<meshStandardMaterial color={solidSideColor} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} />);
+							return (
+								<meshStandardMaterial
+									color={'#ffffff'}
+									map={ft.color}
+									roughnessMap={ft.rough as any}
+									bumpMap={ft.bump as any}
+									bumpScale={materialKind === 'stone' ? 0.012 : 0.008}
+									metalness={metalness}
+									roughness={roughness}
+									envMapIntensity={envMapIntensity}
+								/>
+							);
 						})()}
 					</mesh>
 
@@ -92,14 +133,50 @@ export function buildRectTreads(params: {
 						});
 
 						const matFrontBack = (flipU: boolean = false) => {
-							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 							const ft = buildFaceTextures(treadWidth, treadThickness, rotateFrontBack, flipU);
-							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
+							const metalness = materialKind === 'metal' ? 1 : 0;
+							const roughness = materialKind === 'metal' ? 0.22 : materialKind === 'stone' ? 0.55 : 0.7;
+							const envMapIntensity = materialKind === 'metal' ? 1.35 : 0.9;
+							if (useSolidMat) return (<meshStandardMaterial color={solidSideColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
+							return (
+								<meshStandardMaterial
+									color={'#ffffff'}
+									map={ft.color}
+									roughnessMap={ft.rough as any}
+									bumpMap={ft.bump as any}
+									bumpScale={materialKind === 'stone' ? 0.012 : 0.008}
+									metalness={metalness}
+									roughness={roughness}
+									envMapIntensity={envMapIntensity}
+									side={2}
+									polygonOffset
+									polygonOffsetFactor={-1}
+									polygonOffsetUnits={-1}
+								/>
+							);
 						};
 						const matSides = (flipU: boolean = false) => {
-							if (useSolidMat) return (<meshBasicMaterial color={solidSideColor} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 							const ft = buildFaceTextures(t.run, treadThickness, rotateSides, flipU);
-							return (<meshBasicMaterial map={ft.color} side={2} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
+							const metalness = materialKind === 'metal' ? 1 : 0;
+							const roughness = materialKind === 'metal' ? 0.22 : materialKind === 'stone' ? 0.55 : 0.7;
+							const envMapIntensity = materialKind === 'metal' ? 1.35 : 0.9;
+							if (useSolidMat) return (<meshStandardMaterial color={solidSideColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
+							return (
+								<meshStandardMaterial
+									color={'#ffffff'}
+									map={ft.color}
+									roughnessMap={ft.rough as any}
+									bumpMap={ft.bump as any}
+									bumpScale={materialKind === 'stone' ? 0.012 : 0.008}
+									metalness={metalness}
+									roughness={roughness}
+									envMapIntensity={envMapIntensity}
+									side={2}
+									polygonOffset
+									polygonOffsetFactor={-1}
+									polygonOffsetUnits={-1}
+								/>
+							);
 						};
 
 						const frontRotY = forwardSign > 0 ? Math.PI / 2 : -Math.PI / 2;

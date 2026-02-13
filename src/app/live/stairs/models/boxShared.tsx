@@ -18,7 +18,7 @@ export type BuildFaceTextures = (
 	rotate90?: boolean,
 	flipU?: boolean,
 	flipV?: boolean,
-) => { color: any };
+) => { color: any; bump?: any; rough?: any };
 
 export function axisFromYaw(yaw: number): Axis {
 	return (Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z') as Axis;

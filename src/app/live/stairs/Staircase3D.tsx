@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { useLoader } from '@react-three/fiber';
-import { useTexture, Text } from '@react-three/drei';
-import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, LinearMipmapLinearFilter, BufferGeometry, Float32BufferAttribute, Cache, NoToneMapping, Vector3 } from 'three';
+import { ContactShadows, Environment, Text } from '@react-three/drei';
+import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, LinearMipmapLinearFilter, BufferGeometry, Float32BufferAttribute, Cache, Vector3 } from 'three';
 import type { PathSegment } from '../shared/path';
 import { buildRectTreads } from './models/rect';
 import { buildWedgeTreads } from './models/wedge';
@@ -55,6 +55,7 @@ function Staircase3D({
 	hitechPlateTopOffsetM,
 	hitechPlateInsetFromEdge,
 	hitechOffsets,
+	highQuality = false,
 }: {
 	shape: 'straight' | 'L' | 'U';
 	steps: number;
@@ -97,6 +98,7 @@ function Staircase3D({
 	hitechPlateTopOffsetM?: number;
 	hitechPlateInsetFromEdge?: number;
 	hitechOffsets?: number[];
+	highQuality?: boolean;
 }) {
 	// שיתוף נקודת ההתחלה של פלטת B (גרם 2) עבור המחבר – כדי למנוע סדקים/פערים בין B למחבר
 	const hitechBStartRef = React.useRef<{ top: [number, number, number]; bot: [number, number, number] } | null>(null);
@@ -561,6 +563,22 @@ function Staircase3D({
 
 	return (
 		<group position={[-1.5, 0, 0]}>
+			{/* תאורה + סביבה פיזיקלית (דסקטופ חזק יותר, מובייל קל יותר) */}
+			<ambientLight intensity={highQuality ? 0.38 : 0.28} />
+			<directionalLight position={[3.5, 6, 2.5]} intensity={highQuality ? 2.2 : 1.6} />
+			<directionalLight position={[-4.0, 3.5, -2.0]} intensity={highQuality ? 0.9 : 0.6} />
+			<Environment preset={highQuality ? 'studio' : 'city'} resolution={highQuality ? 256 : 64} blur={0.25} />
+
+			{/* Contact Shadows (דסקטופ בלבד) */}
+			{highQuality ? (
+				<ContactShadows
+					position={[floorBounds.cx, floorBounds.y + 0.001, floorBounds.cz]}
+					scale={Math.max(floorBounds.w, floorBounds.h)}
+					opacity={0.35}
+					blur={2.6}
+					far={6.5}
+				/>
+			) : null}
 			{(() => { 
 				if (boxModel === 'rounded') {
 					return buildRoundedTreads({

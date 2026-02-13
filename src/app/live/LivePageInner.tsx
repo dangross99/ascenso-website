@@ -5,7 +5,8 @@ import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useProgress } from '@react-three/drei';
-import { NoToneMapping } from 'three';
+import { ACESFilmicToneMapping, SRGBColorSpace } from 'three';
+import { Bloom, EffectComposer, N8AO } from '@react-three/postprocessing';
 import Footer from '@/components/Footer';
 import Staircase3D from './stairs/Staircase3D';
 import type { PathSegment } from './shared/path';
@@ -329,6 +330,7 @@ function LivePageInner() {
 	const [mobileCanvasH, setMobileCanvasH] = React.useState<number>(0);
 	const [mobileHeaderH, setMobileHeaderH] = React.useState<number>(0);
 	const [mobileTabsH, setMobileTabsH] = React.useState<number>(0);
+	const [isDesktopViewport, setIsDesktopViewport] = React.useState(true);
 	const topTabsRef = React.useRef<HTMLDivElement | null>(null);
 	// זיהוי מקלדת מובייל (visualViewport) כדי להתאים יישור מודאל/סרגל תחתון
 	const [isKeyboardOpen, setIsKeyboardOpen] = React.useState(false);
@@ -336,6 +338,7 @@ function LivePageInner() {
 		const update = () => {
 			if (typeof window === 'undefined') return;
 			const isMobile = window.innerWidth < 1024;
+			setIsDesktopViewport(!isMobile);
 			if (isMobile) {
 				// מדידה מדויקת לפי רוחב האלמנט בפועל (מונע סטיות/חפיפה)
 				const w = (() => {
@@ -1553,13 +1556,19 @@ function LivePageInner() {
 					<div ref={canvasWrapRef} className="w-full aspect-[16/9] lg:aspect-auto lg:h-[60vh] bg-white border overflow-hidden rounded fixed inset-x-0 z-30 lg:relative" style={{ height: mobileCanvasH || undefined, top: (mobileHeaderH + mobileTabsH) || 0 }}>
 						<Canvas
 							shadows={false}
-							flat
 							camera={{ position: [-2.494, 1.897, 3.259], fov: 45 }}
 							dpr={[1, 1.5]}
-							gl={{ toneMapping: NoToneMapping, toneMappingExposure: 1.0, preserveDrawingBuffer: false, antialias: true, powerPreference: 'high-performance' }}
+							gl={{
+								toneMapping: ACESFilmicToneMapping,
+								toneMappingExposure: 1.05,
+								outputColorSpace: SRGBColorSpace as any,
+								preserveDrawingBuffer: false,
+								antialias: true,
+								powerPreference: 'high-performance',
+							}}
 						>
 							<React.Suspense fallback={null}>
-								{/* ללא תאורה – חומרים Unlit מציגים טקסטורות AS-IS */}
+								{/* רינדור PBR (תאורה/סביבה בתוך Staircase3D) */}
 								<Staircase3D
 									shape={shape}
 									steps={steps}
@@ -1590,6 +1599,7 @@ function LivePageInner() {
 									landingRailingStates={landingRailing}
 									stepRailingSides={stepRailingSide}
 									landingRailingSides={landingRailingSide}
+									highQuality={isDesktopViewport}
 									railingTextureUrl={(() => {
 										if (railing === 'metal' && railingMetalId) {
 											const rec = metalRailingOptions.find(r => r.id === railingMetalId);
@@ -1663,6 +1673,13 @@ function LivePageInner() {
 										return cfg.inset || 0;
 									})()}
 								/>
+								{/* Post‑Processing: דסקטופ בלבד */}
+								{isDesktopViewport ? (
+									<EffectComposer multisampling={0}>
+										<N8AO halfRes aoRadius={0.28} intensity={0.9} distanceFalloff={1.0} />
+										<Bloom intensity={0.18} luminanceThreshold={0.85} luminanceSmoothing={0.15} />
+									</EffectComposer>
+								) : null}
 								<OrbitControls ref={orbitRef} enableDamping makeDefault zoomToCursor target={[0.304, 0.930, -0.053]} />
 							</React.Suspense>
 						</Canvas>

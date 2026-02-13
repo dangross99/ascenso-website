@@ -74,9 +74,24 @@ export function buildRidgeTreads(params: {
 						const yBottomFrontEdge = yTop - frontEdgeTh - seam;
 
 						const faceMat = (dimU: number, dimV: number, rot: boolean, flipU: boolean = false, flipV: boolean = false) => {
-							if (useSolidMat) return <meshBasicMaterial color={solidSideColor} side={2} />;
 							const ft = buildFaceTextures(dimU, dimV, rot, flipU, flipV);
-							return <meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />;
+							const metalness = 0.0;
+							const roughness = 0.55;
+							const envMapIntensity = 0.9;
+							if (useSolidMat) return <meshStandardMaterial color={solidSideColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} />;
+							return (
+								<meshStandardMaterial
+									color={'#ffffff'}
+									map={ft.color}
+									roughnessMap={ft.rough as any}
+									bumpMap={ft.bump as any}
+									bumpScale={0.01}
+									metalness={metalness}
+									roughness={roughness}
+									envMapIntensity={envMapIntensity}
+									side={2}
+								/>
+							);
 						};
 
 						const front = (

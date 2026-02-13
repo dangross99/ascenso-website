@@ -641,7 +641,7 @@ function Staircase3D({
 			{(() => {
 				const showOuterWalls = true;
 				if (!showOuterWalls) return null;
-				const wallH = 1.35; // מטר
+				const wallH = 6.0; // מטר – קבוע מהרצפה
 				const wallTh = 0.06; // עובי קיר
 				const gap = 0.01; // מרווח מהקצה כדי למנוע זי-פייטינג
 				const wallColor = '#e5e7eb';
@@ -675,7 +675,7 @@ function Staircase3D({
 
 							// מרכז הקיר ב-local coords של המדרך (הקבוצה כבר מסובבת לפי t.rotation)
 							const zWall = outerSignLocal * (treadWidth / 2 + gap + wallTh / 2);
-							// נציב את הקיר בגובה מוחלט ביחס לרצפה, אבל בתוך ה-group של המדרך כדי שיסתובב יחד איתו
+							// נציב את הקיר בגובה מוחלט ביחס לרצפה (0..6m), אבל בתוך ה-group של המדרך כדי שיסתובב יחד איתו
 							const worldCenterY = floorBounds.y + wallH / 2;
 							const yLocal = worldCenterY - t.position[1];
 

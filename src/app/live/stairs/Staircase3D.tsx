@@ -563,75 +563,16 @@ function Staircase3D({
 
 	return (
 		<group position={[-1.5, 0, 0]}>
-			{/* תאורה + סביבה פיזיקלית (דסקטופ חזק יותר, מובייל קל יותר) */}
-			{/* תאורה יותר "אחידה" כדי שהכיוונים השונים במסלול לא יחשיכו/יבהירו דרמטית */}
-			<ambientLight intensity={highQuality ? 0.48 : 0.30} />
-			<hemisphereLight args={['#ffffff', '#d7dde5', highQuality ? 0.55 : 0.30]} />
-			{/* Key light (חם) עם צללים רכים בדסקטופ */}
-			<directionalLight
-				position={[3.5, 6, 2.5]}
-				intensity={highQuality ? 1.55 : 1.25}
-				color={highQuality ? '#fff2e6' : '#ffffff'}
-				castShadow={!!highQuality}
-				shadow-mapSize={[2048, 2048]}
-				shadow-bias={-0.00015}
-				shadow-normalBias={0.02}
-				shadow-camera-near={0.1}
-				shadow-camera-far={30}
-				shadow-camera-left={-6}
-				shadow-camera-right={6}
-				shadow-camera-top={6}
-				shadow-camera-bottom={-6}
-			/>
-			{/* Fill lights מסביב (ללא צללים) כדי למנוע צד אחד "שחור" בפניות */}
-			<directionalLight position={[-4.0, 3.5, -2.0]} intensity={highQuality ? 0.85 : 0.55} color={'#e8f0ff'} />
-			<directionalLight position={[0.0, 4.0, -5.5]} intensity={highQuality ? 0.55 : 0.35} color={'#ffffff'} />
-			<directionalLight position={[-6.0, 5.0, 3.5]} intensity={highQuality ? 0.45 : 0.28} color={'#ffffff'} />
-			{/* Environment: בדסקטופ נשתמש ב-Lightformers כדי לקבל תחושת חלל/חלון ריאליסטית */}
-			{highQuality ? (
-				<Environment resolution={256} frames={1} blur={0.25}>
-					{/* תקרה רכה (softbox) */}
-					<Lightformer
-						form="rect"
-						intensity={2.2}
-						color="#ffffff"
-						position={[0.0, 4.5, 0.5]}
-						rotation={[Math.PI / 2, 0, 0]}
-						scale={[6.5, 3.2, 1]}
-					/>
-					{/* "חלון" צדדי חם */}
-					<Lightformer
-						form="rect"
-						intensity={3.1}
-						color="#fff2e6"
-						position={[3.8, 2.2, 1.8]}
-						rotation={[0, -Math.PI / 2.6, 0]}
-						scale={[3.0, 2.2, 1]}
-					/>
-					{/* Rim קריר עדין כדי להוציא סילואט */}
-					<Lightformer
-						form="rect"
-						intensity={0.9}
-						color="#e8f0ff"
-						position={[-4.2, 1.8, -2.8]}
-						rotation={[0, Math.PI / 2.4, 0]}
-						scale={[3.4, 2.6, 1]}
-					/>
-				</Environment>
-			) : (
-				<Environment preset="city" resolution={64} blur={0.25} />
-			)}
+			{/* תאורה + Environment (Studio setup) – אחיד, נקי, ללא צללים קשים */}
+			{/* Ambient חזק כדי למנוע אזורים שחורים בזוויות שונות */}
+			<ambientLight intensity={0.8} />
+			{/* מעט שמיים/קרקע כדי לשמור על תחושת נפח בלי דרמה */}
+			<hemisphereLight args={['#ffffff', '#d7dde5', 0.35]} />
+			{/* Point light מרכזי במקום Directional (פחות "שריפה" ופחות כתמים) */}
+			<pointLight position={[0, 8, 5]} intensity={1.5} decay={2} distance={30} color="#ffffff" />
 
-			{/* Contact Shadows (דסקטופ בלבד) */}
-			{highQuality ? (
-				<ContactShadows
-					position={[floorBounds.cx, floorBounds.y + 0.001, floorBounds.cz]}
-					scale={Math.max(floorBounds.w, floorBounds.h)}
-					opacity={0.18}
-					blur={3.2}
-					far={4.2}
-				/>
-			) : null}
+			{/* Environment פשוט עם השתקפויות רכות */}
+			<Environment preset="studio" resolution={64} blur={0.35} />
 			{(() => { 
 				if (boxModel === 'rounded') {
 					return buildRoundedTreads({

@@ -564,15 +564,17 @@ function Staircase3D({
 	// אור עוקב מצלמה: מונע אזורים "שחורים" בזמן תנועה/סיבוב
 	const followLightRef = React.useRef<any>(null);
 	const { camera } = useThree();
+	const tmpDir = React.useRef(new Vector3());
+	const tmpUp = React.useRef(new Vector3(0, 0.6, 0));
 	useFrame(() => {
 		if (followLightRef.current) {
 			// שים את האור מעט *קדימה* מהמצלמה כדי למנוע דעיכה/כיבוי בזוויות,
 			// ושמור על תאורה יציבה בזמן תנועה.
-			const dir = camera.getWorldDirection(new Vector3());
+			const dir = camera.getWorldDirection(tmpDir.current);
 			followLightRef.current.position
 				.copy(camera.position)
 				.add(dir.multiplyScalar(2.0))
-				.add(new Vector3(0, 0.6, 0));
+				.add(tmpUp.current);
 		}
 	});
 

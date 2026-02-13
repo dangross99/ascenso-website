@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, useProgress } from '@react-three/drei';
 import { ACESFilmicToneMapping, PCFSoftShadowMap, SRGBColorSpace } from 'three';
 import { Bloom, EffectComposer, N8AO } from '@react-three/postprocessing';
@@ -34,6 +34,19 @@ function CanvasLoadingOverlay() {
 			</div>
 		</div>
 	);
+}
+
+function CameraHeadlight({ active }: { active: boolean }) {
+	const lightRef = React.useRef<any>(null);
+	const { camera } = useThree();
+	useFrame(() => {
+		if (!active) return;
+		if (lightRef.current) {
+			lightRef.current.position.copy(camera.position);
+		}
+	});
+	if (!active) return null;
+	return <pointLight ref={lightRef} intensity={0.35} distance={25} decay={2} color="#ffffff" />;
 }
 
 type MaterialRecord = {
@@ -84,6 +97,7 @@ function LivePageInner() {
 	// כדי להימנע מ-mismatch בהידרציה – נרנדר את גוף העמוד רק אחרי mount
 	const [mounted, setMounted] = React.useState(false);
 	React.useEffect(() => setMounted(true), []);
+	const [isOrbiting, setIsOrbiting] = React.useState(false);
 	const [isPending, startTransition] = React.useTransition();
 	const priceRef = React.useRef<HTMLDivElement | null>(null);
 	const [pricePing, setPricePing] = React.useState(false);
@@ -1555,7 +1569,7 @@ function LivePageInner() {
 						<div className="lg:col-span-2">
 					<div ref={canvasWrapRef} className="w-full aspect-[16/9] lg:aspect-auto lg:h-[60vh] bg-white border overflow-hidden rounded fixed inset-x-0 z-30 lg:relative" style={{ height: mobileCanvasH || undefined, top: (mobileHeaderH + mobileTabsH) || 0 }}>
 						<Canvas
-							shadows={isDesktopViewport ? { type: PCFSoftShadowMap } : false}
+							shadows={isDesktopViewport && !isOrbiting ? { type: PCFSoftShadowMap } : false}
 							camera={{ position: [-2.494, 1.897, 3.259], fov: 45 }}
 							dpr={[1, isDesktopViewport ? 2 : 1.5]}
 							gl={{
@@ -1568,6 +1582,8 @@ function LivePageInner() {
 							}}
 						>
 							<React.Suspense fallback={null}>
+								{/* בזמן הזזת מצלמה: Headlight עדין למנוע "חושך" בזוויות */}
+								<CameraHeadlight active={!!isDesktopViewport && isOrbiting} />
 								{/* רינדור PBR (תאורה/סביבה בתוך Staircase3D) */}
 								<Staircase3D
 									shape={shape}
@@ -1674,14 +1690,23 @@ function LivePageInner() {
 									})()}
 								/>
 								{/* Post‑Processing: דסקטופ בלבד */}
-								{isDesktopViewport ? (
+								{/* AO הוא screen-space ולכן יכול "להשחיר" בזמן תנועה; נכבה בזמן גרירה */}
+								{isDesktopViewport && !isOrbiting ? (
 									<EffectComposer multisampling={0}>
 										{/* AO חזק מדי גורם ל"השחרה" מתחת למדרגות יחד עם ContactShadows */}
 										<N8AO halfRes aoRadius={0.22} intensity={0.55} distanceFalloff={1.25} />
 										<Bloom intensity={0.16} luminanceThreshold={0.88} luminanceSmoothing={0.18} />
 									</EffectComposer>
 								) : null}
-								<OrbitControls ref={orbitRef} enableDamping makeDefault zoomToCursor target={[0.304, 0.930, -0.053]} />
+								<OrbitControls
+									ref={orbitRef}
+									enableDamping
+									makeDefault
+									zoomToCursor
+									target={[0.304, 0.930, -0.053]}
+									onStart={() => setIsOrbiting(true)}
+									onEnd={() => setIsOrbiting(false)}
+								/>
 							</React.Suspense>
 						</Canvas>
 						<CanvasLoadingOverlay />

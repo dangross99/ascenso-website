@@ -8,42 +8,42 @@ export function BoxPicker(props: {
 }) {
 	const { box, setBox } = props;
 	const options: Array<{ id: BoxId; label: string }> = [
-		{ id: 'thick', label: 'תיבה עבה‑דופן' },
-		{ id: 'thin', label: 'תיבה דקה‑דופן' },
-		{ id: 'rounded', label: 'תיבה מעוגלת' },
+		{ id: 'thick', label: 'קלאסי' },
+		{ id: 'thin', label: 'להב' },
+		{ id: 'rounded', label: 'קפסולה' },
 		{ id: 'taper', label: 'תיבה מצטמצמת' },
-		{ id: 'ridge', label: 'דגם רכס מרכזי' },
-		{ id: 'wedge', label: 'דגם אלכסוני' },
+		{ id: 'ridge', label: 'מרום' },
+		{ id: 'wedge', label: 'טריז' },
 	];
 
 	const a11y = (id: BoxId) =>
 		id === 'thick'
-			? 'דגם עבה'
+			? 'דגם קלאסי'
 			: id === 'thin'
-			? 'דגם דק'
+			? 'דגם להב'
 			: id === 'rounded'
-			? 'דגם מעוגל'
+			? 'דגם קפסולה'
 			: id === 'taper'
 			? 'דגם מצטמצם'
 			: id === 'wedge'
-			? 'דגם אלכסוני'
+			? 'דגם טריז'
 			: id === 'ridge'
-			? 'דגם רכס מרכזי'
+			? 'דגם מרום'
 			: 'דגם תיבה';
 
 	const short = (id: BoxId) =>
 		id === 'thick'
-			? 'עבה'
+			? 'קלאסי'
 			: id === 'thin'
-			? 'דק'
+			? 'להב'
 			: id === 'rounded'
-			? 'מעוגל'
+			? 'קפסולה'
 			: id === 'taper'
 			? 'מצטמצם'
 			: id === 'wedge'
-			? 'אלכסוני'
+			? 'טריז'
 			: id === 'ridge'
-			? 'רכס'
+			? 'מרום'
 			: 'תיבה';
 
 	return (

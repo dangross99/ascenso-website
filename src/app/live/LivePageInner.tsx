@@ -1234,17 +1234,17 @@ function LivePageInner() {
 		const pathText = formatPathForShare(pathSegments);
 		const railingText = formatRailing();
 		const boxText = box === 'thick'
-			? 'תיבה עבה‑דופן'
+			? 'קלאסי'
 			: box === 'thin'
-			? 'תיבה דקה‑דופן'
+			? 'להב'
 			: box === 'rounded'
-			? 'תיבה מעוגלת'
+			? 'קפסולה'
 			: box === 'taper'
 			? 'תיבה מצטמצמת'
 			: box === 'wedge'
-			? 'דגם אלכסוני'
+			? 'טריז'
 			: box === 'ridge'
-			? 'דגם רכס מרכזי'
+			? 'מרום'
 			: '';
 		const totalText = `₪${total.toLocaleString('he-IL')}`;
 		// הכרחת כיוון LTR עבור ה‑URL באמצעות LRI/PDI (איסולציה) למניעת שבירה RTL
@@ -1330,17 +1330,17 @@ function LivePageInner() {
 		const pathText = formatPathForShare(pathSegments);
 		const railingText = formatRailing();
 		const boxText = box === 'thick'
-			? 'תיבה עבה‑דופן'
+			? 'קלאסי'
 			: box === 'thin'
-			? 'תיבה דקה‑דופן'
+			? 'להב'
 			: box === 'rounded'
-			? 'תיבה מעוגלת'
+			? 'קפסולה'
 			: box === 'taper'
 			? 'תיבה מצטמצמת'
 			: box === 'wedge'
-			? 'דגם אלכסוני'
+			? 'טריז'
 			: box === 'ridge'
-			? 'דגם רכס מרכזי'
+			? 'מרום'
 			: '';
 		const totalText = `₪${total.toLocaleString('he-IL')}`;
 		const leadId = generateLeadId();
@@ -1954,16 +1954,16 @@ function LivePageInner() {
 											<span className="font-medium">דגם תיבה</span>
 											<span className="text-sm text-gray-600">
 												{box === 'thick'
-													? 'תיבה עבה‑דופן'
+													? 'קלאסי'
 													: box === 'thin'
-													? 'תיבה דקה‑דופן'
+													? 'להב'
 													: box === 'rounded'
-													? 'תיבה מעוגלת'
+													? 'קפסולה'
 													: box === 'taper'
 													? 'תיבה מצטמצמת'
 													: box === 'wedge'
-													? 'דגם אלכסוני'
-													: 'דגם רכס מרכזי'}
+													? 'טריז'
+													: 'מרום'}
 											</span>
 										</button>
 										)}
@@ -2405,16 +2405,16 @@ function LivePageInner() {
 								<span className="text-sm font-medium">דגם תיבה</span>
 								<span className="text-sm text-gray-600">
 									{box === 'thick'
-										? 'תיבה עבה‑דופן'
+										? 'קלאסי'
 										: box === 'thin'
-										? 'תיבה דקה‑דופן'
+										? 'להב'
 										: box === 'rounded'
-										? 'תיבה מעוגלת'
+										? 'קפסולה'
 										: box === 'taper'
 										? 'תיבה מצטמצמת'
 										: box === 'wedge'
-										? 'דגם אלכסוני'
-										: 'דגם רכס מרכזי'}
+										? 'טריז'
+										: 'מרום'}
 								</span>
 							</button>
 							{desktopOpenCat === 'box' && (

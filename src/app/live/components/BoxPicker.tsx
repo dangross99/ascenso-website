@@ -11,7 +11,7 @@ export function BoxPicker(props: {
 		{ id: 'thick', label: 'קלאסי' },
 		{ id: 'thin', label: 'להב' },
 		{ id: 'rounded', label: 'קפסולה' },
-		{ id: 'taper', label: 'תיבה מצטמצמת' },
+		{ id: 'taper', label: 'דלתא' },
 		{ id: 'ridge', label: 'מרום' },
 		{ id: 'wedge', label: 'טריז' },
 	];
@@ -24,7 +24,7 @@ export function BoxPicker(props: {
 			: id === 'rounded'
 			? 'דגם קפסולה'
 			: id === 'taper'
-			? 'דגם מצטמצם'
+			? 'דגם דלתא'
 			: id === 'wedge'
 			? 'דגם טריז'
 			: id === 'ridge'
@@ -39,7 +39,7 @@ export function BoxPicker(props: {
 			: id === 'rounded'
 			? 'קפסולה'
 			: id === 'taper'
-			? 'מצטמצם'
+			? 'דלתא'
 			: id === 'wedge'
 			? 'טריז'
 			: id === 'ridge'

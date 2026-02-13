@@ -12,8 +12,8 @@ export function BoxPicker(props: {
 		{ id: 'thin', label: 'תיבה דקה‑דופן' },
 		{ id: 'rounded', label: 'תיבה מעוגלת' },
 		{ id: 'taper', label: 'תיבה מצטמצמת' },
-		{ id: 'wedge', label: 'דגם אלכסוני' },
 		{ id: 'ridge', label: 'דגם רכס מרכזי' },
+		{ id: 'wedge', label: 'דגם אלכסוני' },
 	];
 
 	const a11y = (id: BoxId) =>
@@ -90,12 +90,13 @@ export function BoxPicker(props: {
 							) : opt.id === 'ridge' ? (
 								<svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
 									<g transform="rotate(180 26 26)">
-										{/* תיבה עם רכס מרכזי: פס בולט באמצע */}
-										<rect x="1" y="16" width="50" height="20" rx="0" fill={box === opt.id ? '#F2E9E3' : 'none'} />
-										<rect x="1" y="16" width="50" height="20" rx="0" stroke="currentColor" strokeWidth="2" fill="none" />
-										{/* רכס כ"פס" אנכי במרכז + שני קווי שיפוע עדינים אליו */}
-										<rect x="25" y="18" width="2" height="16" fill="currentColor" />
-										<path d="M2 34 L26 18 L50 34" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.9" />
+										{/* רכס: רק משולש */}
+										<polygon
+											points="2,34 26,18 50,34"
+											fill={box === opt.id ? '#F2E9E3' : 'none'}
+											stroke="currentColor"
+											strokeWidth="2"
+										/>
 									</g>
 								</svg>
 							) : (

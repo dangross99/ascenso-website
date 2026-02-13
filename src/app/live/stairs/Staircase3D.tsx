@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { useLoader } from '@react-three/fiber';
-import { ContactShadows, Environment, Lightformer, Text } from '@react-three/drei';
+import { useFrame, useLoader, useThree } from '@react-three/fiber';
+import { Environment, Text } from '@react-three/drei';
 import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, LinearMipmapLinearFilter, BufferGeometry, Float32BufferAttribute, Cache, Vector3 } from 'three';
 import type { PathSegment } from '../shared/path';
 import { buildRectTreads } from './models/rect';
@@ -561,15 +561,23 @@ function Staircase3D({
 		}
 	}, [map, bumpMap, roughMap, tileScale]);
 
+	// אור עוקב מצלמה: מונע אזורים "שחורים" בזמן תנועה/סיבוב
+	const followLightRef = React.useRef<any>(null);
+	const { camera } = useThree();
+	useFrame(() => {
+		if (followLightRef.current) {
+			followLightRef.current.position.copy(camera.position);
+		}
+	});
+
 	return (
 		<group position={[-1.5, 0, 0]}>
-			{/* תאורה + Environment (Studio setup) – אחיד, נקי, ללא צללים קשים */}
-			{/* Ambient חזק כדי למנוע אזורים שחורים בזוויות שונות */}
-			<ambientLight intensity={0.8} />
+			{/* תאורה + Environment (Studio setup) – אחיד, נקי, אור עוקב מצלמה */}
+			<ambientLight intensity={0.7} />
 			{/* מעט שמיים/קרקע כדי לשמור על תחושת נפח בלי דרמה */}
-			<hemisphereLight args={['#ffffff', '#d7dde5', 0.35]} />
-			{/* Point light מרכזי במקום Directional (פחות "שריפה" ופחות כתמים) */}
-			<pointLight position={[0, 8, 5]} intensity={1.5} decay={2} distance={30} color="#ffffff" />
+			<hemisphereLight args={['#ffffff', '#d7dde5', 0.25]} />
+			{/* אור דינמי שמעתיק את מיקום המצלמה בכל פריים */}
+			<pointLight ref={followLightRef} position={[0, 8, 5]} intensity={1.5} decay={2} distance={60} color="#ffffff" />
 
 			{/* Environment פשוט עם השתקפויות רכות */}
 			<Environment preset="studio" resolution={64} blur={0.35} />

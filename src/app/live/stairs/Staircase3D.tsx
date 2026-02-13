@@ -675,19 +675,17 @@ function Staircase3D({
 
 							// מרכז הקיר ב-local coords של המדרך (הקבוצה כבר מסובבת לפי t.rotation)
 							const zWall = outerSignLocal * (treadWidth / 2 + gap + wallTh / 2);
+							// נציב את הקיר בגובה מוחלט ביחס לרצפה, אבל בתוך ה-group של המדרך כדי שיסתובב יחד איתו
 							const worldCenterY = floorBounds.y + wallH / 2;
 							const yLocal = worldCenterY - t.position[1];
 
 							return (
-								<mesh
-									key={`outer-wall-${i}`}
-									position={[0, yLocal, zWall]}
-									castShadow={false}
-									receiveShadow
-								>
-									<boxGeometry args={[t.run, wallH, wallTh]} />
-									<meshBasicMaterial color={wallColor} side={2} transparent opacity={0.92} />
-								</mesh>
+								<group key={`outer-wall-${i}`} position={t.position} rotation={t.rotation}>
+									<mesh position={[0, yLocal, zWall]} castShadow={false} receiveShadow>
+										<boxGeometry args={[t.run, wallH, wallTh]} />
+										<meshBasicMaterial color={wallColor} side={2} transparent opacity={0.92} />
+									</mesh>
+								</group>
 							);
 						})}
 					</group>

@@ -655,13 +655,15 @@ function Staircase3D({
 							const yaw = t.rotation[1] as number;
 							const axis = (Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z') as 'x' | 'z';
 
-							// פודסט עם פנייה – לרוב אין "קיר רציף" הגיוני, נשאיר ריק
+							const isLanding = !!t.isLanding;
 							// @ts-ignore
-							if (t.isLanding && t.turn) { lIdx++; return null; }
+							const hasTurn = !!(isLanding && t.turn);
 
-							const innerSide: 'right' | 'left' = t.isLanding
-								? (landingRailingSides?.[lIdx++] ?? 'right')
-								: (stepRailingSides?.[sIdx++] ?? 'right');
+							// innerSide אצלנו = "פנים" (LivePageInner). לפודסטים עם פנייה זה יהיה לפי seg.turn.
+							const innerSide: 'right' | 'left' = isLanding
+								? (landingRailingSides?.[lIdx] ?? 'right')
+								: (stepRailingSides?.[sIdx] ?? 'right');
+							if (isLanding) lIdx++; else sIdx++;
 
 							// rightLocalSignFor + חריג פודסטים לאורך Z (כמו boxShared)
 							const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
@@ -684,10 +686,30 @@ function Staircase3D({
 
 							return (
 								<group key={`outer-wall-${i}`} position={t.position} rotation={t.rotation}>
+									{/* קיר חיצוני לאורך הרוחב (כמו בכל מדרגה/פודסט) */}
 									<mesh position={[0, yLocal, zWall]} castShadow={false} receiveShadow>
 										<boxGeometry args={[t.run, wallH, wallTh]} />
 										<meshBasicMaterial color={wallColor} side={2} transparent opacity={0.92} />
 									</mesh>
+									{/* בפודסט עם פנייה: הוסף גם קיר חיצוני שני שיוצר "L" בפינה החיצונית */}
+									{hasTurn ? (
+										<mesh
+											rotation={[0, Math.PI / 2, 0]}
+											position={[
+												// נבחר צד קצה לפי כיוון הפנייה (ימין/שמאל) – בקירוב טוב לזווית 90°
+												// @ts-ignore
+												((t.turn === 'right' ? 1 : -1) as 1 | -1) * (t.run / 2 + gap + wallTh / 2),
+												yLocal,
+												// רק חצי רוחב חיצוני כדי לא "לגלוש" לפנים
+												outerSignLocal * (treadWidth / 4),
+											]}
+											castShadow={false}
+											receiveShadow
+										>
+											<boxGeometry args={[treadWidth / 2, wallH, wallTh]} />
+											<meshBasicMaterial color={wallColor} side={2} transparent opacity={0.92} />
+										</mesh>
+									) : null}
 								</group>
 							);
 						})}

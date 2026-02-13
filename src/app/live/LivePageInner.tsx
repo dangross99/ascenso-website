@@ -6,7 +6,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useProgress } from '@react-three/drei';
 import { ACESFilmicToneMapping, PCFSoftShadowMap, SRGBColorSpace } from 'three';
-import { Bloom, EffectComposer, N8AO } from '@react-three/postprocessing';
+import { Bloom, BrightnessContrast, ChromaticAberration, DepthOfField, EffectComposer, N8AO, SMAA, Vignette } from '@react-three/postprocessing';
+import { Vector2 } from 'three';
 import Footer from '@/components/Footer';
 import Staircase3D from './stairs/Staircase3D';
 import type { PathSegment } from './shared/path';
@@ -1566,6 +1567,19 @@ function LivePageInner() {
 								antialias: true,
 								powerPreference: 'high-performance',
 							}}
+							onCreated={({ gl }) => {
+								// "צילום" יותר טבעי: תאורה פיזיקלית + צללים עקביים (בדסקטופ בלבד)
+								if (isDesktopViewport) {
+									try {
+										// @ts-ignore
+										gl.physicallyCorrectLights = true;
+										// @ts-ignore
+										gl.shadowMap.enabled = true;
+										// @ts-ignore
+										gl.shadowMap.type = PCFSoftShadowMap;
+									} catch {}
+								}
+							}}
 						>
 							<React.Suspense fallback={null}>
 								{/* רינדור PBR (תאורה/סביבה בתוך Staircase3D) */}
@@ -1678,6 +1692,15 @@ function LivePageInner() {
 									<EffectComposer multisampling={0}>
 										<N8AO halfRes aoRadius={0.36} intensity={1.15} distanceFalloff={1.15} />
 										<Bloom intensity={0.16} luminanceThreshold={0.88} luminanceSmoothing={0.18} />
+										{/* Anti‑aliasing איכותי (במקום MSAA) */}
+										<SMAA />
+										{/* DOF עדין מאוד לתחושת מצלמה (לא "אינסטגרם") */}
+										<DepthOfField focusDistance={0.02} focalLength={0.02} bokehScale={1.8} height={720} />
+										{/* Color grading עדין: קצת קונטרסט + וינייט */}
+										<BrightnessContrast brightness={0.0} contrast={0.08} />
+										<Vignette offset={0.22} darkness={0.35} eskil />
+										{/* נגיעה קולנועית מינימלית */}
+										<ChromaticAberration offset={new Vector2(0.00035, 0.00025)} radialModulation={true} modulationOffset={0.6} />
 									</EffectComposer>
 								) : null}
 								<OrbitControls ref={orbitRef} enableDamping makeDefault zoomToCursor target={[0.304, 0.930, -0.053]} />

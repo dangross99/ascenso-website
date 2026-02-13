@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Image from 'next/image';
 import React from 'react';
@@ -1677,7 +1677,7 @@ function LivePageInner() {
 								{isDesktopViewport ? (
 									<EffectComposer multisampling={0}>
 										{/* AO חזק מדי גורם ל"השחרה" מתחת למדרגות יחד עם ContactShadows */}
-										<N8AO halfRes aoRadius={0.32} intensity={0.85} distanceFalloff={1.25} />
+										<N8AO halfRes aoRadius={0.22} intensity={0.55} distanceFalloff={1.25} />
 										<Bloom intensity={0.16} luminanceThreshold={0.88} luminanceSmoothing={0.18} />
 									</EffectComposer>
 								) : null}

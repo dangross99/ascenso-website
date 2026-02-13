@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import { useLoader } from '@react-three/fiber';
@@ -627,7 +627,7 @@ function Staircase3D({
 				<ContactShadows
 					position={[floorBounds.cx, floorBounds.y + 0.001, floorBounds.cz]}
 					scale={Math.max(floorBounds.w, floorBounds.h)}
-					opacity={0.24}
+					opacity={0.18}
 					blur={3.2}
 					far={4.2}
 				/>

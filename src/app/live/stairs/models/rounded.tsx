@@ -114,8 +114,8 @@ export function buildRoundedTreads(params: {
 				// ה-UV נקבעים ידנית ע"י projection (למעלה) כדי למנוע מראה "מפורק לחלקים".
 				const matAll = (() => {
 					const metalness = materialKind === 'metal' ? 1 : 0;
-					const roughness = materialKind === 'metal' ? 0.22 : materialKind === 'stone' ? 0.55 : 0.7;
-					const envMapIntensity = materialKind === 'metal' ? 1.35 : 0.9;
+					const roughness = materialKind === 'metal' ? 0.35 : materialKind === 'stone' ? 0.68 : 0.82;
+					const envMapIntensity = materialKind === 'metal' ? 0.75 : 0.25;
 					if (useSolidMat) return <meshStandardMaterial color={solidTopColor || solidSideColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} />;
 					const ft = buildFaceTextures(run, treadWidth, rotTop);
 					return (

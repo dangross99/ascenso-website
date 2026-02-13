@@ -150,8 +150,8 @@ export function buildTaperBoxTreads(params: {
 				const matTop = (() => {
 					const ft = buildFaceTextures(run, treadWidth, rotTop);
 					const metalness = materialKind === 'metal' ? 1 : 0;
-					const roughness = materialKind === 'metal' ? 0.22 : materialKind === 'stone' ? 0.55 : 0.7;
-					const envMapIntensity = materialKind === 'metal' ? 1.35 : 0.9;
+					const roughness = materialKind === 'metal' ? 0.35 : materialKind === 'stone' ? 0.68 : 0.82;
+					const envMapIntensity = materialKind === 'metal' ? 0.75 : 0.25;
 					if (useSolidMat) return (<meshStandardMaterial color={solidTopColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} />);
 					return (
 						<meshStandardMaterial
@@ -170,8 +170,8 @@ export function buildTaperBoxTreads(params: {
 				const matBottom = (() => {
 					const ft = buildFaceTextures(run, treadWidth, rotTop);
 					const metalness = materialKind === 'metal' ? 1 : 0;
-					const roughness = materialKind === 'metal' ? 0.22 : materialKind === 'stone' ? 0.55 : 0.7;
-					const envMapIntensity = materialKind === 'metal' ? 1.35 : 0.9;
+					const roughness = materialKind === 'metal' ? 0.35 : materialKind === 'stone' ? 0.68 : 0.82;
+					const envMapIntensity = materialKind === 'metal' ? 0.75 : 0.25;
 					if (useSolidMat) return (<meshStandardMaterial color={solidSideColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 					return (
 						<meshStandardMaterial
@@ -193,8 +193,8 @@ export function buildTaperBoxTreads(params: {
 				const matFrontBack = (flipU: boolean = false) => {
 					const ft = buildFaceTextures(treadWidth, thickStart, rotateFrontBack, flipU);
 					const metalness = materialKind === 'metal' ? 1 : 0;
-					const roughness = materialKind === 'metal' ? 0.22 : materialKind === 'stone' ? 0.55 : 0.7;
-					const envMapIntensity = materialKind === 'metal' ? 1.35 : 0.9;
+					const roughness = materialKind === 'metal' ? 0.35 : materialKind === 'stone' ? 0.68 : 0.82;
+					const envMapIntensity = materialKind === 'metal' ? 0.75 : 0.25;
 					if (useSolidMat) return (<meshStandardMaterial color={solidSideColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 					return (
 						<meshStandardMaterial
@@ -216,8 +216,8 @@ export function buildTaperBoxTreads(params: {
 				const matSides = (flipU: boolean = false) => {
 					const ft = buildFaceTextures(run, thickStart, rotateSides, flipU);
 					const metalness = materialKind === 'metal' ? 1 : 0;
-					const roughness = materialKind === 'metal' ? 0.22 : materialKind === 'stone' ? 0.55 : 0.7;
-					const envMapIntensity = materialKind === 'metal' ? 1.35 : 0.9;
+					const roughness = materialKind === 'metal' ? 0.35 : materialKind === 'stone' ? 0.68 : 0.82;
+					const envMapIntensity = materialKind === 'metal' ? 0.75 : 0.25;
 					if (useSolidMat) return (<meshStandardMaterial color={solidSideColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 					return (
 						<meshStandardMaterial

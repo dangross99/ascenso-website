@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import { useLoader } from '@react-three/fiber';
@@ -564,11 +564,13 @@ function Staircase3D({
 	return (
 		<group position={[-1.5, 0, 0]}>
 			{/* תאורה + סביבה פיזיקלית (דסקטופ חזק יותר, מובייל קל יותר) */}
-			<ambientLight intensity={highQuality ? 0.42 : 0.28} />
+			{/* תאורה יותר "אחידה" כדי שהכיוונים השונים במסלול לא יחשיכו/יבהירו דרמטית */}
+			<ambientLight intensity={highQuality ? 0.48 : 0.30} />
+			<hemisphereLight args={['#ffffff', '#d7dde5', highQuality ? 0.55 : 0.30]} />
 			{/* Key light (חם) עם צללים רכים בדסקטופ */}
 			<directionalLight
 				position={[3.5, 6, 2.5]}
-				intensity={highQuality ? 2.2 : 1.6}
+				intensity={highQuality ? 1.55 : 1.25}
 				color={highQuality ? '#fff2e6' : '#ffffff'}
 				castShadow={!!highQuality}
 				shadow-mapSize={[2048, 2048]}
@@ -581,8 +583,10 @@ function Staircase3D({
 				shadow-camera-top={6}
 				shadow-camera-bottom={-6}
 			/>
-			{/* Fill light (קר) בלי צללים */}
-			<directionalLight position={[-4.0, 3.5, -2.0]} intensity={highQuality ? 0.9 : 0.6} color={'#e8f0ff'} />
+			{/* Fill lights מסביב (ללא צללים) כדי למנוע צד אחד "שחור" בפניות */}
+			<directionalLight position={[-4.0, 3.5, -2.0]} intensity={highQuality ? 0.85 : 0.55} color={'#e8f0ff'} />
+			<directionalLight position={[0.0, 4.0, -5.5]} intensity={highQuality ? 0.55 : 0.35} color={'#ffffff'} />
+			<directionalLight position={[-6.0, 5.0, 3.5]} intensity={highQuality ? 0.45 : 0.28} color={'#ffffff'} />
 			{/* Environment: בדסקטופ נשתמש ב-Lightformers כדי לקבל תחושת חלל/חלון ריאליסטית */}
 			{highQuality ? (
 				<Environment resolution={256} frames={1} blur={0.25}>

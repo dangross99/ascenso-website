@@ -564,7 +564,7 @@ function Staircase3D({
 	return (
 		<group position={[-1.5, 0, 0]}>
 			{/* תאורה + סביבה פיזיקלית (דסקטופ חזק יותר, מובייל קל יותר) */}
-			<ambientLight intensity={highQuality ? 0.38 : 0.28} />
+			<ambientLight intensity={highQuality ? 0.42 : 0.28} />
 			{/* Key light (חם) עם צללים רכים בדסקטופ */}
 			<directionalLight
 				position={[3.5, 6, 2.5]}
@@ -623,9 +623,9 @@ function Staircase3D({
 				<ContactShadows
 					position={[floorBounds.cx, floorBounds.y + 0.001, floorBounds.cz]}
 					scale={Math.max(floorBounds.w, floorBounds.h)}
-					opacity={0.35}
-					blur={2.6}
-					far={6.5}
+					opacity={0.24}
+					blur={3.2}
+					far={4.2}
 				/>
 			) : null}
 			{(() => { 

@@ -637,6 +637,62 @@ function Staircase3D({
 				});
 						})()}
 
+			{/* קירות "חוץ" לצורך קונטקסט ויזואלי (לא משנה את מודלי המדרגות עצמם) */}
+			{(() => {
+				const showOuterWalls = true;
+				if (!showOuterWalls) return null;
+				const wallH = 1.35; // מטר
+				const wallTh = 0.06; // עובי קיר
+				const gap = 0.01; // מרווח מהקצה כדי למנוע זי-פייטינג
+				const wallColor = '#e5e7eb';
+
+				let sIdx = 0;
+				let lIdx = 0;
+
+				return (
+					<group>
+						{treads.map((t, i) => {
+							const yaw = t.rotation[1] as number;
+							const axis = (Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z') as 'x' | 'z';
+
+							// פודסט עם פנייה – לרוב אין "קיר רציף" הגיוני, נשאיר ריק
+							// @ts-ignore
+							if (t.isLanding && t.turn) { lIdx++; return null; }
+
+							const innerSide: 'right' | 'left' = t.isLanding
+								? (landingRailingSides?.[lIdx++] ?? 'right')
+								: (stepRailingSides?.[sIdx++] ?? 'right');
+
+							// rightLocalSignFor + חריג פודסטים לאורך Z (כמו boxShared)
+							const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
+							let rightLocal: 1 | -1 =
+								(axis === 'x' ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
+							if (t.isLanding && axis === 'z') rightLocal = (rightLocal === 1 ? -1 : 1) as 1 | -1;
+
+							// אצלנו innerSide הוא "פנים" (LivePageInner), לכן החוץ הוא ההיפוך.
+							const innerSignLocal = (innerSide === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
+							const outerSignLocal = (-innerSignLocal as 1 | -1);
+
+							// מרכז הקיר ב-local coords של המדרך (הקבוצה כבר מסובבת לפי t.rotation)
+							const zWall = outerSignLocal * (treadWidth / 2 + gap + wallTh / 2);
+							const worldCenterY = floorBounds.y + wallH / 2;
+							const yLocal = worldCenterY - t.position[1];
+
+							return (
+								<mesh
+									key={`outer-wall-${i}`}
+									position={[0, yLocal, zWall]}
+									castShadow={false}
+									receiveShadow
+								>
+									<boxGeometry args={[t.run, wallH, wallTh]} />
+									<meshBasicMaterial color={wallColor} side={2} transparent opacity={0.92} />
+								</mesh>
+							);
+						})}
+					</group>
+				);
+			})()}
 
 			{/* Hitech plates (מוסתר) */}
 			<HitechPlates

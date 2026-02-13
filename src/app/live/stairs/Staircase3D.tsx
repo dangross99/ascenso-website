@@ -1,8 +1,8 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import { useLoader } from '@react-three/fiber';
-import { ContactShadows, Environment, Text } from '@react-three/drei';
+import { ContactShadows, Environment, Lightformer, Text } from '@react-three/drei';
 import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, LinearMipmapLinearFilter, BufferGeometry, Float32BufferAttribute, Cache, Vector3 } from 'three';
 import type { PathSegment } from '../shared/path';
 import { buildRectTreads } from './models/rect';
@@ -565,9 +565,58 @@ function Staircase3D({
 		<group position={[-1.5, 0, 0]}>
 			{/* תאורה + סביבה פיזיקלית (דסקטופ חזק יותר, מובייל קל יותר) */}
 			<ambientLight intensity={highQuality ? 0.38 : 0.28} />
-			<directionalLight position={[3.5, 6, 2.5]} intensity={highQuality ? 2.2 : 1.6} />
-			<directionalLight position={[-4.0, 3.5, -2.0]} intensity={highQuality ? 0.9 : 0.6} />
-			<Environment preset={highQuality ? 'studio' : 'city'} resolution={highQuality ? 256 : 64} blur={0.25} />
+			{/* Key light (חם) עם צללים רכים בדסקטופ */}
+			<directionalLight
+				position={[3.5, 6, 2.5]}
+				intensity={highQuality ? 2.2 : 1.6}
+				color={highQuality ? '#fff2e6' : '#ffffff'}
+				castShadow={!!highQuality}
+				shadow-mapSize={[2048, 2048]}
+				shadow-bias={-0.00015}
+				shadow-normalBias={0.02}
+				shadow-camera-near={0.1}
+				shadow-camera-far={30}
+				shadow-camera-left={-6}
+				shadow-camera-right={6}
+				shadow-camera-top={6}
+				shadow-camera-bottom={-6}
+			/>
+			{/* Fill light (קר) בלי צללים */}
+			<directionalLight position={[-4.0, 3.5, -2.0]} intensity={highQuality ? 0.9 : 0.6} color={'#e8f0ff'} />
+			{/* Environment: בדסקטופ נשתמש ב-Lightformers כדי לקבל תחושת חלל/חלון ריאליסטית */}
+			{highQuality ? (
+				<Environment resolution={256} frames={1} blur={0.25}>
+					{/* תקרה רכה (softbox) */}
+					<Lightformer
+						form="rect"
+						intensity={2.2}
+						color="#ffffff"
+						position={[0.0, 4.5, 0.5]}
+						rotation={[Math.PI / 2, 0, 0]}
+						scale={[6.5, 3.2, 1]}
+					/>
+					{/* "חלון" צדדי חם */}
+					<Lightformer
+						form="rect"
+						intensity={3.1}
+						color="#fff2e6"
+						position={[3.8, 2.2, 1.8]}
+						rotation={[0, -Math.PI / 2.6, 0]}
+						scale={[3.0, 2.2, 1]}
+					/>
+					{/* Rim קריר עדין כדי להוציא סילואט */}
+					<Lightformer
+						form="rect"
+						intensity={0.9}
+						color="#e8f0ff"
+						position={[-4.2, 1.8, -2.8]}
+						rotation={[0, Math.PI / 2.4, 0]}
+						scale={[3.4, 2.6, 1]}
+					/>
+				</Environment>
+			) : (
+				<Environment preset="city" resolution={64} blur={0.25} />
+			)}
 
 			{/* Contact Shadows (דסקטופ בלבד) */}
 			{highQuality ? (
@@ -653,10 +702,10 @@ function Staircase3D({
 					landingRailingSides,
 					hitech: false,
 				});
-						})()}
+					})()}
 
 			{/* קירות "חוץ" לצורך קונטקסט ויזואלי (לא משנה את מודלי המדרגות עצמם) */}
-			{(() => {
+								{(() => {
 				const showOuterWalls = true;
 				if (!showOuterWalls) return null;
 				const wallH = 6.0; // מטר – קבוע מהרצפה
@@ -667,10 +716,10 @@ function Staircase3D({
 				let sIdx = 0;
 				let lIdx = 0;
 
-				return (
-					<group>
+							return (
+								<group>
 						{treads.map((t, i) => {
-							const yaw = t.rotation[1] as number;
+								const yaw = t.rotation[1] as number;
 							const axis = (Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z') as 'x' | 'z';
 
 							const isLanding = !!t.isLanding;
@@ -725,14 +774,14 @@ function Staircase3D({
 											{/* קיר בעובי wallTh על ציר X ובאורך חצי רוחב על ציר Z */}
 											<boxGeometry args={[wallTh, wallH, treadWidth / 2]} />
 											<meshBasicMaterial color={wallColor} side={2} transparent opacity={0.92} />
-										</mesh>
-									) : null}
-								</group>
-							);
-						})}
+						</mesh>
+						) : null}
 					</group>
 				);
-			})()}
+						})}
+								</group>
+							);
+						})()}
 
 			{/* Hitech plates (מוסתר) */}
 			<HitechPlates

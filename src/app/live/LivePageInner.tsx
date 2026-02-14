@@ -1406,7 +1406,13 @@ function LivePageInner() {
 								el: (
 									<div>
 										<BoxPicker box={box as any} setBox={setBox as any} />
-
+										{getNextCatForSteps('box') && (
+											<div className="mt-3 flex justify-center">
+												<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('box')!)} className="px-6 py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
+													המשך
+												</button>
+											</div>
+										)}
 										{/* צבעי מעקה לפי סוג שנבחר */}
 										<div className="mb-3">
 											{railing === 'glass' && (
@@ -1452,64 +1458,109 @@ function LivePageInner() {
 							nodes.push({
 								key: 'material',
 								el: (
-									<MaterialKindPicker
-										activeMaterial={activeMaterial}
-										onChange={(m) => startTransition(() => setActiveMaterial(m))}
-									/>
+									<>
+										<MaterialKindPicker
+											activeMaterial={activeMaterial}
+											onChange={(m) => startTransition(() => setActiveMaterial(m))}
+										/>
+										{getNextCatForSteps('material') && (
+											<div className="mt-3 flex justify-center">
+												<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('material')!)} className="px-6 py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
+													המשך
+												</button>
+											</div>
+										)}
+									</>
 								),
 							});
 							if (activeMaterial === 'wood') {
 								nodes.push({
 									key: 'woodTexture',
 									el: (
-										<WoodTexturePicker
-											woodModels={woodModels as any}
-											activeModelId={activeModelId}
-											onPick={(id) => startTransition(() => setActiveModelId(id))}
-										/>
+										<>
+											<WoodTexturePicker
+												woodModels={woodModels as any}
+												activeModelId={activeModelId}
+												onPick={(id) => startTransition(() => setActiveModelId(id))}
+											/>
+											{getNextCatForSteps('woodTexture') && (
+												<div className="mt-3 flex justify-center">
+													<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('woodTexture')!)} className="px-6 py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
+														המשך
+													</button>
+												</div>
+											)}
+										</>
 									),
 								});
 								nodes.push({
 									key: 'woodColor',
 									el: (
-										<WoodColorPicker
-											swatches={WOOD_SWATCHES}
-											activeModel={activeModel as any}
-											activeColor={activeColor}
-											colorHex={COLOR_HEX}
-											onPick={(id) => startTransition(() => setActiveColor(id))}
-										/>
+										<>
+											<WoodColorPicker
+												swatches={WOOD_SWATCHES}
+												activeModel={activeModel as any}
+												activeColor={activeColor}
+												colorHex={COLOR_HEX}
+												onPick={(id) => startTransition(() => setActiveColor(id))}
+											/>
+											{getNextCatForSteps('woodColor') && (
+												<div className="mt-3 flex justify-center">
+													<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('woodColor')!)} className="px-6 py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
+														המשך
+													</button>
+												</div>
+											)}
+										</>
 									),
 								});
 							} else {
 								nodes.push({
 									key: 'nonWoodTexture',
 									el: (
-										<NonWoodTexturePicker
-											nonWoodModels={nonWoodModels as any}
-											activeTexId={activeTexId}
-											onPick={(id) =>
-												startTransition(() => {
-													setActiveTexId(id);
-													if (activeMaterial === 'metal') setActiveMetalTexId(id);
-													if (activeMaterial === 'stone') setActiveStoneTexId(id);
-												})
-											}
-										/>
+										<>
+											<NonWoodTexturePicker
+												nonWoodModels={nonWoodModels as any}
+												activeTexId={activeTexId}
+												onPick={(id) =>
+													startTransition(() => {
+														setActiveTexId(id);
+														if (activeMaterial === 'metal') setActiveMetalTexId(id);
+														if (activeMaterial === 'stone') setActiveStoneTexId(id);
+													})
+												}
+											/>
+											{getNextCatForSteps('nonWoodTexture') && (
+												<div className="mt-3 flex justify-center">
+													<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('nonWoodTexture')!)} className="px-6 py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
+														המשך
+													</button>
+												</div>
+											)}
+										</>
 									),
 								});
 							}
 							nodes.push({
 								key: 'path',
 								el: (
-									<PathPicker
-										shape={shape}
-										steps={steps}
-										stepsTotalForPath={stepsTotalForPath}
-										pathSegments={pathSegments}
-										setShape={setShape}
-										setPathSegments={setPathSegments}
-									/>
+									<>
+										<PathPicker
+											shape={shape}
+											steps={steps}
+											stepsTotalForPath={stepsTotalForPath}
+											pathSegments={pathSegments}
+											setShape={setShape}
+											setPathSegments={setPathSegments}
+										/>
+										{getNextCatForSteps('path') && (
+											<div className="mt-3 flex justify-center">
+												<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('path')!)} className="px-6 py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
+													המשך
+												</button>
+											</div>
+										)}
+									</>
 								),
 							});
 							nodes.push({

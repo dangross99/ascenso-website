@@ -16,21 +16,6 @@ export function NonWoodTexturePicker(props: {
 	return (
 		<div className="p-2 pt-1">
 			<div className="flex flex-row items-start gap-4 flex-wrap">
-				{show && (
-					<div className="flex flex-col items-center shrink-0">
-						<span className="text-xs font-semibold text-[#1a1a2e]/70 mb-2">תצוגה מקדימה – איך החומר נראה</span>
-						<div
-							className="rounded-full border-2 border-[#1a1a2e]/20 bg-center bg-cover shadow-inner"
-							style={{
-								width: PREVIEW_SIZE,
-								height: PREVIEW_SIZE,
-								backgroundImage: show.images?.[0] ? `url("${encodeURI(show.images[0])}")` : undefined,
-								backgroundColor: (!show.images || show.images.length === 0) && show.solid ? show.solid : undefined,
-							}}
-						/>
-						<span className="mt-2 text-sm font-medium text-[#1a1a2e]">{show.name || show.id}</span>
-					</div>
-				)}
 				<div className="flex flex-wrap justify-center gap-4 text-center min-w-0 flex-1">
 				{nonWoodModels.map(m => (
 					<div key={m.id} className="flex flex-col items-center w-20">
@@ -51,6 +36,21 @@ export function NonWoodTexturePicker(props: {
 					</div>
 				))}
 				</div>
+				{show && (
+					<div className="flex flex-col items-center shrink-0">
+						<span className="text-xs font-semibold text-[#1a1a2e]/70 mb-2">תצוגה מקדימה – איך החומר נראה</span>
+						<div
+							className="rounded-full border-2 border-[#1a1a2e]/20 bg-center bg-cover shadow-inner"
+							style={{
+								width: PREVIEW_SIZE,
+								height: PREVIEW_SIZE,
+								backgroundImage: show.images?.[0] ? `url("${encodeURI(show.images[0])}")` : undefined,
+								backgroundColor: (!show.images || show.images.length === 0) && show.solid ? show.solid : undefined,
+							}}
+						/>
+						<span className="mt-2 text-sm font-medium text-[#1a1a2e]">{show.name || show.id}</span>
+					</div>
+				)}
 			</div>
 		</div>
 	);

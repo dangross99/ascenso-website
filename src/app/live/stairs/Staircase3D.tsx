@@ -27,6 +27,11 @@ const MODEL_SIDE_OVERRIDES: Partial<Record<string, Partial<Record<string, { forc
 	},
 };
 
+/** דריסת צד קיר לפי מסלול בלבד (חל על כל הדגמים) – למשל L 0° גרם ראשון: קיר בפאה השנייה */
+const PATH_WALL_SIDE_OVERRIDES: Partial<Record<string, { forceWallSide: 'right' | 'left' }>> = {
+	L_0_flight_0: { forceWallSide: 'left' },
+};
+
 function getPathKey(path: 'straight' | 'L' | 'U', flip: boolean, flight: number): string {
 	const suffix = flip ? 180 : 0;
 	if (path === 'straight') return `straight_${suffix}`;
@@ -34,8 +39,10 @@ function getPathKey(path: 'straight' | 'L' | 'U', flip: boolean, flight: number)
 }
 
 function getForceWallSideFromTable(model: string, pathKey: string): 'right' | 'left' | 'auto' {
-	const entry = MODEL_SIDE_OVERRIDES[model]?.[pathKey];
-	return entry?.forceWallSide ?? 'auto';
+	const modelEntry = MODEL_SIDE_OVERRIDES[model]?.[pathKey];
+	if (modelEntry) return modelEntry.forceWallSide;
+	const pathEntry = PATH_WALL_SIDE_OVERRIDES[pathKey];
+	return pathEntry?.forceWallSide ?? 'auto';
 }
 
 /** דריסת mirror לפי דגם ומסלול – כש־true, הפאה העבה/חזית תפנה נכון. טריז ב־180° מתוקן בהיפוך ציר Y במודל (wedge.tsx) */

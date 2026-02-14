@@ -11,6 +11,13 @@ export function NonWoodTexturePicker(props: {
 }) {
 	const { nonWoodModels, activeTexId, onPick } = props;
 	const [hoverPreview, setHoverPreview] = React.useState<{ image?: string; backgroundColor?: string } | null>(null);
+	const closeTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+	const clearCloseTimeout = () => {
+		if (closeTimeoutRef.current) {
+			clearTimeout(closeTimeoutRef.current);
+			closeTimeoutRef.current = null;
+		}
+	};
 	return (
 		<div className="p-2 pt-1">
 			<div className="flex flex-wrap justify-center gap-4 text-center">
@@ -20,12 +27,14 @@ export function NonWoodTexturePicker(props: {
 							aria-label={m.name || m.id}
 							title={m.name || m.id}
 							onClick={() => onPick(m.id)}
-							onMouseEnter={() => setHoverPreview({
+							onMouseEnter={() => { clearCloseTimeout(); setHoverPreview({
 								image: m.images?.[0],
 								backgroundColor: (!m.images || m.images.length === 0) && m.solid ? m.solid : undefined,
-							})}
-							onMouseLeave={() => setHoverPreview(null)}
-							className={`w-[52px] h-[52px] rounded-full border-2 bg-center bg-cover cursor-pointer transition-transform duration-200 hover:scale-150 ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+							}); }}
+							onMouseLeave={() => {
+								closeTimeoutRef.current = setTimeout(() => setHoverPreview(null), 220);
+							}}
+							className={`w-[52px] h-[52px] rounded-full border-2 bg-center bg-cover cursor-pointer ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 							style={{
 								backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined,
 								backgroundColor: (!m.images || m.images.length === 0) && m.solid ? m.solid : undefined,
@@ -39,7 +48,8 @@ export function NonWoodTexturePicker(props: {
 			{hoverPreview && (
 				<div
 					className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40"
-					onMouseLeave={() => setHoverPreview(null)}
+					onMouseEnter={clearCloseTimeout}
+					onMouseLeave={() => { clearCloseTimeout(); setHoverPreview(null); }}
 					aria-hidden
 				>
 					<div

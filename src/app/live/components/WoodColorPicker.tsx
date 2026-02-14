@@ -18,6 +18,13 @@ export function WoodColorPicker(props: {
 	const { swatches, activeModel, activeColor, colorHex, onPick } = props;
 	const items = swatches.filter(sw => !!activeModel?.variants?.[sw.id]);
 	const [hoverPreview, setHoverPreview] = React.useState<{ image?: string; backgroundColor?: string } | null>(null);
+	const closeTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+	const clearCloseTimeout = () => {
+		if (closeTimeoutRef.current) {
+			clearTimeout(closeTimeoutRef.current);
+			closeTimeoutRef.current = null;
+		}
+	};
 	return (
 		<div className="p-2 pt-1">
 			<div className="flex items-center justify-center gap-4 flex-wrap text-center">
@@ -30,12 +37,14 @@ export function WoodColorPicker(props: {
 								aria-label={sw.label}
 								title={sw.label}
 								onClick={() => onPick(sw.id)}
-								onMouseEnter={() => setHoverPreview({
+								onMouseEnter={() => { clearCloseTimeout(); setHoverPreview({
 									image: img,
 									backgroundColor: img ? undefined : solid,
-								})}
-								onMouseLeave={() => setHoverPreview(null)}
-								className={`w-[52px] h-[52px] rounded-full border-2 cursor-pointer transition-transform duration-200 hover:scale-150 ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+								}); }}
+								onMouseLeave={() => {
+									closeTimeoutRef.current = setTimeout(() => setHoverPreview(null), 220);
+								}}
+								className={`w-[52px] h-[52px] rounded-full border-2 cursor-pointer ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 								style={{
 									backgroundImage: img ? `url("${encodeURI(img)}")` : undefined,
 									backgroundColor: img ? undefined : solid,
@@ -52,7 +61,8 @@ export function WoodColorPicker(props: {
 			{hoverPreview && (
 				<div
 					className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40"
-					onMouseLeave={() => setHoverPreview(null)}
+					onMouseEnter={clearCloseTimeout}
+					onMouseLeave={() => { clearCloseTimeout(); setHoverPreview(null); }}
 					aria-hidden
 				>
 					<div

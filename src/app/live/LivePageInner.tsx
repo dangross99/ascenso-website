@@ -1640,7 +1640,7 @@ function LivePageInner() {
 												<button
 													type="button"
 													onClick={() => setMobileOpenCat(tab)}
-													className={`inline-flex items-center gap-2 shrink-0 cursor-default py-1.5 px-2 rounded-md ${mobileOpenCat === tab ? 'bg-[#1a1a2e]/5' : ''}`}
+													className={`inline-flex items-center gap-2 shrink-0 cursor-pointer py-1.5 px-2 rounded-md transition-colors hover:bg-[#1a1a2e]/5 ${mobileOpenCat === tab ? 'bg-[#1a1a2e]/5' : ''}`}
 													aria-selected={mobileOpenCat === tab}
 													role="tab"
 												>
@@ -2483,7 +2483,7 @@ function LivePageInner() {
 													<button
 														type="button"
 														onClick={() => setMobileOpenCat(tab)}
-														className={`inline-flex items-center gap-2 shrink-0 cursor-default py-1.5 px-2 rounded-md ${mobileOpenCat === tab ? 'bg-[#1a1a2e]/5' : ''}`}
+														className={`inline-flex items-center gap-2 shrink-0 cursor-pointer py-1.5 px-2 rounded-md transition-colors hover:bg-[#1a1a2e]/5 ${mobileOpenCat === tab ? 'bg-[#1a1a2e]/5' : ''}`}
 														aria-selected={mobileOpenCat === tab}
 														role="tab"
 													>

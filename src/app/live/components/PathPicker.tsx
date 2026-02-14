@@ -50,7 +50,7 @@ export function PathPicker(props: {
 				{(['straight', 'L', 'U'] as const).map(s => (
 					<button
 						key={s}
-						className={`px-4 py-2 text-base rounded-full border ${shape === s ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
+						className={`px-4 py-2 text-base rounded-full border cursor-pointer transition-colors ${shape === s ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
 						onClick={() => {
 							setShape(s);
 							setPathSegments(buildTemplate(s));
@@ -67,7 +67,7 @@ export function PathPicker(props: {
 						<div className="text-sm text-gray-600 mb-1">גרם {fi + 1}</div>
 						<div className="flex items-center justify-center gap-2">
 							<button
-								className="px-2 py-1 rounded border"
+								className="px-2 py-1 rounded border cursor-pointer bg-white hover:bg-gray-100 transition-colors"
 								aria-label="הפחת מדרגה"
 								onClick={() => {
 									setPathSegments(prev => prev.map((seg, idx) => (
@@ -81,7 +81,7 @@ export function PathPicker(props: {
 							</button>
 							<span className="text-base font-medium min-w-[3ch]">{f.steps}</span>
 							<button
-								className="px-2 py-1 rounded border"
+								className="px-2 py-1 rounded border cursor-pointer bg-white hover:bg-gray-100 transition-colors"
 								aria-label="הוסף מדרגה"
 								onClick={() => {
 									setPathSegments(prev => prev.map((seg, idx) => (

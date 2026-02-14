@@ -68,7 +68,7 @@ export function RailingPicker(props: {
 				] as const).map(opt => (
 					<button
 						key={opt.id}
-						className={`px-4 py-2 text-base rounded-full border ${railing === opt.id ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
+						className={`px-4 py-2 text-base rounded-full border cursor-pointer transition-colors ${railing === opt.id ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
 						onClick={() => setRailing(opt.id)}
 					>
 						{opt.label}
@@ -90,7 +90,7 @@ export function RailingPicker(props: {
 								title={sw.label}
 								aria-label={sw.label}
 								onClick={() => setGlassTone(sw.id)}
-								className={`w-[22px] h-[22px] rounded-full border-2 cursor-pointer ${glassTone === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+								className={`w-[22px] h-[22px] rounded-full border-2 cursor-pointer transition-transform hover:scale-110 ${glassTone === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 								style={{ backgroundColor: sw.color, borderColor: sw.border }}
 							/>
 						))}
@@ -103,14 +103,14 @@ export function RailingPicker(props: {
 							title="שחור"
 							aria-label="שחור"
 							onClick={() => { setRailingMetalSolid('#111111'); setRailingMetalId(null); }}
-							className={`w-[22px] h-[22px] rounded-full border-2 cursor-pointer ${railingMetalSolid === '#111111' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+							className={`w-[22px] h-[22px] rounded-full border-2 cursor-pointer transition-transform hover:scale-110 ${railingMetalSolid === '#111111' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 							style={{ backgroundColor: '#111111', borderColor: '#333' }}
 						/>
 						<button
 							title="לבן"
 							aria-label="לבן"
 							onClick={() => { setRailingMetalSolid('#F5F5F5'); setRailingMetalId(null); }}
-							className={`w-[22px] h-[22px] rounded-full border-2 cursor-pointer ${railingMetalSolid === '#F5F5F5' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+							className={`w-[22px] h-[22px] rounded-full border-2 cursor-pointer transition-transform hover:scale-110 ${railingMetalSolid === '#F5F5F5' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 							style={{ backgroundColor: '#F5F5F5', borderColor: '#ddd' }}
 						/>
 					</div>
@@ -124,7 +124,7 @@ export function RailingPicker(props: {
 								title={opt.name}
 								aria-label={opt.name}
 								onClick={() => { setCableId(opt.id); setCableColor(opt.color || '#c7ccd1'); }}
-								className={`w-[22px] h-[22px] rounded-full border-2 bg-center bg-cover cursor-pointer ${cableId === opt.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+								className={`w-[22px] h-[22px] rounded-full border-2 bg-center bg-cover cursor-pointer transition-transform hover:scale-110 ${cableId === opt.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 								style={{ backgroundImage: opt.image ? `url("${encodeURI(opt.image)}")` : undefined, borderColor: '#ddd' }}
 							/>
 						))}
@@ -165,13 +165,13 @@ export function RailingPicker(props: {
 										<div className="text-sm text-gray-600 mb-1">גרם {idx + 1}</div>
 										<div className="flex items-center justify-center gap-2 mb-2">
 											<button
-												className={`px-3 py-1 text-sm rounded-full border ${isFloor ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
+												className={`px-3 py-1 text-sm rounded-full border cursor-pointer transition-colors ${isFloor ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
 												onClick={() => setFlightCableSpan(f, 'floor')}
 											>
 												תקרה‑רצפה
 											</button>
 											<button
-												className={`px-3 py-1 text-sm rounded-full border ${!isFloor ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
+												className={`px-3 py-1 text-sm rounded-full border cursor-pointer transition-colors ${!isFloor ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
 												onClick={() => setFlightCableSpan(f, 'tread')}
 											>
 												תקרה‑מדרגה
@@ -193,13 +193,13 @@ export function RailingPicker(props: {
 											<div className="text-sm text-gray-600 mb-1">פודסט {i + 1}</div>
 											<div className="flex items-center justify-center gap-2 mb-2">
 												<button
-													className={`px-3 py-1 text-sm rounded-full border ${val === 'floor' ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
+													className={`px-3 py-1 text-sm rounded-full border cursor-pointer transition-colors ${val === 'floor' ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
 													onClick={() => setLandingCableSpanMode(prev => prev.map((v, j) => j === i ? 'floor' : v))}
 												>
 													תקרה‑רצפה
 												</button>
 												<button
-													className={`px-3 py-1 text-sm rounded-full border ${val === 'tread' ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
+													className={`px-3 py-1 text-sm rounded-full border cursor-pointer transition-colors ${val === 'tread' ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
 													onClick={() => setLandingCableSpanMode(prev => prev.map((v, j) => j === i ? 'tread' : v))}
 												>
 													תקרה‑מדרגה

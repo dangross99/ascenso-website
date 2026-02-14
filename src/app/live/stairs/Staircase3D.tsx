@@ -27,9 +27,12 @@ const MODEL_SIDE_OVERRIDES: Partial<Record<string, Partial<Record<string, { forc
 	},
 };
 
-/** דריסת צד קיר לפי מסלול בלבד (חל על כל הדגמים) – למשל L 0° גרם ראשון: קיר בפאה השנייה */
+/** דריסת צד קיר לפי מסלול בלבד (חל על כל הדגמים). L 180° = מראה של L 0° (עולה ופונה ימינה ↔ עולה ופונה שמאלה) */
 const PATH_WALL_SIDE_OVERRIDES: Partial<Record<string, { forceWallSide: 'right' | 'left' }>> = {
 	L_0_flight_0: { forceWallSide: 'left' },
+	L_0_flight_1: { forceWallSide: 'right' },
+	L_180_flight_0: { forceWallSide: 'right' },
+	L_180_flight_1: { forceWallSide: 'left' },
 };
 
 function getPathKey(path: 'straight' | 'L' | 'U', flip: boolean, flight: number): string {

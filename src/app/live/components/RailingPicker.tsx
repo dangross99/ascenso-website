@@ -61,15 +61,14 @@ export function RailingPicker(props: {
 
 	return (
 		<div className="p-3 relative">
-			{/* תצוגה מקדימה כבלים – צד שמאל למעלה, בלי להגדיל את הטאב */}
+			{/* תצוגה מקדימה כבלים – צד ימין למעלה, absolute כדי לא להגדיל טאב */}
 			{railing === 'cable' && selectedCable && (
-				<div className="absolute top-3 end-3 flex flex-col items-center z-10" dir="rtl" style={{ width: 72 }}>
-					<span className="text-[10px] font-semibold text-[#1a1a2e]/70 mb-1">תצוגה מקדימה</span>
+				<div className="absolute top-3 start-3 z-10">
 					<div
-						className="rounded-full border-2 border-[#1a1a2e]/20 bg-center bg-cover shrink-0"
+						className="rounded-full border-2 border-[#1a1a2e]/20 bg-center bg-cover"
 						style={{
-							width: 56,
-							height: 56,
+							width: 88,
+							height: 88,
 							backgroundImage: selectedCable.image ? `url("${encodeURI(selectedCable.image)}")` : undefined,
 							backgroundColor: selectedCable.color || '#e5e5e5',
 						}}

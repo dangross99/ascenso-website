@@ -38,6 +38,7 @@ function Staircase3D({
 	stepRailingStates,
 	landingRailingStates,
 	stepRailingSides,
+	stepRailingSidesForRailing,
 	landingRailingSides,
 	railingKind,
 	railingTextureUrl,
@@ -80,6 +81,8 @@ function Staircase3D({
 	stepRailingStates?: boolean[];
 	landingRailingStates?: boolean[];
 	stepRailingSides?: Array<'right' | 'left'>;
+	/** צד מעקה בלבד – אם מועבר, משמש רק ל-build (מעקה); קירות נשארים עם stepRailingSides */
+	stepRailingSidesForRailing?: Array<'right' | 'left'>;
 	landingRailingSides?: Array<'right' | 'left'>;
 	railingKind?: 'none' | 'glass' | 'metal' | 'cable';
 	railingTextureUrl?: string | null;
@@ -589,6 +592,7 @@ function Staircase3D({
 						treadWidth,
 					});
 				}
+				const railingSides = stepRailingSidesForRailing ?? stepRailingSides;
 				if (boxModel === 'taper') {
 					return buildTaperBoxTreads({
 						treads: treads as any,
@@ -600,7 +604,7 @@ function Staircase3D({
 						treadThickness,
 						treadWidth,
 						thickEnd: 0.05, // 5cm בקצה
-						stepRailingSides,
+						stepRailingSides: railingSides,
 						landingRailingSides,
 					});
 				}
@@ -616,7 +620,7 @@ function Staircase3D({
 						treadWidth,
 						wedgeFrontFraction,
 						wedgeFrontThicknessM,
-						stepRailingSides,
+						stepRailingSides: railingSides,
 						landingRailingSides,
 						debugLabels: false,
 						hitech: false,
@@ -631,7 +635,7 @@ function Staircase3D({
 						buildFaceTextures,
 						treadThickness,
 						treadWidth,
-						stepRailingSides,
+						stepRailingSides: railingSides,
 						landingRailingSides,
 						debugLabels: false,
 						hitech: false,
@@ -646,7 +650,7 @@ function Staircase3D({
 					buildFaceTextures,
 					treadThickness,
 					treadWidth,
-					stepRailingSides,
+					stepRailingSides: railingSides,
 					landingRailingSides,
 					hitech: false,
 				});

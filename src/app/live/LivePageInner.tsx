@@ -572,7 +572,6 @@ function LivePageInner() {
 		// 'inner' מציין את הצד הפנימי הרציף לכל מקטעי הישר עד לפנייה הבאה
 		let initialized = false;
 		let inner: 'right' | 'left' = 'right';
-		let flightIdx = 0; // 0=גרם 1, 1=גרם 2, 2=גרם 3 – במודל 3D גרמים 1 ו-3 מפרשים right/left בהפוך
 
 		for (let i = 0; i < pathSegments.length; i++) {
 			const seg = pathSegments[i];
@@ -590,10 +589,7 @@ function LivePageInner() {
 			}
 
 			if (seg.kind === 'straight') {
-				// בגרמים 1 ו-3 (flight 0, 2) המודל הופך את הצד – שולחים הפוך כדי שהמעקה יישאר בצד הפנימי (לא ליד הקיר)
-				const sideToPush = (flightIdx === 0 || flightIdx === 2) ? flip(inner) : inner;
-				for (let s = 0; s < seg.steps; s++) stepSides.push(sideToPush);
-				flightIdx++;
+				for (let s = 0; s < seg.steps; s++) stepSides.push(inner);
 			} else {
 				// פודסט ללא פנייה: שמור את הצד הנוכחי; עם פנייה: הצד של הפודסט הוא הפנייה
 				landingSides.push(typeof seg.turn === 'undefined' ? inner : (seg.turn === 'right' ? 'right' : 'left'));
@@ -605,6 +601,29 @@ function LivePageInner() {
 		}
 		return { stepSides, landingSides };
 	}, [pathSegments]);
+
+	// צד מעקה מתוקן לגרמים 1 ו-3 בלבד – המודל 3D מפרש right/left בהפוך שם, אז מעבירים הפוך רק למעקה (לא לקירות)
+	const stepRailingSideForRailing = React.useMemo(() => {
+		const out = stepRailingSide.slice(0, stepsTotalForPath);
+		if (!pathSegments?.length) return out;
+		let stepIdx = 0;
+		let flightIdx = 0;
+		const flip = (s: 'right' | 'left'): 'right' | 'left' => (s === 'right' ? 'left' : 'right');
+		for (let i = 0; i < pathSegments.length; i++) {
+			const seg = pathSegments[i];
+			if (seg.kind === 'straight') {
+				const n = Math.max(0, (seg as any).steps ?? 0);
+				for (let s = 0; s < n; s++) {
+					if (stepIdx < out.length && (flightIdx === 0 || flightIdx === 2)) {
+						out[stepIdx] = flip(out[stepIdx] ?? 'right');
+					}
+					stepIdx++;
+				}
+				flightIdx++;
+			}
+		}
+		return out;
+	}, [stepRailingSide, stepsTotalForPath, pathSegments]);
 
 	// צד נוכחי גלובלי (רוב) למעקה – מציג מה הצד הדומיננטי כדי לאפשר החלפה מהירה במובייל
 	const globalRailingSide = React.useMemo<'right' | 'left'>(() => {
@@ -1692,6 +1711,7 @@ function LivePageInner() {
 									stepRailingStates={stepRailing}
 									landingRailingStates={landingRailing}
 									stepRailingSides={stepRailingSide}
+									stepRailingSidesForRailing={stepRailingSideForRailing}
 									landingRailingSides={landingRailingSide}
 									highQuality={isDesktopViewport}
 									railingTextureUrl={(() => {

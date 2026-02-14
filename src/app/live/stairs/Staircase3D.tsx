@@ -330,6 +330,20 @@ function Staircase3D({
 
 	const treads = React.useMemo(getTreads, [shape, steps, JSON.stringify(pathSegments), pathFlipped180]);
 
+	// במבנה ישר ללא 180: דגמי מרום ודלתא מוצגים הפוכים – מפצים בהוספת 180° לרוטציה
+	const isStraightNoFlip =
+		pathFlipped180 === false &&
+		treads.length > 0 &&
+		treads.every((t) => t.flight === 0 && !t.isLanding) &&
+		treads[0].rotation[1] === 0;
+	const treadsRidgeTaper = React.useMemo(() => {
+		if (!isStraightNoFlip || (boxModel !== 'ridge' && boxModel !== 'taper')) return treads;
+		return treads.map((t) => ({
+			...t,
+			rotation: [t.rotation[0], t.rotation[1] + Math.PI, t.rotation[2]] as [number, number, number],
+		}));
+	}, [treads, isStraightNoFlip, boxModel]);
+
 	// נתוני קיר רציף לכל גרם: התחלה (עם מתיחה אחורה אחרי פודסט), סוף, אורך, ויואו – לאיחוד עם עוגן הפודסט
 	const flightWallData = React.useMemo(() => {
 		const out: Array<{
@@ -662,7 +676,7 @@ function Staircase3D({
 				}
 				if (boxModel === 'taper') {
 					return buildTaperBoxTreads({
-						treads: treads as any,
+						treads: treadsRidgeTaper as any,
 						materialKind,
 						useSolidMat,
 						solidTopColor,
@@ -695,7 +709,7 @@ function Staircase3D({
 				}
 				if (boxModel === 'ridge') {
 					return buildRidgeTreads({
-						treads: treads as any,
+						treads: treadsRidgeTaper as any,
 						useSolidMat,
 						solidTopColor,
 						solidSideColor,

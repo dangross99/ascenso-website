@@ -2,12 +2,15 @@ import React from 'react';
 
 type WoodModel = { id: string; name?: string; images: string[] };
 
+const PREVIEW_SIZE = 520; // 52px × 10
+
 export function WoodTexturePicker(props: {
 	woodModels: WoodModel[];
 	activeModelId: string | null;
 	onPick: (id: string) => void;
 }) {
 	const { woodModels, activeModelId, onPick } = props;
+	const [hoverPreview, setHoverPreview] = React.useState<{ image?: string; backgroundColor?: string } | null>(null);
 	return (
 		<div className="p-2 pt-1">
 			<div className="flex flex-wrap justify-center gap-4 text-center">
@@ -17,6 +20,11 @@ export function WoodTexturePicker(props: {
 							aria-label={m.name || m.id}
 							title={m.name || m.id}
 							onClick={() => onPick(m.id)}
+							onMouseEnter={() => setHoverPreview({
+								image: m.images?.[0],
+								backgroundColor: m.images?.[0] ? undefined : '#e5e5e5',
+							})}
+							onMouseLeave={() => setHoverPreview(null)}
 							className={`w-[52px] h-[52px] rounded-full border-2 bg-center bg-cover cursor-pointer transition-transform duration-200 hover:scale-150 ${activeModelId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 							style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
 						/>
@@ -24,6 +32,23 @@ export function WoodTexturePicker(props: {
 					</div>
 				))}
 			</div>
+			{hoverPreview && (
+				<div
+					className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40"
+					onMouseLeave={() => setHoverPreview(null)}
+					aria-hidden
+				>
+					<div
+						className="rounded-full border-4 border-white shadow-2xl bg-center bg-cover"
+						style={{
+							width: PREVIEW_SIZE,
+							height: PREVIEW_SIZE,
+							backgroundImage: hoverPreview.image ? `url("${encodeURI(hoverPreview.image)}")` : undefined,
+							backgroundColor: hoverPreview.backgroundColor,
+						}}
+					/>
+				</div>
+			)}
 		</div>
 	);
 }

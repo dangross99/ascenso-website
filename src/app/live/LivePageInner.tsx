@@ -551,6 +551,8 @@ function LivePageInner() {
 		return [{ kind: 'straight', steps }];
 	});
 	const [pathFlipped180, setPathFlipped180] = React.useState(false);
+	const [textureHoverPreview, setTextureHoverPreview] = React.useState<{ image?: string; backgroundColor?: string } | null>(null);
+	const TEXTURE_PREVIEW_SIZE = 400; // 40px × 10
 
 	// הוסר: מנגנון "שחזור מצב" למובייל כולל סטייט, שמירה, ושחזורים
 
@@ -1440,6 +1442,23 @@ function LivePageInner() {
 
 	return (
 		<>
+			{textureHoverPreview && (
+				<div
+					className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40"
+					onMouseLeave={() => setTextureHoverPreview(null)}
+					aria-hidden
+				>
+					<div
+						className="rounded-full border-4 border-white shadow-2xl bg-center bg-cover"
+						style={{
+							width: TEXTURE_PREVIEW_SIZE,
+							height: TEXTURE_PREVIEW_SIZE,
+							backgroundImage: textureHoverPreview.image ? `url("${encodeURI(textureHoverPreview.image)}")` : undefined,
+							backgroundColor: textureHoverPreview.backgroundColor,
+						}}
+					/>
+				</div>
+			)}
 			<div className="min-h-screen w-full bg-[#EFEFEF]">
 			<main className="max-w-7xl mx-auto px-4 lg:px-6 py-6" dir="rtl">
 			<div className="grid grid-cols-1 gap-0">
@@ -2261,6 +2280,8 @@ function LivePageInner() {
 																aria-label={m.name || m.id}
 																title={m.name || m.id}
 																onClick={() => startTransition(() => setActiveModelId(m.id))}
+																onMouseEnter={() => setTextureHoverPreview({ image: m.images?.[0], backgroundColor: m.images?.[0] ? undefined : '#e5e5e5' })}
+																onMouseLeave={() => setTextureHoverPreview(null)}
 																className={`w-10 h-10 rounded-full border-2 bg-center bg-cover cursor-pointer transition-transform duration-200 hover:scale-150 ${activeModelId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
 															/>
@@ -2282,6 +2303,8 @@ function LivePageInner() {
 																				aria-label={sw.label}
 																				title={sw.label}
 																				onClick={() => startTransition(() => setActiveColor(sw.id))}
+																				onMouseEnter={() => setTextureHoverPreview({ image: img, backgroundColor: img ? undefined : solid })}
+																				onMouseLeave={() => setTextureHoverPreview(null)}
 																				className={`w-8 h-8 rounded-full border-2 cursor-pointer transition-transform duration-200 hover:scale-150 ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																				style={{
 																					backgroundImage: img ? `url("${encodeURI(img)}")` : undefined,
@@ -2328,6 +2351,11 @@ function LivePageInner() {
 													if (activeMaterial === 'metal') setActiveMetalTexId(m.id);
 													if (activeMaterial === 'stone') setActiveStoneTexId(m.id);
 												})}
+																onMouseEnter={() => setTextureHoverPreview({
+																	image: m.images?.[0],
+																	backgroundColor: (!m.images || m.images.length === 0) && (m as any).solid ? (m as any).solid : undefined,
+																})}
+																onMouseLeave={() => setTextureHoverPreview(null)}
 																className={`w-10 h-10 rounded-full border-2 bg-center bg-cover cursor-pointer transition-transform duration-200 hover:scale-150 ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, backgroundColor: (!m.images || m.images.length === 0) && (m as any).solid ? (m as any).solid : undefined, borderColor: '#ddd' }}
 															/>

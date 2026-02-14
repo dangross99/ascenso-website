@@ -2,12 +2,15 @@ import React from 'react';
 
 type NonWoodModel = { id: string; name?: string; images?: string[] } & Record<string, any>;
 
+const PREVIEW_SIZE = 520; // 52px × 10
+
 export function NonWoodTexturePicker(props: {
 	nonWoodModels: NonWoodModel[];
 	activeTexId: string | null;
 	onPick: (id: string) => void;
 }) {
 	const { nonWoodModels, activeTexId, onPick } = props;
+	const [hoverPreview, setHoverPreview] = React.useState<{ image?: string; backgroundColor?: string } | null>(null);
 	return (
 		<div className="p-2 pt-1">
 			<div className="flex flex-wrap justify-center gap-4 text-center">
@@ -17,6 +20,11 @@ export function NonWoodTexturePicker(props: {
 							aria-label={m.name || m.id}
 							title={m.name || m.id}
 							onClick={() => onPick(m.id)}
+							onMouseEnter={() => setHoverPreview({
+								image: m.images?.[0],
+								backgroundColor: (!m.images || m.images.length === 0) && m.solid ? m.solid : undefined,
+							})}
+							onMouseLeave={() => setHoverPreview(null)}
 							className={`w-[52px] h-[52px] rounded-full border-2 bg-center bg-cover cursor-pointer transition-transform duration-200 hover:scale-150 ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 							style={{
 								backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined,
@@ -28,6 +36,23 @@ export function NonWoodTexturePicker(props: {
 					</div>
 				))}
 			</div>
+			{hoverPreview && (
+				<div
+					className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40"
+					onMouseLeave={() => setHoverPreview(null)}
+					aria-hidden
+				>
+					<div
+						className="rounded-full border-4 border-white shadow-2xl bg-center bg-cover"
+						style={{
+							width: PREVIEW_SIZE,
+							height: PREVIEW_SIZE,
+							backgroundImage: hoverPreview.image ? `url("${encodeURI(hoverPreview.image)}")` : undefined,
+							backgroundColor: hoverPreview.backgroundColor,
+						}}
+					/>
+				</div>
+			)}
 		</div>
 	);
 }

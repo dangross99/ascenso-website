@@ -529,13 +529,14 @@ function LivePageInner() {
 		return i >= 0 && i < stepOrderForSteps.length - 1 ? stepOrderForSteps[i + 1] : null;
 	};
 
+	// ערכים מהקוד – מציינים מעבר/שינוי עובי (מה שהופך לגובה אחר)
 	const boxDisplayInfo: Record<string, { name: string; specs: string }> = {
-		thick: { name: 'קלאסי', specs: 'עובי 18 מ״מ · רוחב 28 ס״מ' },
-		thin: { name: 'להב', specs: 'עובי 7 מ״מ · רוחב 28 ס״מ' },
-		rounded: { name: 'קפסולה', specs: 'עובי 8 מ״מ · רוחב 28 ס״מ · רדיוס 8 ס״מ' },
-		taper: { name: 'דלתא', specs: 'עובי 12 מ״מ · רוחב 28–24 ס״מ' },
-		wedge: { name: 'טריז', specs: 'עובי 11 מ״מ · זווית 8°' },
-		ridge: { name: 'מרום', specs: 'עובי 9 מ״מ · גובה רכס 16 ס״מ' },
+		thick: { name: 'קלאסי', specs: 'עובי אחיד 11 ס״מ' },
+		thin: { name: 'להב', specs: 'עובי אחיד 7 ס״מ' },
+		rounded: { name: 'קפסולה', specs: 'עובי 8 ס״מ · פינות מעוגלות רדיוס 4 ס״מ' },
+		taper: { name: 'דלתא', specs: 'קצה 5 ס״מ הופך ל־12 ס״מ' },
+		wedge: { name: 'טריז', specs: 'חזית 3.5 ס״מ הופך לעובי 11 ס״מ' },
+		ridge: { name: 'מרום', specs: 'בסיס 2 ס״מ · רכס עולה ל־11 ס״מ' },
 	};
 
 	// קונפיגורטור מדרגות

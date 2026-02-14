@@ -48,10 +48,11 @@ function getForceWallSideFromTable(model: string, pathKey: string): 'right' | 'l
 	return pathEntry?.forceWallSide ?? 'auto';
 }
 
-/** דריסת mirror לפי דגם ומסלול – כש־true, הפאה העבה/חזית תפנה נכון */
+/** דריסת mirror לפי דגם ומסלול – כש־true, הפאה העבה/חזית תפנה נכון. דלתא = taper */
 const MIRROR_OVERRIDES: Partial<Record<string, Partial<Record<string, boolean>>>> = {
 	ridge: { straight_0: true, L_0_flight_0: true, L_0_flight_1: true },
 	taper: { straight_0: true, L_0_flight_0: true, L_0_flight_1: true },
+	delta: { L_0_flight_0: true, L_0_flight_1: true },
 	wedge: { L_0_flight_0: true, L_0_flight_1: true },
 };
 

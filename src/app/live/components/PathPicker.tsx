@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import type { PathSegment } from '../shared/path';
 
 export function PathPicker(props: {
@@ -11,7 +11,7 @@ export function PathPicker(props: {
 }) {
 	const { shape, steps, stepsTotalForPath, pathSegments, setShape, setPathSegments } = props;
 
-	// ׳‘׳—׳™׳¨׳” ׳׳”׳™׳¨׳”: ׳™׳©׳¨ / L / U ג†’ ׳‘׳•׳ ׳” ׳×׳‘׳ ׳™׳× ׳׳¡׳׳•׳ ׳‘׳¡׳™׳¡׳™׳×
+	// בניית תבנית: ישר / L / U → מקטעים למסלול
 	const buildTemplate = (s: 'straight' | 'L' | 'U'): PathSegment[] => {
 		const total = stepsTotalForPath || steps;
 		if (s === 'straight') return [{ kind: 'straight' as const, steps: total }];
@@ -56,12 +56,12 @@ export function PathPicker(props: {
 							setPathSegments(buildTemplate(s));
 						}}
 					>
-						{s === 'straight' ? '׳™׳©׳¨' : s === 'L' ? '׳¦׳•׳¨׳× L' : '׳¦׳•׳¨׳× U'}
+						{s === 'straight' ? 'ישר' : s === 'L' ? 'זווית L' : 'זווית U'}
 					</button>
 				))}
 			</div>
 
-			{/* ׳›׳₪׳×׳•׳¨ ׳׳¨׳׳” ׳’׳׳•׳‘׳׳™ ג€“ ׳”׳•׳₪׳ ׳׳× ׳›׳ ׳”׳₪׳ ׳™׳•׳× ׳‘׳׳¡׳׳•׳ */}
+			{/* הפוך כיוון פודסט – רק כשמסלול עם פינות */}
 			<div className="flex items-center justify-center mb-2">
 				<button
 					className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100"
@@ -72,21 +72,21 @@ export function PathPicker(props: {
 							return { kind: 'landing', turn: (seg.turn === 'left' ? 'right' : 'left') };
 						}));
 					}}
-					title="׳׳¨׳׳”"
-					aria-label="׳׳¨׳׳”"
+					title="הפוך"
+					aria-label="הפוך"
 				>
-					׳׳¨׳׳”
+					הפוך
 				</button>
 			</div>
 
 			<div className={`grid gap-3`} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
 				{flights.map((f, fi) => (
 					<div key={fi} className="border rounded-md p-2 text-center">
-						<div className="text-sm text-gray-600 mb-1">׳’׳¨׳ {fi + 1}</div>
+						<div className="text-sm text-gray-600 mb-1">גרם {fi + 1}</div>
 						<div className="flex items-center justify-center gap-2">
 							<button
 								className="px-2 py-1 rounded border"
-								aria-label="׳₪׳—׳•׳× ׳׳“׳¨׳’׳•׳×"
+								aria-label="הפחת מדרגה"
 								onClick={() => {
 									setPathSegments(prev => prev.map((seg, idx) => (
 										idx === f.segIndex && seg.kind === 'straight'
@@ -100,7 +100,7 @@ export function PathPicker(props: {
 							<span className="text-base font-medium min-w-[3ch]">{f.steps}</span>
 							<button
 								className="px-2 py-1 rounded border"
-								aria-label="׳™׳•׳×׳¨ ׳׳“׳¨׳’׳•׳×"
+								aria-label="הוסף מדרגה"
 								onClick={() => {
 									setPathSegments(prev => prev.map((seg, idx) => (
 										idx === f.segIndex && seg.kind === 'straight'

@@ -497,7 +497,7 @@ function LivePageInner() {
 		switch (cat) {
 			case 'box': return 'בחרו את עובי הדופן של המדרך – עבה או דקה. אפשר לשנות בכל שלב.';
 			case 'material': return 'בחרו חומר בסיסי לעיבוד המדרך: עץ, מתכת או אבן טבעית.';
-			case 'woodTexture': return 'בחרו דגם עץ (טקסטורה) שמתאים לקו העיצובי שלכם.';
+			case 'woodTexture': return 'בחרו דגם עץ (טקסטורה) וגוון שמתאימים לקו העיצובי שלכם.';
 			case 'woodColor': return 'בחרו גוון לעץ (טבעי/ווריאציות כהות/בהירות) לפי התמונות.';
 			case 'nonWoodTexture': return 'בחרו טקסטורה למתכת/אבן. מומלץ לבחון את ההשתקפויות במודל.';
 			case 'path': return 'בנו את מסלול המדרגות: הוסיפו ישרים/פודסטים והתאימו מספר מדרגות לפי הצורך.';
@@ -511,7 +511,7 @@ function LivePageInner() {
 		switch (cat) {
 			case 'box': return 'דגם';
 			case 'material': return 'חומר';
-			case 'woodTexture': return 'טקסטורה (עץ)';
+			case 'woodTexture': return 'טקסטורה וצבע (עץ)';
 			case 'woodColor': return 'צבע (עץ)';
 			case 'nonWoodTexture': return 'טקסטורה';
 			case 'path': return 'מסלול';
@@ -522,7 +522,7 @@ function LivePageInner() {
 	// ללא זרימה כפויה – אין מעבר אוטומטי או אינדקס שלב
 	type Cat = 'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing';
 	const stepOrderForSteps: Cat[] = activeMaterial === 'wood'
-		? ['box', 'material', 'woodTexture', 'woodColor', 'path', 'railing']
+		? ['box', 'material', 'woodTexture', 'path', 'railing']
 		: ['box', 'material', 'nonWoodTexture', 'path', 'railing'];
 	const getNextCatForSteps = (cat: Cat): Cat | null => {
 		const i = stepOrderForSteps.indexOf(cat);
@@ -1493,30 +1493,18 @@ function LivePageInner() {
 												activeModelId={activeModelId}
 												onPick={(id) => startTransition(() => setActiveModelId(id))}
 											/>
+											<div className="mt-3">
+												<WoodColorPicker
+													swatches={WOOD_SWATCHES}
+													activeModel={activeModel as any}
+													activeColor={activeColor}
+													colorHex={COLOR_HEX}
+													onPick={(id) => startTransition(() => setActiveColor(id))}
+												/>
+											</div>
 											{getNextCatForSteps('woodTexture') && (
 												<div className="mt-3 mb-4 text-center">
 													<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('woodTexture')!)} className="px-5 py-2 rounded-lg bg-emerald-600 text-white font-medium text-sm shadow-sm hover:bg-emerald-700 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer">
-														המשך
-													</button>
-												</div>
-											)}
-										</div>
-									),
-								});
-								nodes.push({
-									key: 'woodColor',
-									el: (
-										<div className="px-4">
-											<WoodColorPicker
-												swatches={WOOD_SWATCHES}
-												activeModel={activeModel as any}
-												activeColor={activeColor}
-												colorHex={COLOR_HEX}
-												onPick={(id) => startTransition(() => setActiveColor(id))}
-											/>
-											{getNextCatForSteps('woodColor') && (
-												<div className="mt-3 mb-4 text-center">
-													<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('woodColor')!)} className="px-5 py-2 rounded-lg bg-emerald-600 text-white font-medium text-sm shadow-sm hover:bg-emerald-700 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer">
 														המשך
 													</button>
 												</div>
@@ -1599,7 +1587,7 @@ function LivePageInner() {
 							});
 
 							const mapNodes = new Map(nodes.map(n => [n.key, n.el]));
-							const order: Cat[] = activeMaterial === 'wood' ? ['box','material','woodTexture','woodColor','path','railing'] : ['box','material','nonWoodTexture','path','railing'];
+							const order: Cat[] = activeMaterial === 'wood' ? ['box','material','woodTexture','path','railing'] : ['box','material','nonWoodTexture','path','railing'];
 							return (
 								<>
 									{/* ציר שלבים – מספור וחיבור בין קטגוריות */}
@@ -1628,7 +1616,7 @@ function LivePageInner() {
 									</div>
 									<div className="pt-1 flex justify-center">
 										<div className="w-full max-w-5xl text-center">
-											{mapNodes.get((mobileOpenCat || order[0]) as Cat) as React.ReactElement}
+											{mapNodes.get((order.includes((mobileOpenCat || order[0]) as Cat) ? (mobileOpenCat || order[0]) : (mobileOpenCat === 'woodColor' ? 'woodTexture' : order[0])) as Cat) as React.ReactElement}
 										</div>
 									</div>
 								</>
@@ -2107,7 +2095,7 @@ function LivePageInner() {
 							type Cat = 'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing';
 							const nodes: Array<{ key: Cat; el: React.ReactElement }> = [];
 							const stepOrder: Cat[] = activeMaterial === 'wood'
-								? ['box','material','woodTexture','woodColor','path','railing']
+								? ['box','material','woodTexture','path','railing']
 								: ['box','material','nonWoodTexture','path','railing'];
 							const getNextCat = (cat: Cat): Cat | null => {
 								const i = stepOrder.indexOf(cat);
@@ -2186,7 +2174,7 @@ function LivePageInner() {
 									el: (
 										<div>
 											{mobileOpenCat === 'woodTexture' && (
-												<div className="p-3 bg-white border border-t-0 rounded-b-md">
+												<div className="p-3 bg-white border border-t-0 rounded-b-md space-y-4">
 													<div className="flex flex-wrap gap-3">
 														{woodModels.map(m => (
 															<button
@@ -2199,28 +2187,12 @@ function LivePageInner() {
 															/>
 														))}
 													</div>
-													{getNextCat('woodTexture') && (
-														<div className="mt-3 px-3 pb-2">
-															<button type="button" onClick={() => setMobileOpenCat(getNextCat('woodTexture')!)} className="w-full py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
-																המשך
-															</button>
-														</div>
-													)}
-												</div>
-											)}
-										</div>
-									),
-								});
-								nodes.push({
-									key: 'woodColor',
-									el: (
-										<div>
-											{mobileOpenCat === 'woodColor' && (
-												<>
-													<div className="p-3 bg-white border border-t-0 rounded-b-md">
-														{(() => {
-															const items = WOOD_SWATCHES.filter(sw => !!activeModel?.variants?.[sw.id]);
-															return (
+													{(() => {
+														const items = WOOD_SWATCHES.filter(sw => !!activeModel?.variants?.[sw.id]);
+														if (items.length === 0) return null;
+														return (
+															<div>
+																<span className="text-xs font-semibold text-[#1a1a2e]/70 block mb-2">גוון</span>
 																<div className="flex items-center gap-3 flex-wrap">
 																	{items.map(sw => {
 																		const img = activeModel?.variants?.[sw.id]?.[0];
@@ -2243,17 +2215,17 @@ function LivePageInner() {
 																		);
 																	})}
 																</div>
-															);
-														})()}
-													</div>
-													{getNextCat('woodColor') && (
-														<div className="mt-3 px-3 pb-2">
-															<button type="button" onClick={() => setMobileOpenCat(getNextCat('woodColor')!)} className="w-full py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
+															</div>
+														);
+													})()}
+													{getNextCat('woodTexture') && (
+														<div className="pt-1 pb-2">
+															<button type="button" onClick={() => setMobileOpenCat(getNextCat('woodTexture')!)} className="w-full py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
 																המשך
 															</button>
 														</div>
 													)}
-												</>
+												</div>
 											)}
 										</div>
 									),
@@ -2415,11 +2387,11 @@ function LivePageInner() {
 
 							// סדר קבוע: Box -> Material -> (WoodTexture, WoodColor | NonWoodTexture) -> Path -> Railing
 							const fixedOrder: Cat[] = activeMaterial === 'wood'
-								? ['path','box','material','woodTexture','woodColor','railing']
+								? ['path','box','material','woodTexture','railing']
 								: ['path','box','material','nonWoodTexture','railing'];
 							// Tabs bar
 							const tabOrder: Cat[] = activeMaterial === 'wood'
-								? ['box','material','woodTexture','woodColor','path','railing']
+								? ['box','material','woodTexture','path','railing']
 								: ['box','material','nonWoodTexture','path','railing'];
 							const mapNodes = new Map(nodes.map(n => [n.key, n.el]));
 							return (
@@ -2452,7 +2424,7 @@ function LivePageInner() {
 									</div>
 									<div className="mt-1 flex justify-center">
 										<div className="w-full max-w-5xl text-center">
-											{mapNodes.get((mobileOpenCat || tabOrder[0]) as Cat) as React.ReactElement}
+											{mapNodes.get((tabOrder.includes((mobileOpenCat || tabOrder[0]) as Cat) ? (mobileOpenCat || tabOrder[0]) : (mobileOpenCat === 'woodColor' ? 'woodTexture' : tabOrder[0])) as Cat) as React.ReactElement}
 										</div>
 									</div>
 								</>

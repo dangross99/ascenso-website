@@ -17,7 +17,7 @@ export function WoodColorPicker(props: {
 }) {
 	const { swatches, activeModel, activeColor, colorHex, onPick } = props;
 	const items = swatches.filter(sw => !!activeModel?.variants?.[sw.id]);
-	const [hoverPreview, setHoverPreview] = React.useState<{ image?: string; backgroundColor?: string } | null>(null);
+	const [hoverPreview, setHoverPreview] = React.useState<{ image?: string; backgroundColor?: string; pickId: string } | null>(null);
 	const closeTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 	const clearCloseTimeout = () => {
 		if (closeTimeoutRef.current) {
@@ -35,11 +35,12 @@ export function WoodColorPicker(props: {
 						<div key={sw.id} className="flex flex-col items-center w-16">
 							<button
 								aria-label={sw.label}
-								title={sw.label}
+								title={`${sw.label} – לחץ לבחירה`}
 								onClick={() => onPick(sw.id)}
 								onMouseEnter={() => { clearCloseTimeout(); setHoverPreview({
 									image: img,
 									backgroundColor: img ? undefined : solid,
+									pickId: sw.id,
 								}); }}
 								onMouseLeave={() => {
 									closeTimeoutRef.current = setTimeout(() => setHoverPreview(null), 220);
@@ -60,13 +61,14 @@ export function WoodColorPicker(props: {
 			</div>
 			{hoverPreview && (
 				<div
-					className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40"
+					className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-3 bg-black/40 cursor-pointer"
 					onMouseEnter={clearCloseTimeout}
 					onMouseLeave={() => { clearCloseTimeout(); setHoverPreview(null); }}
+					onClick={() => { if (hoverPreview.pickId) { onPick(hoverPreview.pickId); setHoverPreview(null); } }}
 					aria-hidden
 				>
 					<div
-						className="rounded-full border-4 border-white shadow-2xl bg-center bg-cover"
+						className="rounded-full border-4 border-white shadow-2xl bg-center bg-cover ring-2 ring-[#1a1a2e]/30"
 						style={{
 							width: PREVIEW_SIZE,
 							height: PREVIEW_SIZE,
@@ -74,6 +76,7 @@ export function WoodColorPicker(props: {
 							backgroundColor: hoverPreview.backgroundColor,
 						}}
 					/>
+					<span className="text-sm font-medium text-white drop-shadow-md bg-black/30 px-3 py-1.5 rounded-full">לחץ לבחירה</span>
 				</div>
 			)}
 		</div>

@@ -10,7 +10,7 @@ export function NonWoodTexturePicker(props: {
 	onPick: (id: string) => void;
 }) {
 	const { nonWoodModels, activeTexId, onPick } = props;
-	const [hoverPreview, setHoverPreview] = React.useState<{ image?: string; backgroundColor?: string } | null>(null);
+	const [hoverPreview, setHoverPreview] = React.useState<{ image?: string; backgroundColor?: string; pickId: string } | null>(null);
 	const closeTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 	const clearCloseTimeout = () => {
 		if (closeTimeoutRef.current) {
@@ -25,11 +25,12 @@ export function NonWoodTexturePicker(props: {
 					<div key={m.id} className="flex flex-col items-center w-20">
 						<button
 							aria-label={m.name || m.id}
-							title={m.name || m.id}
+							title={`${m.name || m.id} – לחץ לבחירה`}
 							onClick={() => onPick(m.id)}
 							onMouseEnter={() => { clearCloseTimeout(); setHoverPreview({
 								image: m.images?.[0],
 								backgroundColor: (!m.images || m.images.length === 0) && m.solid ? m.solid : undefined,
+								pickId: m.id,
 							}); }}
 							onMouseLeave={() => {
 								closeTimeoutRef.current = setTimeout(() => setHoverPreview(null), 220);
@@ -47,13 +48,14 @@ export function NonWoodTexturePicker(props: {
 			</div>
 			{hoverPreview && (
 				<div
-					className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40"
+					className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-3 bg-black/40 cursor-pointer"
 					onMouseEnter={clearCloseTimeout}
 					onMouseLeave={() => { clearCloseTimeout(); setHoverPreview(null); }}
+					onClick={() => { if (hoverPreview.pickId) { onPick(hoverPreview.pickId); setHoverPreview(null); } }}
 					aria-hidden
 				>
 					<div
-						className="rounded-full border-4 border-white shadow-2xl bg-center bg-cover"
+						className="rounded-full border-4 border-white shadow-2xl bg-center bg-cover ring-2 ring-[#1a1a2e]/30"
 						style={{
 							width: PREVIEW_SIZE,
 							height: PREVIEW_SIZE,
@@ -61,6 +63,7 @@ export function NonWoodTexturePicker(props: {
 							backgroundColor: hoverPreview.backgroundColor,
 						}}
 					/>
+					<span className="text-sm font-medium text-white drop-shadow-md bg-black/30 px-3 py-1.5 rounded-full">לחץ לבחירה</span>
 				</div>
 			)}
 		</div>

@@ -551,7 +551,11 @@ function LivePageInner() {
 		return [{ kind: 'straight', steps }];
 	});
 	const [pathFlipped180, setPathFlipped180] = React.useState(false);
-	const [textureHoverPreview, setTextureHoverPreview] = React.useState<{ image?: string; backgroundColor?: string } | null>(null);
+	const [textureHoverPreview, setTextureHoverPreview] = React.useState<{
+		image?: string;
+		backgroundColor?: string;
+		pick?: { type: 'model' | 'color' | 'tex'; id: string };
+	} | null>(null);
 	const TEXTURE_PREVIEW_SIZE = 400; // 40px × 10
 	const textureHoverCloseTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 	const clearTextureHoverCloseTimeout = React.useCallback(() => {
@@ -1451,13 +1455,28 @@ function LivePageInner() {
 		<>
 			{textureHoverPreview && (
 				<div
-					className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40"
+					className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-3 bg-black/40 cursor-pointer"
 					onMouseEnter={clearTextureHoverCloseTimeout}
 					onMouseLeave={() => { clearTextureHoverCloseTimeout(); setTextureHoverPreview(null); }}
+					onClick={() => {
+						const pick = textureHoverPreview.pick;
+						if (pick) {
+							if (pick.type === 'model') startTransition(() => setActiveModelId(pick.id));
+							else if (pick.type === 'color') startTransition(() => setActiveColor(pick.id));
+							else if (pick.type === 'tex') {
+								startTransition(() => {
+									setActiveTexId(pick.id);
+									if (activeMaterial === 'metal') setActiveMetalTexId(pick.id);
+									if (activeMaterial === 'stone') setActiveStoneTexId(pick.id);
+								});
+							}
+							setTextureHoverPreview(null);
+						}
+					}}
 					aria-hidden
 				>
 					<div
-						className="rounded-full border-4 border-white shadow-2xl bg-center bg-cover"
+						className="rounded-full border-4 border-white shadow-2xl bg-center bg-cover ring-2 ring-[#1a1a2e]/30"
 						style={{
 							width: TEXTURE_PREVIEW_SIZE,
 							height: TEXTURE_PREVIEW_SIZE,
@@ -1465,6 +1484,7 @@ function LivePageInner() {
 							backgroundColor: textureHoverPreview.backgroundColor,
 						}}
 					/>
+					<span className="text-sm font-medium text-white drop-shadow-md bg-black/30 px-3 py-1.5 rounded-full">לחץ לבחירה</span>
 				</div>
 			)}
 			<div className="min-h-screen w-full bg-[#EFEFEF]">
@@ -2328,9 +2348,9 @@ function LivePageInner() {
 															<button
 																key={m.id}
 																aria-label={m.name || m.id}
-																title={m.name || m.id}
+																title={`${m.name || m.id} – לחץ לבחירה`}
 																onClick={() => startTransition(() => setActiveModelId(m.id))}
-																onMouseEnter={() => { clearTextureHoverCloseTimeout(); setTextureHoverPreview({ image: m.images?.[0], backgroundColor: m.images?.[0] ? undefined : '#e5e5e5' }); }}
+																onMouseEnter={() => { clearTextureHoverCloseTimeout(); setTextureHoverPreview({ image: m.images?.[0], backgroundColor: m.images?.[0] ? undefined : '#e5e5e5', pick: { type: 'model', id: m.id } }); }}
 																onMouseLeave={() => { textureHoverCloseTimeoutRef.current = setTimeout(() => setTextureHoverPreview(null), 220); }}
 																className={`w-10 h-10 rounded-full border-2 bg-center bg-cover cursor-pointer ${activeModelId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
@@ -2351,9 +2371,9 @@ function LivePageInner() {
 																			<button
 																				key={sw.id}
 																				aria-label={sw.label}
-																				title={sw.label}
+																				title={`${sw.label} – לחץ לבחירה`}
 																				onClick={() => startTransition(() => setActiveColor(sw.id))}
-																				onMouseEnter={() => { clearTextureHoverCloseTimeout(); setTextureHoverPreview({ image: img, backgroundColor: img ? undefined : solid }); }}
+																				onMouseEnter={() => { clearTextureHoverCloseTimeout(); setTextureHoverPreview({ image: img, backgroundColor: img ? undefined : solid, pick: { type: 'color', id: sw.id } }); }}
 																				onMouseLeave={() => { textureHoverCloseTimeoutRef.current = setTimeout(() => setTextureHoverPreview(null), 220); }}
 																				className={`w-8 h-8 rounded-full border-2 cursor-pointer ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																				style={{
@@ -2395,7 +2415,7 @@ function LivePageInner() {
 															<button
 																key={m.id}
 																aria-label={m.name || m.id}
-																title={m.name || m.id}
+																title={`${m.name || m.id} – לחץ לבחירה`}
 												onClick={() => startTransition(() => {
 													setActiveTexId(m.id);
 													if (activeMaterial === 'metal') setActiveMetalTexId(m.id);
@@ -2404,6 +2424,7 @@ function LivePageInner() {
 																onMouseEnter={() => { clearTextureHoverCloseTimeout(); setTextureHoverPreview({
 																	image: m.images?.[0],
 																	backgroundColor: (!m.images || m.images.length === 0) && (m as any).solid ? (m as any).solid : undefined,
+																	pick: { type: 'tex', id: m.id },
 																}); }}
 																onMouseLeave={() => { textureHoverCloseTimeoutRef.current = setTimeout(() => setTextureHoverPreview(null), 220); }}
 																className={`w-10 h-10 rounded-full border-2 bg-center bg-cover cursor-pointer ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}

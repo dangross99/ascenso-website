@@ -692,8 +692,8 @@ function Staircase3D({
 								(axis === 'x' ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
 							if (t.isLanding && axis === 'z') rightLocal = (rightLocal === 1 ? -1 : 1) as 1 | -1;
 							const railingSideSignLocal = (railingSide === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
-							// הקיר בפאה הנגדית למעקה
-							const zWall = -railingSideSignLocal * (treadWidth / 2 + gap + wallTh / 2);
+							// הקיר בפאה הנגדית למעקה – אותו ציר שהמעקה משתמש בו: axis x → צד ב-Z, axis z → צד ב-X
+							const wallOffset = -railingSideSignLocal * (treadWidth / 2 + gap + wallTh / 2);
 
 							// כיוון התקדמות (לקיר חזית בפודסט עם פנייה)
 							const forwardSignBase = (axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
@@ -704,8 +704,8 @@ function Staircase3D({
 
 							return (
 								<group key={`outer-wall-${i}`} position={t.position} rotation={t.rotation}>
-									{/* קיר חיצוני – toneMapped={false} כדי שהלבן לא יידחס ע"י ACES ויישאר בוהק */}
-									<mesh position={[0, yLocal, zWall]} castShadow={false} receiveShadow={false}>
+									{/* קיר חיצוני – מיקום לפי אותו ציר כמו המעקה (X כשהמדרך לאורך Z, Z כשהמדרך לאורך X) */}
+									<mesh position={axis === 'x' ? [0, yLocal, wallOffset] : [wallOffset, yLocal, 0]} castShadow={false} receiveShadow={false}>
 										<boxGeometry args={[t.run, wallH, wallTh]} />
 										<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
 									</mesh>

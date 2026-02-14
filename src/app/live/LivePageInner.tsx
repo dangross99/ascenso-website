@@ -1533,11 +1533,28 @@ function LivePageInner() {
 							const order: Cat[] = activeMaterial === 'wood' ? ['box','material','woodTexture','woodColor','path','railing'] : ['box','material','nonWoodTexture','path','railing'];
 							return (
 								<>
-									<div className="flex gap-3 overflow-x-auto px-3 pt-2 w-full lg:justify-center">
-										{order.map(tab => (
-											<button key={tab} className={`inline-flex items-center justify-center px-4 py-2 text-sm md:text-base whitespace-nowrap text-center border-b-2 min-h-[44px] cursor-pointer ${mobileOpenCat === tab ? 'border-[#1a1a2e] text-[#1a1a2e] font-semibold' : 'border-transparent text-gray-600 hover:text-gray-800'}`} onClick={() => setMobileOpenCat(tab)}>
-												{getCatTitle(tab)}
-											</button>
+									{/* ציר שלבים – מספור וחיבור בין קטגוריות */}
+									<div className="flex items-center overflow-x-auto px-3 py-3 w-full lg:justify-center gap-0 border-b border-gray-200" dir="rtl">
+										{order.map((tab, i) => (
+											<React.Fragment key={tab}>
+												<button
+													type="button"
+													onClick={() => setMobileOpenCat(tab)}
+													className={`inline-flex items-center gap-2 shrink-0 cursor-pointer py-1.5 px-2 rounded-md transition-colors hover:bg-gray-100 ${mobileOpenCat === tab ? 'bg-[#1a1a2e]/5' : ''}`}
+													aria-selected={mobileOpenCat === tab}
+													role="tab"
+												>
+													<span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${mobileOpenCat === tab ? 'bg-[#1a1a2e] text-white' : 'border-2 border-gray-300 text-gray-500'}`}>
+														{i + 1}
+													</span>
+													<span className={`text-sm md:text-base whitespace-nowrap ${mobileOpenCat === tab ? 'font-semibold text-[#1a1a2e]' : 'text-gray-600'}`}>
+														{getCatTitle(tab)}
+													</span>
+												</button>
+												{i < order.length - 1 && (
+													<span className="mx-1 w-6 min-w-[8px] shrink-0 border-t border-gray-300" aria-hidden />
+												)}
+											</React.Fragment>
 										))}
 									</div>
 									<div className="pt-1 flex justify-center">
@@ -2321,17 +2338,28 @@ function LivePageInner() {
 							return (
 								<>
 									<div className="sticky top-0 z-20 bg-white/95 backdrop-blur border-b">
-										<div className="flex gap-3 overflow-x-auto px-2 py-2 w-full lg:justify-center" dir="rtl">
-											{tabOrder.map(tab => (
-												<button
-													key={tab}
-													className={`inline-flex items-center justify-center px-4 py-2 text-sm md:text-base whitespace-nowrap text-center border-b-2 min-h-[44px] cursor-pointer ${mobileOpenCat === tab ? 'border-[#1a1a2e] text-[#1a1a2e] font-semibold' : 'border-transparent text-gray-600 hover:text-gray-800'}`}
-													onClick={() => setMobileOpenCat(tab)}
-													aria-selected={mobileOpenCat === tab}
-													role="tab"
-												>
-													{getCatTitle(tab)}
-												</button>
+										{/* ציר שלבים – מספור וקו חיבור */}
+										<div className="flex items-center overflow-x-auto px-2 py-3 w-full lg:justify-center gap-0" dir="rtl">
+											{tabOrder.map((tab, i) => (
+												<React.Fragment key={tab}>
+													<button
+														type="button"
+														onClick={() => setMobileOpenCat(tab)}
+														className={`inline-flex items-center gap-2 shrink-0 cursor-pointer py-1.5 px-2 rounded-md transition-colors hover:bg-gray-100 ${mobileOpenCat === tab ? 'bg-[#1a1a2e]/5' : ''}`}
+														aria-selected={mobileOpenCat === tab}
+														role="tab"
+													>
+														<span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${mobileOpenCat === tab ? 'bg-[#1a1a2e] text-white' : 'border-2 border-gray-300 text-gray-500'}`}>
+															{i + 1}
+														</span>
+														<span className={`text-sm md:text-base whitespace-nowrap ${mobileOpenCat === tab ? 'font-semibold text-[#1a1a2e]' : 'text-gray-600'}`}>
+															{getCatTitle(tab)}
+														</span>
+													</button>
+													{i < tabOrder.length - 1 && (
+														<span className="mx-1 w-6 min-w-[8px] shrink-0 border-t border-gray-300" aria-hidden />
+													)}
+												</React.Fragment>
 											))}
 										</div>
 									</div>

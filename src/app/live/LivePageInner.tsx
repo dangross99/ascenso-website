@@ -13,7 +13,7 @@ import { encodePath, decodePath } from './shared/path';
 import { BookingModal } from './components/BookingModal';
 import { BrandWordmark } from './components/BrandWordmark';
 import { Schematic } from './components/Schematic';
-import { BoxPicker } from './components/BoxPicker';
+import { BoxPicker, BoxShapeIcon } from './components/BoxPicker';
 import { MaterialKindPicker } from './components/MaterialKindPicker';
 import { WoodTexturePicker } from './components/WoodTexturePicker';
 import { WoodColorPicker } from './components/WoodColorPicker';
@@ -1872,12 +1872,19 @@ function LivePageInner() {
 						{/* פירוט חשבון צדדי בדסקטופ */}
 						<div className="hidden lg:block lg:col-span-1">
 							<div className="bg-white rounded-md p-3 h-full space-y-3">
-								{/* הדגם הנבחר + פירוט טכני */}
+								{/* הדגם הנבחר + פירוט טכני – כרטיס מזמין עם צורת הדגם */}
 								{boxDisplayInfo[box] && (
 									<div className="pb-3 border-b border-gray-200">
-										<div className="font-semibold text-[#1a1a2e] mb-1">הדגם הנבחר</div>
-										<div className="text-sm font-medium text-gray-800">{boxDisplayInfo[box].name}</div>
-										<p className="text-xs text-gray-600 mt-1 leading-relaxed">{boxDisplayInfo[box].desc}</p>
+										<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] p-3 border border-[#e8e2dc] shadow-sm">
+											<div className="flex items-start gap-3">
+												<BoxShapeIcon boxId={box as any} size={44} className="mt-0.5" />
+												<div className="min-w-0 flex-1">
+													<div className="text-[11px] font-semibold uppercase tracking-wide text-[#1a1a2e]/70 mb-0.5">הדגם הנבחר</div>
+													<div className="text-sm font-bold text-[#1a1a2e]">{boxDisplayInfo[box].name}</div>
+													<p className="text-xs text-gray-600 mt-1 leading-relaxed">{boxDisplayInfo[box].desc}</p>
+												</div>
+											</div>
+										</div>
 									</div>
 								)}
 								<div className="font-semibold mb-1">פירוט חשבון (כולל מע״מ)</div>
@@ -1926,10 +1933,15 @@ function LivePageInner() {
 					{/* פירוט חשבון מתחת להדמייה – מובייל/טאבלט בלבד */}
 					<div className="mt-3 space-y-3 lg:hidden">
 						{boxDisplayInfo[box] && (
-							<div className="bg-white rounded-md p-3 border border-gray-200">
-								<div className="font-semibold text-[#1a1a2e] mb-1">הדגם הנבחר</div>
-								<div className="text-sm font-medium text-gray-800">{boxDisplayInfo[box].name}</div>
-								<p className="text-xs text-gray-600 mt-1 leading-relaxed">{boxDisplayInfo[box].desc}</p>
+							<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] p-3 border border-[#e8e2dc] shadow-sm">
+								<div className="flex items-start gap-3">
+									<BoxShapeIcon boxId={box as any} size={48} className="shrink-0" />
+									<div className="min-w-0 flex-1">
+										<div className="text-[11px] font-semibold uppercase tracking-wide text-[#1a1a2e]/70 mb-0.5">הדגם הנבחר</div>
+										<div className="text-sm font-bold text-[#1a1a2e]">{boxDisplayInfo[box].name}</div>
+										<p className="text-xs text-gray-600 mt-1 leading-relaxed">{boxDisplayInfo[box].desc}</p>
+									</div>
+								</div>
 							</div>
 						)}
 						<div className="bg-white rounded-md p-3">

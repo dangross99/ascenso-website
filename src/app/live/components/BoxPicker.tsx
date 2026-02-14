@@ -1,6 +1,60 @@
 import React from 'react';
 
-type BoxId = 'thick' | 'thin' | 'rounded' | 'taper' | 'wedge' | 'ridge';
+export type BoxId = 'thick' | 'thin' | 'rounded' | 'taper' | 'wedge' | 'ridge';
+
+/** אייקון צורת הדגם – לשימוש בסיכום "הדגם הנבחר" */
+export function BoxShapeIcon(props: { boxId: BoxId; size?: number; className?: string }) {
+	const { boxId, size = 48, className = '' } = props;
+	const s = size;
+	const fill = '#F2E9E3';
+	const stroke = '#1a1a2e';
+	return (
+		<div className={`flex items-center justify-center shrink-0 text-[#1a1a2e] ${className}`} aria-hidden>
+			{boxId === 'thick' ? (
+				<svg width={s} height={s} viewBox="0 0 52 52">
+					<rect x="1" y="16" width="50" height="20" rx="0" fill={fill} />
+					<rect x="1" y="16" width="50" height="20" rx="0" stroke={stroke} strokeWidth="2" fill="none" />
+				</svg>
+			) : boxId === 'thin' ? (
+				<svg width={s} height={s} viewBox="0 0 52 52">
+					<rect x="1" y="20" width="50" height="12" rx="0" fill={fill} />
+					<rect x="1" y="20" width="50" height="12" rx="0" stroke={stroke} strokeWidth="2" fill="none" />
+				</svg>
+			) : boxId === 'rounded' ? (
+				<svg width={s} height={s} viewBox="0 0 52 52">
+					<rect x="4" y="18" width="44" height="16" rx="8" fill={fill} />
+					<rect x="4" y="18" width="44" height="16" rx="8" stroke={stroke} strokeWidth="2" fill="none" />
+				</svg>
+			) : boxId === 'taper' ? (
+				<svg width={s} height={s} viewBox="0 0 52 52">
+					<polygon points="6,34 46,30 46,20 6,18" fill={fill} />
+					<polygon points="6,34 46,30 46,20 6,18" fill="none" stroke={stroke} strokeWidth="2" />
+				</svg>
+			) : boxId === 'wedge' ? (
+				<svg width={s} height={s} viewBox="0 0 52 52">
+					<g transform="rotate(180 26 26)">
+						<polygon points="6,14 46,22 46,38 6,38" fill={fill} />
+						<polygon points="6,14 46,22 46,38 6,38" fill="none" stroke={stroke} strokeWidth="2" />
+						<path d="M6 14 L46 22" stroke={stroke} strokeWidth="2" fill="none" />
+					</g>
+				</svg>
+			) : boxId === 'ridge' ? (
+				<svg width={s} height={s} viewBox="0 0 52 52">
+					<g transform="rotate(180 26 26)">
+						<polygon points="2,34 26,18 50,34" fill={fill} stroke={stroke} strokeWidth="2" />
+					</g>
+				</svg>
+			) : (
+				<svg width={s} height={s} viewBox="0 0 52 52">
+					<rect x="6" y="18" width="40" height="16" rx="0" fill={fill} />
+					<rect x="6" y="18" width="40" height="16" rx="0" stroke={stroke} strokeWidth="2" fill="none" />
+					<rect x="6" y="18" width="2" height="16" fill={stroke} />
+					<rect x="44" y="18" width="2" height="16" fill={stroke} />
+				</svg>
+			)}
+		</div>
+	);
+}
 
 export function BoxPicker(props: {
 	box: BoxId;

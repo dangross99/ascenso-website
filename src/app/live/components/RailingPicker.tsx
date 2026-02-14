@@ -61,9 +61,9 @@ export function RailingPicker(props: {
 
 	return (
 		<div className="p-3 relative">
-			{/* תצוגה מקדימה כבלים – צד ימין למעלה, absolute כדי לא להגדיל טאב */}
+			{/* תצוגה מקדימה כבלים – צד שמאל, טיפה לכיוון המרכז, absolute כדי לא להגדיל טאב */}
 			{railing === 'cable' && selectedCable && (
-				<div className="absolute top-3 start-3 z-10">
+				<div className="absolute top-3 end-3 me-6 z-10">
 					<div
 						className="rounded-full border-2 border-[#1a1a2e]/20 bg-center bg-cover"
 						style={{

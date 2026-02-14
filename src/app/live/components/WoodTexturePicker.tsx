@@ -87,7 +87,7 @@ export function WoodTexturePicker(props: {
 							<span className="mt-2 text-sm font-medium text-[#1a1a2e]">{show.name || show.id}</span>
 						</div>
 						{colorItems.length > 0 && (
-							<div className="grid grid-cols-2 grid-rows-2 gap-2.5">
+							<div className="grid grid-cols-2 grid-rows-2 gap-2.5 me-auto">
 								{colorItems.map(sw => (
 									<ColorCircle
 										key={sw.id}

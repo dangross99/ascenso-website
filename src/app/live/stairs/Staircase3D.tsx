@@ -269,10 +269,11 @@ function Staircase3D({
 					mirror: mirror0,
 					forceWallSide: fws0,
 				});
+				// גרם שני: מתחיל מיד אחרי קצה הפודסט (Z = -treadWidth/2), בלי רווח
 				for (let i = 0; i < b; i++) {
 					const stepY = (a + 1 + i) * riser;
 					treads.push({
-						position: [podestX, stepY, -treadWidth - i * treadDepth - treadDepth / 2],
+						position: [podestX, stepY, -treadWidth / 2 - i * treadDepth - treadDepth / 2],
 						rotation: [0, -Math.PI / 2, 0],
 						run: treadDepth,
 						isLanding: false,
@@ -318,9 +319,10 @@ function Staircase3D({
 					mirror: mirror0,
 					forceWallSide: fws0,
 				});
+				// גרם שני: מתחיל מיד אחרי קצה הפודסט (Z = ±treadWidth/2), בלי רווח
 				for (let i = 0; i < b; i++) {
 					const stepY = (a + 1 + i) * riser;
-					const z = flip ? treadWidth + i * treadDepth + treadDepth / 2 : -treadWidth - i * treadDepth - treadDepth / 2;
+					const z = flip ? treadWidth / 2 + i * treadDepth + treadDepth / 2 : -treadWidth / 2 - i * treadDepth - treadDepth / 2;
 					treads.push({
 						position: [p1x, stepY, z],
 						rotation: [0, flip ? Math.PI / 2 + yaw180 : yaw1, 0],
@@ -332,7 +334,7 @@ function Staircase3D({
 						forceWallSide: fws1,
 					});
 				}
-				const p2z = flip ? treadWidth + b * treadDepth + treadWidth / 2 : -treadWidth - b * treadDepth - treadWidth / 2;
+				const p2z = flip ? treadWidth / 2 + b * treadDepth + treadWidth / 2 : -treadWidth / 2 - b * treadDepth - treadWidth / 2;
 				treads.push({
 					position: [p1x, (a + b + 1) * riser, p2z],
 					rotation: [0, flip ? Math.PI / 2 + yaw180 : yaw1, 0],

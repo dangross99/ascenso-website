@@ -338,9 +338,10 @@ function Staircase3D({
 		treads[0].rotation[1] === 0;
 	const treadsRidgeTaper = React.useMemo(() => {
 		if (!isStraightNoFlip || (boxModel !== 'ridge' && boxModel !== 'taper')) return treads;
+		// היפוך צד ימין/שמאל (ציר Z מקומי – אנכי למדרגה) כדי לתקן כיוון מרום/דלתא
 		return treads.map((t) => ({
 			...t,
-			rotation: [t.rotation[0], t.rotation[1] + Math.PI, t.rotation[2]] as [number, number, number],
+			rotation: [t.rotation[0], t.rotation[1], t.rotation[2] + Math.PI] as [number, number, number],
 		}));
 	}, [treads, isStraightNoFlip, boxModel]);
 

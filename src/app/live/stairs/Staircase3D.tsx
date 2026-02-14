@@ -976,7 +976,8 @@ function Staircase3D({
 							const axis = (Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z') as 'x' | 'z';
 							const hasTurn = !!(t as { turn?: 'left' | 'right' }).turn;
 							const lIdx = treads.slice(0, i).filter((x) => x.isLanding).length;
-							const railingSide: 'right' | 'left' = landingRailingSides?.[lIdx] ?? 'right';
+							const railingSide: 'right' | 'left' =
+								t.forceWallSide !== 'auto' ? t.forceWallSide : (landingRailingSides?.[lIdx] ?? 'right');
 							const cosY = Math.cos(yaw);
 							const sinY = Math.sin(yaw);
 							let rightLocal: 1 | -1 =
@@ -989,7 +990,7 @@ function Staircase3D({
 							const yLocal = worldCenterY - t.position[1];
 							return (
 								<group key={`outer-wall-landing-${i}`} position={t.position} rotation={t.rotation}>
-									<mesh position={axis === 'x' ? [0, yLocal, wallOffset] : [wallOffset, yLocal, 0]} castShadow={false} receiveShadow={false}>
+									<mesh position={[0, yLocal, wallOffset]} castShadow={false} receiveShadow={false}>
 										<boxGeometry args={[t.run, wallH, wallTh]} />
 										<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
 									</mesh>

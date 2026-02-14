@@ -134,7 +134,7 @@
   },
   {
     "id": "stone_green_alpi",
-    "name": "גרין אלפי",
+    "name": "האלפיים הירוקים",
     "category": "stone",
     "colors": [],
     "price": 5500,
@@ -194,7 +194,7 @@
   },
   {
     "id": "stone_land_stone",
-    "name": "אבן לנד",
+    "name": "אבן אדמה",
     "category": "stone",
     "colors": [],
     "price": 4900,
@@ -244,7 +244,7 @@
   },
   {
     "id": "antique_gold",
-    "name": "זהב אנטיק",
+    "name": "זהב ענתיקה",
     "category": "metal",
     "colors": [
       "gray"
@@ -256,7 +256,7 @@
   },
   {
     "id": "antique_silver",
-    "name": "כסף אנטיק",
+    "name": "כסף ענתיקה",
     "category": "metal",
     "colors": [
       "gray"
@@ -340,7 +340,7 @@
   },
   {
     "id": "rain",
-    "name": "ריין",
+    "name": "גשם",
     "category": "metal",
     "colors": [
       "gray"

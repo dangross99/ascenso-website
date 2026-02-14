@@ -50,12 +50,13 @@ type MaterialRecord = {
 
 type PriceListData = {
 	stairs?: {
+		models?: Array<{ id: string; priceMultiplier?: number }>;
 		pricing?: { baseSetup?: number; landingMultiplier?: number };
 		textures?: Array<{ id: string; pricePerStep?: number }>;
 	};
 	railings?: {
-		glass?: { unitPrice?: number };
-		cables?: { unitPrice?: number };
+		glass?: { unitPrice?: number; toneMultiplier?: number; toneMultiplierIds?: string[] };
+		cables?: { unitPrice?: number; unitPriceCoated?: number; naturalCableId?: string };
 	};
 };
 
@@ -891,6 +892,15 @@ function LivePageInner() {
 		});
 		return map;
 	}, [priceList]);
+	const modelMultiplierByBox = React.useMemo(() => {
+		const map = new Map<string, number>();
+		priceList?.stairs?.models?.forEach(m => {
+			if (m.id != null && typeof m.priceMultiplier === 'number' && m.priceMultiplier > 0) {
+				map.set(m.id, m.priceMultiplier);
+			}
+		});
+		return map;
+	}, [priceList]);
 	// אם הטקסטורה הפעילה לא קיימת לאחר הסינון (למשל metal_solid_white/black), בחר את הראשונה הזמינה
 	React.useEffect(() => {
 		if (activeMaterial === 'wood') return;
@@ -1146,10 +1156,12 @@ function LivePageInner() {
 		}>;
 		total: number;
 	} {
-		const baseSetup: number = Number(priceList?.stairs?.pricing?.baseSetup) || 1125;
+		const baseSetup: number = Number(priceList?.stairs?.pricing?.baseSetup) || 1500;
 		const landingMultiplier: number = Number(priceList?.stairs?.pricing?.landingMultiplier) || 2.5;
 		const texId = activeMaterial === 'wood' ? (activeModel?.id ?? null) : activeTexId;
-		const perStep: number = (texId ? pricePerStepByTexId.get(texId) : undefined) ?? 600;
+		const basePerStep: number = (texId ? pricePerStepByTexId.get(texId) : undefined) ?? 600;
+		const boxMultiplier: number = modelMultiplierByBox.get(box) ?? 1;
+		const perStep: number = Math.round(basePerStep * boxMultiplier);
 		const landingPrice = perStep * landingMultiplier;
 		// חישוב מתוך המסלול
 		const stepsTotal = pathSegments.reduce((s, seg) => s + (seg.kind === 'straight' ? seg.steps : 0), 0);
@@ -1182,7 +1194,12 @@ function LivePageInner() {
 			const areaM2 =
 				stepsEnabledCount * (STEP_RUN_M * GLASS_H_STEP_M) +
 				landingsEnabledCount * (LANDING_RUN_M * GLASS_H_LAND_M);
-			const glassRate: number = Number(priceList?.railings?.glass?.unitPrice) || 1275;
+			let glassRate: number = Number(priceList?.railings?.glass?.unitPrice) || 1530;
+			const toneMult = priceList?.railings?.glass?.toneMultiplier;
+			const toneIds = priceList?.railings?.glass?.toneMultiplierIds;
+			if (toneMult != null && toneIds?.length && (glassTone === 'smoked' || glassTone === 'bronze')) {
+				glassRate = Math.round(glassRate * toneMult);
+			}
 			const cost = Math.round(areaM2 * glassRate);
 			if (cost > 0) items.push({ label: 'מעקה זכוכית', value: cost, qty: areaM2, unitPrice: glassRate, unitLabel: 'מ״ר' });
 		} else if (railing === 'metal') {
@@ -1194,8 +1211,11 @@ function LivePageInner() {
 			const cost = Math.round(totalMeters * ratePerMeter);
 			if (cost > 0) items.push({ label: 'מעקה מתכת', value: cost, qty: totalMeters, unitPrice: ratePerMeter, unitLabel: 'מ׳' });
 		} else if (railing === 'cable') {
-			// כבלי נירוסטה – מחיר לכבל מהמחירון
-			const cableUnitPrice: number = Number(priceList?.railings?.cables?.unitPrice) || 825;
+			// כבלים: נירוסטה טבעי (cable_01) = unitPrice; ציפוי = unitPriceCoated
+			const baseCable: number = Number(priceList?.railings?.cables?.unitPrice) || 825;
+			const coatedCable: number = Number(priceList?.railings?.cables?.unitPriceCoated) || 1175;
+			const naturalId: string = priceList?.railings?.cables?.naturalCableId ?? 'cable_01';
+			const cableUnitPrice: number = (cableId && cableId !== naturalId) ? coatedCable : baseCable;
 			const cablesCount = stepsEnabledCount * 3 + landingsEnabledCount * 9;
 			const cost = cablesCount * cableUnitPrice;
 			if (cost > 0) items.push({ label: 'מערכת כבלי נירוסטה', value: cost, qty: cablesCount, unitPrice: cableUnitPrice, unitLabel: 'כבל' });

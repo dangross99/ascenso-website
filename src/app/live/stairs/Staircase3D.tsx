@@ -11,6 +11,7 @@ import { buildRidgeTreads } from './models/ridge';
 import { buildRoundedTreads } from './models/rounded';
 import { buildTaperBoxTreads } from './models/taper';
 import { HitechPlates } from './models/hitech';
+import { computeLocalFrame } from './models/boxShared';
 
 // ׳”׳₪׳¢׳׳× ׳§׳׳© ׳©׳ three ׳¢׳‘׳•׳¨ ׳˜׳¢׳™׳ ׳•׳× ׳—׳׳§׳•׳×
 Cache.enabled = true;
@@ -686,20 +687,16 @@ function Staircase3D({
 								: (stepRailingSides?.[sIdx] ?? 'right');
 							if (isLanding) lIdx++; else sIdx++;
 
-							// rightLocalSignFor + חריג פודסטים לאורך Z (כמו boxShared)
-							const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
-							let rightLocal: 1 | -1 =
-								(axis === 'x' ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
-							if (t.isLanding && axis === 'z') rightLocal = (rightLocal === 1 ? -1 : 1) as 1 | -1;
-
-							// אצלנו innerSide הוא "פנים" (LivePageInner), לכן החוץ הוא ההיפוך.
-							const innerSignLocalRaw = (innerSide === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
-							// חישוב צד "חוץ": בגרמים 0 ו-1 (גרם ראשון ואמצעי) החוץ באותו כיוון כמו innerSignLocalRaw כדי שהקיר יגיב להיפוך 180°;
-							// בגרם 2 בלבד החוץ הוא ההיפוך.
-							const outerSignLocal = (t.flight === 2 ? (-innerSignLocalRaw as 1 | -1) : innerSignLocalRaw) as 1 | -1;
-
-							// מרכז הקיר ב-local coords – רק מיקום, בלי scale/היפוך על ה-mesh
-							const zWall = outerSignLocal * (treadWidth / 2 + gap + wallTh / 2);
+							// שימוש ב-computeLocalFrame כמו ב-boxShared – כיוון התקדמות וצד פנימי דינמיים לפי הגרם והמסלול
+							const { innerSignLocal, forwardSign } = computeLocalFrame({
+								yaw,
+								isLanding,
+								flight: t.flight,
+								axis,
+								innerIsRight: innerSide === 'right',
+							});
+							// הקיר תמיד בצד הנגדי ל-innerSignLocal (צד חיצוני), עוקב אחרי המדרגות גם בהיפוך 180°
+							const zWall = -innerSignLocal * (treadWidth / 2 + gap + wallTh / 2);
 							// נציב את הקיר בגובה מוחלט ביחס לרצפה (0..6m), אבל בתוך ה-group של המדרך כדי שיסתובב יחד איתו
 							const worldCenterY = floorBounds.y + wallH / 2;
 							const yLocal = worldCenterY - t.position[1];
@@ -711,14 +708,12 @@ function Staircase3D({
 										<boxGeometry args={[t.run, wallH, wallTh]} />
 										<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
 									</mesh>
-									{/* בפודסט עם פנייה: קיר חזית על כל רוחב הפאה. פודסט שני (flight 1, axis z): חזית ב־-X */}
+									{/* בפודסט עם פנייה: קיר חזית – מיקום לפי forwardSign (כיוון התקדמות ממשי) */}
 									{hasTurn ? (
 										<mesh
 											position={[
-												// קיר "חזית": פודסט ראשון +X, פודסט שני -X
-												(t.isLanding && t.flight === 1 && axis === 'z' ? -1 : 1) * (t.run / 2 + gap + wallTh / 2),
+												forwardSign * (t.run / 2 + gap + wallTh / 2),
 												yLocal,
-												// ממורכז ברוחב (Z=0) – הקיר מכסה את כל פאת החזית
 												0,
 											]}
 											castShadow={false}

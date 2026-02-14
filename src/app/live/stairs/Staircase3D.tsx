@@ -48,14 +48,23 @@ function getForceWallSideFromTable(model: string, pathKey: string): 'right' | 'l
 	return pathEntry?.forceWallSide ?? 'auto';
 }
 
-/** דריסת mirror לפי דגם ומסלול – כש־true, הפאה העבה/חזית תפנה נכון. טריז ב־180° מתוקן בהיפוך ציר Y במודל (wedge.tsx) */
+/** דריסת mirror לפי דגם ומסלול – כש־true, הפאה העבה/חזית תפנה נכון */
 const MIRROR_OVERRIDES: Partial<Record<string, Partial<Record<string, boolean>>>> = {
-	ridge: { straight_0: true },
-	taper: { straight_0: true },
+	ridge: { straight_0: true, L_0_flight_0: true, L_0_flight_1: true },
+	taper: { straight_0: true, L_0_flight_0: true, L_0_flight_1: true },
+	wedge: { L_0_flight_0: true, L_0_flight_1: true },
+};
+
+/** היפוך mirror לפי מסלול בלבד (חל על כל הדגמים) – L 0°: להפוך את המדרגות */
+const PATH_MIRROR_OVERRIDES: Partial<Record<string, boolean>> = {
+	L_0_flight_0: true,
+	L_0_flight_1: true,
 };
 
 function getMirrorOverride(model: string, pathKey: string): boolean | undefined {
-	return MIRROR_OVERRIDES[model]?.[pathKey];
+	const byModel = MIRROR_OVERRIDES[model]?.[pathKey];
+	if (typeof byModel === 'boolean') return byModel;
+	return PATH_MIRROR_OVERRIDES[pathKey];
 }
 
 function Staircase3D({

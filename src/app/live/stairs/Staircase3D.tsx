@@ -695,8 +695,9 @@ function Staircase3D({
 								axis,
 								innerIsRight: innerSide === 'right',
 							});
-							// הקיר תמיד בצד הנגדי ל-innerSignLocal (צד חיצוני), עוקב אחרי המדרגות גם בהיפוך 180°
-							const zWall = -innerSignLocal * (treadWidth / 2 + gap + wallTh / 2);
+							// הקיר תמיד בצד החיצוני: גרמים 0,1 → -innerSignLocal; גרם 2 (העליון) → +innerSignLocal כדי שהקיר יהיה בצד החיצוני של ה-U (ללא פער בפינה)
+							const outerSignLocal = (t.flight === 2 ? innerSignLocal : (-innerSignLocal as 1 | -1)) as 1 | -1;
+							const zWall = outerSignLocal * (treadWidth / 2 + gap + wallTh / 2);
 							// נציב את הקיר בגובה מוחלט ביחס לרצפה (0..6m), אבל בתוך ה-group של המדרך כדי שיסתובב יחד איתו
 							const worldCenterY = floorBounds.y + wallH / 2;
 							const yLocal = worldCenterY - t.position[1];

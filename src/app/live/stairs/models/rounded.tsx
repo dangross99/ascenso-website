@@ -110,12 +110,12 @@ export function buildRoundedTreads(params: {
 				geo.computeVertexNormals();
 				applyProjectedUVsForBoxLike(geo, { run, thickness: treadThickness, width: treadWidth }, rotTop);
 
-				// חומר יחיד לכל המדרגה (Top+Sides) כדי שהטקסטורה תיראה "מחוברת" לגוף ולרום.
-				// ה-UV נקבעים ידנית ע"י projection (למעלה) כדי למנוע מראה "מפורק לחלקים".
+				// חומר יחיד לכל ה-Extrude (Top + Sides + פינות מעוגלות) – אותן הגדרות לכל הפאות.
+				// ה-UV נקבעים ע"י applyProjectedUVsForBoxLike כדי למנוע מראה מפורק.
 				const matAll = (() => {
 					const metalness = materialKind === 'metal' ? 1 : 0;
 					const roughness = materialKind === 'metal' ? 0.35 : materialKind === 'stone' ? 0.68 : 0.82;
-					const envMapIntensity = materialKind === 'metal' ? 2.0 : 1.5;
+					const envMapIntensity = useSolidMat ? (materialKind === 'metal' ? 2.0 : 1.5) : 0.2;
 					if (useSolidMat) return <meshStandardMaterial color={solidTopColor || solidSideColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} />;
 					const ft = buildFaceTextures(run, treadWidth, rotTop);
 					return (
@@ -128,6 +128,9 @@ export function buildRoundedTreads(params: {
 							metalness={metalness}
 							roughness={roughness}
 							envMapIntensity={envMapIntensity}
+							emissive="#ffffff"
+							emissiveMap={ft.color}
+							emissiveIntensity={0.1}
 							side={2}
 						/>
 					);

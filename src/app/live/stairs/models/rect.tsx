@@ -61,7 +61,10 @@ export function buildRectTreads(params: {
 										bumpScale={0.008}
 										metalness={0}
 										roughness={0.82}
-										envMapIntensity={1.5}
+										envMapIntensity={0.2}
+										emissive="#ffffff"
+										emissiveMap={ft.color}
+										emissiveIntensity={0.1}
 										side={2}
 									/>
 								);
@@ -70,7 +73,7 @@ export function buildRectTreads(params: {
 							(() => {
 								const metalness = materialKind === 'metal' ? 1 : 0;
 								const roughness = materialKind === 'metal' ? 0.35 : materialKind === 'stone' ? 0.68 : 0.82;
-								const envMapIntensity = materialKind === 'metal' ? 2.0 : 1.5;
+								const envMapIntensity = useSolidMat ? (materialKind === 'metal' ? 2.0 : 1.5) : 0.2;
 								if (useSolidMat) return (<meshStandardMaterial color={solidTopColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} />);
 								const axisTop = axisFromYaw(t.rotation[1] as number);
 								const ft = buildFaceTextures(t.run, treadWidth, axisTop === 'z');
@@ -84,6 +87,9 @@ export function buildRectTreads(params: {
 										metalness={metalness}
 										roughness={roughness}
 										envMapIntensity={envMapIntensity}
+										emissive="#ffffff"
+										emissiveMap={ft.color}
+										emissiveIntensity={0.1}
 										side={2}
 									/>
 								);
@@ -99,7 +105,7 @@ export function buildRectTreads(params: {
 							const ft = buildFaceTextures(t.run, treadWidth, axisBottom === 'z');
 							const metalness = materialKind === 'metal' ? 1 : 0;
 							const roughness = materialKind === 'metal' ? 0.35 : materialKind === 'stone' ? 0.68 : 0.82;
-							const envMapIntensity = materialKind === 'metal' ? 2.0 : 1.5;
+							const envMapIntensity = useSolidMat ? (materialKind === 'metal' ? 2.0 : 1.5) : 0.2;
 							if (useSolidMat) return (<meshStandardMaterial color={solidSideColor} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} />);
 							return (
 								<meshStandardMaterial
@@ -111,6 +117,9 @@ export function buildRectTreads(params: {
 									metalness={metalness}
 									roughness={roughness}
 									envMapIntensity={envMapIntensity}
+									emissive="#ffffff"
+									emissiveMap={ft.color}
+									emissiveIntensity={0.1}
 								/>
 							);
 						})()}
@@ -135,8 +144,8 @@ export function buildRectTreads(params: {
 						const matFrontBack = (flipU: boolean = false) => {
 							const ft = buildFaceTextures(treadWidth, treadThickness, rotateFrontBack, flipU);
 							const metalness = materialKind === 'metal' ? 1 : 0;
-							const roughness = materialKind === 'metal' ? 0.22 : materialKind === 'stone' ? 0.55 : 0.7;
-							const envMapIntensity = materialKind === 'metal' ? 2.0 : 1.5;
+							const roughness = materialKind === 'metal' ? 0.35 : materialKind === 'stone' ? 0.68 : 0.82;
+							const envMapIntensity = useSolidMat ? (materialKind === 'metal' ? 2.0 : 1.5) : 0.2;
 							if (useSolidMat) return (<meshStandardMaterial color={solidSideColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 							return (
 								<meshStandardMaterial
@@ -148,6 +157,9 @@ export function buildRectTreads(params: {
 									metalness={metalness}
 									roughness={roughness}
 									envMapIntensity={envMapIntensity}
+									emissive="#ffffff"
+									emissiveMap={ft.color}
+									emissiveIntensity={0.1}
 									side={2}
 									polygonOffset
 									polygonOffsetFactor={-1}
@@ -158,8 +170,8 @@ export function buildRectTreads(params: {
 						const matSides = (flipU: boolean = false) => {
 							const ft = buildFaceTextures(t.run, treadThickness, rotateSides, flipU);
 							const metalness = materialKind === 'metal' ? 1 : 0;
-							const roughness = materialKind === 'metal' ? 0.22 : materialKind === 'stone' ? 0.55 : 0.7;
-							const envMapIntensity = materialKind === 'metal' ? 2.0 : 1.5;
+							const roughness = materialKind === 'metal' ? 0.35 : materialKind === 'stone' ? 0.68 : 0.82;
+							const envMapIntensity = useSolidMat ? (materialKind === 'metal' ? 2.0 : 1.5) : 0.2;
 							if (useSolidMat) return (<meshStandardMaterial color={solidSideColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 							return (
 								<meshStandardMaterial
@@ -171,6 +183,9 @@ export function buildRectTreads(params: {
 									metalness={metalness}
 									roughness={roughness}
 									envMapIntensity={envMapIntensity}
+									emissive="#ffffff"
+									emissiveMap={ft.color}
+									emissiveIntensity={0.1}
 									side={2}
 									polygonOffset
 									polygonOffsetFactor={-1}

@@ -151,7 +151,7 @@ export function buildTaperBoxTreads(params: {
 					const ft = buildFaceTextures(run, treadWidth, rotTop);
 					const metalness = materialKind === 'metal' ? 1 : 0;
 					const roughness = materialKind === 'metal' ? 0.35 : materialKind === 'stone' ? 0.68 : 0.82;
-					const envMapIntensity = materialKind === 'metal' ? 2.0 : 1.5;
+					const envMapIntensity = useSolidMat ? (materialKind === 'metal' ? 2.0 : 1.5) : 0.2;
 					if (useSolidMat) return (<meshStandardMaterial color={solidTopColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} />);
 					return (
 						<meshStandardMaterial
@@ -163,6 +163,9 @@ export function buildTaperBoxTreads(params: {
 							metalness={metalness}
 							roughness={roughness}
 							envMapIntensity={envMapIntensity}
+							emissive="#ffffff"
+							emissiveMap={ft.color}
+							emissiveIntensity={0.1}
 							side={2}
 						/>
 					);
@@ -171,7 +174,7 @@ export function buildTaperBoxTreads(params: {
 					const ft = buildFaceTextures(run, treadWidth, rotTop);
 					const metalness = materialKind === 'metal' ? 1 : 0;
 					const roughness = materialKind === 'metal' ? 0.35 : materialKind === 'stone' ? 0.68 : 0.82;
-					const envMapIntensity = materialKind === 'metal' ? 2.0 : 1.5;
+					const envMapIntensity = useSolidMat ? (materialKind === 'metal' ? 2.0 : 1.5) : 0.2;
 					if (useSolidMat) return (<meshStandardMaterial color={solidSideColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 					return (
 						<meshStandardMaterial
@@ -183,6 +186,9 @@ export function buildTaperBoxTreads(params: {
 							metalness={metalness}
 							roughness={roughness}
 							envMapIntensity={envMapIntensity}
+							emissive="#ffffff"
+							emissiveMap={ft.color}
+							emissiveIntensity={0.1}
 							side={2}
 							polygonOffset
 							polygonOffsetFactor={-1}
@@ -194,7 +200,7 @@ export function buildTaperBoxTreads(params: {
 					const ft = buildFaceTextures(treadWidth, thickStart, rotateFrontBack, flipU);
 					const metalness = materialKind === 'metal' ? 1 : 0;
 					const roughness = materialKind === 'metal' ? 0.35 : materialKind === 'stone' ? 0.68 : 0.82;
-					const envMapIntensity = materialKind === 'metal' ? 2.0 : 1.5;
+					const envMapIntensity = useSolidMat ? (materialKind === 'metal' ? 2.0 : 1.5) : 0.2;
 					if (useSolidMat) return (<meshStandardMaterial color={solidSideColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 					return (
 						<meshStandardMaterial
@@ -206,6 +212,9 @@ export function buildTaperBoxTreads(params: {
 							metalness={metalness}
 							roughness={roughness}
 							envMapIntensity={envMapIntensity}
+							emissive="#ffffff"
+							emissiveMap={ft.color}
+							emissiveIntensity={0.1}
 							side={2}
 							polygonOffset
 							polygonOffsetFactor={-1}
@@ -217,7 +226,7 @@ export function buildTaperBoxTreads(params: {
 					const ft = buildFaceTextures(run, thickStart, rotateSides, flipU);
 					const metalness = materialKind === 'metal' ? 1 : 0;
 					const roughness = materialKind === 'metal' ? 0.35 : materialKind === 'stone' ? 0.68 : 0.82;
-					const envMapIntensity = materialKind === 'metal' ? 2.0 : 1.5;
+					const envMapIntensity = useSolidMat ? (materialKind === 'metal' ? 2.0 : 1.5) : 0.2;
 					if (useSolidMat) return (<meshStandardMaterial color={solidSideColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 					return (
 						<meshStandardMaterial
@@ -229,6 +238,9 @@ export function buildTaperBoxTreads(params: {
 							metalness={metalness}
 							roughness={roughness}
 							envMapIntensity={envMapIntensity}
+							emissive="#ffffff"
+							emissiveMap={ft.color}
+							emissiveIntensity={0.1}
 							side={2}
 							polygonOffset
 							polygonOffsetFactor={-1}

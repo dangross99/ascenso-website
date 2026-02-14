@@ -4,7 +4,7 @@
     "name": "אדמה",
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
-    "price": 3900,
+    "price": 2925,
     "images": ["/images/materials/wood/earth/earth-natural.png"],
     "variants": {
       "oak": ["/images/materials/wood/earth/earth-natural.png"],
@@ -18,7 +18,7 @@
     "name": "חריטה",
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
-    "price": 3600,
+    "price": 2700,
     "images": ["/images/materials/wood/carved/carved-natural.png"],
     "variants": {
       "oak": ["/images/materials/wood/carved/carved-natural.png"],
@@ -32,7 +32,7 @@
     "name": "שוקולד",
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
-    "price": 3700,
+    "price": 2775,
     "images": ["/images/materials/wood/chocolate/chocolate-natural.png"],
     "variants": {
       "oak": ["/images/materials/wood/chocolate/chocolate-natural.png"],
@@ -46,7 +46,7 @@
     "name": "ציור",
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
-    "price": 3900,
+    "price": 2925,
     "images": ["/images/materials/wood/painted/painted-natural.png"],
     "variants": {
       "oak": ["/images/materials/wood/painted/painted-natural.png"],
@@ -60,7 +60,7 @@
     "name": "דומינו",
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
-    "price": 3800,
+    "price": 2850,
     "images": ["/images/materials/wood/domino/domino-natural.png"],
     "variants": {
       "oak": ["/images/materials/wood/domino/domino-natural.png"],
@@ -74,7 +74,7 @@
     "name": "פטיש",
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
-    "price": 3800,
+    "price": 2850,
     "images": ["/images/materials/wood/hammered/hammered-natural.png"],
     "variants": {
       "oak": ["/images/materials/wood/hammered/hammered-natural.png"],
@@ -88,7 +88,7 @@
     "name": "עטיפה",
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
-    "price": 4200,
+    "price": 3150,
     "images": ["/images/materials/wood/wrapped/wrapped-natural.png"],
     "variants": {
       "oak": ["/images/materials/wood/wrapped/wrapped-natural.png"],
@@ -102,7 +102,7 @@
     "name": "נקי",
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
-    "price": 2800,
+    "price": 2100,
     "images": ["/images/materials/wood/plain/plain-natural.png"],
     "variants": {
       "oak": ["/images/materials/wood/plain/plain-natural.png"],
@@ -127,7 +127,7 @@
     "name": "אמזונס ברזיל",
     "category": "stone",
     "colors": [],
-    "price": 5800,
+    "price": 4350,
     "images": [
       "/images/materials/amazonas-brazil.png"
     ]
@@ -137,7 +137,7 @@
     "name": "האלפיים הירוקים",
     "category": "stone",
     "colors": [],
-    "price": 5500,
+    "price": 4125,
     "images": [
       "/images/materials/green-alpi.png"
     ]
@@ -147,7 +147,7 @@
     "name": "טרוורטין כסף",
     "category": "stone",
     "colors": [],
-    "price": 4600,
+    "price": 3450,
     "images": [
       "/images/materials/travertine-silver.png"
     ]
@@ -157,7 +157,7 @@
     "name": "פור סיזנס",
     "category": "stone",
     "colors": [],
-    "price": 6600,
+    "price": 4950,
     "images": [
       "/images/materials/four-seasons.png"
     ]
@@ -167,7 +167,7 @@
     "name": "אבן פריז",
     "category": "stone",
     "colors": [],
-    "price": 4900,
+    "price": 3675,
     "images": [
       "/images/materials/parisian-stone.jpeg"
     ]
@@ -177,7 +177,7 @@
     "name": "יין אדום",
     "category": "stone",
     "colors": [],
-    "price": 5300,
+    "price": 3975,
     "images": [
       "/images/materials/red-wine.jpeg"
     ]
@@ -187,7 +187,7 @@
     "name": "זהב שחור",
     "category": "stone",
     "colors": [],
-    "price": 4300,
+    "price": 3225,
     "images": [
       "/images/materials/black-gold.png"
     ]
@@ -197,7 +197,7 @@
     "name": "אבן אדמה",
     "category": "stone",
     "colors": [],
-    "price": 4900,
+    "price": 3675,
     "images": [
       "/images/materials/land-stone.png"
     ]
@@ -207,7 +207,7 @@
     "name": "אבן גשם",
     "category": "stone",
     "colors": [],
-    "price": 5000,
+    "price": 3750,
     "images": [
       "/images/materials/rain-stone.png"
     ]
@@ -217,7 +217,7 @@
     "name": "אבן נהר",
     "category": "stone",
     "colors": [],
-    "price": 4900,
+    "price": 3675,
     "images": [
       "/images/materials/river-stone.png"
     ]
@@ -227,7 +227,7 @@
     "name": "אבן טיגריס",
     "category": "stone",
     "colors": [],
-    "price": 4500,
+    "price": 3375,
     "images": [
       "/images/materials/tiger-stone.png"
     ]
@@ -237,7 +237,7 @@
     "name": "ואן גוך",
     "category": "stone",
     "colors": [],
-    "price": 5700,
+    "price": 4275,
     "images": [
       "/images/materials/van-gogh.png"
     ]
@@ -249,7 +249,7 @@
     "colors": [
       "gray"
     ],
-    "price": 4000,
+    "price": 2250,
     "images": [
       "/images/materials/Antique Gold.png"
     ]
@@ -261,7 +261,7 @@
     "colors": [
       "gray"
     ],
-    "price": 4800,
+    "price": 3600,
     "images": [
       "/images/materials/Antique Silver.png"
     ]
@@ -273,7 +273,7 @@
     "colors": [
       "gray"
     ],
-    "price": 3000,
+    "price": 2250,
     "images": [
       "/images/materials/Black.png"
     ]
@@ -285,7 +285,7 @@
     "colors": [
       "gray"
     ],
-    "price": 4200,
+    "price": 3150,
     "images": [
       "/images/materials/Champagne.png"
     ]
@@ -297,7 +297,7 @@
     "colors": [
       "gray"
     ],
-    "price": 3500,
+    "price": 2625,
     "images": [
       "/images/materials/Gold Silver.png"
     ]
@@ -309,7 +309,7 @@
     "colors": [
       "gray"
     ],
-    "price": 3400,
+    "price": 2550,
     "images": [
       "/images/materials/Gold.png"
     ]
@@ -321,7 +321,7 @@
     "colors": [
       "gray"
     ],
-    "price": 4400,
+    "price": 3300,
     "images": [
       "/images/materials/Golden Rust.jpeg"
     ]
@@ -333,7 +333,7 @@
     "colors": [
       "gray"
     ],
-    "price": 3600,
+    "price": 2700,
     "images": [
       "/images/materials/Graphite.jpeg"
     ]
@@ -345,7 +345,7 @@
     "colors": [
       "gray"
     ],
-    "price": 4600,
+    "price": 3450,
     "images": [
       "/images/materials/Rain.jpeg"
     ]
@@ -357,7 +357,7 @@
     "colors": [
       "gray"
     ],
-    "price": 3800,
+    "price": 2850,
     "images": [
       "/images/materials/Rose Gold.png"
     ]
@@ -369,7 +369,7 @@
     "colors": [
       "gray"
     ],
-    "price": 3700,
+    "price": 2775,
     "images": [
       "/images/materials/Silver.jpeg"
     ]
@@ -381,7 +381,7 @@
     "colors": [
       "gray"
     ],
-    "price": 3000,
+    "price": 2250,
     "images": [
       "/images/materials/White.png"
     ]

@@ -1116,9 +1116,9 @@ function LivePageInner() {
 		}>;
 		total: number;
 	} {
-		const baseSetup = 1500; // פתיחת תיק/מדידות/שינוע בסיסי
-		// מחיר למדרגה לפי החומר/טקסטורה הנבחרים (ברירת מחדל 800)
-		let perStep = 800;
+		const baseSetup = 1125; // פתיחת תיק/מדידות/שינוע בסיסי
+		// מחיר למדרגה לפי החומר/טקסטורה הנבחרים (ברירת מחדל 600)
+		let perStep = 600;
 		// בחירת רשומת חומר פעילה
 		let selectedRecord: MaterialRecord | undefined;
 		if (activeMaterial === 'wood') {
@@ -1163,7 +1163,7 @@ function LivePageInner() {
 			const areaM2 =
 				stepsEnabledCount * (STEP_RUN_M * GLASS_H_STEP_M) +
 				landingsEnabledCount * (LANDING_RUN_M * GLASS_H_LAND_M);
-			const glassRate = 1700; // ₪ למ״ר
+			const glassRate = 1275; // ₪ למ״ר
 			const cost = Math.round(areaM2 * glassRate);
 			if (cost > 0) items.push({ label: 'מעקה זכוכית', value: cost, qty: areaM2, unitPrice: glassRate, unitLabel: 'מ״ר' });
 		} else if (railing === 'metal') {
@@ -1175,11 +1175,11 @@ function LivePageInner() {
 			const cost = Math.round(totalMeters * ratePerMeter);
 			if (cost > 0) items.push({ label: 'מעקה מתכת', value: cost, qty: totalMeters, unitPrice: ratePerMeter, unitLabel: 'מ׳' });
 		} else if (railing === 'cable') {
-			// כבלי נירוסטה – 1100 ₪ לכל כבל שמופיע בהדמייה
+			// כבלי נירוסטה – 825 ₪ לכל כבל שמופיע בהדמייה
 			// במודל: 3 כבלים לכל מדרגה עם מעקה, ו‑9 כבלים לכל פודסט ישר עם מעקה
 			const cablesCount = stepsEnabledCount * 3 + landingsEnabledCount * 9;
-			const cost = cablesCount * 1100;
-			if (cost > 0) items.push({ label: 'מערכת כבלי נירוסטה', value: cost, qty: cablesCount, unitPrice: 1100, unitLabel: 'כבל' });
+			const cost = cablesCount * 825;
+			if (cost > 0) items.push({ label: 'מערכת כבלי נירוסטה', value: cost, qty: cablesCount, unitPrice: 825, unitLabel: 'כבל' });
 		}
 
 		const subtotal = items.reduce((s, i) => s + i.value, 0);

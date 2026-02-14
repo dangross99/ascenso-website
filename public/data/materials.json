@@ -1,16 +1,16 @@
 [
   {
-    "id": "wood_adama",
-    "name": "אדמה",
+    "id": "wood_plain",
+    "name": "נקי",
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
-    "price": 2925,
-    "images": ["/images/materials/wood/earth/earth-natural.png"],
+    "price": 2100,
+    "images": ["/images/materials/wood/plain/plain-natural.png"],
     "variants": {
-      "oak": ["/images/materials/wood/earth/earth-natural.png"],
-      "walnut": ["/images/materials/wood/earth/earth-walnut.png"],
-      "white": ["/images/materials/wood/earth/earth-white.png"],
-      "black": ["/images/materials/wood/earth/earth-black.png"]
+      "oak": ["/images/materials/wood/plain/plain-natural.png"],
+      "walnut": ["/images/materials/wood/plain/plain-walnut.png"],
+      "white": ["/images/materials/wood/plain/plain-white.png"],
+      "black": ["/images/materials/wood/plain/plain-black.png"]
     }
   },
   {
@@ -98,17 +98,17 @@
     }
   },
   {
-    "id": "wood_plain",
-    "name": "נקי",
+    "id": "wood_adama",
+    "name": "אדמה",
     "category": "wood",
     "colors": ["oak","walnut","white","black"],
-    "price": 2100,
-    "images": ["/images/materials/wood/plain/plain-natural.png"],
+    "price": 2925,
+    "images": ["/images/materials/wood/earth/earth-natural.png"],
     "variants": {
-      "oak": ["/images/materials/wood/plain/plain-natural.png"],
-      "walnut": ["/images/materials/wood/plain/plain-walnut.png"],
-      "white": ["/images/materials/wood/plain/plain-white.png"],
-      "black": ["/images/materials/wood/plain/plain-black.png"]
+      "oak": ["/images/materials/wood/earth/earth-natural.png"],
+      "walnut": ["/images/materials/wood/earth/earth-walnut.png"],
+      "white": ["/images/materials/wood/earth/earth-white.png"],
+      "black": ["/images/materials/wood/earth/earth-black.png"]
     }
   },
   
@@ -336,30 +336,6 @@
     "price": 2700,
     "images": [
       "/images/materials/Graphite.jpeg"
-    ]
-  },
-  {
-    "id": "rain",
-    "name": "גשם",
-    "category": "metal",
-    "colors": [
-      "gray"
-    ],
-    "price": 3450,
-    "images": [
-      "/images/materials/Rain.jpeg"
-    ]
-  },
-  {
-    "id": "rose_gold",
-    "name": "זהב ורוד",
-    "category": "metal",
-    "colors": [
-      "gray"
-    ],
-    "price": 2850,
-    "images": [
-      "/images/materials/Rose Gold.png"
     ]
   },
   {

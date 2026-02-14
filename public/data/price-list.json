@@ -48,8 +48,6 @@
       { "id": "gold", "category": "מתכת", "name": "זהב", "pricePerStep": 2805 },
       { "id": "golden_rust", "category": "מתכת", "name": "חלודה זהובה", "pricePerStep": 3630 },
       { "id": "graphite", "category": "מתכת", "name": "גרפיט", "pricePerStep": 2970 },
-      { "id": "rain", "category": "מתכת", "name": "גשם", "pricePerStep": 3795 },
-      { "id": "rose_gold", "category": "מתכת", "name": "זהב ורוד", "pricePerStep": 3135 },
       { "id": "silver", "category": "מתכת", "name": "כסף", "pricePerStep": 3053 },
       { "id": "white", "category": "מתכת", "name": "לבן", "pricePerStep": 2475 }
     ]

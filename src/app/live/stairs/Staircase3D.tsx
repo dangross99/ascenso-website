@@ -987,6 +987,8 @@ function Staircase3D({
 							const wallOffset = -railingSideSignLocal * (treadWidth / 2 + gap + wallTh / 2);
 							const forwardSignBase = (axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
 							const forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase) as 1 | -1;
+							// L 0°: קיר הפנייה צריך להיות בפינה החיצונית (+X), לא ב־-X – הופכים כש־forceWallSide מוגדר
+							const forwardSignTurn = t.forceWallSide !== 'auto' ? -forwardSign : forwardSign;
 							const yLocal = worldCenterY - t.position[1];
 							return (
 								<group key={`outer-wall-landing-${i}`} position={t.position} rotation={t.rotation}>
@@ -996,7 +998,7 @@ function Staircase3D({
 									</mesh>
 									{hasTurn ? (
 										<mesh
-											position={[forwardSign * (t.run / 2 + gap + wallTh / 2), yLocal, 0]}
+											position={[forwardSignTurn * (t.run / 2 + gap + wallTh / 2), yLocal, 0]}
 											castShadow={false}
 											receiveShadow={false}
 										>

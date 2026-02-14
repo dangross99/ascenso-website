@@ -132,7 +132,7 @@ function Staircase3D({
 	const riser = 0.18;
 
 	function getTreads() {
-		const treads: Array<{
+		type TreadItem = {
 			position: [number, number, number];
 			rotation: [number, number, number];
 			run: number;
@@ -140,98 +140,207 @@ function Staircase3D({
 			turn?: 'left' | 'right';
 			flight: number;
 			axis: 'x' | 'z';
-		}> = [];
+		};
+		const treads: TreadItem[] = [];
+
 		if (pathSegments && pathSegments.length) {
-			// כיוון התחלתי: +X
-			let dirIndex = 0; // 0:+X, 1:+Z, 2:-X, 3:-Z
-			const dirs: Array<[number, number]> = [
-				[1, 0],
-				[0, 1],
-				[-1, 0],
-				[0, -1],
-			];
-			const yaws = [0, Math.PI / 2, Math.PI, -Math.PI / 2];
-			// נקודת התחלה על הציר, נזיז קדימה לפי אורך כל שלב
-			let sx = 0, sz = 0;
-			let stepIndex = 0;
-			let flightIdx = 0;
-			for (const seg of pathSegments) {
-				if (seg.kind === 'straight') {
-					const [dx, dz] = dirs[dirIndex];
-					for (let i = 0; i < seg.steps; i++) {
-						const run = treadDepth;
-						const cx = sx + dx * (run / 2);
-						const cz = sz + dz * (run / 2);
+			const straightSteps = pathSegments.filter((s): s is { kind: 'straight'; steps: number } => s.kind === 'straight').map(s => s.steps);
+			const landings = pathSegments.filter((s): s is { kind: 'landing'; turn?: 'left' | 'right' } => s.kind === 'landing');
+			const isStraight = straightSteps.length === 1;
+			const isL = straightSteps.length === 2 && landings.length === 1;
+			const isU = straightSteps.length === 3 && landings.length === 2;
+			const flip = pathFlipped180 === true;
+			const yaw180 = flip ? Math.PI : 0;
+
+			if (isStraight) {
+				const n = straightSteps[0];
+				// Straight (0°): התקדמות על ציר X+
+				// Straight (180°): התקדמות על ציר X- עם סיבוב Math.PI
+				for (let i = 0; i < n; i++) {
+					const x = flip ? -(i * treadDepth + treadDepth / 2) : i * treadDepth + treadDepth / 2;
+					treads.push({
+						position: [x, i * riser, 0],
+						rotation: [0, yaw180, 0],
+						run: treadDepth,
+						isLanding: false,
+						flight: 0,
+						axis: 'x',
+					});
+				}
+			} else if (isL) {
+				const [a, b] = straightSteps;
+				// L 0°: גרם ראשון X+, פודסט, גרם שני Z-
+				// L 180°: גרם ראשון X-, פודסט, גרם שני Z+
+				for (let i = 0; i < a; i++) {
+					const x = flip ? -(i * treadDepth + treadDepth / 2) : i * treadDepth + treadDepth / 2;
+					treads.push({
+						position: [x, i * riser, 0],
+						rotation: [0, yaw180, 0],
+						run: treadDepth,
+						isLanding: false,
+						flight: 0,
+						axis: 'x',
+					});
+				}
+				const podestX = flip ? -(a * treadDepth + treadWidth / 2) : a * treadDepth + treadWidth / 2;
+				treads.push({
+					position: [podestX, a * riser, 0],
+					rotation: [0, yaw180, 0],
+					run: treadWidth,
+					isLanding: true,
+					turn: 'right',
+					flight: 0,
+					axis: 'x',
+				});
+				// אחרי פודסט: עוגן = פינה פנימית + treadWidth בכיוון הגרם החדש
+				for (let i = 0; i < b; i++) {
+					const stepY = (a + 1 + i) * riser;
+					if (flip) {
+						// Z+: מרכז מדרגה i ב־z = treadWidth + i*treadDepth + treadDepth/2
+						treads.push({
+							position: [podestX, stepY, treadWidth + i * treadDepth + treadDepth / 2],
+							rotation: [0, Math.PI / 2 + yaw180, 0],
+							run: treadDepth,
+							isLanding: false,
+							flight: 1,
+							axis: 'z',
+						});
+					} else {
+						// Z-: מרכז מדרגה i ב־z = -treadWidth - i*treadDepth - treadDepth/2
+						treads.push({
+							position: [podestX, stepY, -treadWidth - i * treadDepth - treadDepth / 2],
+							rotation: [0, -Math.PI / 2 + yaw180, 0],
+							run: treadDepth,
+							isLanding: false,
+							flight: 1,
+							axis: 'z',
+						});
+					}
+				}
+			} else if (isU) {
+				const [a, b, c] = straightSteps;
+				const yaw0 = yaw180;
+				const yaw1 = -Math.PI / 2 + yaw180;
+				const yaw2 = Math.PI + yaw180;
+				// U 0°: X+ -> פודסט -> Z- -> פודסט -> X-
+				// U 180°: X- -> פודסט -> Z+ -> פודסט -> X+
+				// גרם 1
+				for (let i = 0; i < a; i++) {
+					const x = flip ? -(i * treadDepth + treadDepth / 2) : i * treadDepth + treadDepth / 2;
+					treads.push({
+						position: [x, i * riser, 0],
+						rotation: [0, yaw0, 0],
+						run: treadDepth,
+						isLanding: false,
+						flight: 0,
+						axis: 'x',
+					});
+				}
+				const p1x = flip ? -(a * treadDepth + treadWidth / 2) : a * treadDepth + treadWidth / 2;
+				treads.push({
+					position: [p1x, a * riser, 0],
+					rotation: [0, yaw0, 0],
+					run: treadWidth,
+					isLanding: true,
+					turn: 'right',
+					flight: 0,
+					axis: 'x',
+				});
+				// גרם 2
+				for (let i = 0; i < b; i++) {
+					const stepY = (a + 1 + i) * riser;
+					const z = flip ? treadWidth + i * treadDepth + treadDepth / 2 : -treadWidth - i * treadDepth - treadDepth / 2;
+					treads.push({
+						position: [p1x, stepY, z],
+						rotation: [0, flip ? Math.PI / 2 + yaw180 : yaw1, 0],
+						run: treadDepth,
+						isLanding: false,
+						flight: 1,
+						axis: 'z',
+					});
+				}
+				// פודסט 2: מרכז ב־(p1x, (a+b+1)*riser, p2z) כאשר p2z לפי סוף גרם 2
+				const p2z = flip ? treadWidth + b * treadDepth + treadWidth / 2 : -treadWidth - b * treadDepth - treadWidth / 2;
+				treads.push({
+					position: [p1x, (a + b + 1) * riser, p2z],
+					rotation: [0, flip ? Math.PI / 2 + yaw180 : yaw1, 0],
+					run: treadWidth,
+					isLanding: true,
+					turn: 'right',
+					flight: 1,
+					axis: 'z',
+				});
+				// גרם 3: עוגן פינה פנימית + treadWidth. פינה פנימית (ימין ב־Z-) = (p1x - treadWidth/2, p2z) -> (p1x - treadWidth, p2z) לתחילת X-
+				const p3xStart = flip ? p1x + treadWidth : p1x - treadWidth;
+				for (let i = 0; i < c; i++) {
+					const stepY = (a + b + 2 + i) * riser;
+					const x = flip ? p3xStart + i * treadDepth + treadDepth / 2 : p3xStart - i * treadDepth - treadDepth / 2;
+					treads.push({
+						position: [x, stepY, p2z],
+						rotation: [0, yaw2, 0],
+						run: treadDepth,
+						isLanding: false,
+						flight: 2,
+						axis: 'x',
+					});
+				}
+			} else {
+				// fallback: מסלול לא סטנדרטי – חישוב דינמי (ללא cumulative error ככל האפשר)
+				let dirIndex = 0;
+				const dirs: Array<[number, number]> = [[1, 0], [0, 1], [-1, 0], [0, -1]];
+				const yaws = [0, Math.PI / 2, Math.PI, -Math.PI / 2];
+				let sx = 0, sz = 0, stepIndex = 0, flightIdx = 0;
+				for (const seg of pathSegments) {
+					if (seg.kind === 'straight') {
+						const [dx, dz] = dirs[dirIndex];
+						for (let i = 0; i < seg.steps; i++) {
+							const cx = sx + dx * (treadDepth / 2);
+							const cz = sz + dz * (treadDepth / 2);
+							treads.push({
+								position: [cx, stepIndex * riser, cz],
+								rotation: [0, yaws[dirIndex], 0],
+								run: treadDepth,
+								isLanding: false,
+								flight: flightIdx,
+								axis: (dirIndex & 1) === 0 ? 'x' : 'z',
+							});
+							sx += dx * treadDepth;
+							sz += dz * treadDepth;
+							stepIndex += 1;
+						}
+					} else {
+						const prevDir = dirIndex;
+						const [dx, dz] = dirs[dirIndex];
+						const cx = sx + dx * (treadWidth / 2);
+						const cz = sz + dz * (treadWidth / 2);
 						treads.push({
 							position: [cx, stepIndex * riser, cz],
 							rotation: [0, yaws[dirIndex], 0],
-							run,
-							isLanding: false,
+							run: treadWidth,
+							isLanding: true,
+							turn: seg.turn,
 							flight: flightIdx,
 							axis: (dirIndex & 1) === 0 ? 'x' : 'z',
 						});
-						// התקדמות לנקודת התחלה הבאה
-						sx += dx * run;
-						sz += dz * run;
 						stepIndex += 1;
+						if (seg.turn === 'right') dirIndex = (dirIndex + 1) & 3;
+						if (seg.turn === 'left') dirIndex = (dirIndex + 3) & 3;
+						if (seg.turn) flightIdx += 1;
+						if (seg.turn === 'left' || seg.turn === 'right') {
+							const [pdx, pdz] = dirs[prevDir];
+							const sidePrevIdx = (prevDir + (seg.turn === 'right' ? 1 : 3)) & 3;
+							const [spx, spz] = dirs[sidePrevIdx];
+							const cornerX = sx + pdx * treadWidth + spx * (treadWidth / 2);
+							const cornerZ = sz + pdz * treadWidth + spz * (treadWidth / 2);
+							const sideNewIdx = (dirIndex + (seg.turn === 'right' ? 1 : 3)) & 3;
+							const [snx, snz] = dirs[sideNewIdx];
+							sx = cornerX + snx * (treadWidth / 2);
+							sz = cornerZ + snz * (treadWidth / 2);
+						} else {
+							sx += dx * treadWidth;
+							sz += dz * treadWidth;
+						}
 					}
-				} else {
-					// פודסט: שלב שה"שלח" שלו שווה לאורך המדרגה (רוחב), כלומר ריבוע 1x1מ׳
-					const [dx, dz] = dirs[dirIndex];
-					const run = treadWidth;
-					const cx = sx + dx * (run / 2);
-					const cz = sz + dz * (run / 2);
-					treads.push({
-						position: [cx, stepIndex * riser, cz],
-						rotation: [0, yaws[dirIndex], 0],
-						run,
-						isLanding: true,
-						turn: seg.turn,
-						flight: flightIdx,
-						axis: (dirIndex & 1) === 0 ? 'x' : 'z',
-					});
-					// עדכון נקודת עיגון למסלול הבא:
-					// אם אין פנייה – התקדמות לקצה הפודסט בכיוון הנוכחי
-					// אם יש פנייה – נעמוד על הקו ההתחלתי של הפודסט ביחס לכיוון החדש (בלי התקדמות קדימה)
-					const prevDir = dirIndex;
-					if (!seg.turn) {
-						sx += dx * run;
-						sz += dz * run;
-					}
-					stepIndex += 1;
-					// לאחר פודסט ניתן לשנות כיוון להמשך
-					// מיפוי מתוקן: 'right' = +90°, 'left' = -90°
-					if (seg.turn === 'right') dirIndex = (dirIndex + 1) & 3;
-					if (seg.turn === 'left') dirIndex = (dirIndex + 3) & 3;
-					// סיום טיסה – לאחר פנייה מתחיל גרם חדש
-					if (seg.turn === 'left' || seg.turn === 'right') {
-						flightIdx += 1;
-					}
-					// אם יש פנייה, קבע נקודת עיגון חדשה כך שהמקטע הבא
-					// יתחיל בדיוק מהקודקוד ועל אותו קו התחלה של הפודסט:
-					// העוגן מוגדר כך שמרכז המדרגה הבאה יהיה בעומק half‑treadDepth קדימה,
-					// והקצה הפנימי שלה יתיישר עם הקודקוד.
-					if (seg.turn === 'left' || seg.turn === 'right') {
-						// קודקוד פנימי של הפודסט ביחס לכיוון הקודם
-						const sidePrevIdx = (prevDir + (seg.turn === 'right' ? 1 : 3)) & 3;
-						const [spx, spz] = dirs[sidePrevIdx];
-						// נקודת הקצה הרחוקה של הפודסט בכיוון הישן (סוף הפודסט) + היסט לצד הפנימי -> הקודקוד הנכון
-						const [pdx, pdz] = dirs[prevDir];
-						const cornerX = sx + pdx * run + spx * (treadWidth / 2);
-						const cornerZ = sz + pdz * run + spz * (treadWidth / 2);
-						// צד פנימי ביחס לכיוון החדש
-						const sideNewIdx = (dirIndex + (seg.turn === 'right' ? 1 : 3)) & 3;
-						const [snx, snz] = dirs[sideNewIdx];
-						// וקטור כיוון חדש
-						const [ndx, ndz] = dirs[dirIndex];
-						// העוגן החדש S הוא תחילת הקו בכיוון החדש כך שהקודקוד הפנימי של המדרגה הבאה
-						// יישב בדיוק על הקודקוד של הפודסט:
-						// עבור בניית שלב: center = S + nd*(treadDepth/2)
-						// והקודקוד הפנימי = S - sn*(treadWidth/2) → לכן S = corner + sn*(treadWidth/2)
-						sx = cornerX + snx * (treadWidth / 2);
-						sz = cornerZ + snz * (treadWidth / 2);
-					}
-					// לא מוסיפים מדרגה אוטומטית; המקטע הבא יתחיל מן הקו שבחרנו
 				}
 			}
 		} else if (shape === 'straight') {

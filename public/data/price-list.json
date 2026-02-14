@@ -43,11 +43,9 @@
       { "id": "antique_gold", "category": "מתכת", "name": "זהב ענתיקה", "pricePerStep": 3300 },
       { "id": "antique_silver", "category": "מתכת", "name": "כסף ענתיקה", "pricePerStep": 3960 },
       { "id": "black", "category": "מתכת", "name": "שחור", "pricePerStep": 2475 },
-      { "id": "champagne", "category": "מתכת", "name": "שמפניה", "pricePerStep": 3465 },
       { "id": "gold_silver", "category": "מתכת", "name": "זהב-כסף", "pricePerStep": 2888 },
       { "id": "gold", "category": "מתכת", "name": "זהב", "pricePerStep": 2805 },
       { "id": "golden_rust", "category": "מתכת", "name": "חלודה זהובה", "pricePerStep": 3630 },
-      { "id": "graphite", "category": "מתכת", "name": "גרפיט", "pricePerStep": 2970 },
       { "id": "silver", "category": "מתכת", "name": "כסף", "pricePerStep": 3053 },
       { "id": "white", "category": "מתכת", "name": "לבן", "pricePerStep": 2475 }
     ]

@@ -279,18 +279,6 @@
     ]
   },
   {
-    "id": "champagne",
-    "name": "שמפניה",
-    "category": "metal",
-    "colors": [
-      "gray"
-    ],
-    "price": 3150,
-    "images": [
-      "/images/materials/Champagne.png"
-    ]
-  },
-  {
     "id": "gold_silver",
     "name": "זהב-כסף",
     "category": "metal",
@@ -324,18 +312,6 @@
     "price": 3300,
     "images": [
       "/images/materials/Golden Rust.jpeg"
-    ]
-  },
-  {
-    "id": "graphite",
-    "name": "גרפיט",
-    "category": "metal",
-    "colors": [
-      "gray"
-    ],
-    "price": 2700,
-    "images": [
-      "/images/materials/Graphite.jpeg"
     ]
   },
   {

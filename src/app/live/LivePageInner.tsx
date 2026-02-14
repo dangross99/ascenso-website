@@ -529,13 +529,13 @@ function LivePageInner() {
 		return i >= 0 && i < stepOrderForSteps.length - 1 ? stepOrderForSteps[i + 1] : null;
 	};
 
-	const boxDisplayInfo: Record<string, { name: string; desc: string }> = {
-		thick: { name: 'קלאסי', desc: 'תיבה עבה־דופן, עובי אחיד. מתאים לעיצוב קלאסי ויציב.' },
-		thin: { name: 'להב', desc: 'תיבה דקה־דופן, מראה מינימליסטי. חיסכון במשקל ומראה קל.' },
-		rounded: { name: 'קפסולה', desc: 'מדרך מעוגל (קפסולה). מראה רך ומודרני.' },
-		taper: { name: 'דלתא', desc: 'מדרך בצורת דלתא, צר בחלק האחורי. קו עיצובי דינמי.' },
-		wedge: { name: 'טריז', desc: 'מדרך אלכסוני (טריז). מתאים לעיצוב ייחודי.' },
-		ridge: { name: 'מרום', desc: 'דגם רכס מרכזי. מראה מודרני עם רכס בולט.' },
+	const boxDisplayInfo: Record<string, { name: string; specs: string }> = {
+		thick: { name: 'קלאסי', specs: 'עובי 18 מ״מ · רוחב 28 ס״מ' },
+		thin: { name: 'להב', specs: 'עובי 7 מ״מ · רוחב 28 ס״מ' },
+		rounded: { name: 'קפסולה', specs: 'עובי 8 מ״מ · רוחב 28 ס״מ · רדיוס 8 ס״מ' },
+		taper: { name: 'דלתא', specs: 'עובי 12 מ״מ · רוחב 28–24 ס״מ' },
+		wedge: { name: 'טריז', specs: 'עובי 11 מ״מ · זווית 8°' },
+		ridge: { name: 'מרום', specs: 'עובי 9 מ״מ · גובה רכס 16 ס״מ' },
 	};
 
 	// קונפיגורטור מדרגות
@@ -1872,18 +1872,14 @@ function LivePageInner() {
 						{/* פירוט חשבון צדדי בדסקטופ */}
 						<div className="hidden lg:block lg:col-span-1">
 							<div className="bg-white rounded-md p-3 h-full space-y-3">
-								{/* הדגם הנבחר + פירוט טכני – כרטיס מזמין עם צורת הדגם */}
+								{/* הדגם הנבחר – שורה אחת: צורה, שם, נתונים טכניים */}
 								{boxDisplayInfo[box] && (
 									<div className="pb-3 border-b border-gray-200">
-										<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] p-3 border border-[#e8e2dc] shadow-sm">
-											<div className="flex items-start gap-3">
-												<BoxShapeIcon boxId={box as any} size={44} className="mt-0.5" />
-												<div className="min-w-0 flex-1">
-													<div className="text-[11px] font-semibold uppercase tracking-wide text-[#1a1a2e]/70 mb-0.5">הדגם הנבחר</div>
-													<div className="text-sm font-bold text-[#1a1a2e]">{boxDisplayInfo[box].name}</div>
-													<p className="text-xs text-gray-600 mt-1 leading-relaxed">{boxDisplayInfo[box].desc}</p>
-												</div>
-											</div>
+										<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-2 border border-[#e8e2dc] shadow-sm flex items-center gap-2 flex-wrap">
+											<BoxShapeIcon boxId={box as any} size={36} className="shrink-0" />
+											<span className="text-xs font-semibold text-[#1a1a2e]/70 shrink-0">הדגם הנבחר</span>
+											<span className="text-sm font-bold text-[#1a1a2e] shrink-0">{boxDisplayInfo[box].name}</span>
+											<span className="text-xs text-gray-600 tabular-nums">{boxDisplayInfo[box].specs}</span>
 										</div>
 									</div>
 								)}
@@ -1933,15 +1929,11 @@ function LivePageInner() {
 					{/* פירוט חשבון מתחת להדמייה – מובייל/טאבלט בלבד */}
 					<div className="mt-3 space-y-3 lg:hidden">
 						{boxDisplayInfo[box] && (
-							<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] p-3 border border-[#e8e2dc] shadow-sm">
-								<div className="flex items-start gap-3">
-									<BoxShapeIcon boxId={box as any} size={48} className="shrink-0" />
-									<div className="min-w-0 flex-1">
-										<div className="text-[11px] font-semibold uppercase tracking-wide text-[#1a1a2e]/70 mb-0.5">הדגם הנבחר</div>
-										<div className="text-sm font-bold text-[#1a1a2e]">{boxDisplayInfo[box].name}</div>
-										<p className="text-xs text-gray-600 mt-1 leading-relaxed">{boxDisplayInfo[box].desc}</p>
-									</div>
-								</div>
+							<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-2 border border-[#e8e2dc] shadow-sm flex items-center gap-2 flex-wrap">
+								<BoxShapeIcon boxId={box as any} size={40} className="shrink-0" />
+								<span className="text-xs font-semibold text-[#1a1a2e]/70 shrink-0">הדגם הנבחר</span>
+								<span className="text-sm font-bold text-[#1a1a2e] shrink-0">{boxDisplayInfo[box].name}</span>
+								<span className="text-xs text-gray-600 tabular-nums">{boxDisplayInfo[box].specs}</span>
 							</div>
 						)}
 						<div className="bg-white rounded-md p-3">

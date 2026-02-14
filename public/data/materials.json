@@ -124,7 +124,7 @@
   
   {
     "id": "stone_amazonas_brazil",
-    "name": "Amazonas Brazil",
+    "name": "אמזונס ברזיל",
     "category": "stone",
     "colors": [],
     "price": 5800,
@@ -134,7 +134,7 @@
   },
   {
     "id": "stone_green_alpi",
-    "name": "Green Alpi",
+    "name": "גרין אלפי",
     "category": "stone",
     "colors": [],
     "price": 5500,
@@ -144,7 +144,7 @@
   },
   {
     "id": "stone_travertine_silver",
-    "name": "Travertine Silver",
+    "name": "טרוורטין כסף",
     "category": "stone",
     "colors": [],
     "price": 4600,
@@ -154,7 +154,7 @@
   },
   {
     "id": "stone_four_seasons",
-    "name": "Four Seasons",
+    "name": "פור סיזנס",
     "category": "stone",
     "colors": [],
     "price": 6600,
@@ -164,7 +164,7 @@
   },
   {
     "id": "stone_parisian_stone",
-    "name": "Parisian Stone",
+    "name": "אבן פריז",
     "category": "stone",
     "colors": [],
     "price": 4900,
@@ -174,7 +174,7 @@
   },
   {
     "id": "stone_red_wine",
-    "name": "Red Wine",
+    "name": "יין אדום",
     "category": "stone",
     "colors": [],
     "price": 5300,
@@ -184,7 +184,7 @@
   },
   {
     "id": "stone_black_gold",
-    "name": "Black Gold",
+    "name": "זהב שחור",
     "category": "stone",
     "colors": [],
     "price": 4300,
@@ -194,7 +194,7 @@
   },
   {
     "id": "stone_land_stone",
-    "name": "Land Stone",
+    "name": "אבן לנד",
     "category": "stone",
     "colors": [],
     "price": 4900,
@@ -204,7 +204,7 @@
   },
   {
     "id": "stone_rain_stone",
-    "name": "Rain Stone",
+    "name": "אבן גשם",
     "category": "stone",
     "colors": [],
     "price": 5000,
@@ -214,7 +214,7 @@
   },
   {
     "id": "stone_river_stone",
-    "name": "River Stone",
+    "name": "אבן נהר",
     "category": "stone",
     "colors": [],
     "price": 4900,
@@ -224,7 +224,7 @@
   },
   {
     "id": "stone_tiger_stone",
-    "name": "Tiger Stone",
+    "name": "אבן טיגריס",
     "category": "stone",
     "colors": [],
     "price": 4500,
@@ -234,7 +234,7 @@
   },
   {
     "id": "stone_van_gogh",
-    "name": "Van Gogh",
+    "name": "ואן גוך",
     "category": "stone",
     "colors": [],
     "price": 5700,
@@ -244,7 +244,7 @@
   },
   {
     "id": "antique_gold",
-    "name": "Antique Gold",
+    "name": "זהב אנטיק",
     "category": "metal",
     "colors": [
       "gray"
@@ -256,7 +256,7 @@
   },
   {
     "id": "antique_silver",
-    "name": "Antique Silver",
+    "name": "כסף אנטיק",
     "category": "metal",
     "colors": [
       "gray"
@@ -268,7 +268,7 @@
   },
   {
     "id": "black",
-    "name": "Black",
+    "name": "שחור",
     "category": "metal",
     "colors": [
       "gray"
@@ -280,7 +280,7 @@
   },
   {
     "id": "champagne",
-    "name": "Champagne",
+    "name": "שמפניה",
     "category": "metal",
     "colors": [
       "gray"
@@ -292,7 +292,7 @@
   },
   {
     "id": "gold_silver",
-    "name": "Gold Silver",
+    "name": "זהב-כסף",
     "category": "metal",
     "colors": [
       "gray"
@@ -304,7 +304,7 @@
   },
   {
     "id": "gold",
-    "name": "Gold",
+    "name": "זהב",
     "category": "metal",
     "colors": [
       "gray"
@@ -316,7 +316,7 @@
   },
   {
     "id": "golden_rust",
-    "name": "Golden Rust",
+    "name": "חלודה זהובה",
     "category": "metal",
     "colors": [
       "gray"
@@ -328,7 +328,7 @@
   },
   {
     "id": "graphite",
-    "name": "Graphite",
+    "name": "גרפיט",
     "category": "metal",
     "colors": [
       "gray"
@@ -340,7 +340,7 @@
   },
   {
     "id": "rain",
-    "name": "Rain",
+    "name": "ריין",
     "category": "metal",
     "colors": [
       "gray"
@@ -352,7 +352,7 @@
   },
   {
     "id": "rose_gold",
-    "name": "Rose Gold",
+    "name": "זהב ורוד",
     "category": "metal",
     "colors": [
       "gray"
@@ -364,7 +364,7 @@
   },
   {
     "id": "silver",
-    "name": "Silver",
+    "name": "כסף",
     "category": "metal",
     "colors": [
       "gray"
@@ -376,7 +376,7 @@
   },
   {
     "id": "white",
-    "name": "White",
+    "name": "לבן",
     "category": "metal",
     "colors": [
       "gray"

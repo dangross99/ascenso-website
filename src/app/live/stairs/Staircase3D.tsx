@@ -2,7 +2,7 @@
 
 import React, { useRef } from 'react';
 import { useLoader, useFrame } from '@react-three/fiber';
-import { Environment, Text } from '@react-three/drei';
+import { Environment, Text, ContactShadows } from '@react-three/drei';
 import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, LinearMipmapLinearFilter, BufferGeometry, Float32BufferAttribute, Cache, Vector3, type PointLight } from 'three';
 import type { PathSegment } from '../shared/path';
 import { buildRectTreads } from './models/rect';
@@ -701,10 +701,10 @@ function Staircase3D({
 
 							return (
 								<group key={`outer-wall-${i}`} position={t.position} rotation={t.rotation}>
-									{/* קיר חיצוני – קופסה 6 ס"מ, meshBasicMaterial לצבע אחיד 100% */}
+									{/* קיר חיצוני – Standard מט (roughness=1) לתאורה ריאליסטית, צבע קרם אחיד */}
 									<mesh position={[0, yLocal, zWall]} castShadow={false} receiveShadow>
 										<boxGeometry args={[t.run, wallH, wallTh]} />
-										<meshBasicMaterial color={wallColor} side={2} />
+										<meshStandardMaterial color={wallColor} side={2} metalness={0} roughness={1} />
 									</mesh>
 									{/* בפודסט עם פנייה: הוסף גם קיר חיצוני שני שיוצר "L" בפינה החיצונית */}
 									{hasTurn ? (
@@ -719,9 +719,9 @@ function Staircase3D({
 											castShadow={false}
 											receiveShadow
 										>
-											{/* קיר L – קופסה 6 ס"מ, meshBasicMaterial לצבע אחיד */}
+											{/* קיר L – Standard מט, צבע קרם אחיד */}
 											<boxGeometry args={[wallTh, wallH, treadWidth / 2]} />
-											<meshBasicMaterial color={wallColor} side={2} />
+											<meshStandardMaterial color={wallColor} side={2} metalness={0} roughness={1} />
 						</mesh>
 						) : null}
 					</group>
@@ -1582,8 +1582,16 @@ function Staircase3D({
 			{/* רצפה – מותאמת אוטומטית לגבולות המהלך */}
 			<mesh rotation={[-Math.PI / 2, 0, 0]} position={[floorBounds.cx, floorBounds.y, floorBounds.cz]} receiveShadow>
 				<planeGeometry args={[floorBounds.w, floorBounds.h]} />
-				<meshBasicMaterial color="#e5e7eb" />
+				<meshStandardMaterial color="#e5e7eb" metalness={0} roughness={1} />
 			</mesh>
+			{/* Contact Shadows – צל מטושטש מתחת למדרגות וליד הקירות, מראה קולנועי */}
+			<ContactShadows
+				position={[floorBounds.cx, floorBounds.y + 0.002, floorBounds.cz]}
+				opacity={0.4}
+				scale={Math.max(floorBounds.w, floorBounds.h) * 1.5}
+				blur={2}
+				far={4}
+			/>
 		</group>
 	);
 }

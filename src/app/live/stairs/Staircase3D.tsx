@@ -711,12 +711,12 @@ function Staircase3D({
 										<boxGeometry args={[t.run, wallH, wallTh]} />
 										<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
 									</mesh>
-									{/* בפודסט עם פנייה: קיר חזית על כל רוחב הפאה. פודסט שני (flight 1, axis z): חזית ב־-X */}
+									{/* בפודסט עם פנייה: קיר חזית על כל רוחב הפאה. הסימן לפי כיוון הפנייה כדי שבהפיכת 180° הקיר יזוז לצד החיצוני החדש */}
 									{hasTurn ? (
 										<mesh
 											position={[
-												// קיר "חזית": פודסט ראשון +X, פודסט שני -X
-												(t.isLanding && t.flight === 1 && axis === 'z' ? -1 : 1) * (t.run / 2 + gap + wallTh / 2),
+												// קיר "חזית": תלוי ב-turn כדי שבהפיכת מסלול (180°) הקיר האמצעי יזוז לצד הנכון
+												(t.isLanding && t.flight === 1 && axis === 'z' ? (t.turn === 'right' ? -1 : 1) : 1) * (t.run / 2 + gap + wallTh / 2),
 												yLocal,
 												// ממורכז ברוחב (Z=0) – הקיר מכסה את כל פאת החזית
 												0,

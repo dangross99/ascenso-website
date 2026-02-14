@@ -98,7 +98,7 @@ export function BookingModal(props: {
 						</div>
 
 						<div className="mb-2 relative flex justify-center">
-							<div className="absolute left-2 md:left-4 lg:left-20 top-1/2 -translate-y-1/2 mt-3 pointer-events-none text-[#0f1424]">
+							<div className="absolute left-2 md:left-4 lg:left-20 top-1/2 -translate-y-1/2 mt-5 pointer-events-none text-[#0f1424]">
 								<svg
 									className="w-[2.72rem] h-[2.72rem] md:w-[3.2rem] md:h-[3.2rem]"
 									viewBox="0 0 24 24"

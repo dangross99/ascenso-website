@@ -1959,40 +1959,42 @@ function LivePageInner() {
 						{/* פירוט חשבון צדדי בדסקטופ */}
 						<div className="hidden lg:block lg:col-span-1">
 							<div className="bg-white rounded-md p-3 h-full space-y-3">
-								{/* הדגם הנבחר – שורה אחת: צורה, שם, נתונים טכניים */}
-								{boxDisplayInfo[box] && (
-									<div className="pb-3 border-b border-gray-200">
-										<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-2 border border-[#e8e2dc] shadow-sm flex items-center gap-2 flex-wrap">
-											<BoxShapeIcon boxId={box as any} size={36} className="shrink-0" />
-											<span className="text-xs font-semibold text-[#1a1a2e]/70 shrink-0">הדגם הנבחר</span>
-											<span className="text-sm font-bold text-[#1a1a2e] shrink-0">{boxDisplayInfo[box].name}</span>
-											<span className="text-xs text-gray-600 tabular-nums">{boxDisplayInfo[box].specs}</span>
-										</div>
-									</div>
-								)}
-								{/* הטקסטורה הנבחרת – תמונה + סוג חומר + שם */}
-								{(() => {
-									const matLabel = activeMaterial === 'wood' ? 'עץ' : activeMaterial === 'metal' ? 'מתכת' : activeMaterial === 'stone' ? 'אבן טבעית' : null;
-									const sel = activeMaterial === 'wood'
-										? (woodModels.find(m => m.id === activeModelId) || woodModels[0])
-										: (nonWoodModels.find(m => m.id === activeTexId) || nonWoodModels[0]);
-									if (!matLabel || !sel) return null;
-									const img = sel.images?.[0];
-									const solid = (sel as any)?.solid;
-									return (
-										<div className="pb-3 border-b border-gray-200">
+								<div className="space-y-2">
+									{/* הדגם הנבחר – שורה אחת: צורה, שם, נתונים טכניים */}
+									{boxDisplayInfo[box] && (
+										<div>
 											<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-2 border border-[#e8e2dc] shadow-sm flex items-center gap-2 flex-wrap">
-												<div
-													className="w-9 h-9 rounded-lg shrink-0 bg-center bg-cover border border-[#e8e2dc]"
-													style={{ backgroundImage: img ? `url("${encodeURI(img)}")` : undefined, backgroundColor: solid || '#e8e2dc' }}
-												/>
-												<span className="text-xs font-semibold text-[#1a1a2e]/70 shrink-0">הטקסטורה הנבחרת</span>
-												<span className="text-sm font-bold text-[#1a1a2e] shrink-0">{sel.name || sel.id}</span>
-												<span className="text-xs text-gray-600">{matLabel}</span>
+												<BoxShapeIcon boxId={box as any} size={36} className="shrink-0" />
+												<span className="text-xs font-semibold text-[#1a1a2e]/70 shrink-0">הדגם הנבחר</span>
+												<span className="text-sm font-bold text-[#1a1a2e] shrink-0">{boxDisplayInfo[box].name}</span>
+												<span className="text-xs text-gray-600 tabular-nums">{boxDisplayInfo[box].specs}</span>
 											</div>
 										</div>
-									);
-								})()}
+									)}
+									{/* הטקסטורה הנבחרת – תמונה + סוג חומר + שם */}
+									{(() => {
+										const matLabel = activeMaterial === 'wood' ? 'עץ' : activeMaterial === 'metal' ? 'מתכת' : activeMaterial === 'stone' ? 'אבן טבעית' : null;
+										const sel = activeMaterial === 'wood'
+											? (woodModels.find(m => m.id === activeModelId) || woodModels[0])
+											: (nonWoodModels.find(m => m.id === activeTexId) || nonWoodModels[0]);
+										if (!matLabel || !sel) return null;
+										const img = sel.images?.[0];
+										const solid = (sel as any)?.solid;
+										return (
+											<div>
+												<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-2 border border-[#e8e2dc] shadow-sm flex items-center gap-2 flex-wrap">
+													<div
+														className="w-9 h-9 rounded-lg shrink-0 bg-center bg-cover border border-[#e8e2dc]"
+														style={{ backgroundImage: img ? `url("${encodeURI(img)}")` : undefined, backgroundColor: solid || '#e8e2dc' }}
+													/>
+													<span className="text-xs font-semibold text-[#1a1a2e]/70 shrink-0">הטקסטורה הנבחרת</span>
+													<span className="text-sm font-bold text-[#1a1a2e] shrink-0">{sel.name || sel.id}</span>
+													<span className="text-xs text-gray-600">{matLabel}</span>
+												</div>
+											</div>
+										);
+									})()}
+								</div>
 								<div className="font-semibold mb-1">פירוט חשבון (כולל מע״מ)</div>
 								<ul className="text-sm text-gray-700 space-y-1">
 									{breakdown.map(b => (

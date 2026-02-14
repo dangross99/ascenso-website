@@ -701,9 +701,9 @@ function Staircase3D({
 
 							return (
 								<group key={`outer-wall-${i}`} position={t.position} rotation={t.rotation}>
-									{/* קיר חיצוני – מיקום בלבד, רוטציה כך שהפנים למדרגות תמיד אותה פניית הקופסה (תאורה אחידה) */}
-									<mesh position={[0, yLocal, zWall]} rotation={[0, outerSignLocal === -1 ? Math.PI : 0, 0]} castShadow={false} receiveShadow>
-										<boxGeometry args={[t.run, wallH, wallTh]} />
+									{/* קיר חיצוני – משטח שטוח (plane), רקע בלבד, מגיב לאור באופן אחיד */}
+									<mesh position={[0, yLocal, zWall]} castShadow={false} receiveShadow>
+										<planeGeometry args={[t.run, wallH]} />
 										<meshStandardMaterial color={wallColor} side={2} roughness={0.9} metalness={0} />
 									</mesh>
 									{/* בפודסט עם פנייה: הוסף גם קיר חיצוני שני שיוצר "L" בפינה החיצונית */}
@@ -716,12 +716,12 @@ function Staircase3D({
 												// רק חצי רוחב חיצוני כדי לא "לגלוש" לפנים
 												outerSignLocal * (treadWidth / 4),
 											]}
-											rotation={[0, outerSignLocal === -1 ? Math.PI : 0, 0]}
+											rotation={[0, Math.PI / 2, 0]}
 											castShadow={false}
 											receiveShadow
 										>
-											{/* קיר בעובי wallTh על ציר X – אותה פניית קופסה לתאורה אחידה */}
-											<boxGeometry args={[wallTh, wallH, treadWidth / 2]} />
+											{/* קיר כמישור (YZ) – משטח שטוח, צבע אחיד */}
+											<planeGeometry args={[treadWidth / 2, wallH]} />
 											<meshStandardMaterial color={wallColor} side={2} roughness={0.9} metalness={0} />
 						</mesh>
 						) : null}

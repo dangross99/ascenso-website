@@ -34,6 +34,7 @@ function Staircase3D({
 	ridgeFrontCenterThicknessM,
 	ridgeFrontEdgeThicknessM,
 	pathSegments,
+	pathFlipped180,
 	glassTone,
 	stepRailingStates,
 	landingRailingStates,
@@ -77,6 +78,7 @@ function Staircase3D({
 	ridgeFrontCenterThicknessM?: number;
 	ridgeFrontEdgeThicknessM?: number;
 	pathSegments?: PathSegment[] | null;
+	pathFlipped180?: boolean;
 	glassTone?: 'extra' | 'smoked' | 'bronze';
 	stepRailingStates?: boolean[];
 	landingRailingStates?: boolean[];

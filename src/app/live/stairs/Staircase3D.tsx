@@ -14,6 +14,30 @@ import { HitechPlates } from './models/hitech';
 
 // ׳”׳₪׳¢׳׳× ׳§׳׳© ׳©׳ three ׳¢׳‘׳•׳¨ ׳˜׳¢׳™׳ ׳•׳× ׳—׳׳§׳•׳×
 Cache.enabled = true;
+
+/** טבלת שליטה בצד הקיר לפי דגם ומסלול – דריסה ידנית כשהפאה נצמדת לצד הלא נכון */
+const MODEL_SIDE_OVERRIDES: Partial<Record<string, Partial<Record<string, { forceWallSide: 'right' | 'left' }>>>> = {
+	ridge: {
+		straight_180: { forceWallSide: 'left' },
+		L_180_flight_1: { forceWallSide: 'right' },
+		U_0_flight_2: { forceWallSide: 'left' },
+	},
+	taper: {
+		L_180_flight_1: { forceWallSide: 'left' },
+	},
+};
+
+function getPathKey(path: 'straight' | 'L' | 'U', flip: boolean, flight: number): string {
+	const suffix = flip ? 180 : 0;
+	if (path === 'straight') return `straight_${suffix}`;
+	return `${path}_${suffix}_flight_${flight}`;
+}
+
+function getForceWallSideFromTable(model: string, pathKey: string): 'right' | 'left' | 'auto' {
+	const entry = MODEL_SIDE_OVERRIDES[model]?.[pathKey];
+	return entry?.forceWallSide ?? 'auto';
+}
+
 function Staircase3D({
 	shape,
 	steps,
@@ -149,6 +173,7 @@ function Staircase3D({
 			flight: number;
 			axis: 'x' | 'z';
 			mirror: boolean;
+			forceWallSide: 'right' | 'left' | 'auto';
 		};
 		const treads: TreadItem[] = [];
 
@@ -160,10 +185,13 @@ function Staircase3D({
 			const isU = straightSteps.length === 3 && landings.length === 2;
 			const flip = pathFlipped180 === true;
 			const yaw180 = flip ? Math.PI : 0;
+			const path: 'straight' | 'L' | 'U' = isStraight ? 'straight' : isL ? 'L' : 'U';
+			const fws = (flight: number) => getForceWallSideFromTable(boxModel ?? 'rect', getPathKey(path, flip, flight));
 
 			if (isStraight) {
 				const n = straightSteps[0];
 				const mirror = getMirrorForTread(flip, 'straight', 0);
+				const forceWallSide = fws(0);
 				for (let i = 0; i < n; i++) {
 					const x = flip ? -(i * treadDepth + treadDepth / 2) : i * treadDepth + treadDepth / 2;
 					treads.push({
@@ -174,12 +202,15 @@ function Staircase3D({
 						flight: 0,
 						axis: 'x',
 						mirror,
+						forceWallSide,
 					});
 				}
 			} else if (isL) {
 				const [a, b] = straightSteps;
 				const mirror0 = getMirrorForTread(flip, 'L', 0);
 				const mirror1 = getMirrorForTread(flip, 'L', 1);
+				const fws0 = fws(0);
+				const fws1 = fws(1);
 				for (let i = 0; i < a; i++) {
 					const x = flip ? -(i * treadDepth + treadDepth / 2) : i * treadDepth + treadDepth / 2;
 					treads.push({
@@ -190,6 +221,7 @@ function Staircase3D({
 						flight: 0,
 						axis: 'x',
 						mirror: mirror0,
+						forceWallSide: fws0,
 					});
 				}
 				const podestX = flip ? -(a * treadDepth + treadWidth / 2) : a * treadDepth + treadWidth / 2;
@@ -202,6 +234,7 @@ function Staircase3D({
 					flight: 0,
 					axis: 'x',
 					mirror: mirror0,
+					forceWallSide: fws0,
 				});
 				for (let i = 0; i < b; i++) {
 					const stepY = (a + 1 + i) * riser;
@@ -214,6 +247,7 @@ function Staircase3D({
 							flight: 1,
 							axis: 'z',
 							mirror: mirror1,
+							forceWallSide: fws1,
 						});
 					} else {
 						treads.push({
@@ -224,6 +258,7 @@ function Staircase3D({
 							flight: 1,
 							axis: 'z',
 							mirror: mirror1,
+							forceWallSide: fws1,
 						});
 					}
 				}
@@ -235,6 +270,9 @@ function Staircase3D({
 				const mirror0 = getMirrorForTread(flip, 'U', 0);
 				const mirror1 = getMirrorForTread(flip, 'U', 1);
 				const mirror2 = getMirrorForTread(flip, 'U', 2);
+				const fws0 = fws(0);
+				const fws1 = fws(1);
+				const fws2 = fws(2);
 				for (let i = 0; i < a; i++) {
 					const x = flip ? -(i * treadDepth + treadDepth / 2) : i * treadDepth + treadDepth / 2;
 					treads.push({
@@ -245,6 +283,7 @@ function Staircase3D({
 						flight: 0,
 						axis: 'x',
 						mirror: mirror0,
+						forceWallSide: fws0,
 					});
 				}
 				const p1x = flip ? -(a * treadDepth + treadWidth / 2) : a * treadDepth + treadWidth / 2;
@@ -257,6 +296,7 @@ function Staircase3D({
 					flight: 0,
 					axis: 'x',
 					mirror: mirror0,
+					forceWallSide: fws0,
 				});
 				for (let i = 0; i < b; i++) {
 					const stepY = (a + 1 + i) * riser;
@@ -269,6 +309,7 @@ function Staircase3D({
 						flight: 1,
 						axis: 'z',
 						mirror: mirror1,
+						forceWallSide: fws1,
 					});
 				}
 				const p2z = flip ? treadWidth + b * treadDepth + treadWidth / 2 : -treadWidth - b * treadDepth - treadWidth / 2;
@@ -281,6 +322,7 @@ function Staircase3D({
 					flight: 1,
 					axis: 'z',
 					mirror: mirror1,
+					forceWallSide: fws1,
 				});
 				const p3xStart = flip ? p1x + treadWidth : p1x - treadWidth;
 				for (let i = 0; i < c; i++) {
@@ -294,6 +336,7 @@ function Staircase3D({
 						flight: 2,
 						axis: 'x',
 						mirror: mirror2,
+						forceWallSide: fws2,
 					});
 				}
 			} else {
@@ -316,6 +359,7 @@ function Staircase3D({
 								flight: flightIdx,
 								axis: (dirIndex & 1) === 0 ? 'x' : 'z',
 								mirror: false,
+								forceWallSide: 'auto',
 							});
 							sx += dx * treadDepth;
 							sz += dz * treadDepth;
@@ -335,6 +379,7 @@ function Staircase3D({
 							flight: flightIdx,
 							axis: (dirIndex & 1) === 0 ? 'x' : 'z',
 							mirror: false,
+							forceWallSide: 'auto',
 						});
 						stepIndex += 1;
 						if (seg.turn === 'right') dirIndex = (dirIndex + 1) & 3;
@@ -358,6 +403,7 @@ function Staircase3D({
 				}
 			}
 		} else if (shape === 'straight') {
+			const fws = getForceWallSideFromTable(boxModel ?? 'rect', 'straight_0');
 			for (let i = 0; i < steps; i++) {
 				treads.push({
 					position: [i * treadDepth + treadDepth / 2, i * riser, 0],
@@ -367,12 +413,15 @@ function Staircase3D({
 					flight: 0,
 					axis: 'x',
 					mirror: false,
+					forceWallSide: fws,
 				});
 			}
 		} else if (shape === 'L') {
 			const half = Math.floor(steps / 2);
+			const fws0 = getForceWallSideFromTable(boxModel ?? 'rect', 'L_0_flight_0');
+			const fws1 = getForceWallSideFromTable(boxModel ?? 'rect', 'L_0_flight_1');
 			for (let i = 0; i < half; i++) {
-				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, 0, 0], run: treadDepth, isLanding: false, flight: 0, axis: 'x', mirror: false });
+				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, 0, 0], run: treadDepth, isLanding: false, flight: 0, axis: 'x', mirror: false, forceWallSide: fws0 });
 			}
 			const runL = treadWidth;
 			const lxStart = half * treadDepth;
@@ -385,6 +434,7 @@ function Staircase3D({
 				flight: 0,
 				axis: 'x',
 				mirror: false,
+				forceWallSide: fws0,
 			});
 			for (let i = 0; i < steps - half - 1; i++) {
 				treads.push({
@@ -395,13 +445,17 @@ function Staircase3D({
 					flight: 1,
 					axis: 'z',
 					mirror: false,
+					forceWallSide: fws1,
 				});
 			}
 		} else {
 			const third = Math.floor(steps / 3);
 			const mirror2 = getMirrorForTread(false, 'U', 2);
+			const fws0 = getForceWallSideFromTable(boxModel ?? 'rect', 'U_0_flight_0');
+			const fws1 = getForceWallSideFromTable(boxModel ?? 'rect', 'U_0_flight_1');
+			const fws2 = getForceWallSideFromTable(boxModel ?? 'rect', 'U_0_flight_2');
 			for (let i = 0; i < third; i++) {
-				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, 0, 0], run: treadDepth, isLanding: false, flight: 0, axis: 'x', mirror: false });
+				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, 0, 0], run: treadDepth, isLanding: false, flight: 0, axis: 'x', mirror: false, forceWallSide: fws0 });
 			}
 			const runL1 = treadWidth;
 			const l1xStart = third * treadDepth;
@@ -414,6 +468,7 @@ function Staircase3D({
 				flight: 0,
 				axis: 'x',
 				mirror: false,
+				forceWallSide: fws0,
 			});
 			for (let i = 0; i < third; i++) {
 				treads.push({
@@ -424,6 +479,7 @@ function Staircase3D({
 					flight: 1,
 					axis: 'z',
 					mirror: false,
+					forceWallSide: fws1,
 				});
 			}
 			const runL2 = treadWidth;
@@ -438,6 +494,7 @@ function Staircase3D({
 				flight: 1,
 				axis: 'z',
 				mirror: false,
+				forceWallSide: fws1,
 			});
 			for (let i = 0; i < steps - third * 2 - 1; i++) {
 				treads.push({
@@ -448,13 +505,14 @@ function Staircase3D({
 					flight: 2,
 					axis: 'x',
 					mirror: mirror2,
+					forceWallSide: fws2,
 				});
 			}
 		}
 		return treads;
 	}
 
-	const treads = React.useMemo(getTreads, [shape, steps, JSON.stringify(pathSegments), pathFlipped180]);
+	const treads = React.useMemo(getTreads, [shape, steps, JSON.stringify(pathSegments), pathFlipped180, boxModel]);
 
 	// במבנה ישר ללא 180: דגמי מרום ודלתא מוצגים הפוכים – מפצים בהוספת 180° לרוטציה
 	// נתוני קיר רציף לכל גרם: התחלה (עם מתיחה אחורה אחרי פודסט), סוף, אורך, ויואו – לאיחוד עם עוגן הפודסט
@@ -505,7 +563,8 @@ function Staircase3D({
 			const wallLength = Math.hypot(wallEnd[0] - wallStart[0], wallEnd[2] - wallStart[2]);
 			const axis = (Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z') as 'x' | 'z';
 			const sides = stepRailingSidesForRailing ?? stepRailingSides;
-			const railingSide: 'right' | 'left' = (sides?.[sIdx] ?? 'right');
+			const railingSide: 'right' | 'left' =
+				first.t.forceWallSide !== 'auto' ? first.t.forceWallSide : (sides?.[sIdx] ?? 'right');
 			sIdx += list.length;
 			out.push({
 				wallStart,

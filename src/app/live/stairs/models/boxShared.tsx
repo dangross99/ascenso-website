@@ -12,6 +12,8 @@ export type Tread = {
 	flight: number;
 	/** היפוך צד ימין/שמאל (למודלים א-סימטריים: ridge, taper, wedge) – לפי טבלת מסלול/דגם */
 	mirror?: boolean;
+	/** דריסת צד הקיר: 'right' | 'left' | 'auto' – מהטבלה MODEL_SIDE_OVERRIDES או ברירת מחדל */
+	forceWallSide?: 'right' | 'left' | 'auto';
 };
 
 export type BuildFaceTextures = (
@@ -63,6 +65,7 @@ export function getInnerIsRight(params: {
 	landingIdx: number;
 }) {
 	const { t, curStepIdx, stepRailingSides, landingRailingSides, landingIdx } = params;
+	if (t.forceWallSide === 'right' || t.forceWallSide === 'left') return t.forceWallSide === 'right';
 	return t.isLanding
 		? (((landingRailingSides?.[landingIdx] ?? 'right') === 'right'))
 		: ((typeof stepRailingSides !== 'undefined' ? (stepRailingSides[curStepIdx] ?? 'right') : 'right') === 'right');

@@ -1404,11 +1404,11 @@ function LivePageInner() {
 							nodes.push({
 								key: 'box',
 								el: (
-									<div>
+									<div className="px-4">
 										<BoxPicker box={box as any} setBox={setBox as any} />
 										{getNextCatForSteps('box') && (
-											<div className="mt-2 flex justify-center">
-												<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('box')!)} className="px-6 py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
+											<div className="mt-3 text-center">
+												<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('box')!)} className="px-5 py-2 rounded-lg bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90 transition-opacity">
 													המשך
 												</button>
 											</div>
@@ -1458,14 +1458,14 @@ function LivePageInner() {
 							nodes.push({
 								key: 'material',
 								el: (
-									<div>
+									<div className="px-4">
 										<MaterialKindPicker
 											activeMaterial={activeMaterial}
 											onChange={(m) => startTransition(() => setActiveMaterial(m))}
 										/>
 										{getNextCatForSteps('material') && (
-											<div className="mt-2 flex justify-center">
-												<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('material')!)} className="px-6 py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
+											<div className="mt-3 text-center">
+												<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('material')!)} className="px-5 py-2 rounded-lg bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90 transition-opacity">
 													המשך
 												</button>
 											</div>
@@ -1477,15 +1477,15 @@ function LivePageInner() {
 								nodes.push({
 									key: 'woodTexture',
 									el: (
-										<div>
+										<div className="px-4">
 											<WoodTexturePicker
 												woodModels={woodModels as any}
 												activeModelId={activeModelId}
 												onPick={(id) => startTransition(() => setActiveModelId(id))}
 											/>
 											{getNextCatForSteps('woodTexture') && (
-												<div className="mt-2 flex justify-center">
-													<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('woodTexture')!)} className="px-6 py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
+												<div className="mt-3 text-center">
+													<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('woodTexture')!)} className="px-5 py-2 rounded-lg bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90 transition-opacity">
 														המשך
 													</button>
 												</div>
@@ -1496,7 +1496,7 @@ function LivePageInner() {
 								nodes.push({
 									key: 'woodColor',
 									el: (
-										<div>
+										<div className="px-4">
 											<WoodColorPicker
 												swatches={WOOD_SWATCHES}
 												activeModel={activeModel as any}
@@ -1505,8 +1505,8 @@ function LivePageInner() {
 												onPick={(id) => startTransition(() => setActiveColor(id))}
 											/>
 											{getNextCatForSteps('woodColor') && (
-												<div className="mt-2 flex justify-center">
-													<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('woodColor')!)} className="px-6 py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
+												<div className="mt-3 text-center">
+													<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('woodColor')!)} className="px-5 py-2 rounded-lg bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90 transition-opacity">
 														המשך
 													</button>
 												</div>
@@ -1518,7 +1518,7 @@ function LivePageInner() {
 								nodes.push({
 									key: 'nonWoodTexture',
 									el: (
-										<div>
+										<div className="px-4">
 											<NonWoodTexturePicker
 												nonWoodModels={nonWoodModels as any}
 												activeTexId={activeTexId}
@@ -1531,8 +1531,8 @@ function LivePageInner() {
 												}
 											/>
 											{getNextCatForSteps('nonWoodTexture') && (
-												<div className="mt-2 flex justify-center">
-													<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('nonWoodTexture')!)} className="px-6 py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
+												<div className="mt-3 text-center">
+													<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('nonWoodTexture')!)} className="px-5 py-2 rounded-lg bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90 transition-opacity">
 														המשך
 													</button>
 												</div>
@@ -1544,7 +1544,7 @@ function LivePageInner() {
 							nodes.push({
 								key: 'path',
 								el: (
-									<div>
+									<div className="px-4">
 										<PathPicker
 											shape={shape}
 											steps={steps}
@@ -1554,8 +1554,8 @@ function LivePageInner() {
 											setPathSegments={setPathSegments}
 										/>
 										{getNextCatForSteps('path') && (
-											<div className="mt-2 flex justify-center">
-												<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('path')!)} className="px-6 py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
+											<div className="mt-3 text-center">
+												<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('path')!)} className="px-5 py-2 rounded-lg bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90 transition-opacity">
 													המשך
 												</button>
 											</div>

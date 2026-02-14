@@ -14,6 +14,8 @@ export type Tread = {
 	mirror?: boolean;
 	/** דריסת צד הקיר: 'right' | 'left' | 'auto' – מהטבלה MODEL_SIDE_OVERRIDES או ברירת מחדל */
 	forceWallSide?: 'right' | 'left' | 'auto';
+	/** סיבוב 180° לגוף המדרגה – רק L 0° גרם ראשון (דלתא/מרום), לא ישר */
+	bodyRotate180?: boolean;
 };
 
 export type BuildFaceTextures = (

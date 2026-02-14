@@ -204,6 +204,7 @@ function Staircase3D({
 			axis: 'x' | 'z';
 			mirror: boolean;
 			forceWallSide: 'right' | 'left' | 'auto';
+			bodyRotate180?: boolean;
 		};
 		const treads: TreadItem[] = [];
 
@@ -237,6 +238,7 @@ function Staircase3D({
 						axis: 'x',
 						mirror,
 						forceWallSide,
+						bodyRotate180: false,
 					});
 				}
 			} else if (isL) {
@@ -247,6 +249,7 @@ function Staircase3D({
 				const fws0 = fws(0);
 				const fws1 = fws(1);
 				const podestX = a * treadDepth + treadWidth / 2;
+				const bodyRotateL0 = !flip; // רק L 0° – דלתא/מרום סיבוב גוף בגרם ראשון
 				for (let i = 0; i < a; i++) {
 					treads.push({
 						position: [i * treadDepth + treadDepth / 2, i * riser, 0],
@@ -257,6 +260,7 @@ function Staircase3D({
 						axis: 'x',
 						mirror: mirror0,
 						forceWallSide: fws0,
+						bodyRotate180: bodyRotateL0,
 					});
 				}
 				treads.push({
@@ -269,6 +273,7 @@ function Staircase3D({
 					axis: 'x',
 					mirror: mirror0,
 					forceWallSide: fws0,
+					bodyRotate180: bodyRotateL0,
 				});
 				// גרם שני: מתחיל מיד אחרי קצה הפודסט (Z = -treadWidth/2), בלי רווח
 				for (let i = 0; i < b; i++) {
@@ -282,6 +287,7 @@ function Staircase3D({
 						axis: 'z',
 						mirror: mirror1,
 						forceWallSide: fws1,
+						bodyRotate180: false,
 					});
 				}
 			} else if (isU) {

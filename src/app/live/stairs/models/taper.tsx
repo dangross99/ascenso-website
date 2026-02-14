@@ -301,8 +301,8 @@ export function buildTaperBoxTreads(params: {
 					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
-				// L 0° / ישר 0°: סיבוב 180° בגרם הראשון כמו בדגם מרום (ridge) – הפאה העבה תפנה נכון
-				const bodyYaw = t.flight === 0 ? Math.PI : 0;
+				// רק L 0°: סיבוב 180° בגרם הראשון (bodyRotate180 מוגדר ב־getTreads) – לא בישר 0°/180°
+				const bodyYaw = t.bodyRotate180 ? Math.PI : 0;
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>
 						<group rotation={[0, bodyYaw, 0]}>

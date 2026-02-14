@@ -499,7 +499,7 @@ function LivePageInner() {
 			case 'woodTexture': return 'בחרו דגם עץ (טקסטורה) וגוון שמתאימים לקו העיצובי שלכם.';
 			case 'woodColor': return 'בחרו גוון לעץ (טבעי/ווריאציות כהות/בהירות) לפי התמונות.';
 			case 'nonWoodTexture': return 'בחרו טקסטורה למתכת/אבן. מומלץ לבחון את ההשתקפויות במודל.';
-			case 'path': return 'בנו את מסלול המדרגות: הוסיפו ישרים/פודסטים והתאימו מספר מדרגות לפי הצורך.';
+			case 'path': return 'בנו את מבנה המדרגות: הוסיפו ישרים/פודסטים והתאימו מספר מדרגות לפי הצורך.';
 			case 'railing': return 'בחרו סוג מעקה: זכוכית/מתכת/כבלי נירוסטה והתאימו גוון/צד לפי ההעדפה.';
 			default: return '';
 		}
@@ -513,7 +513,7 @@ function LivePageInner() {
 			case 'woodTexture': return 'טקסטורה';
 			case 'woodColor': return 'צבע (עץ)';
 			case 'nonWoodTexture': return 'טקסטורה';
-			case 'path': return 'מסלול';
+			case 'path': return 'מבנה המדרגות';
 			case 'railing': return 'מעקה';
 			default: return '';
 		}
@@ -1315,7 +1315,7 @@ function LivePageInner() {
 			`- דגם תיבה: ${boxText}`,
 			`- חומר: ${materialLabel}${colorName ? `, צבע: ${colorName}` : ''}`,
 			`- טקסטורה: ${textureName}`,
-			`- מסלול: ${pathText}`,
+			`- מבנה המדרגות: ${pathText}`,
 			`- מעקה: ${railingText}`,
 			`- מחיר משוער: ${totalText}`,
 			``,
@@ -1410,7 +1410,7 @@ function LivePageInner() {
 			`- דגם תיבה: ${boxText}`,
 			`- חומר: ${materialLabel}${colorName ? `, צבע: ${colorName}` : ''}`,
 			`- טקסטורה: ${textureName}`,
-			`- מסלול: ${pathText}`,
+			`- מבנה המדרגות: ${pathText}`,
 			`- מעקה: ${railingText}`,
 			`- מחיר משוער: ${totalText}`,
 			``,

@@ -654,9 +654,8 @@ function Staircase3D({
 
 			{/* קירות "חוץ" לצורך קונטקסט ויזואלי (לא משנה את מודלי המדרגות עצמם) */}
 								{(() => {
-				// NOTE: קירות "חוץ" הם שקופים (transparent) ולכן יכולים לגרום ל"החשכה" בזמן תנועה
-				// בגלל מיון שקיפות (sorting) שמשתנה עם המצלמה. מכבים כברירת מחדל כדי לייצב את ההדמיה.
-				const showOuterWalls = false;
+				// NOTE: קירות "חוץ" הם שקופים (transparent) – עלולים לגרום להחשכה קלה בתנועה (transparency sorting).
+				const showOuterWalls = true;
 				if (!showOuterWalls) return null;
 				const wallH = 6.0; // מטר – קבוע מהרצפה
 				const wallTh = 0.06; // עובי קיר

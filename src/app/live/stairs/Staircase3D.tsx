@@ -449,8 +449,10 @@ function Staircase3D({
 			const half = Math.floor(steps / 2);
 			const fws0 = getForceWallSideFromTable(boxModel ?? 'rect', 'L_0_flight_0');
 			const fws1 = getForceWallSideFromTable(boxModel ?? 'rect', 'L_0_flight_1');
+			// דלתא L 0°: סיבוב רק במדרגות גרם ראשון (גם כשנכנסים מכאן בלי pathSegments)
+			const bodyRotateL0 = true;
 			for (let i = 0; i < half; i++) {
-				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, 0, 0], run: treadDepth, isLanding: false, flight: 0, axis: 'x', mirror: false, forceWallSide: fws0 });
+				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, 0, 0], run: treadDepth, isLanding: false, flight: 0, axis: 'x', mirror: false, forceWallSide: fws0, bodyRotate180: bodyRotateL0 });
 			}
 			const runL = treadWidth;
 			const lxStart = half * treadDepth;
@@ -464,6 +466,7 @@ function Staircase3D({
 				axis: 'x',
 				mirror: false,
 				forceWallSide: fws0,
+				bodyRotate180: false,
 			});
 			for (let i = 0; i < steps - half - 1; i++) {
 				treads.push({
@@ -475,6 +478,7 @@ function Staircase3D({
 					axis: 'z',
 					mirror: false,
 					forceWallSide: fws1,
+					bodyRotate180: false,
 				});
 			}
 		} else {

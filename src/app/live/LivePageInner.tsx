@@ -2261,7 +2261,7 @@ function LivePageInner() {
 																aria-label={m.name || m.id}
 																title={m.name || m.id}
 																onClick={() => startTransition(() => setActiveModelId(m.id))}
-																className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeModelId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+																className={`w-10 h-10 rounded-full border-2 bg-center bg-cover cursor-pointer transition-transform duration-200 hover:scale-150 ${activeModelId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
 															/>
 														))}
@@ -2282,7 +2282,7 @@ function LivePageInner() {
 																				aria-label={sw.label}
 																				title={sw.label}
 																				onClick={() => startTransition(() => setActiveColor(sw.id))}
-																				className={`w-8 h-8 rounded-full border-2 cursor-pointer ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+																				className={`w-8 h-8 rounded-full border-2 cursor-pointer transition-transform duration-200 hover:scale-150 ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																				style={{
 																					backgroundImage: img ? `url("${encodeURI(img)}")` : undefined,
 																					backgroundColor: img ? undefined : solid,
@@ -2328,7 +2328,7 @@ function LivePageInner() {
 													if (activeMaterial === 'metal') setActiveMetalTexId(m.id);
 													if (activeMaterial === 'stone') setActiveStoneTexId(m.id);
 												})}
-																className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+																className={`w-10 h-10 rounded-full border-2 bg-center bg-cover cursor-pointer transition-transform duration-200 hover:scale-150 ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, backgroundColor: (!m.images || m.images.length === 0) && (m as any).solid ? (m as any).solid : undefined, borderColor: '#ddd' }}
 															/>
 														))}

@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 
 type Swatch = { id: string; label: string };
 
@@ -27,7 +27,7 @@ export function WoodColorPicker(props: {
 								aria-label={sw.label}
 								title={sw.label}
 								onClick={() => onPick(sw.id)}
-								className={`w-[52px] h-[52px] rounded-full border-2 cursor-pointer ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+								className={`w-[52px] h-[52px] rounded-full border-2 cursor-pointer transition-transform duration-200 hover:scale-150 ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 								style={{
 									backgroundImage: img ? `url("${encodeURI(img)}")` : undefined,
 									backgroundColor: img ? undefined : solid,

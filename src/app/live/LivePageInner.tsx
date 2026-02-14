@@ -21,6 +21,33 @@ import { NonWoodTexturePicker } from './components/NonWoodTexturePicker';
 import { PathPicker } from './components/PathPicker';
 import { RailingPicker } from './components/RailingPicker';
 
+// תופס שגיאות טעינת טקסטורה (קובץ חסר) – מעבר אוטומטי לגוון ברירת מחדל
+class TextureLoadErrorBoundary extends React.Component<
+	{ children: React.ReactNode; onFallback: () => void },
+	{ hasError: boolean }
+> {
+	state = { hasError: false };
+	static getDerivedStateFromError() {
+		return { hasError: true };
+	}
+	componentDidCatch(error: unknown) {
+		const msg = String((error as Error)?.message ?? error);
+		if (msg.includes('Could not load') || msg.includes('404') || msg.includes('Failed to load')) {
+			this.props.onFallback();
+		}
+	}
+	render() {
+		if (this.state.hasError) {
+			return (
+				<div className="flex items-center justify-center p-4 text-gray-500 text-sm" dir="rtl">
+					טוען גוון חלופי…
+				</div>
+			);
+		}
+		return this.props.children;
+	}
+}
+
 // Overlay ׳˜׳¢׳™׳ ׳” ׳׳§׳ ׳‘׳¡ ג€“ ׳׳•׳¦׳’ ׳‘׳–׳׳ ׳˜׳¢׳™׳ ׳× ׳˜׳§׳¡׳˜׳•׳¨׳•׳×/׳ ׳›׳¡׳™׳
 function CanvasLoadingOverlay() {
 	const { active, progress } = useProgress();
@@ -470,6 +497,11 @@ function LivePageInner() {
 	// מאסטר: מצבים מחזוריים להפעלה/ביטול ולצד
 	const [masterApply, setMasterApply] = React.useState<'none' | 'add' | 'remove'>('none');
 	const [masterSide, setMasterSide] = React.useState<'none' | 'right' | 'left'>('none');
+	// 0=גוון נבחר, 1=תמונה ראשית של הדגם, 2=בלי טקסטורה (placeholder)
+	const [textureFallbackLevel, setTextureFallbackLevel] = React.useState(0);
+	React.useEffect(() => {
+		setTextureFallbackLevel(0);
+	}, [activeColor, activeModelId, activeMaterial, activeTexId]);
 	// מובייל: אקורדיון קטגוריות בפאנל (ברירת מחדל: סגור כדי שלא ייווצר מרווח נוסף מתחת לקנבס)
 	const [mobileOpenCat, setMobileOpenCat] = React.useState<
 		'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing' | null
@@ -511,7 +543,7 @@ function LivePageInner() {
 		switch (cat) {
 			case 'box': return 'דגם';
 			case 'material': return 'חומר';
-			case 'woodTexture': return 'טקסטורה וצבע (עץ)';
+			case 'woodTexture': return 'טקסטורה';
 			case 'woodColor': return 'צבע (עץ)';
 			case 'nonWoodTexture': return 'טקסטורה';
 			case 'path': return 'מסלול';
@@ -1036,6 +1068,33 @@ function LivePageInner() {
 
 	const activeModel =
 		activeMaterial === 'wood' ? woodModels.find(m => m.id === activeModelId) || woodModels[0] : undefined;
+
+	// כשטעינת תמונת גוון נכשלת – רמה 1: תמונה ראשית של הדגם, רמה 2: null (Staircase3D ישתמש ב-placeholder)
+	const effectiveSceneTex = React.useMemo(() => {
+		if (activeMaterial === 'wood') {
+			if (textureFallbackLevel >= 2) {
+				return { textureUrl: null, bumpUrl: null, roughnessUrl: null };
+			}
+			if (textureFallbackLevel >= 1) {
+				return {
+					textureUrl: activeModel?.images?.[0] ?? null,
+					bumpUrl: null as string | null,
+					roughnessUrl: null as string | null,
+				};
+			}
+			return {
+				textureUrl: activeModel?.variants?.[activeColor]?.[0] || activeModel?.images?.[0] || null,
+				bumpUrl: activeModel?.pbrVariants?.[activeColor]?.bump?.[0] || null,
+				roughnessUrl: activeModel?.pbrVariants?.[activeColor]?.roughness?.[0] || null,
+			};
+		}
+		const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0];
+		return {
+			textureUrl: (sel as any)?.solid ? null : (sel?.images?.[0] || null),
+			bumpUrl: (sel as any)?.solid ? null : (sel?.pbr?.bump?.[0] || null),
+			roughnessUrl: (sel as any)?.solid ? null : (sel?.pbr?.roughness?.[0] || null),
+		};
+	}, [activeMaterial, textureFallbackLevel, activeModel, activeColor, activeTexId, nonWoodModels]);
 
 	// סנכרון URL לשיתוף
 	React.useEffect(() => {
@@ -1627,6 +1686,10 @@ function LivePageInner() {
 					<div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
 						<div className="lg:col-span-2">
 					<div ref={canvasWrapRef} className="w-full aspect-[16/9] lg:aspect-auto lg:h-[60vh] bg-white border overflow-hidden rounded fixed inset-x-0 z-30 lg:relative" style={{ height: mobileCanvasH || undefined, top: (mobileHeaderH + mobileTabsH) || 0 }}>
+						<TextureLoadErrorBoundary
+							key={`${effectiveSceneTex.textureUrl ?? 'n'}-${textureFallbackLevel}`}
+							onFallback={() => setTextureFallbackLevel((l) => Math.min(2, l + 1))}
+						>
 						<Canvas
 							// תאורה קבועה ויציבה: בלי shadows ובלי post-processing
 							shadows={false}
@@ -1703,24 +1766,9 @@ function LivePageInner() {
 										}
 										return 0;
 									})()}
-									textureUrl={(() => {
-										if (activeMaterial === 'wood') {
-											return activeModel?.variants?.[activeColor]?.[0] || activeModel?.images?.[0] || null;
-										}
-										const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0];
-										if (sel?.solid) return null;
-										return sel?.images?.[0] || null;
-									})()}
-									bumpUrl={
-										activeMaterial === 'wood'
-											? activeModel?.pbrVariants?.[activeColor]?.bump?.[0] || null
-											: (() => { const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0]; return sel?.solid ? null : (sel?.pbr?.bump?.[0] || null); })()
-									}
-									roughnessUrl={
-										activeMaterial === 'wood'
-											? activeModel?.pbrVariants?.[activeColor]?.roughness?.[0] || null
-											: (() => { const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0]; return sel?.solid ? null : (sel?.pbr?.roughness?.[0] || null); })()
-									}
+									textureUrl={effectiveSceneTex.textureUrl}
+									bumpUrl={effectiveSceneTex.bumpUrl}
+									roughnessUrl={effectiveSceneTex.roughnessUrl}
 									materialSolidColor={(() => { if (activeMaterial === 'wood') return null; const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0]; return (sel as any)?.solid || null; })()}
 									tileScale={(() => {
 										if (activeMaterial === 'wood') {
@@ -1756,6 +1804,7 @@ function LivePageInner() {
 								/>
 							</React.Suspense>
 						</Canvas>
+						</TextureLoadErrorBoundary>
 						<CanvasLoadingOverlay />
 						
 						{/* אייקון מועדפים מעל הקנבס במקום בלון המחיר (דסקטופ בלבד) */}

@@ -1994,6 +1994,37 @@ function LivePageInner() {
 											</div>
 										);
 									})()}
+									{/* המעקה הנבחר – מוצג רק כשיש מעקה */}
+									{railing !== 'none' && (
+										<div>
+											<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-2 border border-[#e8e2dc] shadow-sm flex items-center gap-2 flex-wrap">
+												{railing === 'glass' && (
+													<div
+														className="w-9 h-9 rounded-lg shrink-0 border border-[#e8e2dc]"
+														style={{
+															backgroundColor: glassTone === 'smoked' ? '#4a5568' : glassTone === 'bronze' ? '#b08d57' : '#aee7ff',
+														}}
+													/>
+												)}
+												{railing === 'metal' && (
+													<div
+														className="w-9 h-9 rounded-lg shrink-0 bg-center bg-cover border border-[#e8e2dc]"
+														style={{
+															backgroundColor: railingMetalSolid || '#e8e2dc',
+															backgroundImage: railingMetalId && !railingMetalSolid
+																? `url("${encodeURI(metalRailingOptions.find(r => r.id === railingMetalId)?.images?.[0] || '')}")`
+																: undefined,
+														}}
+													/>
+												)}
+												{railing === 'cable' && (
+													<div className="w-9 h-9 rounded-lg shrink-0 bg-[#c7ccd1] border border-[#e8e2dc]" />
+												)}
+												<span className="text-xs font-semibold text-[#1a1a2e]/70 shrink-0">המעקה הנבחר</span>
+												<span className="text-sm font-bold text-[#1a1a2e] shrink-0">{formatRailing()}</span>
+											</div>
+										</div>
+									)}
 								</div>
 								<div className="font-semibold mb-1">פירוט חשבון (כולל מע״מ)</div>
 								<ul className="text-sm text-gray-700 space-y-1">

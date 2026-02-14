@@ -702,10 +702,10 @@ function Staircase3D({
 
 							return (
 								<group key={`outer-wall-${i}`} position={t.position} rotation={t.rotation}>
-									{/* קיר חיצוני לאורך הרוחב (כמו בכל מדרגה/פודסט) */}
+									{/* קיר חיצוני לאורך הרוחב – חומר אמיתי שמגיב לאור ו־Environment */}
 									<mesh position={[0, yLocal, zWall]} castShadow={false} receiveShadow>
 										<boxGeometry args={[t.run, wallH, wallTh]} />
-										<meshBasicMaterial color={wallColor} side={2} transparent opacity={0.92} />
+										<meshStandardMaterial color={wallColor} side={2} roughness={0.9} metalness={0} />
 									</mesh>
 									{/* בפודסט עם פנייה: הוסף גם קיר חיצוני שני שיוצר "L" בפינה החיצונית */}
 									{hasTurn ? (
@@ -720,9 +720,9 @@ function Staircase3D({
 											castShadow={false}
 											receiveShadow
 										>
-											{/* קיר בעובי wallTh על ציר X ובאורך חצי רוחב על ציר Z */}
+											{/* קיר בעובי wallTh על ציר X – חומר אמיתי, צללים מהמדרגות */}
 											<boxGeometry args={[wallTh, wallH, treadWidth / 2]} />
-											<meshBasicMaterial color={wallColor} side={2} transparent opacity={0.92} />
+											<meshStandardMaterial color={wallColor} side={2} roughness={0.9} metalness={0} />
 						</mesh>
 						) : null}
 					</group>

@@ -2,7 +2,7 @@ import React from 'react';
 
 type WoodModel = { id: string; name?: string; images: string[] };
 
-const PREVIEW_SIZE = 140;
+const PREVIEW_SIZE = 180;
 
 export function WoodTexturePicker(props: {
 	woodModels: WoodModel[];

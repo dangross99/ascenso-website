@@ -2,7 +2,7 @@ import React from 'react';
 
 type NonWoodModel = { id: string; name?: string; images?: string[] } & Record<string, any>;
 
-const PREVIEW_SIZE = 140;
+const PREVIEW_SIZE = 180;
 
 export function NonWoodTexturePicker(props: {
 	nonWoodModels: NonWoodModel[];

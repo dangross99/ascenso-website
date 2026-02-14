@@ -1531,7 +1531,7 @@ function LivePageInner() {
 												activeModelId={activeModelId}
 												onPick={(id) => startTransition(() => setActiveModelId(id))}
 											/>
-											<div className="mt-3">
+											<div className="mt-2">
 												<WoodColorPicker
 													swatches={WOOD_SWATCHES}
 													activeModel={activeModel as any}
@@ -1631,16 +1631,13 @@ function LivePageInner() {
 											<p className="text-sm font-medium text-[#1a1a2e] mb-1.5">כך נראות מדרגות החלום שלכם</p>
 											<p className="text-xs text-gray-600 mb-3">צעד אחד מלהפוך אותן למציאות – כתבו לנו בוואטסאפ ונחזור בהקדם.</p>
 											<a
-												href={`https://api.whatsapp.com/send?phone=${(whatsappPhone || '').replace(/\D/g, '')}&text=${encodeURIComponent('היי, סיימתי להתאים את המדרגות בהדמייה ואשמח לקבל הצעת מחיר או לתאם פגישה.')}`}
+												href={`https://api.whatsapp.com/send?phone=${(whatsappPhone || '').replace(/\D/g, '')}&text=${encodeURIComponent(buildWhatsappText(generateLeadId(), '', false))}`}
 												target="_blank"
 												rel="noopener noreferrer"
 												className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-md bg-emerald-600 text-white px-5 py-2.5 text-sm font-semibold shadow-sm hover:bg-emerald-700 hover:opacity-95 cursor-pointer"
 												aria-label="שלח הודעה בוואטסאפ"
 											>
-												<span>כתבו לנו, ונתקדם</span>
-												<svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-													<path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.04-1.235-.783-.781-1.418-1.733-1.503-2.114-.086-.382.025-.597.188-.792.164-.196.363-.463.544-.695.181-.231.241-.385.361-.644.121-.26.06-.488-.03-.677-.09-.188-.769-1.896-1.055-2.594-.285-.698-.575-.603-.769-.613-.195-.009-.416-.01-.636-.01-.221 0-.579.086-.882.26-.303.174-1.18.899-1.18 2.191s1.208 2.54 1.375 2.717c.167.177 2.353 3.585 5.708 4.933.795.317 1.417.508 1.902.65.763.225 1.458.193 2.007.117.615-.084 1.897-.776 2.169-1.521.272-.745.272-1.382.19-1.521-.082-.139-.297-.223-.594-.372z"/>
-												</svg>
+												<span>כתבו לנו, ונתקדם..</span>
 											</a>
 										</div>
 									</>

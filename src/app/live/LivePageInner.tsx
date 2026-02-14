@@ -1622,7 +1622,7 @@ function LivePageInner() {
 											setLandingCableSpanMode={setLandingCableSpanMode}
 										/>
 										{/* סיום והתקשרות – שלב 5 (מעקה) */}
-										<div className="mt-3 pt-3 pb-0 border-t border-gray-200 text-center" dir="rtl">
+										<div className="mt-1.5 pt-1.5 pb-3 border-t border-gray-200 text-center" dir="rtl">
 											<p className="text-sm font-medium text-[#1a1a2e] mb-1.5">כך נראות מדרגות החלום שלכם</p>
 											<p className="text-xs text-gray-600 mb-3">צעד אחד מלהפוך אותן למציאות – כתבו לנו בוואטסאפ ונחזור בהקדם.</p>
 											<a

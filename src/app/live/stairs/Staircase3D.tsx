@@ -11,7 +11,6 @@ import { buildRidgeTreads } from './models/ridge';
 import { buildRoundedTreads } from './models/rounded';
 import { buildTaperBoxTreads } from './models/taper';
 import { HitechPlates } from './models/hitech';
-import { computeLocalFrame } from './models/boxShared';
 
 // ׳”׳₪׳¢׳׳× ׳§׳׳© ׳©׳ three ׳¢׳‘׳•׳¨ ׳˜׳¢׳™׳ ׳•׳× ׳—׳׳§׳•׳×
 Cache.enabled = true;
@@ -681,23 +680,24 @@ function Staircase3D({
 							// @ts-ignore
 							const hasTurn = !!(isLanding && t.turn);
 
-							// innerSide אצלנו = "פנים" (LivePageInner). לפודסטים עם פנייה זה יהיה לפי seg.turn.
-							const innerSide: 'right' | 'left' = isLanding
+							// צד המעקה – אותו מערך שהמעקה משתמש בו (railingSides למדרגות), כדי שהקיר יהיה בפאה הנגדית
+							const railingSide: 'right' | 'left' = isLanding
 								? (landingRailingSides?.[lIdx] ?? 'right')
-								: (stepRailingSides?.[sIdx] ?? 'right');
+								: (railingSides?.[sIdx] ?? 'right');
 							if (isLanding) lIdx++; else sIdx++;
 
-							// שימוש ב-computeLocalFrame כמו ב-boxShared – כיוון התקדמות וצד פנימי דינמיים לפי הגרם והמסלול
-							const { innerSignLocal, forwardSign } = computeLocalFrame({
-								yaw,
-								isLanding,
-								flight: t.flight,
-								axis,
-								innerIsRight: innerSide === 'right',
-							});
-							// הקיר תמיד בצד החיצוני: גרמים 0,1 → -innerSignLocal; גרם 2 (העליון) → +innerSignLocal כדי שהקיר יהיה בצד החיצוני של ה-U (ללא פער בפינה)
-							const outerSignLocal = (t.flight === 2 ? innerSignLocal : (-innerSignLocal as 1 | -1)) as 1 | -1;
-							const zWall = outerSignLocal * (treadWidth / 2 + gap + wallTh / 2);
+							// אותו חישוב צד מקומי כמו במעקה (rightLocal + חריג פודסט Z)
+							const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
+							let rightLocal: 1 | -1 =
+								(axis === 'x' ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
+							if (t.isLanding && axis === 'z') rightLocal = (rightLocal === 1 ? -1 : 1) as 1 | -1;
+							const railingSideSignLocal = (railingSide === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
+							// הקיר בפאה הנגדית למעקה
+							const zWall = -railingSideSignLocal * (treadWidth / 2 + gap + wallTh / 2);
+
+							// כיוון התקדמות (לקיר חזית בפודסט עם פנייה)
+							const forwardSignBase = (axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
+							const forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase) as 1 | -1;
 							// נציב את הקיר בגובה מוחלט ביחס לרצפה (0..6m), אבל בתוך ה-group של המדרך כדי שיסתובב יחד איתו
 							const worldCenterY = floorBounds.y + wallH / 2;
 							const yLocal = worldCenterY - t.position[1];

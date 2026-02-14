@@ -1627,9 +1627,9 @@ function LivePageInner() {
 											setLandingCableSpanMode={setLandingCableSpanMode}
 										/>
 										{/* סיום והתקשרות – שלב 5 (מעקה) */}
-										<div className="mt-3 pt-3 border-t border-gray-200 text-center" dir="rtl">
-											<p className="text-sm font-medium text-[#1a1a2e] mb-0.5">כך נראות מדרגות החלום שלכם</p>
-											<p className="text-xs text-gray-600 mb-2">צעד אחד מלהפוך אותן למציאות – כתבו לנו בוואטסאפ ונחזור בהקדם.</p>
+										<div className="mt-1 pt-1.5 border-t border-gray-200 text-center" dir="rtl">
+											<p className="text-sm font-medium text-[#1a1a2e] mb-0">כך נראות מדרגות החלום שלכם</p>
+											<p className="text-xs text-gray-600 mb-1.5">צעד אחד מלהפוך אותן למציאות – כתבו לנו בוואטסאפ ונחזור בהקדם.</p>
 											<a
 												href={`https://api.whatsapp.com/send?phone=${(whatsappPhone || '').replace(/\D/g, '')}&text=${encodeURIComponent('היי, סיימתי להתאים את המדרגות בהדמייה ואשמח לקבל הצעת מחיר או לתאם פגישה.')}`}
 												target="_blank"

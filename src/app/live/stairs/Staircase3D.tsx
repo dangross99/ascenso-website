@@ -569,6 +569,7 @@ function Staircase3D({
 		if (headlightRef.current) headlightRef.current.position.copy(state.camera.position);
 	});
 
+	const railingSides = stepRailingSidesForRailing ?? stepRailingSides;
 	return (
 		<group position={[-1.5, 0, 0]}>
 			{/* תאורת פנים רכה: ambient גבוה, headlight רך */}
@@ -592,7 +593,6 @@ function Staircase3D({
 						treadWidth,
 					});
 				}
-				const railingSides = stepRailingSidesForRailing ?? stepRailingSides;
 				if (boxModel === 'taper') {
 					return buildTaperBoxTreads({
 						treads: treads as any,
@@ -845,7 +845,7 @@ function Staircase3D({
 					const idxForStep = sIdx2;
 					const enabled = stepRailingStates[sIdx2++] ?? false;
 					if (!enabled) { if (current) { segs.push(current); current = null; } continue; }
-					const sidePref = (typeof stepRailingSides !== 'undefined' ? (stepRailingSides[idxForStep] ?? 'right') : 'right');
+					const sidePref = (typeof railingSides !== 'undefined' ? (railingSides[idxForStep] ?? 'right') : 'right');
 					if (axis === 'x') {
 						const x0 = t.position[0] - t.run / 2;
 						const x1 = t.position[0] + t.run / 2;
@@ -998,7 +998,7 @@ function Staircase3D({
 					const idxForStep = sIdx3;
 					const enabled = stepRailingStates[sIdx3++] ?? false;
 					if (!enabled) continue;
-					const sidePref = (typeof stepRailingSides !== 'undefined' ? (stepRailingSides[idxForStep] ?? 'right') : 'right');
+					const sidePref = (typeof railingSides !== 'undefined' ? (railingSides[idxForStep] ?? 'right') : 'right');
 
 					if (axis === 'x') {
 						const x0 = t.position[0] - t.run / 2;
@@ -1074,7 +1074,7 @@ function Staircase3D({
 					if (!t.isLanding) {
 						const curIdx = sIdx;
 						const enabled = stepRailingStates[curIdx] ?? false;
-						const sidePref = (typeof stepRailingSides !== 'undefined' ? (stepRailingSides[curIdx] ?? 'right') : 'right');
+						const sidePref = (typeof railingSides !== 'undefined' ? (railingSides[curIdx] ?? 'right') : 'right');
 						const mode = (stepCableSpanModes?.[curIdx] ?? cableSpanMode) ?? 'tread';
 						sIdx = sIdx + 1;
 						if (!enabled) continue;
@@ -1253,7 +1253,7 @@ function Staircase3D({
 					const idxForStep = sIdx2;
 					const enabled = stepRailingStates[sIdx2++] ?? false;
 					if (!enabled) { if (current) { segs.push(current); current = null; } continue; }
-					const sidePref = (typeof stepRailingSides !== 'undefined' ? (stepRailingSides[idxForStep] ?? 'right') : 'right');
+					const sidePref = (typeof railingSides !== 'undefined' ? (railingSides[idxForStep] ?? 'right') : 'right');
 					if (axis === 'x') {
 						const x0 = t.position[0] - t.run / 2;
 						const x1 = t.position[0] + t.run / 2;
@@ -1466,7 +1466,7 @@ function Staircase3D({
 					const idxForStep = sIdx3;
 					const enabled = stepRailingStates[sIdx3++] ?? false;
 					if (!enabled) continue;
-					const sidePref = (typeof stepRailingSides !== 'undefined' ? (stepRailingSides[idxForStep] ?? 'right') : 'right');
+					const sidePref = (typeof railingSides !== 'undefined' ? (railingSides[idxForStep] ?? 'right') : 'right');
 
 					if (axis === 'x') {
 						const x0 = t.position[0] - t.run / 2;

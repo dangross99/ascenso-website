@@ -1705,6 +1705,7 @@ function LivePageInner() {
 									ridgeFrontCenterThicknessM={0.09}
 									ridgeFrontEdgeThicknessM={0.03}
 									pathSegments={pathSegments}
+									pathFlipped180={pathFlipped180}
 									// דגם "הייטק" מוסתר כרגע
 									hitech={false}
 									hitechPlateThickness={0.012}
@@ -1849,7 +1850,8 @@ function LivePageInner() {
 									}}
 									aria-label="הפוך כיוון מסלול"
 									title={pathFlipped180 ? 'מסלול בהיפוך 180° (לחץ לביטול)' : 'הפוך כיוון מסלול'}
-									className={`pointer-events-auto min-w-[2.25rem] h-9 px-1.5 rounded-full border cursor-pointer shadow inline-flex items-center justify-center font-bold text-sm ${pathFlipped180 ? 'bg-emerald-500 text-white border-emerald-600 hover:bg-emerald-600' : 'text-[#1a1a2e] bg-white/90 hover:bg-white border'}`}
+									className="pointer-events-auto min-w-[2.25rem] h-9 px-1.5 rounded-full border border-[#1a1a2e]/20 cursor-pointer shadow inline-flex items-center justify-center font-bold text-sm bg-white/90 hover:bg-white"
+									style={pathFlipped180 ? { backgroundColor: '#10b981', color: '#fff', borderColor: '#059669' } : undefined}
 								>
 									<span>180<span className="text-[10px] align-super leading-none">°</span></span>
 								</button>
@@ -1910,7 +1912,8 @@ function LivePageInner() {
 									}}
 									aria-label="הפוך כיוון מסלול"
 									title={pathFlipped180 ? 'מסלול בהיפוך 180° (לחץ לביטול)' : 'הפוך כיוון מסלול'}
-									className={`pointer-events-auto min-w-[2rem] h-8 px-1 rounded-full border cursor-pointer shadow inline-flex items-center justify-center font-bold text-xs ${pathFlipped180 ? 'bg-emerald-500 text-white border-emerald-600 hover:bg-emerald-600' : 'text-[#1a1a2e] bg-white/90 hover:bg-white border'}`}
+									className="pointer-events-auto min-w-[2rem] h-8 px-1 rounded-full border border-[#1a1a2e]/20 cursor-pointer shadow inline-flex items-center justify-center font-bold text-xs bg-white/90 hover:bg-white"
+									style={pathFlipped180 ? { backgroundColor: '#10b981', color: '#fff', borderColor: '#059669' } : undefined}
 								>
 									<span>180<span className="text-[9px] align-super leading-none">°</span></span>
 								</button>

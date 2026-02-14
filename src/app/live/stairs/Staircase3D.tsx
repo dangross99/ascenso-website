@@ -57,6 +57,7 @@ function Staircase3D({
 	hitechPlateInsetFromEdge,
 	hitechOffsets,
 	highQuality = false,
+	pathFlipped180 = false,
 }: {
 	shape: 'straight' | 'L' | 'U';
 	steps: number;
@@ -102,6 +103,8 @@ function Staircase3D({
 	hitechPlateInsetFromEdge?: number;
 	hitechOffsets?: number[];
 	highQuality?: boolean;
+	/** כשמופעל היפוך 180° – גרם שני ופודסטים מחליפים צד קיר */
+	pathFlipped180?: boolean;
 }) {
 	// שיתוף נקודת ההתחלה של פלטת B (גרם 2) עבור המחבר – כדי למנוע סדקים/פערים בין B למחבר
 	const hitechBStartRef = React.useRef<{ top: [number, number, number]; bot: [number, number, number] } | null>(null);
@@ -692,12 +695,14 @@ function Staircase3D({
 								(axis === 'x' ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
 							if (t.isLanding && axis === 'z') rightLocal = (rightLocal === 1 ? -1 : 1) as 1 | -1;
 							const railingSideSignLocal = (railingSide === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
-							// הקיר בפאה הנגדית למעקה – אותו ציר שהמעקה משתמש בו: axis x → צד ב-Z, axis z → צד ב-X
-							const wallOffset = -railingSideSignLocal * (treadWidth / 2 + gap + wallTh / 2);
+							// הקיר בפאה הנגדית למעקה. בהיפוך 180°: גרם שני (flight 1) ופודסטים מחליפים צד
+							const flipWallSide = pathFlipped180 && (t.flight === 1 || t.isLanding);
+							const wallOffset = (flipWallSide ? railingSideSignLocal : -railingSideSignLocal) * (treadWidth / 2 + gap + wallTh / 2);
 
-							// כיוון התקדמות (לקיר חזית בפודסט עם פנייה)
+							// כיוון התקדמות (לקיר חזית בפודסט עם פנייה). בהיפוך 180° מפנים את קיר החזית
 							const forwardSignBase = (axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
-							const forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase) as 1 | -1;
+							let forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase) as 1 | -1;
+							if (pathFlipped180 && t.isLanding && t.turn) forwardSign = (-forwardSign as 1 | -1) as 1 | -1;
 							// נציב את הקיר בגובה מוחלט ביחס לרצפה (0..6m), אבל בתוך ה-group של המדרך כדי שיסתובב יחד איתו
 							const worldCenterY = floorBounds.y + wallH / 2;
 							const yLocal = worldCenterY - t.position[1];

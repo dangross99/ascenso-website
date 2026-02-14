@@ -328,7 +328,72 @@ function Staircase3D({
 		return treads;
 	}
 
-	const treads = React.useMemo(getTreads, [shape, steps, JSON.stringify(pathSegments)]);
+	const treads = React.useMemo(getTreads, [shape, steps, JSON.stringify(pathSegments), pathFlipped180]);
+
+	// נתוני קיר רציף לכל גרם: התחלה (עם מתיחה אחורה אחרי פודסט), סוף, אורך, ויואו – לאיחוד עם עוגן הפודסט
+	const flightWallData = React.useMemo(() => {
+		const out: Array<{
+			wallStart: [number, number, number];
+			wallEnd: [number, number, number];
+			wallCenter: [number, number, number];
+			wallLength: number;
+			yaw: number;
+			axis: 'x' | 'z';
+			flight: number;
+			railingSide: 'right' | 'left';
+			firstTreadIndex: number;
+		}> = [];
+		const stepsByFlight = new Map<number, Array<{ i: number; t: (typeof treads)[0] }>>();
+		treads.forEach((t, i) => {
+			if (t.isLanding) return;
+			const list = stepsByFlight.get(t.flight) ?? [];
+			list.push({ i, t });
+			stepsByFlight.set(t.flight, list);
+		});
+		let sIdx = 0;
+		for (const [flight, list] of Array.from(stepsByFlight.entries()).sort((a, b) => a[0] - b[0])) {
+			if (list.length === 0) continue;
+			const first = list[0];
+			const last = list[list.length - 1];
+			const yaw = first.t.rotation[1] as number;
+			const dirX = Math.cos(yaw);
+			const dirZ = Math.sin(yaw);
+			// גרם ראשון: קיר מתחיל מקצה אחורי של המדרגה הראשונה. גרם שני ומעלה: קיר נמתח אחורה עד position - treadWidth/2 (עוגן לפודסט)
+			const extendBack = flight === 0 ? first.t.run / 2 : treadWidth / 2;
+			const wallStart: [number, number, number] = [
+				first.t.position[0] - dirX * extendBack,
+				first.t.position[1],
+				first.t.position[2] - dirZ * extendBack,
+			];
+			const wallEnd: [number, number, number] = [
+				last.t.position[0] + dirX * (last.t.run / 2),
+				last.t.position[1],
+				last.t.position[2] + dirZ * (last.t.run / 2),
+			];
+			const wallCenter: [number, number, number] = [
+				(wallStart[0] + wallEnd[0]) / 2,
+				(wallStart[1] + wallEnd[1]) / 2,
+				(wallStart[2] + wallEnd[2]) / 2,
+			];
+			const wallLength = Math.hypot(wallEnd[0] - wallStart[0], wallEnd[2] - wallStart[2]);
+			const axis = (Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z') as 'x' | 'z';
+			const sides = stepRailingSidesForRailing ?? stepRailingSides;
+			const railingSide: 'right' | 'left' = (sides?.[sIdx] ?? 'right');
+			sIdx += list.length;
+			out.push({
+				wallStart,
+				wallEnd,
+				wallCenter,
+				wallLength,
+				yaw,
+				axis,
+				flight,
+				railingSide,
+				firstTreadIndex: first.i,
+			});
+		}
+		return out;
+	}, [treads, treadWidth, stepRailingSidesForRailing, stepRailingSides]);
 
 	// זיהוי הגרם והמדרגה האחרונה עבור פאנל הסגירה בדגם "הייטק"
 	const staircaseEndsWithLanding = (treads.length > 0 ? treads[treads.length - 1].isLanding : false);
@@ -669,69 +734,71 @@ function Staircase3D({
 				// BasicMaterial + toneMapped=false – לבן שמנת עדין (בז־לבן), אחיד בכל הגרמים
 				const wallColor = '#FFFBF5';
 
-				let sIdx = 0;
-				let lIdx = 0;
+				const worldCenterY = floorBounds.y + wallH / 2;
 
+				return (
+					<group>
+						{/* קיר רציף אחד לכל גרם – מתחיל מהרצפה/פודסט (עם מתיחה אחורה בגרם שני ומעלה) */}
+						{flightWallData.map((fw) => {
+							const cosY = Math.cos(fw.yaw);
+							const sinY = Math.sin(fw.yaw);
+							let rightLocal: 1 | -1 =
+								(fw.axis === 'x' ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
+							const railingSideSignLocal = (fw.railingSide === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
+							const wallOffset = -railingSideSignLocal * (treadWidth / 2 + gap + wallTh / 2);
+							const yLocal = worldCenterY - fw.wallCenter[1];
 							return (
-								<group>
+								<group key={`flight-wall-${fw.flight}`} position={fw.wallCenter} rotation={[0, fw.yaw, 0]}>
+									<mesh
+										position={fw.axis === 'x' ? [0, yLocal, wallOffset] : [wallOffset, yLocal, 0]}
+										castShadow={false}
+										receiveShadow={false}
+									>
+										<boxGeometry args={[fw.wallLength, wallH, wallTh]} />
+										<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
+									</mesh>
+								</group>
+							);
+						})}
+						{/* קירות פודסטים: ריצה + קיר חזית L */}
 						{treads.map((t, i) => {
-								const yaw = t.rotation[1] as number;
+							if (!t.isLanding) return null;
+							const yaw = t.rotation[1] as number;
 							const axis = (Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z') as 'x' | 'z';
-
-							const isLanding = !!t.isLanding;
-							// @ts-ignore
-							const hasTurn = !!(isLanding && t.turn);
-
-							// צד המעקה – אותו מערך שהמעקה משתמש בו (railingSides למדרגות), כדי שהקיר יהיה בפאה הנגדית
-							const railingSide: 'right' | 'left' = isLanding
-								? (landingRailingSides?.[lIdx] ?? 'right')
-								: (railingSides?.[sIdx] ?? 'right');
-							if (isLanding) lIdx++; else sIdx++;
-
-							// אותו חישוב צד מקומי כמו במעקה (rightLocal + חריג פודסט Z)
-							const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
+							const hasTurn = !!(t as { turn?: 'left' | 'right' }).turn;
+							const lIdx = treads.slice(0, i).filter((x) => x.isLanding).length;
+							const railingSide: 'right' | 'left' = landingRailingSides?.[lIdx] ?? 'right';
+							const cosY = Math.cos(yaw);
+							const sinY = Math.sin(yaw);
 							let rightLocal: 1 | -1 =
 								(axis === 'x' ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
-							if (t.isLanding && axis === 'z') rightLocal = (rightLocal === 1 ? -1 : 1) as 1 | -1;
+							if (axis === 'z') rightLocal = (rightLocal === 1 ? -1 : 1) as 1 | -1;
 							const railingSideSignLocal = (railingSide === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
-							// הקיר בפאה הנגדית למעקה – אותו ציר שהמעקה משתמש בו: axis x → צד ב-Z, axis z → צד ב-X
 							const wallOffset = -railingSideSignLocal * (treadWidth / 2 + gap + wallTh / 2);
-
-							// כיוון התקדמות (לקיר חזית בפודסט עם פנייה)
 							const forwardSignBase = (axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
 							const forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase) as 1 | -1;
-							// נציב את הקיר בגובה מוחלט ביחס לרצפה (0..6m), אבל בתוך ה-group של המדרך כדי שיסתובב יחד איתו
-							const worldCenterY = floorBounds.y + wallH / 2;
 							const yLocal = worldCenterY - t.position[1];
-
 							return (
-								<group key={`outer-wall-${i}`} position={t.position} rotation={t.rotation}>
-									{/* קיר חיצוני – מיקום לפי אותו ציר כמו המעקה (X כשהמדרך לאורך Z, Z כשהמדרך לאורך X) */}
+								<group key={`outer-wall-landing-${i}`} position={t.position} rotation={t.rotation}>
 									<mesh position={axis === 'x' ? [0, yLocal, wallOffset] : [wallOffset, yLocal, 0]} castShadow={false} receiveShadow={false}>
 										<boxGeometry args={[t.run, wallH, wallTh]} />
 										<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
 									</mesh>
-									{/* בפודסט עם פנייה: קיר חזית – מיקום לפי forwardSign (כיוון התקדמות ממשי) */}
 									{hasTurn ? (
 										<mesh
-											position={[
-												forwardSign * (t.run / 2 + gap + wallTh / 2),
-												yLocal,
-												0,
-											]}
+											position={[forwardSign * (t.run / 2 + gap + wallTh / 2), yLocal, 0]}
 											castShadow={false}
 											receiveShadow={false}
 										>
-											{/* קיר L – רוחב מלא; toneMapped={false} ללבן בוהק */}
 											<boxGeometry args={[wallTh, wallH, treadWidth]} />
 											<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
-						</mesh>
-						) : null}
-					</group>
-				);
-						})}
+										</mesh>
+									) : null}
 								</group>
 							);
+						})}
+					</group>
+				);
 						})()}
 
 			{/* Hitech plates (מוסתר) */}

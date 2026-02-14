@@ -659,6 +659,18 @@ function LivePageInner() {
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [landingMeta, railing, computeInnerDefaultSides]);
+
+	// זכוכית/מתכת/כבלים: מעקה תמיד "עם" – אין אופציה "ללא", רק בכבלים יש בחירה תקרה‑רצפה / תקרה‑מדרגה
+	React.useEffect(() => {
+		if (railing === 'none') return;
+		setStepRailing(prev => {
+			const out = prev.slice(0, stepsTotalForPath);
+			for (let i = 0; i < stepsTotalForPath; i++) out[i] = true;
+			return out;
+		});
+		setLandingRailing(landingMeta.map(turn => (turn ? false : true)));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [railing, stepsTotalForPath, landingMeta]);
 	// סנכרון מערכי מצב כבל פר‑מדרגה/פודסט לפי אורך המסלול
 	React.useEffect(() => {
 		setStepCableSpanMode(prev => {
@@ -1582,6 +1594,10 @@ function LivePageInner() {
 										setStepRailing={setStepRailing}
 										landingRailing={landingRailing}
 										setLandingRailing={setLandingRailing}
+										stepCableSpanMode={stepCableSpanMode}
+										setStepCableSpanMode={setStepCableSpanMode}
+										landingCableSpanMode={landingCableSpanMode}
+										setLandingCableSpanMode={setLandingCableSpanMode}
 									/>
 								),
 							});

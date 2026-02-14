@@ -27,6 +27,11 @@ export function RailingPicker(props: {
 
 	landingRailing: boolean[];
 	setLandingRailing: React.Dispatch<React.SetStateAction<boolean[]>>;
+
+	stepCableSpanMode: Array<'floor' | 'tread'>;
+	setStepCableSpanMode: React.Dispatch<React.SetStateAction<Array<'floor' | 'tread'>>>;
+	landingCableSpanMode: Array<'floor' | 'tread'>;
+	setLandingCableSpanMode: React.Dispatch<React.SetStateAction<Array<'floor' | 'tread'>>>;
 }) {
 	const {
 		railing,
@@ -46,6 +51,10 @@ export function RailingPicker(props: {
 		setStepRailing,
 		landingRailing,
 		setLandingRailing,
+		stepCableSpanMode,
+		setStepCableSpanMode,
+		landingCableSpanMode,
+		setLandingCableSpanMode,
 	} = props;
 
 	return (
@@ -123,9 +132,8 @@ export function RailingPicker(props: {
 				)}
 			</div>
 
-			{(() => {
-				// עורך מתקדם כמו ב"מסלול": עמודות לכל גרם (בלי בחירת צד – תמיד פנימי)
-				// מפה את ריצות הישר לאינדקסי מדרגות במערכי המעקה
+			{railing === 'cable' && (() => {
+				// כבלים בלבד: בחירה לכל גרם – תקרה‑רצפה או תקרה‑מדרגה
 				const flights: Array<{ segIndex: number; start: number; count: number }> = [];
 				let cursor = 0;
 				for (let i = 0; i < pathSegments.length; i++) {
@@ -134,77 +142,69 @@ export function RailingPicker(props: {
 						const count = Math.max(0, (seg as any).steps || 0);
 						flights.push({ segIndex: i, start: cursor, count });
 						cursor += count;
-					} else {
-						// פודסט אינו מוסיף מדרגות
 					}
 				}
 				const cols = Math.max(1, flights.length);
 
-				const toggleFlight = (f: { start: number; count: number }, value: boolean) => {
-					setStepRailing(prev => {
+				const setFlightCableSpan = (f: { start: number; count: number }, value: 'floor' | 'tread') => {
+					setStepCableSpanMode(prev => {
 						const out = prev.slice(0, Math.max(prev.length, f.start + f.count));
 						for (let i = f.start; i < f.start + f.count; i++) out[i] = value;
 						return out;
 					});
 				};
-				// ללא בחירת צד – הצד תמיד פנימי לפי computeInnerDefaultSides
 
 				return (
 					<>
-						{/* ללא "מראה" – הצד נקבע אוטומטית */}
-
 						<div className="grid gap-3 mb-3" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
 							{flights.map((f, idx) => {
-								const enabledCount = stepRailing.slice(f.start, f.start + f.count).filter(Boolean).length;
-								const allOn = enabledCount === f.count && f.count > 0;
-								const anyOn = enabledCount > 0;
+								const firstVal = stepCableSpanMode[f.start];
+								const isFloor = firstVal === 'floor';
 								return (
 									<div key={idx} className="border rounded-md p-2 text-center">
 										<div className="text-sm text-gray-600 mb-1">גרם {idx + 1}</div>
 										<div className="flex items-center justify-center gap-2 mb-2">
 											<button
-												className={`px-3 py-1 text-sm rounded-full border ${allOn ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
-												onClick={() => toggleFlight(f, true)}
+												className={`px-3 py-1 text-sm rounded-full border ${isFloor ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
+												onClick={() => setFlightCableSpan(f, 'floor')}
 											>
-												עם מעקה
+												תקרה‑רצפה
 											</button>
 											<button
-												className={`px-3 py-1 text-sm rounded-full border ${!anyOn ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
-												onClick={() => toggleFlight(f, false)}
+												className={`px-3 py-1 text-sm rounded-full border ${!isFloor ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
+												onClick={() => setFlightCableSpan(f, 'tread')}
 											>
-												ללא
+												תקרה‑מדרגה
 											</button>
 										</div>
-										{/* ללא בחירת צד */}
 									</div>
 								);
 							})}
 						</div>
 
-						{/* פודסטים ללא פנייה – הפעלה בלבד (צד אוטומטי פנימי) */}
+						{/* פודסטים ללא פנייה – תקרה‑רצפה או תקרה‑מדרגה */}
 						{landingMeta.some(t => !t) && (
 							<div className="flex items-center justify-center gap-2 flex-wrap">
 								{landingMeta.map((turn, i) => {
 									if (turn) return null;
-									const on = landingRailing[i] ?? (railing !== 'none');
+									const val = landingCableSpanMode[i] ?? 'tread';
 									return (
 										<div key={i} className="border rounded-md p-2 text-center">
 											<div className="text-sm text-gray-600 mb-1">פודסט {i + 1}</div>
 											<div className="flex items-center justify-center gap-2 mb-2">
 												<button
-													className={`px-3 py-1 text-sm rounded-full border ${on ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
-													onClick={() => setLandingRailing(prev => prev.map((v, idx) => idx === i ? true : v))}
+													className={`px-3 py-1 text-sm rounded-full border ${val === 'floor' ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
+													onClick={() => setLandingCableSpanMode(prev => prev.map((v, j) => j === i ? 'floor' : v))}
 												>
-													עם מעקה
+													תקרה‑רצפה
 												</button>
 												<button
-													className={`px-3 py-1 text-sm rounded-full border ${!on ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
-													onClick={() => setLandingRailing(prev => prev.map((v, idx) => idx === i ? false : v))}
+													className={`px-3 py-1 text-sm rounded-full border ${val === 'tread' ? 'bg-[#1a1a2e] text-white' : 'bg-white'}`}
+													onClick={() => setLandingCableSpanMode(prev => prev.map((v, j) => j === i ? 'tread' : v))}
 												>
-													ללא
+													תקרה‑מדרגה
 												</button>
 											</div>
-											{/* ללא בחירת צד */}
 										</div>
 									);
 								})}

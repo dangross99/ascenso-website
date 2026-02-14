@@ -1554,15 +1554,16 @@ function LivePageInner() {
 						<div className="lg:col-span-2">
 					<div ref={canvasWrapRef} className="w-full aspect-[16/9] lg:aspect-auto lg:h-[60vh] bg-white border overflow-hidden rounded fixed inset-x-0 z-30 lg:relative" style={{ height: mobileCanvasH || undefined, top: (mobileHeaderH + mobileTabsH) || 0 }}>
 						<Canvas
-							shadows
+							// תאורה קבועה ויציבה: בלי shadows ובלי post-processing
+							shadows={false}
 							camera={{ position: [-2.494, 1.897, 3.259], fov: 45 }}
 							dpr={[1, isDesktopViewport ? 2 : 1.5]}
 							gl={{
-								antialias: true,
 								toneMapping: ACESFilmicToneMapping,
 								toneMappingExposure: 1.05,
 								outputColorSpace: SRGBColorSpace as any,
 								preserveDrawingBuffer: false,
+								antialias: true,
 								powerPreference: 'high-performance',
 							}}
 						>

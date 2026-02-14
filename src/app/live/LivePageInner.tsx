@@ -572,6 +572,7 @@ function LivePageInner() {
 		// 'inner' מציין את הצד הפנימי הרציף לכל מקטעי הישר עד לפנייה הבאה
 		let initialized = false;
 		let inner: 'right' | 'left' = 'right';
+		let flightIdx = 0; // 0=גרם 1, 1=גרם 2, 2=גרם 3 – במודל 3D גרמים 1 ו-3 מפרשים right/left בהפוך
 
 		for (let i = 0; i < pathSegments.length; i++) {
 			const seg = pathSegments[i];
@@ -589,7 +590,10 @@ function LivePageInner() {
 			}
 
 			if (seg.kind === 'straight') {
-				for (let s = 0; s < seg.steps; s++) stepSides.push(inner);
+				// בגרמים 1 ו-3 (flight 0, 2) המודל הופך את הצד – שולחים הפוך כדי שהמעקה יישאר בצד הפנימי (לא ליד הקיר)
+				const sideToPush = (flightIdx === 0 || flightIdx === 2) ? flip(inner) : inner;
+				for (let s = 0; s < seg.steps; s++) stepSides.push(sideToPush);
+				flightIdx++;
 			} else {
 				// פודסט ללא פנייה: שמור את הצד הנוכחי; עם פנייה: הצד של הפודסט הוא הפנייה
 				landingSides.push(typeof seg.turn === 'undefined' ? inner : (seg.turn === 'right' ? 'right' : 'left'));

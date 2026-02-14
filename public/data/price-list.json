@@ -1,0 +1,86 @@
+{
+  "meta": {
+    "title": "מחירון מדרגות ומעקות",
+    "updated": "2025-02-14",
+    "note": "המחירים לפני מע\"מ. מע\"מ 18%. פתיחת פרויקט ומקדם צורה (פודסטים) מחושבים בהדמייה."
+  },
+  "stairs": {
+    "models": [
+      { "id": "thick", "name": "קלאסי", "specs": "עובי אחיד 11 ס״מ" },
+      { "id": "thin", "name": "להב", "specs": "עובי אחיד 7 ס״מ" },
+      { "id": "rounded", "name": "קפסולה", "specs": "עובי 8 ס״מ · פינות רדיוס 4 ס״מ" },
+      { "id": "taper", "name": "דלתא", "specs": "קצה 5 ס״מ הופך ל־12 ס״מ" },
+      { "id": "wedge", "name": "טריז", "specs": "חזית 11 ס״מ הופך לעובי 3.5 ס״מ" },
+      { "id": "ridge", "name": "מרום", "specs": "בסיס 2 ס״מ · רכס עולה ל־11 ס״מ" }
+    ],
+    "pricing": {
+      "baseSetup": 1500,
+      "landingMultiplier": 2.5,
+      "unitLabel": "מחיר ליחידת מדרגה (₪)",
+      "landingNote": "פודסט = 2.5 × מחיר יחידת מדרגה"
+    },
+    "textures": [
+      { "id": "wood_adama", "category": "עץ", "name": "אדמה", "pricePerStep": 3900 },
+      { "id": "wood_carved", "category": "עץ", "name": "חריטה", "pricePerStep": 3600 },
+      { "id": "wood_chocolate", "category": "עץ", "name": "שוקולד", "pricePerStep": 3700 },
+      { "id": "wood_painted", "category": "עץ", "name": "ציור", "pricePerStep": 3900 },
+      { "id": "wood_domino", "category": "עץ", "name": "דומינו", "pricePerStep": 3800 },
+      { "id": "wood_hammered", "category": "עץ", "name": "פטיש", "pricePerStep": 3800 },
+      { "id": "wood_wrapped", "category": "עץ", "name": "עטיפה", "pricePerStep": 4200 },
+      { "id": "wood_plain", "category": "עץ", "name": "נקי", "pricePerStep": 2800 },
+      { "id": "stone_amazonas_brazil", "category": "אבן טבעית", "name": "אמזונס ברזיל", "pricePerStep": 5800 },
+      { "id": "stone_green_alpi", "category": "אבן טבעית", "name": "האלפיים הירוקים", "pricePerStep": 5500 },
+      { "id": "stone_travertine_silver", "category": "אבן טבעית", "name": "טרוורטין כסף", "pricePerStep": 4600 },
+      { "id": "stone_four_seasons", "category": "אבן טבעית", "name": "פור סיזנס", "pricePerStep": 6600 },
+      { "id": "stone_parisian_stone", "category": "אבן טבעית", "name": "אבן פריז", "pricePerStep": 4900 },
+      { "id": "stone_red_wine", "category": "אבן טבעית", "name": "יין אדום", "pricePerStep": 5300 },
+      { "id": "stone_black_gold", "category": "אבן טבעית", "name": "זהב שחור", "pricePerStep": 4300 },
+      { "id": "stone_land_stone", "category": "אבן טבעית", "name": "אבן אדמה", "pricePerStep": 4900 },
+      { "id": "stone_rain_stone", "category": "אבן טבעית", "name": "אבן גשם", "pricePerStep": 5000 },
+      { "id": "stone_river_stone", "category": "אבן טבעית", "name": "אבן נהר", "pricePerStep": 4900 },
+      { "id": "stone_tiger_stone", "category": "אבן טבעית", "name": "אבן טיגריס", "pricePerStep": 4500 },
+      { "id": "stone_van_gogh", "category": "אבן טבעית", "name": "ואן גוך", "pricePerStep": 5700 },
+      { "id": "antique_gold", "category": "מתכת", "name": "זהב ענתיקה", "pricePerStep": 4000 },
+      { "id": "antique_silver", "category": "מתכת", "name": "כסף ענתיקה", "pricePerStep": 4800 },
+      { "id": "black", "category": "מתכת", "name": "שחור", "pricePerStep": 3000 },
+      { "id": "champagne", "category": "מתכת", "name": "שמפניה", "pricePerStep": 4200 },
+      { "id": "gold_silver", "category": "מתכת", "name": "זהב-כסף", "pricePerStep": 3500 },
+      { "id": "gold", "category": "מתכת", "name": "זהב", "pricePerStep": 3400 },
+      { "id": "golden_rust", "category": "מתכת", "name": "חלודה זהובה", "pricePerStep": 4400 },
+      { "id": "graphite", "category": "מתכת", "name": "גרפיט", "pricePerStep": 3600 },
+      { "id": "rain", "category": "מתכת", "name": "גשם", "pricePerStep": 4600 },
+      { "id": "rose_gold", "category": "מתכת", "name": "זהב ורוד", "pricePerStep": 3800 },
+      { "id": "silver", "category": "מתכת", "name": "כסף", "pricePerStep": 3700 },
+      { "id": "white", "category": "מתכת", "name": "לבן", "pricePerStep": 3000 }
+    ]
+  },
+  "railings": {
+    "glass": {
+      "label": "מעקה זכוכית",
+      "unitPrice": 1700,
+      "unitLabel": "₪ למ״ר",
+      "note": "גוונים: אקסטרה קליר, מושחר, ברונזה"
+    },
+    "metal": {
+      "label": "מעקה מתכת",
+      "unitLabel": "₪ למטר רץ",
+      "note": "מחיר למטר = מחיר יחידת מדרגה לפי החומר הנבחר בהדמייה. גוונים לפי קטלוג מתכת."
+    },
+    "cables": {
+      "label": "מערכת כבלים 8 מ״מ",
+      "unitPrice": 1100,
+      "unitLabel": "₪ לכבל",
+      "note": "3 כבלים למדרגה, 9 כבלים לפודסט ישר. גוונים:",
+      "options": [
+        { "id": "cable_01", "name": "נירוסטה טבעי" },
+        { "id": "cable_02", "name": "שמפניה" },
+        { "id": "cable_03", "name": "זהב" },
+        { "id": "cable_04", "name": "רוז גולד" },
+        { "id": "cable_05", "name": "מושחר" },
+        { "id": "cable_06", "name": "וויסקי" },
+        { "id": "cable_07", "name": "לבן" },
+        { "id": "cable_08", "name": "אפור פחם" }
+      ]
+    }
+  }
+}

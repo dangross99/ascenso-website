@@ -50,10 +50,8 @@ export function WoodTexturePicker(props: {
 	const showId = hoveredId ?? activeModelId ?? woodModels[0]?.id;
 	const show = woodModels.find(m => m.id === showId) ?? woodModels[0];
 	const colorItems = (swatches && activeModel && activeColor != null && colorHex && onPickColor)
-		? swatches.filter(sw => !!activeModel?.variants?.[sw.id])
+		? swatches.filter(sw => !!activeModel?.variants?.[sw.id]).slice(0, 4)
 		: [];
-	const leftColors = colorItems.slice(0, 2);
-	const rightColors = colorItems.slice(2, 4);
 	return (
 		<div className="p-2 pt-1">
 			<div className="flex flex-row items-start gap-4 flex-wrap">
@@ -74,21 +72,7 @@ export function WoodTexturePicker(props: {
 				))}
 				</div>
 				{show && (
-					<div className="flex flex-row items-center gap-2 shrink-0" dir="rtl">
-						{rightColors.length > 0 && (
-							<div className="flex flex-col items-center gap-1">
-								{rightColors.map(sw => (
-									<ColorCircle
-										key={sw.id}
-										img={activeModel?.variants?.[sw.id]?.[0]}
-										solid={colorHex?.[sw.id]}
-										label={sw.label}
-										active={activeColor === sw.id}
-										onClick={() => onPickColor?.(sw.id)}
-									/>
-								))}
-							</div>
-						)}
+					<div className="flex flex-row items-center gap-3 shrink-0" dir="rtl">
 						<div className="flex flex-col items-center">
 							<span className="text-xs font-semibold text-[#1a1a2e]/70 mb-2">תצוגה מקדימה – איך החומר נראה</span>
 							<div
@@ -102,9 +86,9 @@ export function WoodTexturePicker(props: {
 							/>
 							<span className="mt-2 text-sm font-medium text-[#1a1a2e]">{show.name || show.id}</span>
 						</div>
-						{leftColors.length > 0 && (
-							<div className="flex flex-col items-center gap-1">
-								{leftColors.map(sw => (
+						{colorItems.length > 0 && (
+							<div className="grid grid-cols-2 grid-rows-2 gap-2.5">
+								{colorItems.map(sw => (
 									<ColorCircle
 										key={sw.id}
 										img={activeModel?.variants?.[sw.id]?.[0]}

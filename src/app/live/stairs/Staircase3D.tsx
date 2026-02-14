@@ -27,12 +27,12 @@ const MODEL_SIDE_OVERRIDES: Partial<Record<string, Partial<Record<string, { forc
 	},
 };
 
-/** דריסת צד קיר לפי מסלול (חל על כל הדגמים). גרם ראשון וגרם שני ב־L נקבעים בנפרד (לא אותו היפוך לשניהם) */
+/** דריסת צד קיר לפי מסלול (חל על כל הדגמים). L: גאומטריה זהה ב־0° ו־180°; 180° = רק היפוך ימין/שמאל (צד קיר) */
 const PATH_WALL_SIDE_OVERRIDES: Partial<Record<string, { forceWallSide: 'right' | 'left' }>> = {
 	L_0_flight_0: { forceWallSide: 'left' },
 	L_0_flight_1: { forceWallSide: 'right' },
-	L_180_flight_0: { forceWallSide: 'left' },
-	L_180_flight_1: { forceWallSide: 'right' },
+	L_180_flight_0: { forceWallSide: 'right' },
+	L_180_flight_1: { forceWallSide: 'left' },
 };
 
 function getPathKey(path: 'straight' | 'L' | 'U', flip: boolean, flight: number): string {
@@ -230,17 +230,17 @@ function Staircase3D({
 					});
 				}
 			} else if (isL) {
+				// L: תמיד אותה גאומטריה (X+ then Z-) – אין רוטציית מסלול. 180° = רק היפוך ימין/שמאל (צד קיר) כדי למנוע התנגשות
 				const [a, b] = straightSteps;
 				const mirror0 = resolveMirror('L', flip, 0);
 				const mirror1 = resolveMirror('L', flip, 1);
 				const fws0 = fws(0);
 				const fws1 = fws(1);
-				// גרם ראשון: לפי flip (0° X+, 180° X-)
+				const podestX = a * treadDepth + treadWidth / 2;
 				for (let i = 0; i < a; i++) {
-					const x = flip ? -(i * treadDepth + treadDepth / 2) : i * treadDepth + treadDepth / 2;
 					treads.push({
-						position: [x, i * riser, 0],
-						rotation: [0, flip ? Math.PI : 0, 0],
+						position: [i * treadDepth + treadDepth / 2, i * riser, 0],
+						rotation: [0, 0, 0],
 						run: treadDepth,
 						isLanding: false,
 						flight: 0,
@@ -249,10 +249,9 @@ function Staircase3D({
 						forceWallSide: fws0,
 					});
 				}
-				const podestX = flip ? -(a * treadDepth + treadWidth / 2) : a * treadDepth + treadWidth / 2;
 				treads.push({
 					position: [podestX, a * riser, 0],
-					rotation: [0, flip ? Math.PI : 0, 0],
+					rotation: [0, 0, 0],
 					run: treadWidth,
 					isLanding: true,
 					turn: 'right',
@@ -261,32 +260,18 @@ function Staircase3D({
 					mirror: mirror0,
 					forceWallSide: fws0,
 				});
-				// גרם שני: לפי flip (0° Z-, 180° Z+) – כל גרם עם צד קיר משלו
 				for (let i = 0; i < b; i++) {
 					const stepY = (a + 1 + i) * riser;
-					if (flip) {
-						treads.push({
-							position: [podestX, stepY, treadWidth + i * treadDepth + treadDepth / 2],
-							rotation: [0, Math.PI / 2, 0],
-							run: treadDepth,
-							isLanding: false,
-							flight: 1,
-							axis: 'z',
-							mirror: mirror1,
-							forceWallSide: fws1,
-						});
-					} else {
-						treads.push({
-							position: [podestX, stepY, -treadWidth - i * treadDepth - treadDepth / 2],
-							rotation: [0, -Math.PI / 2, 0],
-							run: treadDepth,
-							isLanding: false,
-							flight: 1,
-							axis: 'z',
-							mirror: mirror1,
-							forceWallSide: fws1,
-						});
-					}
+					treads.push({
+						position: [podestX, stepY, -treadWidth - i * treadDepth - treadDepth / 2],
+						rotation: [0, -Math.PI / 2, 0],
+						run: treadDepth,
+						isLanding: false,
+						flight: 1,
+						axis: 'z',
+						mirror: mirror1,
+						forceWallSide: fws1,
+					});
 				}
 			} else if (isU) {
 				const [a, b, c] = straightSteps;

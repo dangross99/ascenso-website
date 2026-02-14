@@ -651,7 +651,9 @@ function Staircase3D({
 
 			{/* קירות "חוץ" לצורך קונטקסט ויזואלי (לא משנה את מודלי המדרגות עצמם) */}
 								{(() => {
-				const showOuterWalls = true;
+				// NOTE: קירות "חוץ" הם שקופים (transparent) ולכן יכולים לגרום ל"החשכה" בזמן תנועה
+				// בגלל מיון שקיפות (sorting) שמשתנה עם המצלמה. מכבים כברירת מחדל כדי לייצב את ההדמיה.
+				const showOuterWalls = false;
 				if (!showOuterWalls) return null;
 				const wallH = 6.0; // מטר – קבוע מהרצפה
 				const wallTh = 0.06; // עובי קיר
@@ -701,8 +703,7 @@ function Staircase3D({
 									{/* קיר חיצוני לאורך הרוחב (כמו בכל מדרגה/פודסט) */}
 									<mesh position={[0, yLocal, zWall]} castShadow={false} receiveShadow>
 										<boxGeometry args={[t.run, wallH, wallTh]} />
-										{/* קיר אטום (בלי transparency) כדי למנוע שינויי כהות בגלל blending בזמן תנועה */}
-										<meshBasicMaterial color={wallColor} toneMapped={false} />
+										<meshBasicMaterial color={wallColor} side={2} transparent opacity={0.92} />
 									</mesh>
 									{/* בפודסט עם פנייה: הוסף גם קיר חיצוני שני שיוצר "L" בפינה החיצונית */}
 									{hasTurn ? (
@@ -719,8 +720,7 @@ function Staircase3D({
 										>
 											{/* קיר בעובי wallTh על ציר X ובאורך חצי רוחב על ציר Z */}
 											<boxGeometry args={[wallTh, wallH, treadWidth / 2]} />
-											{/* קיר אטום (בלי transparency) כדי למנוע שינויי כהות בגלל blending בזמן תנועה */}
-											<meshBasicMaterial color={wallColor} toneMapped={false} />
+											<meshBasicMaterial color={wallColor} side={2} transparent opacity={0.92} />
 						</mesh>
 						) : null}
 					</group>
@@ -753,8 +753,10 @@ function Staircase3D({
 				if (railingKind !== 'glass') return null;
 				if (!glassTone || !stepRailingStates) return null;
 				const glassSelected = glassTone;
-				const opacity = glassSelected === 'smoked' ? 0.5 : glassSelected === 'bronze' ? 0.42 : 0.48;
-				const color = glassSelected === 'smoked' ? '#4a5568' : glassSelected === 'bronze' ? '#b08d57' : '#aee7ff';
+				// חשוב: זכוכית עם opacity גבוה (alpha blending) "מכהה" את מה שמאחור ומשנה מראה בזמן תנועה
+				// בגלל sorting של שקיפות. לכן שומרים על זכוכית בהירה יותר ועם opacity נמוך.
+				const opacity = glassSelected === 'smoked' ? 0.22 : glassSelected === 'bronze' ? 0.20 : 0.18;
+				const color = glassSelected === 'smoked' ? '#64748b' : glassSelected === 'bronze' ? '#c8a76b' : '#bfefff';
 				const totalH = treadThickness + 1.0;
 				const distance = 0.03; // מרחק המעקה מהמדרך (3 ס"מ למניעת חפיפה/זי-פייטינג)
 				const overlapStep = 0.11; // חפיפה למטה במדרגות (11 ס"מ)
@@ -954,9 +956,9 @@ function Staircase3D({
 							geom.setIndex([0, 1, 2, 2, 1, 3]);
 							geom.computeVertexNormals();
 							panels.push(
-								<mesh key={`gstep-Lx-${i}`} castShadow={false} receiveShadow={false}>
+								<mesh key={`gstep-Lx-${i}`} castShadow={false} receiveShadow={false} renderOrder={10}>
 									<primitive object={geom} attach="geometry" />
-									<meshBasicMaterial color={color} transparent opacity={opacity} side={2} depthWrite={false} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
+									<meshBasicMaterial color={color} transparent opacity={opacity} side={2} depthWrite={false} toneMapped={false} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
 								</mesh>
 							);
 						} else {
@@ -977,9 +979,9 @@ function Staircase3D({
 							geom.setIndex([0, 1, 2, 2, 1, 3]);
 							geom.computeVertexNormals();
 							panels.push(
-								<mesh key={`gstep-Lz-${i}`} castShadow={false} receiveShadow={false}>
+								<mesh key={`gstep-Lz-${i}`} castShadow={false} receiveShadow={false} renderOrder={10}>
 									<primitive object={geom} attach="geometry" />
-									<meshBasicMaterial color={color} transparent opacity={opacity} side={2} depthWrite={false} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
+									<meshBasicMaterial color={color} transparent opacity={opacity} side={2} depthWrite={false} toneMapped={false} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
 								</mesh>
 							);
 						}
@@ -1013,9 +1015,9 @@ function Staircase3D({
 						geom.setIndex([0, 1, 2, 2, 1, 3]);
 						geom.computeVertexNormals();
 						panels.push(
-							<mesh key={`gstep-x-${i}`} castShadow={false} receiveShadow={false}>
+							<mesh key={`gstep-x-${i}`} castShadow={false} receiveShadow={false} renderOrder={10}>
 								<primitive object={geom} attach="geometry" />
-								<meshBasicMaterial color={color} transparent opacity={opacity} side={2} depthWrite={false} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
+								<meshBasicMaterial color={color} transparent opacity={opacity} side={2} depthWrite={false} toneMapped={false} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
 							</mesh>
 						);
 					} else {
@@ -1039,9 +1041,9 @@ function Staircase3D({
 						geom.setIndex([0, 1, 2, 2, 1, 3]);
 						geom.computeVertexNormals();
 						panels.push(
-							<mesh key={`gstep-z-${i}`} castShadow={false} receiveShadow={false}>
+							<mesh key={`gstep-z-${i}`} castShadow={false} receiveShadow={false} renderOrder={10}>
 								<primitive object={geom} attach="geometry" />
-								<meshBasicMaterial color={color} transparent opacity={opacity} side={2} depthWrite={false} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
+								<meshBasicMaterial color={color} transparent opacity={opacity} side={2} depthWrite={false} toneMapped={false} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
 							</mesh>
 						);
 					}

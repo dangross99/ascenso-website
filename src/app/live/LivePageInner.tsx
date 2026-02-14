@@ -1793,24 +1793,22 @@ function LivePageInner() {
 										</svg>
 									)}
 								</button>
-								{pathSegments.some(seg => seg.kind === 'landing') && (
-									<button
-										type="button"
-										onClick={() => setPathSegments(prev => prev.map(seg => {
-											if (seg.kind !== 'landing') return seg;
-											if (!seg.turn) return seg;
-											return { kind: 'landing', turn: (seg.turn === 'left' ? 'right' : 'left') };
-										}))}
-										aria-label="הפוך כיוון מסלול"
-										title="הפוך כיוון מסלול"
-										className="pointer-events-auto p-2 rounded-full border text-[#1a1a2e] bg-white/90 hover:bg-white cursor-pointer shadow"
-									>
-										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-											<path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
-											<path d="M21 3v5h-5" />
-										</svg>
-									</button>
-								)}
+								<button
+									type="button"
+									onClick={() => setPathSegments(prev => prev.map(seg => {
+										if (seg.kind !== 'landing') return seg;
+										if (!seg.turn) return seg;
+										return { kind: 'landing', turn: (seg.turn === 'left' ? 'right' : 'left') };
+									}))}
+									aria-label="הפוך כיוון מסלול"
+									title="הפוך כיוון מסלול"
+									className="pointer-events-auto p-2 rounded-full border text-[#1a1a2e] bg-white/90 hover:bg-white cursor-pointer shadow"
+								>
+									<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+										<path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+										<path d="M21 3v5h-5" />
+									</svg>
+								</button>
 							</div>
 						</div>
 						{/* לוגו קבוע במסך מלא */}
@@ -1856,24 +1854,22 @@ function LivePageInner() {
 										</svg>
 									)}
 								</button>
-								{pathSegments.some(seg => seg.kind === 'landing') && (
-									<button
-										type="button"
-										onClick={() => setPathSegments(prev => prev.map(seg => {
-											if (seg.kind !== 'landing') return seg;
-											if (!seg.turn) return seg;
-											return { kind: 'landing', turn: (seg.turn === 'left' ? 'right' : 'left') };
-										}))}
-										aria-label="הפוך כיוון מסלול"
-										title="הפוך כיוון מסלול"
-										className="pointer-events-auto p-2 rounded-full border text-[#1a1a2e] bg-white/90 hover:bg-white cursor-pointer shadow"
-									>
-										<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-											<path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
-											<path d="M21 3v5h-5" />
-										</svg>
-									</button>
-								)}
+								<button
+									type="button"
+									onClick={() => setPathSegments(prev => prev.map(seg => {
+										if (seg.kind !== 'landing') return seg;
+										if (!seg.turn) return seg;
+										return { kind: 'landing', turn: (seg.turn === 'left' ? 'right' : 'left') };
+									}))}
+									aria-label="הפוך כיוון מסלול"
+									title="הפוך כיוון מסלול"
+									className="pointer-events-auto p-2 rounded-full border text-[#1a1a2e] bg-white/90 hover:bg-white cursor-pointer shadow"
+								>
+									<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+										<path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+										<path d="M21 3v5h-5" />
+									</svg>
+								</button>
 							</div>
 						</div>
 						{/* טוסט שיתוף */}

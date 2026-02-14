@@ -40,7 +40,7 @@
       { "id": "stone_river_stone", "category": "אבן טבעית", "name": "אבן נהר", "pricePerStep": 3675 },
       { "id": "stone_tiger_stone", "category": "אבן טבעית", "name": "אבן טיגריס", "pricePerStep": 3375 },
       { "id": "stone_van_gogh", "category": "אבן טבעית", "name": "ואן גוך", "pricePerStep": 4275 },
-      { "id": "antique_gold", "category": "מתכת", "name": "זהב ענתיקה", "pricePerStep": 2250 },
+      { "id": "antique_gold", "category": "מתכת", "name": "זהב ענתיקה", "pricePerStep": 3000 },
       { "id": "antique_silver", "category": "מתכת", "name": "כסף ענתיקה", "pricePerStep": 3600 },
       { "id": "black", "category": "מתכת", "name": "שחור", "pricePerStep": 2250 },
       { "id": "champagne", "category": "מתכת", "name": "שמפניה", "pricePerStep": 3150 },

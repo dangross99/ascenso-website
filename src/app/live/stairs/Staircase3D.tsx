@@ -658,9 +658,9 @@ function Staircase3D({
 				const showOuterWalls = true;
 				if (!showOuterWalls) return null;
 				const wallH = 6.0; // מטר – קבוע מהרצפה
-				const wallTh = 0.06; // עובי קיר
+				const wallTh = 0.06; // עובי קיר 6 ס"מ
 				const gap = 0.01; // מרווח מהקצה כדי למנוע זי-פייטינג
-				const wallColor = '#e5e7eb';
+				const wallColor = '#F5F5DC'; // קרם (Cream) – צבע אחיד בלי משחקי אור
 
 				let sIdx = 0;
 				let lIdx = 0;
@@ -701,10 +701,10 @@ function Staircase3D({
 
 							return (
 								<group key={`outer-wall-${i}`} position={t.position} rotation={t.rotation}>
-									{/* קיר חיצוני – משטח שטוח (plane), רקע בלבד, מגיב לאור באופן אחיד */}
+									{/* קיר חיצוני – קופסה 6 ס"מ, meshBasicMaterial לצבע אחיד 100% */}
 									<mesh position={[0, yLocal, zWall]} castShadow={false} receiveShadow>
-										<planeGeometry args={[t.run, wallH]} />
-										<meshStandardMaterial color={wallColor} side={2} roughness={0.9} metalness={0} />
+										<boxGeometry args={[t.run, wallH, wallTh]} />
+										<meshBasicMaterial color={wallColor} side={2} />
 									</mesh>
 									{/* בפודסט עם פנייה: הוסף גם קיר חיצוני שני שיוצר "L" בפינה החיצונית */}
 									{hasTurn ? (
@@ -716,13 +716,12 @@ function Staircase3D({
 												// רק חצי רוחב חיצוני כדי לא "לגלוש" לפנים
 												outerSignLocal * (treadWidth / 4),
 											]}
-											rotation={[0, Math.PI / 2, 0]}
 											castShadow={false}
 											receiveShadow
 										>
-											{/* קיר כמישור (YZ) – משטח שטוח, צבע אחיד */}
-											<planeGeometry args={[treadWidth / 2, wallH]} />
-											<meshStandardMaterial color={wallColor} side={2} roughness={0.9} metalness={0} />
+											{/* קיר L – קופסה 6 ס"מ, meshBasicMaterial לצבע אחיד */}
+											<boxGeometry args={[wallTh, wallH, treadWidth / 2]} />
+											<meshBasicMaterial color={wallColor} side={2} />
 						</mesh>
 						) : null}
 					</group>

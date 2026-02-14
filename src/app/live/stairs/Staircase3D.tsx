@@ -57,7 +57,6 @@ function Staircase3D({
 	hitechPlateInsetFromEdge,
 	hitechOffsets,
 	highQuality = false,
-	pathFlipped180 = false,
 }: {
 	shape: 'straight' | 'L' | 'U';
 	steps: number;
@@ -103,8 +102,6 @@ function Staircase3D({
 	hitechPlateInsetFromEdge?: number;
 	hitechOffsets?: number[];
 	highQuality?: boolean;
-	/** כשמופעל היפוך 180° – גרם שני ופודסטים מחליפים צד קיר */
-	pathFlipped180?: boolean;
 }) {
 	// שיתוף נקודת ההתחלה של פלטת B (גרם 2) עבור המחבר – כדי למנוע סדקים/פערים בין B למחבר
 	const hitechBStartRef = React.useRef<{ top: [number, number, number]; bot: [number, number, number] } | null>(null);
@@ -695,24 +692,21 @@ function Staircase3D({
 								(axis === 'x' ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
 							if (t.isLanding && axis === 'z') rightLocal = (rightLocal === 1 ? -1 : 1) as 1 | -1;
 							const railingSideSignLocal = (railingSide === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
-							// הקיר בפאה הנגדית למעקה. פודסטים מפנים צד רק בהיפוך 180°
-							// גרם שני (flight 1): ללא היפוך – -railingSideSignLocal מניח את הקיר בצד החיצוני (שמאל)
-							const flipWallSide = pathFlipped180 && t.isLanding;
-							const wallOffset = (flipWallSide ? railingSideSignLocal : -railingSideSignLocal) * (treadWidth / 2 + gap + wallTh / 2);
+							// הקיר בפאה הנגדית למעקה – אותו ציר שהמעקה משתמש בו: axis x → צד ב-Z, axis z → צד ב-X
+							const wallOffset = -railingSideSignLocal * (treadWidth / 2 + gap + wallTh / 2);
 
-							// כיוון התקדמות (לקיר חזית בפודסט עם פנייה). בהיפוך 180° מפנים את קיר החזית
+							// כיוון התקדמות (לקיר חזית בפודסט עם פנייה)
 							const forwardSignBase = (axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
-							let forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase) as 1 | -1;
-							if (pathFlipped180 && t.isLanding && t.turn) forwardSign = (-forwardSign as 1 | -1) as 1 | -1;
+							const forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase) as 1 | -1;
 							// נציב את הקיר בגובה מוחלט ביחס לרצפה (0..6m), אבל בתוך ה-group של המדרך כדי שיסתובב יחד איתו
 							const worldCenterY = floorBounds.y + wallH / 2;
 							const yLocal = worldCenterY - t.position[1];
 
 							return (
 								<group key={`outer-wall-${i}`} position={t.position} rotation={t.rotation}>
-									{/* קיר חיצוני – מיקום בפאה הנגדית; axis z: קיר לאורך Z (לא חוצה מדרגה) */}
+									{/* קיר חיצוני – מיקום לפי אותו ציר כמו המעקה (X כשהמדרך לאורך Z, Z כשהמדרך לאורך X) */}
 									<mesh position={axis === 'x' ? [0, yLocal, wallOffset] : [wallOffset, yLocal, 0]} castShadow={false} receiveShadow={false}>
-										<boxGeometry args={axis === 'x' ? [t.run, wallH, wallTh] : [wallTh, wallH, t.run]} />
+										<boxGeometry args={[t.run, wallH, wallTh]} />
 										<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
 									</mesh>
 									{/* בפודסט עם פנייה: קיר חזית – מיקום לפי forwardSign (כיוון התקדמות ממשי) */}

@@ -65,7 +65,7 @@ export function RailingPicker(props: {
 			{railing === 'cable' && selectedCable && (
 				<div className="absolute top-3 end-3 me-16 z-10 overflow-visible">
 					<div
-						className="rounded-full border-2 border-[#1a1a2e]/20 bg-center bg-cover transition-transform duration-200 origin-center hover:scale-[3.5] cursor-pointer"
+						className="rounded-full border-2 border-[#1a1a2e]/20 bg-center bg-cover transition-transform duration-200 origin-center hover:scale-[2] cursor-pointer"
 						style={{
 							width: 72,
 							height: 72,

@@ -76,7 +76,7 @@ export function WoodTexturePicker(props: {
 						<div className="flex flex-col items-center overflow-visible">
 							<span className="text-xs font-semibold text-[#1a1a2e]/70 mb-2">תצוגה מקדימה – איך החומר נראה</span>
 							<div
-								className="rounded-full border-2 border-[#1a1a2e]/20 bg-center bg-cover shadow-inner transition-transform duration-200 origin-center hover:scale-[3] cursor-pointer"
+								className="rounded-full border-2 border-[#1a1a2e]/20 bg-center bg-cover shadow-inner transition-transform duration-200 origin-center hover:scale-[2] cursor-pointer"
 								style={{
 									width: PREVIEW_SIZE,
 									height: PREVIEW_SIZE,

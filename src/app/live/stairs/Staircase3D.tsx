@@ -666,6 +666,14 @@ function Staircase3D({
 				const gap = 0.001; // מרווח מינימלי (1מ"מ) – קירות נפגשים בלי חריץ, עם מניעת זי-פייטינג
 				// BasicMaterial + toneMapped=false – לבן שמנת עדין (בז־לבן), אחיד בכל הגרמים
 				const wallColor = '#FFFBF5';
+				// סימן לפי הפנייה הראשונה במסלול – בהיפוך 180° הפנייה מתהפכת, אז הקיר עובר לצד הנגדי (צמוד לפאה הנגדית)
+				const pathFlipSign = (() => {
+					if (!pathSegments?.length) return 1;
+					for (const seg of pathSegments) {
+						if (seg.kind === 'landing' && seg.turn) return seg.turn === 'right' ? 1 : -1;
+					}
+					return 1;
+				})();
 
 				let sIdx = 0;
 				let lIdx = 0;
@@ -694,12 +702,11 @@ function Staircase3D({
 
 							// אצלנו innerSide הוא "פנים" (LivePageInner), לכן החוץ הוא ההיפוך.
 							const innerSignLocalRaw = (innerSide === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
-							// חישוב צד "חוץ": בגרמים 0 ו-1 (גרם ראשון ואמצעי) החוץ באותו כיוון כמו innerSignLocalRaw כדי שהקיר יגיב להיפוך 180°;
-							// בגרם 2 בלבד החוץ הוא ההיפוך.
+							// חישוב צד "חוץ" לפי גרם; pathFlipSign מבטיח שכשלוחצים 180° הקיר עובר לצד הנגדי
 							const outerSignLocal = (t.flight === 2 ? (-innerSignLocalRaw as 1 | -1) : innerSignLocalRaw) as 1 | -1;
 
-							// מרכז הקיר ב-local coords – רק מיקום, בלי scale/היפוך על ה-mesh
-							const zWall = outerSignLocal * (treadWidth / 2 + gap + wallTh / 2);
+							// מרכז הקיר ב-local coords – כפול pathFlipSign כדי שבהיפוך 180° הקיר יהיה צמוד לפאה הנגדית
+							const zWall = pathFlipSign * outerSignLocal * (treadWidth / 2 + gap + wallTh / 2);
 							// נציב את הקיר בגובה מוחלט ביחס לרצפה (0..6m), אבל בתוך ה-group של המדרך כדי שיסתובב יחד איתו
 							const worldCenterY = floorBounds.y + wallH / 2;
 							const yLocal = worldCenterY - t.position[1];
@@ -711,14 +718,12 @@ function Staircase3D({
 										<boxGeometry args={[t.run, wallH, wallTh]} />
 										<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
 									</mesh>
-									{/* בפודסט עם פנייה: קיר חזית על כל רוחב הפאה. פודסט שני (flight 1, axis z): חזית ב־-X */}
+									{/* בפודסט עם פנייה: קיר חזית – pathFlipSign כדי שבהיפוך 180° יהיה צמוד לפאה הנגדית */}
 									{hasTurn ? (
 										<mesh
 											position={[
-												// קיר "חזית": פודסט ראשון +X, פודסט שני -X
-												(t.isLanding && t.flight === 1 && axis === 'z' ? -1 : 1) * (t.run / 2 + gap + wallTh / 2),
+												pathFlipSign * (t.isLanding && t.flight === 1 && axis === 'z' ? -1 : 1) * (t.run / 2 + gap + wallTh / 2),
 												yLocal,
-												// ממורכז ברוחב (Z=0) – הקיר מכסה את כל פאת החזית
 												0,
 											]}
 											castShadow={false}

@@ -249,11 +249,13 @@ export function buildTaperBoxTreads(params: {
 					);
 				};
 
-				// Geometry points (local)
+				// Geometry points (local) – mirror מחליף צד ימין/שמאל (Z)
 				const dx = run / 2;
 				const dz = treadWidth / 2;
-				const zOuter = outerSignLocal * dz;
-				const zInner = innerSignLocal * dz;
+				const baseZOuter = outerSignLocal * dz;
+				const baseZInner = innerSignLocal * dz;
+				const zOuter = t.mirror ? baseZInner : baseZOuter;
+				const zInner = t.mirror ? baseZOuter : baseZInner;
 				const yTop = thickStart / 2;
 				const yBotOuter = yTop - thickStart;
 				const yBotInner = yTop - thin;

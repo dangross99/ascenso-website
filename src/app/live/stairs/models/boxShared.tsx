@@ -10,6 +10,8 @@ export type Tread = {
 	run: number;
 	isLanding: boolean;
 	flight: number;
+	/** היפוך צד ימין/שמאל (למודלים א-סימטריים: ridge, taper, wedge) – לפי טבלת מסלול/דגם */
+	mirror?: boolean;
 };
 
 export type BuildFaceTextures = (

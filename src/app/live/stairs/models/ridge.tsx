@@ -67,7 +67,8 @@ export function buildRidgeTreads(params: {
 
 						const xFront = forwardSign * (t.run / 2);
 						const xBack = -forwardSign * (t.run / 2);
-						const zRight = innerSignLocal * (treadWidth / 2 + seam);
+						const halfW = treadWidth / 2 + seam;
+						const zRight = (t.mirror ? -innerSignLocal : innerSignLocal) * halfW;
 						const zLeft = -zRight;
 						const yTop = topY;
 						const yBottomBack = yTop - backTh - seam;

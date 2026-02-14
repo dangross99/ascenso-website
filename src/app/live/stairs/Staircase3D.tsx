@@ -701,8 +701,8 @@ function Staircase3D({
 
 							return (
 								<group key={`outer-wall-${i}`} position={t.position} rotation={t.rotation}>
-									{/* קיר חיצוני – קופסה 6 ס"מ, meshBasicMaterial לצבע אחיד 100% */}
-									<mesh position={[0, yLocal, zWall]} castShadow={false} receiveShadow>
+									{/* קיר חיצוני – בלי receiveShadow כדי שהצבע יישאר אחיד (צללים היו מכההים) */}
+									<mesh position={[0, yLocal, zWall]} castShadow={false} receiveShadow={false}>
 										<boxGeometry args={[t.run, wallH, wallTh]} />
 										<meshBasicMaterial color={wallColor} side={2} />
 									</mesh>
@@ -717,9 +717,9 @@ function Staircase3D({
 												0,
 											]}
 											castShadow={false}
-											receiveShadow
+											receiveShadow={false}
 										>
-											{/* קיר L – רוחב מלא (treadWidth) כדי לכסות את כל פאת הפודסט */}
+											{/* קיר L – רוחב מלא; בלי receiveShadow לצבע אחיד */}
 											<boxGeometry args={[wallTh, wallH, treadWidth]} />
 											<meshBasicMaterial color={wallColor} side={2} />
 						</mesh>

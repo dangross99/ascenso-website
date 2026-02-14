@@ -692,11 +692,9 @@ function Staircase3D({
 							// חישוב צד "חוץ" ישירות לפי גרם – בלי היפוך של innerSignLocal (שגרם לקיר בגרם 0 להיראות כהה/שונה).
 							// בגרם 0 כיוון המסע הפוך, אז החוץ הוא באותו כיוון כמו innerSignLocalRaw; בשאר הגרמים החוץ הוא ההיפוך.
 							const outerSignLocal = (t.flight === 0 ? innerSignLocalRaw : (-innerSignLocalRaw as 1 | -1)) as 1 | -1;
-							// פודסט שני (flight 1, axis z): הקיר הצדדי צריך בצד ההפוך
-							const mainWallSign = (t.isLanding && t.flight === 1 && axis === 'z') ? (-outerSignLocal as 1 | -1) : outerSignLocal;
 
 							// מרכז הקיר ב-local coords – רק מיקום, בלי scale/היפוך על ה-mesh
-							const zWall = mainWallSign * (treadWidth / 2 + gap + wallTh / 2);
+							const zWall = outerSignLocal * (treadWidth / 2 + gap + wallTh / 2);
 							// נציב את הקיר בגובה מוחלט ביחס לרצפה (0..6m), אבל בתוך ה-group של המדרך כדי שיסתובב יחד איתו
 							const worldCenterY = floorBounds.y + wallH / 2;
 							const yLocal = worldCenterY - t.position[1];
@@ -708,12 +706,12 @@ function Staircase3D({
 										<boxGeometry args={[t.run, wallH, wallTh]} />
 										<meshBasicMaterial color={wallColor} side={2} />
 									</mesh>
-									{/* בפודסט עם פנייה: קיר חזית על כל רוחב הפאה */}
+									{/* בפודסט עם פנייה: קיר חזית על כל רוחב הפאה. פודסט שני (flight 1, axis z): חזית ב־-X */}
 									{hasTurn ? (
 										<mesh
 											position={[
-												// קיר "חזית" של הפודסט: בקצה +X במרחב המקומי (שם מתחבר הגרם הבא)
-												(t.run / 2 + gap + wallTh / 2),
+												// קיר "חזית": פודסט ראשון +X, פודסט שני -X
+												(t.isLanding && t.flight === 1 && axis === 'z' ? -1 : 1) * (t.run / 2 + gap + wallTh / 2),
 												yLocal,
 												// ממורכז ברוחב (Z=0) – הקיר מכסה את כל פאת החזית
 												0,

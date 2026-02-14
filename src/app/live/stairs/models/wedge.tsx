@@ -192,9 +192,9 @@ export function buildWedgeTreads(params: {
 						return <group>{geomGroup}{frontMark}{backMark}{rightMark}{leftMark}</group>;
 					})()}
 
-					{/* שכבת פני השטח */}
+					{/* שכבת פני השטח – הוסט קל מעלה + polygonOffset כדי שלא תיעלם (z-fighting עם גוף הטריז) */}
 					<mesh
-						position={[0, (treadThickness / 2 + 0.0005), 0]}
+						position={[0, (treadThickness / 2 + 0.004), 0]}
 						castShadow={materialKind !== 'metal'}
 						receiveShadow={materialKind !== 'metal'}
 					>
@@ -203,14 +203,14 @@ export function buildWedgeTreads(params: {
 							(() => {
 								const axisTop = axisFromYaw(t.rotation[1] as number);
 								const ft = buildFaceTextures(t.run, treadWidth, axisTop === 'z');
-								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
+								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={2} />);
 							})()
 						) : (
 							(() => {
-								if (useSolidMat) return (<meshBasicMaterial color={solidTopColor} side={2} />);
+								if (useSolidMat) return (<meshBasicMaterial color={solidTopColor} side={2} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={2} />);
 								const axisTop = axisFromYaw(t.rotation[1] as number);
 								const ft = buildFaceTextures(t.run, treadWidth, axisTop === 'z');
-								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} />);
+								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={2} />);
 							})()
 						)}
 					</mesh>

@@ -38,6 +38,16 @@ function getForceWallSideFromTable(model: string, pathKey: string): 'right' | 'l
 	return entry?.forceWallSide ?? 'auto';
 }
 
+/** דריסת mirror לפי דגם ומסלול – כש־true, הפאה העבה/חזית תפנה נכון (ישר 0°: דלתא ומרום צריכים הפוך) */
+const MIRROR_OVERRIDES: Partial<Record<string, Partial<Record<string, boolean>>>> = {
+	ridge: { straight_0: true },
+	taper: { straight_0: true },
+};
+
+function getMirrorOverride(model: string, pathKey: string): boolean | undefined {
+	return MIRROR_OVERRIDES[model]?.[pathKey];
+}
+
 function Staircase3D({
 	shape,
 	steps,
@@ -187,10 +197,14 @@ function Staircase3D({
 			const yaw180 = flip ? Math.PI : 0;
 			const path: 'straight' | 'L' | 'U' = isStraight ? 'straight' : isL ? 'L' : 'U';
 			const fws = (flight: number) => getForceWallSideFromTable(boxModel ?? 'rect', getPathKey(path, flip, flight));
+			const resolveMirror = (p: 'straight' | 'L' | 'U', f: boolean, fl: number) => {
+				const o = getMirrorOverride(boxModel ?? 'rect', getPathKey(p, f, fl));
+				return typeof o === 'boolean' ? o : getMirrorForTread(f, p, fl);
+			};
 
 			if (isStraight) {
 				const n = straightSteps[0];
-				const mirror = getMirrorForTread(flip, 'straight', 0);
+				const mirror = resolveMirror('straight', flip, 0);
 				const forceWallSide = fws(0);
 				for (let i = 0; i < n; i++) {
 					const x = flip ? -(i * treadDepth + treadDepth / 2) : i * treadDepth + treadDepth / 2;
@@ -207,8 +221,8 @@ function Staircase3D({
 				}
 			} else if (isL) {
 				const [a, b] = straightSteps;
-				const mirror0 = getMirrorForTread(flip, 'L', 0);
-				const mirror1 = getMirrorForTread(flip, 'L', 1);
+				const mirror0 = resolveMirror('L', flip, 0);
+				const mirror1 = resolveMirror('L', flip, 1);
 				const fws0 = fws(0);
 				const fws1 = fws(1);
 				for (let i = 0; i < a; i++) {
@@ -267,9 +281,9 @@ function Staircase3D({
 				const yaw0 = yaw180;
 				const yaw1 = -Math.PI / 2 + yaw180;
 				const yaw2 = Math.PI + yaw180;
-				const mirror0 = getMirrorForTread(flip, 'U', 0);
-				const mirror1 = getMirrorForTread(flip, 'U', 1);
-				const mirror2 = getMirrorForTread(flip, 'U', 2);
+				const mirror0 = resolveMirror('U', flip, 0);
+				const mirror1 = resolveMirror('U', flip, 1);
+				const mirror2 = resolveMirror('U', flip, 2);
 				const fws0 = fws(0);
 				const fws1 = fws(1);
 				const fws2 = fws(2);

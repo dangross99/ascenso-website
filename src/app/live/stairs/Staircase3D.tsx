@@ -142,28 +142,8 @@ function Staircase3D({
 			axis: 'x' | 'z';
 		}> = [];
 		if (pathSegments && pathSegments.length) {
-			// היפוך 180°: מסלול מהקצה השני, עם החלפת ימין/שמאל בפניות
-			const effectiveSegments: PathSegment[] = pathFlipped180
-				? [...pathSegments].reverse().map(seg => {
-						if (seg.kind === 'landing' && seg.turn) {
-							return { kind: 'landing' as const, turn: seg.turn === 'left' ? 'right' : 'left' };
-						}
-						return seg;
-					})
-				: pathSegments;
-			// כיוון התחלתי: +X (או כיוון הפוך לסיום המסלול המקורי אם pathFlipped180)
-			let dirIndex: number;
-			if (pathFlipped180) {
-				let endDir = 0;
-				for (const seg of pathSegments) {
-					if (seg.kind === 'landing' && seg.turn === 'right') endDir = (endDir + 1) & 3;
-					if (seg.kind === 'landing' && seg.turn === 'left') endDir = (endDir + 3) & 3;
-				}
-				dirIndex = (endDir + 2) & 3; // 180° מהכיוון שבו סיימנו
-			} else {
-				dirIndex = 0;
-			}
-			// 0:+X, 1:+Z, 2:-X, 3:-Z
+			// כיוון התחלתי: +X
+			let dirIndex = 0; // 0:+X, 1:+Z, 2:-X, 3:-Z
 			const dirs: Array<[number, number]> = [
 				[1, 0],
 				[0, 1],
@@ -175,7 +155,7 @@ function Staircase3D({
 			let sx = 0, sz = 0;
 			let stepIndex = 0;
 			let flightIdx = 0;
-			for (const seg of effectiveSegments) {
+			for (const seg of pathSegments) {
 				if (seg.kind === 'straight') {
 					const [dx, dz] = dirs[dirIndex];
 					for (let i = 0; i < seg.steps; i++) {
@@ -348,7 +328,7 @@ function Staircase3D({
 		return treads;
 	}
 
-	const treads = React.useMemo(getTreads, [shape, steps, JSON.stringify(pathSegments), pathFlipped180]);
+	const treads = React.useMemo(getTreads, [shape, steps, JSON.stringify(pathSegments)]);
 
 	// זיהוי הגרם והמדרגה האחרונה עבור פאנל הסגירה בדגם "הייטק"
 	const staircaseEndsWithLanding = (treads.length > 0 ? treads[treads.length - 1].isLanding : false);

@@ -1627,14 +1627,14 @@ function LivePageInner() {
 											setLandingCableSpanMode={setLandingCableSpanMode}
 										/>
 										{/* סיום והתקשרות – שלב 5 (מעקה) */}
-										<div className="mt-4 pt-4 pb-4 border-t border-gray-200 text-center" dir="rtl">
-											<p className="text-sm font-medium text-[#1a1a2e] mb-2">כך נראות מדרגות החלום שלכם</p>
-											<p className="text-xs text-gray-600 mb-4">צעד אחד מלהפוך אותן למציאות – כתבו לנו בוואטסאפ ונחזור בהקדם.</p>
+										<div className="mt-3 pt-3 pb-3 border-t border-gray-200 text-center" dir="rtl">
+											<p className="text-sm font-medium text-[#1a1a2e] mb-1.5">כך נראות מדרגות החלום שלכם</p>
+											<p className="text-xs text-gray-600 mb-3">צעד אחד מלהפוך אותן למציאות – כתבו לנו בוואטסאפ ונחזור בהקדם.</p>
 											<a
 												href={`https://api.whatsapp.com/send?phone=${(whatsappPhone || '').replace(/\D/g, '')}&text=${encodeURIComponent('היי, סיימתי להתאים את המדרגות בהדמייה ואשמח לקבל הצעת מחיר או לתאם פגישה.')}`}
 												target="_blank"
 												rel="noopener noreferrer"
-												className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-md bg-[#25D366] text-white px-5 py-2.5 text-sm font-semibold shadow-sm hover:opacity-95 cursor-pointer"
+												className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-md bg-emerald-600 text-white px-5 py-2.5 text-sm font-semibold shadow-sm hover:bg-emerald-700 hover:opacity-95 cursor-pointer"
 												aria-label="שלח הודעה בוואטסאפ"
 											>
 												<span>כתבו לנו, ונתקדם</span>

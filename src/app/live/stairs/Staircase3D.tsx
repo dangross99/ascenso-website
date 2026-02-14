@@ -554,8 +554,8 @@ function Staircase3D({
 			const yaw = first.t.rotation[1] as number;
 			const dirX = Math.cos(yaw);
 			const dirZ = Math.sin(yaw);
-			// גרם ראשון: קיר מתחיל מקצה אחורי של המדרגה הראשונה. גרם שני ומעלה: קיר נמתח אחורה עד position - treadWidth/2 (עוגן לפודסט)
-			const extendBack = flight === 0 ? first.t.run / 2 : treadWidth / 2;
+			// קיר מתחיל מקצה אחורי של המדרגה הראשונה (לא נכנס לפודסט או למדרגה)
+			const extendBack = first.t.run / 2;
 			const wallStart: [number, number, number] = [
 				first.t.position[0] - dirX * extendBack,
 				first.t.position[1],
@@ -927,7 +927,7 @@ function Staircase3D({
 				if (!showOuterWalls) return null;
 				const wallH = 6.0; // מטר – קבוע מהרצפה
 				const wallTh = 0.06; // עובי קיר 6 ס"מ
-				const gap = 0.001; // מרווח מינימלי (1מ"מ) – קירות נפגשים בלי חריץ, עם מניעת זי-פייטינג
+				const gap = 0.012; // מרווח בין קיר לקצה מדרגה (1.2 ס"מ) – מונע חדירה של קירות ומדרגות
 				// BasicMaterial + toneMapped=false – לבן שמנת עדין (בז־לבן), אחיד בכל הגרמים
 				const wallColor = '#FFFBF5';
 

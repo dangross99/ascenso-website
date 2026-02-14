@@ -61,24 +61,6 @@ export function PathPicker(props: {
 				))}
 			</div>
 
-			{/* הפוך כיוון פודסט – רק כשמסלול עם פינות */}
-			<div className="flex items-center justify-center mb-2">
-				<button
-					className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100"
-					onClick={() => {
-						setPathSegments(prev => prev.map(seg => {
-							if (seg.kind !== 'landing') return seg;
-							if (!seg.turn) return seg;
-							return { kind: 'landing', turn: (seg.turn === 'left' ? 'right' : 'left') };
-						}));
-					}}
-					title="הפוך"
-					aria-label="הפוך"
-				>
-					הפוך
-				</button>
-			</div>
-
 			<div className={`grid gap-3`} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
 				{flights.map((f, fi) => (
 					<div key={fi} className="border rounded-md p-2 text-center">

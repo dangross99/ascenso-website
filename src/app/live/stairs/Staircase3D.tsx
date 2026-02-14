@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useFrame, useLoader, useThree } from '@react-three/fiber';
+import { useLoader } from '@react-three/fiber';
 import { Environment, Text } from '@react-three/drei';
 import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, LinearMipmapLinearFilter, BufferGeometry, Float32BufferAttribute, Cache, Vector3 } from 'three';
 import type { PathSegment } from '../shared/path';
@@ -561,32 +561,15 @@ function Staircase3D({
 		}
 	}, [map, bumpMap, roughMap, tileScale]);
 
-	// אור עוקב מצלמה: מונע אזורים "שחורים" בזמן תנועה/סיבוב
-	const followLightRef = React.useRef<any>(null);
-	const { camera } = useThree();
-	const tmpDir = React.useRef(new Vector3());
-	const tmpUp = React.useRef(new Vector3(0, 0.6, 0));
-	useFrame(() => {
-		if (followLightRef.current) {
-			// שים את האור מעט *קדימה* מהמצלמה כדי למנוע דעיכה/כיבוי בזוויות,
-			// ושמור על תאורה יציבה בזמן תנועה.
-			const dir = camera.getWorldDirection(tmpDir.current);
-			followLightRef.current.position
-				.copy(camera.position)
-				.add(dir.multiplyScalar(2.0))
-				.add(tmpUp.current);
-		}
-	});
-
 	return (
 		<group position={[-1.5, 0, 0]}>
-			{/* תאורה + Environment (Studio setup) – אחיד, נקי, אור עוקב מצלמה */}
-			<ambientLight intensity={0.75} />
-			{/* מעט שמיים/קרקע כדי לשמור על תחושת נפח בלי דרמה */}
-			<hemisphereLight args={['#ffffff', '#d7dde5', 0.25]} />
-			{/* אור דינמי שמעתיק את מיקום המצלמה בכל פריים */}
-			{/* Fill ללא דעיכה (כדי שלא "יפול חושך" כשהמרחקים משתנים בזמן סיבוב) */}
-			<pointLight ref={followLightRef} position={[0, 8, 5]} intensity={1.15} decay={0} distance={0} color="#ffffff" />
+			{/* תאורה קבועה ויציבה (בלי אור עוקב מצלמה ובלי toggles) */}
+			<ambientLight intensity={0.95} />
+			<hemisphereLight args={['#ffffff', '#d7dde5', 0.45]} />
+			{/* 3 נקודות אור מכל הכיוונים כדי לבטל אזורים חשוכים בזמן סיבוב */}
+			<pointLight position={[0, 8, 5]} intensity={1.1} decay={0} distance={0} color="#ffffff" />
+			<pointLight position={[-6, 4, -4]} intensity={0.85} decay={0} distance={0} color="#ffffff" />
+			<pointLight position={[6, 3, -4]} intensity={0.65} decay={0} distance={0} color="#ffffff" />
 
 			{/* Environment פשוט עם השתקפויות רכות */}
 			<Environment preset="studio" resolution={64} blur={0.35} />

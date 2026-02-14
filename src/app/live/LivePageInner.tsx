@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useProgress } from '@react-three/drei';
 import { ACESFilmicToneMapping, PCFSoftShadowMap, SRGBColorSpace } from 'three';
-import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import Footer from '@/components/Footer';
 import Staircase3D from './stairs/Staircase3D';
 import type { PathSegment } from './shared/path';
@@ -1555,7 +1554,8 @@ function LivePageInner() {
 						<div className="lg:col-span-2">
 					<div ref={canvasWrapRef} className="w-full aspect-[16/9] lg:aspect-auto lg:h-[60vh] bg-white border overflow-hidden rounded fixed inset-x-0 z-30 lg:relative" style={{ height: mobileCanvasH || undefined, top: (mobileHeaderH + mobileTabsH) || 0 }}>
 						<Canvas
-							shadows={isDesktopViewport ? { type: PCFSoftShadowMap } : false}
+							// תאורה קבועה ויציבה: בלי shadows ובלי post-processing
+							shadows={false}
 							camera={{ position: [-2.494, 1.897, 3.259], fov: 45 }}
 							dpr={[1, isDesktopViewport ? 2 : 1.5]}
 							gl={{
@@ -1673,13 +1673,6 @@ function LivePageInner() {
 										return cfg.inset || 0;
 									})()}
 								/>
-								{/* Post‑Processing: דסקטופ בלבד */}
-								{/* בלי AO: הוא גורם ל"החשכה" תלויה-מצלמה בזמן תנועה */}
-								{isDesktopViewport ? (
-									<EffectComposer multisampling={0}>
-										<Bloom intensity={0.16} luminanceThreshold={0.88} luminanceSmoothing={0.18} />
-									</EffectComposer>
-								) : null}
 								<OrbitControls
 									ref={orbitRef}
 									enableDamping

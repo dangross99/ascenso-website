@@ -1407,8 +1407,8 @@ function LivePageInner() {
 									<div className="px-4">
 										<BoxPicker box={box as any} setBox={setBox as any} />
 										{getNextCatForSteps('box') && (
-											<div className="mt-3 text-center">
-												<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('box')!)} className="px-5 py-2 rounded-lg bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90 transition-opacity">
+											<div className="mt-3 mb-4 text-center">
+												<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('box')!)} className="px-5 py-2 rounded-lg bg-[#1a1a2e] text-white font-medium text-sm shadow-sm hover:bg-[#252542] hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
 													המשך
 												</button>
 											</div>
@@ -1464,8 +1464,8 @@ function LivePageInner() {
 											onChange={(m) => startTransition(() => setActiveMaterial(m))}
 										/>
 										{getNextCatForSteps('material') && (
-											<div className="mt-3 text-center">
-												<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('material')!)} className="px-5 py-2 rounded-lg bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90 transition-opacity">
+											<div className="mt-3 mb-4 text-center">
+												<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('material')!)} className="px-5 py-2 rounded-lg bg-[#1a1a2e] text-white font-medium text-sm shadow-sm hover:bg-[#252542] hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
 													המשך
 												</button>
 											</div>
@@ -1484,8 +1484,8 @@ function LivePageInner() {
 												onPick={(id) => startTransition(() => setActiveModelId(id))}
 											/>
 											{getNextCatForSteps('woodTexture') && (
-												<div className="mt-3 text-center">
-													<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('woodTexture')!)} className="px-5 py-2 rounded-lg bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90 transition-opacity">
+												<div className="mt-3 mb-4 text-center">
+													<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('woodTexture')!)} className="px-5 py-2 rounded-lg bg-[#1a1a2e] text-white font-medium text-sm shadow-sm hover:bg-[#252542] hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
 														המשך
 													</button>
 												</div>
@@ -1505,8 +1505,8 @@ function LivePageInner() {
 												onPick={(id) => startTransition(() => setActiveColor(id))}
 											/>
 											{getNextCatForSteps('woodColor') && (
-												<div className="mt-3 text-center">
-													<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('woodColor')!)} className="px-5 py-2 rounded-lg bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90 transition-opacity">
+												<div className="mt-3 mb-4 text-center">
+													<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('woodColor')!)} className="px-5 py-2 rounded-lg bg-[#1a1a2e] text-white font-medium text-sm shadow-sm hover:bg-[#252542] hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
 														המשך
 													</button>
 												</div>
@@ -1531,8 +1531,8 @@ function LivePageInner() {
 												}
 											/>
 											{getNextCatForSteps('nonWoodTexture') && (
-												<div className="mt-3 text-center">
-													<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('nonWoodTexture')!)} className="px-5 py-2 rounded-lg bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90 transition-opacity">
+												<div className="mt-3 mb-4 text-center">
+													<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('nonWoodTexture')!)} className="px-5 py-2 rounded-lg bg-[#1a1a2e] text-white font-medium text-sm shadow-sm hover:bg-[#252542] hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
 														המשך
 													</button>
 												</div>
@@ -1554,8 +1554,8 @@ function LivePageInner() {
 											setPathSegments={setPathSegments}
 										/>
 										{getNextCatForSteps('path') && (
-											<div className="mt-3 text-center">
-												<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('path')!)} className="px-5 py-2 rounded-lg bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90 transition-opacity">
+											<div className="mt-3 mb-4 text-center">
+												<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('path')!)} className="px-5 py-2 rounded-lg bg-[#1a1a2e] text-white font-medium text-sm shadow-sm hover:bg-[#252542] hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
 													המשך
 												</button>
 											</div>

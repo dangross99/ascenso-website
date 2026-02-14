@@ -1805,9 +1805,8 @@ function LivePageInner() {
 									className="pointer-events-auto p-2 rounded-full border text-[#1a1a2e] bg-white/90 hover:bg-white cursor-pointer shadow"
 								>
 									<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-										<line x1="12" y1="4" x2="12" y2="20" />
-										<path d="M12 8a4 4 0 0 1 4 4 4 4 0 0 1-4 4" />
-										<polyline points="10 14 12 16 14 14" />
+										<path d="M3 12a9 9 0 0 1 18 0" />
+										<polyline points="15 9 21 12 15 15" />
 									</svg>
 								</button>
 							</div>
@@ -1867,9 +1866,8 @@ function LivePageInner() {
 									className="pointer-events-auto p-2 rounded-full border text-[#1a1a2e] bg-white/90 hover:bg-white cursor-pointer shadow"
 								>
 									<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-										<line x1="12" y1="4" x2="12" y2="20" />
-										<path d="M12 8a4 4 0 0 1 4 4 4 4 0 0 1-4 4" />
-										<polyline points="10 14 12 16 14 14" />
+										<path d="M3 12a9 9 0 0 1 18 0" />
+										<polyline points="15 9 21 12 15 15" />
 									</svg>
 								</button>
 							</div>

@@ -92,8 +92,8 @@ export function RailingPicker(props: {
 				))}
 			</div>
 
-			{/* צבעים/גוונים לפי סוג המעקה הנבחר – מוצג בטאב העליון */}
-			<div className="mb-3">
+			{/* צבעים/גוונים לפי סוג המעקה הנבחר – מוצג בטאב העליון; mt להרחקה מהכפתורים (יותר אוויר) */}
+			<div className="mt-2.5 mb-3">
 				{railing === 'glass' && (
 					<div className="flex items-center justify-center gap-3">
 						{([

@@ -689,12 +689,11 @@ function Staircase3D({
 
 							// אצלנו innerSide הוא "פנים" (LivePageInner), לכן החוץ הוא ההיפוך.
 							const innerSignLocalRaw = (innerSide === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
-							// בגרם הראשון (flight=0) כיוון המסע הפוך אצלנו, וזה הופך גם את צד "ימין מקומי" ביחס לפנים/חוץ.
-							// כדי שהקיר יישב תמיד על החוץ של הגרם – נהפוך רק בגרם הראשון.
-							const innerSignLocal = (t.flight === 0 ? (-innerSignLocalRaw as 1 | -1) : innerSignLocalRaw);
-							const outerSignLocal = (-innerSignLocal as 1 | -1);
+							// חישוב צד "חוץ" ישירות לפי גרם – בלי היפוך של innerSignLocal (שגרם לקיר בגרם 0 להיראות כהה/שונה).
+							// בגרם 0 כיוון המסע הפוך, אז החוץ הוא באותו כיוון כמו innerSignLocalRaw; בשאר הגרמים החוץ הוא ההיפוך.
+							const outerSignLocal = (t.flight === 0 ? innerSignLocalRaw : (-innerSignLocalRaw as 1 | -1)) as 1 | -1;
 
-							// מרכז הקיר ב-local coords של המדרך (הקבוצה כבר מסובבת לפי t.rotation)
+							// מרכז הקיר ב-local coords – רק מיקום, בלי scale/היפוך על ה-mesh
 							const zWall = outerSignLocal * (treadWidth / 2 + gap + wallTh / 2);
 							// נציב את הקיר בגובה מוחלט ביחס לרצפה (0..6m), אבל בתוך ה-group של המדרך כדי שיסתובב יחד איתו
 							const worldCenterY = floorBounds.y + wallH / 2;
@@ -702,8 +701,8 @@ function Staircase3D({
 
 							return (
 								<group key={`outer-wall-${i}`} position={t.position} rotation={t.rotation}>
-									{/* קיר חיצוני לאורך הרוחב – חומר אמיתי שמגיב לאור ו־Environment */}
-									<mesh position={[0, yLocal, zWall]} castShadow={false} receiveShadow>
+									{/* קיר חיצוני – מיקום בלבד, רוטציה כך שהפנים למדרגות תמיד אותה פניית הקופסה (תאורה אחידה) */}
+									<mesh position={[0, yLocal, zWall]} rotation={[0, outerSignLocal === -1 ? Math.PI : 0, 0]} castShadow={false} receiveShadow>
 										<boxGeometry args={[t.run, wallH, wallTh]} />
 										<meshStandardMaterial color={wallColor} side={2} roughness={0.9} metalness={0} />
 									</mesh>
@@ -717,10 +716,11 @@ function Staircase3D({
 												// רק חצי רוחב חיצוני כדי לא "לגלוש" לפנים
 												outerSignLocal * (treadWidth / 4),
 											]}
+											rotation={[0, outerSignLocal === -1 ? Math.PI : 0, 0]}
 											castShadow={false}
 											receiveShadow
 										>
-											{/* קיר בעובי wallTh על ציר X – חומר אמיתי, צללים מהמדרגות */}
+											{/* קיר בעובי wallTh על ציר X – אותה פניית קופסה לתאורה אחידה */}
 											<boxGeometry args={[wallTh, wallH, treadWidth / 2]} />
 											<meshStandardMaterial color={wallColor} side={2} roughness={0.9} metalness={0} />
 						</mesh>

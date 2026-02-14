@@ -54,7 +54,7 @@ export function BoxPicker(props: {
 						<button
 							aria-label={a11y(opt.id)}
 							title={a11y(opt.id)}
-							className={`w-[52px] h-[52px] inline-flex items-center justify-center rounded-lg border-0 cursor-pointer transition-colors duration-200 ${box === opt.id ? 'text-[#1a1a2e] bg-gray-100' : 'text-gray-500 bg-transparent hover:text-gray-800 hover:bg-gray-100'}`}
+							className={`w-[52px] h-[52px] inline-flex items-center justify-center rounded-lg border-0 cursor-pointer transition-colors duration-200 ${box === opt.id ? 'text-[#1a1a2e]' : 'text-gray-500 bg-transparent hover:text-gray-800 hover:bg-gray-100'}`}
 							onClick={() => setBox(opt.id)}
 						>
 							{opt.id === 'thick' ? (

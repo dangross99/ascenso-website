@@ -709,9 +709,9 @@ function Staircase3D({
 
 							return (
 								<group key={`outer-wall-${i}`} position={t.position} rotation={t.rotation}>
-									{/* קיר חיצוני – מיקום לפי אותו ציר כמו המעקה (X כשהמדרך לאורך Z, Z כשהמדרך לאורך X) */}
+									{/* קיר חיצוני: axis x → קיר לאורך X (רוחב ב-Z); axis z → קיר לאורך Z (רוחב ב-X) כדי שלא יחצה את המדרגה */}
 									<mesh position={axis === 'x' ? [0, yLocal, wallOffset] : [wallOffset, yLocal, 0]} castShadow={false} receiveShadow={false}>
-										<boxGeometry args={[t.run, wallH, wallTh]} />
+										<boxGeometry args={axis === 'x' ? [t.run, wallH, wallTh] : [wallTh, wallH, t.run]} />
 										<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
 									</mesh>
 									{/* בפודסט עם פנייה: קיר חזית – מיקום לפי forwardSign (כיוון התקדמות ממשי) */}

@@ -2026,7 +2026,16 @@ function LivePageInner() {
 													/>
 												)}
 												{railing === 'cable' && (
-													<div className="w-9 h-9 rounded-lg shrink-0 bg-[#c7ccd1] border border-[#e8e2dc]" />
+													<div
+														className="w-9 h-9 rounded-lg shrink-0 bg-center bg-cover border border-[#e8e2dc]"
+														style={{
+															backgroundImage: (() => {
+																const sel = cableOptions.find(c => c.id === cableId) || cableOptions[0];
+																return sel?.image ? `url("${encodeURI(sel.image)}")` : undefined;
+															})(),
+															backgroundColor: '#c7ccd1',
+														}}
+													/>
 												)}
 												<span className="text-xs font-semibold text-[#1a1a2e]/70 shrink-0">המעקה הנבחר</span>
 												<span className="text-sm font-bold text-[#1a1a2e] shrink-0">{formatRailing()}</span>

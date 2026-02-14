@@ -1530,16 +1530,16 @@ function LivePageInner() {
 												woodModels={woodModels as any}
 												activeModelId={activeModelId}
 												onPick={(id) => startTransition(() => setActiveModelId(id))}
+												bottomSection={
+													<WoodColorPicker
+														swatches={WOOD_SWATCHES}
+														activeModel={activeModel as any}
+														activeColor={activeColor}
+														colorHex={COLOR_HEX}
+														onPick={(id) => startTransition(() => setActiveColor(id))}
+													/>
+												}
 											/>
-											<div className="mt-2">
-												<WoodColorPicker
-													swatches={WOOD_SWATCHES}
-													activeModel={activeModel as any}
-													activeColor={activeColor}
-													colorHex={COLOR_HEX}
-													onPick={(id) => startTransition(() => setActiveColor(id))}
-												/>
-											</div>
 											{getNextCatForSteps('woodTexture') && (
 												<div className="mt-3 mb-4 text-center">
 													<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('woodTexture')!)} className="px-5 py-2 rounded-lg bg-emerald-600 text-white font-medium text-sm shadow-sm hover:bg-emerald-700 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer">

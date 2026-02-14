@@ -124,7 +124,7 @@ export function BookingModal(props: {
 						<div className="grid grid-cols-1 gap-4">
 							<div className="flex items-start mt-1 md:mt-2">
 								<div ref={refs.questionRef} className="bg-[#1a1a2e] text-white rounded-2xl px-4 py-2 text-base md:text-lg leading-snug inline-block">
-									{bookingStep === 'name' ? 'מה שמך?' : bookingStep === 'city' ? 'איזו עיר?' : bookingStep === 'date' ? 'מתי נוח לך לתאם?' : 'איזה שעות נוח לך לבחור?'}}
+									{bookingStep === 'name' ? 'מה שמך?' : bookingStep === 'city' ? 'איזו עיר?' : bookingStep === 'date' ? 'מתי נוח לך לתאם?' : 'איזה שעות נוח לך לבחור?'}
 								</div>
 							</div>
 

@@ -23,24 +23,25 @@ export function WoodColorPicker(props: {
 	const PREVIEW_SIZE = 140;
 	return (
 		<div className="p-2 pt-1">
-			{showSwatch && (
-				<div className="flex flex-col items-center mb-4">
-					<span className="text-xs font-semibold text-[#1a1a2e]/70 mb-2">תצוגה מקדימה – איך הגוון נראה</span>
-					<div
-						className="rounded-full border-2 border-[#1a1a2e]/20 bg-center bg-cover shadow-inner shrink-0"
-						style={{
-							width: PREVIEW_SIZE,
-							height: PREVIEW_SIZE,
-							backgroundImage: showImg ? `url("${encodeURI(showImg)}")` : undefined,
-							backgroundColor: showImg ? undefined : showSolid,
-							backgroundSize: 'cover',
-							backgroundPosition: 'center',
-						}}
-					/>
-					<span className="mt-2 text-sm font-medium text-[#1a1a2e]">{showSwatch.label}</span>
-				</div>
-			)}
-			<div className="flex items-center justify-center gap-4 flex-wrap text-center">
+			<div className="flex flex-row items-start gap-4 flex-wrap">
+				{showSwatch && (
+					<div className="flex flex-col items-center shrink-0">
+						<span className="text-xs font-semibold text-[#1a1a2e]/70 mb-2">תצוגה מקדימה – איך הגוון נראה</span>
+						<div
+							className="rounded-full border-2 border-[#1a1a2e]/20 bg-center bg-cover shadow-inner"
+							style={{
+								width: PREVIEW_SIZE,
+								height: PREVIEW_SIZE,
+								backgroundImage: showImg ? `url("${encodeURI(showImg)}")` : undefined,
+								backgroundColor: showImg ? undefined : showSolid,
+								backgroundSize: 'cover',
+								backgroundPosition: 'center',
+							}}
+						/>
+						<span className="mt-2 text-sm font-medium text-[#1a1a2e]">{showSwatch.label}</span>
+					</div>
+				)}
+				<div className="flex items-center justify-center gap-4 flex-wrap text-center min-w-0 flex-1">
 				{items.map(sw => {
 					const img = activeModel?.variants?.[sw.id]?.[0];
 					const solid = colorHex[sw.id];
@@ -65,6 +66,7 @@ export function WoodColorPicker(props: {
 						</div>
 					);
 				})}
+				</div>
 			</div>
 		</div>
 	);

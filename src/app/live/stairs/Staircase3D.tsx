@@ -563,13 +563,12 @@ function Staircase3D({
 
 	return (
 		<group position={[-1.5, 0, 0]}>
-			{/* תאורה קבועה ויציבה (בלי אור עוקב מצלמה ובלי toggles) */}
-			<ambientLight intensity={0.95} />
-			<hemisphereLight args={['#ffffff', '#d7dde5', 0.45]} />
-			{/* 3 נקודות אור מכל הכיוונים כדי לבטל אזורים חשוכים בזמן סיבוב */}
-			<pointLight position={[0, 8, 5]} intensity={1.1} decay={0} distance={0} color="#ffffff" />
-			<pointLight position={[-6, 4, -4]} intensity={0.85} decay={0} distance={0} color="#ffffff" />
-			<pointLight position={[6, 3, -4]} intensity={0.65} decay={0} distance={0} color="#ffffff" />
+			{/* תאורה אחידה מכל הזוויות: בעיקר ambient + hemisphere, בלי point lights כיווניים */}
+			<ambientLight intensity={1.15} />
+			<hemisphereLight args={['#ffffff', '#e0e6ed', 0.85]} />
+			{/* אור כיווני מינימלי רק להגדרת נפח עדינה – כמעט לא משפיע על ההבדל בין זוויות */}
+			<directionalLight position={[2, 4, 2]} intensity={0.06} color="#ffffff" />
+			<directionalLight position={[-2, 3, -2]} intensity={0.04} color="#ffffff" />
 
 			{/* Environment פשוט עם השתקפויות רכות */}
 			<Environment preset="studio" resolution={64} blur={0.35} />

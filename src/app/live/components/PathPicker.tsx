@@ -56,7 +56,7 @@ export function PathPicker(props: {
 							setPathSegments(buildTemplate(s));
 						}}
 					>
-						{s === 'straight' ? 'ישר' : s === 'L' ? 'זווית L' : 'זווית U'}
+						{s === 'straight' ? 'מבנה ישר' : s === 'L' ? 'מבנה L' : 'מבנה U'}
 					</button>
 				))}
 			</div>

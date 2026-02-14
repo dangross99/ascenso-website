@@ -3,7 +3,7 @@
 import React, { useRef } from 'react';
 import { useLoader, useFrame } from '@react-three/fiber';
 import { Environment, Text } from '@react-three/drei';
-import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, LinearMipmapLinearFilter, BoxGeometry, Cache, Vector3, type PointLight } from 'three';
+import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, LinearMipmapLinearFilter, BufferGeometry, Float32BufferAttribute, Cache, Vector3, type PointLight } from 'three';
 import type { PathSegment } from '../shared/path';
 import { buildRectTreads } from './models/rect';
 import { buildWedgeTreads } from './models/wedge';
@@ -765,7 +765,6 @@ function Staircase3D({
 				const color = glassSelected === 'smoked' ? '#64748b' : glassSelected === 'bronze' ? '#c8a76b' : '#bfefff';
 				const totalH = treadThickness + 1.0;
 				const distance = 0.03; // מרחק המעקה מהמדרך (3 ס"מ למניעת חפיפה/זי-פייטינג)
-				const panelThickness = 0.016; // עובי פאנל זכוכית 16 מ"מ
 				const overlapStep = 0.11; // חפיפה למטה במדרגות (11 ס"מ)
 				const overlapLanding = 0.20; // חפיפה למטה בפודסטים (20 ס"מ)
 				const heightAboveFaceStep = 1.18; // גובה מעל פני מדרגה
@@ -952,10 +951,19 @@ function Staircase3D({
 							const rZ = -Math.cos(yaw);
 							const zSign = (sidePref === 'right' ? (rZ >= 0 ? 1 : -1) : (rZ >= 0 ? -1 : 1)) as 1 | -1;
 							const zPos = t.position[2] + zSign * (treadWidth / 2 + distance);
-							const cx = (x0 + x1) / 2, cy = b + tH / 2;
+							const geom = new BufferGeometry();
+							const positions = new Float32BufferAttribute([
+								x0, k * x0 + b, zPos,
+								x1, k * x1 + b, zPos,
+								x0, k * x0 + b + tH, zPos,
+								x1, k * x1 + b + tH, zPos,
+							], 3);
+							geom.setAttribute('position', positions);
+							geom.setIndex([0, 1, 2, 2, 1, 3]);
+							geom.computeVertexNormals();
 							panels.push(
-								<mesh key={`gstep-Lx-${i}`} position={[cx, cy, zPos]} castShadow={false} receiveShadow={false} renderOrder={10}>
-									<boxGeometry args={[x1 - x0, tH, panelThickness]} />
+								<mesh key={`gstep-Lx-${i}`} castShadow={false} receiveShadow={false} renderOrder={10}>
+									<primitive object={geom} attach="geometry" />
 									<meshBasicMaterial color={color} transparent opacity={opacity} side={2} depthWrite={false} toneMapped={false} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
 								</mesh>
 							);
@@ -966,10 +974,19 @@ function Staircase3D({
 							const rX = Math.sin(yaw);
 							const signX = (sidePref === 'right' ? (rX >= 0 ? 1 : -1) : (rX >= 0 ? -1 : 1)) as 1 | -1;
 							const xGlass = t.position[0] + signX * (treadWidth / 2 + distance);
-							const cy = b + tH / 2, cz = (z0 + z1) / 2;
+							const geom = new BufferGeometry();
+							const positions = new Float32BufferAttribute([
+								xGlass, k * z0 + b, z0,
+								xGlass, k * z1 + b, z1,
+								xGlass, k * z0 + b + tH, z0,
+								xGlass, k * z1 + b + tH, z1,
+							], 3);
+							geom.setAttribute('position', positions);
+							geom.setIndex([0, 1, 2, 2, 1, 3]);
+							geom.computeVertexNormals();
 							panels.push(
-								<mesh key={`gstep-Lz-${i}`} position={[xGlass, cy, cz]} castShadow={false} receiveShadow={false} renderOrder={10}>
-									<boxGeometry args={[panelThickness, tH, z1 - z0]} />
+								<mesh key={`gstep-Lz-${i}`} castShadow={false} receiveShadow={false} renderOrder={10}>
+									<primitive object={geom} attach="geometry" />
 									<meshBasicMaterial color={color} transparent opacity={opacity} side={2} depthWrite={false} toneMapped={false} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
 								</mesh>
 							);
@@ -993,10 +1010,19 @@ function Staircase3D({
 						const rZ = -Math.cos(yaw);
 						const zSign = (sidePref === 'right' ? (rZ >= 0 ? 1 : -1) : (rZ >= 0 ? -1 : 1)) as 1 | -1;
 						const zPos = t.position[2] + zSign * (treadWidth / 2 + distance);
-						const cx = (x0 + x1) / 2, cy = b + tH / 2;
+						const geom = new BufferGeometry();
+						const positions = new Float32BufferAttribute([
+							x0, k * x0 + b, zPos,
+							x1, k * x1 + b, zPos,
+							x0, k * x0 + b + tH, zPos,
+							x1, k * x1 + b + tH, zPos,
+						], 3);
+						geom.setAttribute('position', positions);
+						geom.setIndex([0, 1, 2, 2, 1, 3]);
+						geom.computeVertexNormals();
 						panels.push(
-							<mesh key={`gstep-x-${i}`} position={[cx, cy, zPos]} castShadow={false} receiveShadow={false} renderOrder={10}>
-								<boxGeometry args={[x1 - x0, tH, panelThickness]} />
+							<mesh key={`gstep-x-${i}`} castShadow={false} receiveShadow={false} renderOrder={10}>
+								<primitive object={geom} attach="geometry" />
 								<meshBasicMaterial color={color} transparent opacity={opacity} side={2} depthWrite={false} toneMapped={false} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
 							</mesh>
 						);
@@ -1010,10 +1036,19 @@ function Staircase3D({
 						const rX = Math.sin(yaw);
 						const signXDesired = (sidePref === 'right' ? (rX >= 0 ? 1 : -1) : (rX >= 0 ? -1 : 1)) as 1 | -1;
 						const xGlass = t.position[0] + signXDesired * (treadWidth / 2 + distance);
-						const cy = b + tH / 2, cz = (z0 + z1) / 2;
+						const geom = new BufferGeometry();
+						const positions = new Float32BufferAttribute([
+							xGlass, k * z0 + b, z0,
+							xGlass, k * z1 + b, z1,
+							xGlass, k * z0 + b + tH, z0,
+							xGlass, k * z1 + b + tH, z1,
+						], 3);
+						geom.setAttribute('position', positions);
+						geom.setIndex([0, 1, 2, 2, 1, 3]);
+						geom.computeVertexNormals();
 						panels.push(
-							<mesh key={`gstep-z-${i}`} position={[xGlass, cy, cz]} castShadow={false} receiveShadow={false} renderOrder={10}>
-								<boxGeometry args={[panelThickness, tH, z1 - z0]} />
+							<mesh key={`gstep-z-${i}`} castShadow={false} receiveShadow={false} renderOrder={10}>
+								<primitive object={geom} attach="geometry" />
 								<meshBasicMaterial color={color} transparent opacity={opacity} side={2} depthWrite={false} toneMapped={false} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
 							</mesh>
 						);
@@ -1142,7 +1177,6 @@ function Staircase3D({
 				if (railingKind !== 'metal') return null;
 				if (!stepRailingStates) return null;
 				const distance = 0.03; // מרחק המעקה מהמדרך (3 ס"מ למניעת חפיפה/זי-פייטינג)
-				const panelThickness = 0.016; // עובי פאנל מתכת 16 מ"מ
 				const overlapStep = 0.11;
 				const overlapLanding = 0.20;
 				const heightAboveFaceStep = 1.18;
@@ -1324,17 +1358,38 @@ function Staircase3D({
 							const rZ = -Math.cos(yaw);
 							const zSign = (sidePref === 'right' ? (rZ >= 0 ? 1 : -1) : (rZ >= 0 ? -1 : 1)) as 1 | -1;
 							const zPos = t.position[2] + zSign * (treadWidth / 2 + distance);
-							const cx = (x0 + x1) / 2, cy = b + tH / 2;
-							const len = Math.abs(x1 - x0), h = tH;
+							const geom = new BufferGeometry();
+							const positions = new Float32BufferAttribute([
+								x0, k * x0 + b, zPos,
+								x1, k * x1 + b, zPos,
+								x0, k * x0 + b + tH, zPos,
+								x1, k * x1 + b + tH, zPos,
+							], 3);
+							const uvs = new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2);
+							geom.setAttribute('position', positions);
+							geom.setAttribute('uv', uvs);
+							geom.setIndex([0,1,2,2,1,3]);
+							geom.computeVertexNormals();
+							// cover
+							const len = Math.abs(x1 - x0);
+							const h = tH;
 							const texW = (railingMap.image && (railingMap.image as any).width) || 1024;
 							const texH = (railingMap.image && (railingMap.image as any).height) || 1024;
-							const texAspect = texW / texH, geoAspect = len / h;
+							const texAspect = texW / texH;
+							const geoAspect = len / h;
 							let repU = 1, repV = 1;
 							if (geoAspect > texAspect) { repU = texAspect / geoAspect; repV = 1; } else { repU = 1; repV = geoAspect / texAspect; }
-							repU = Math.max(0.995, Math.min(1, repU)); repV = Math.max(0.995, Math.min(1, repV));
-							let offU = (1 - repU) / 2, offV = (1 - repV) / 2;
+							repU = Math.max(0.995, Math.min(1, repU));
+							repV = Math.max(0.995, Math.min(1, repV));
+							let offU = (1 - repU) / 2;
+							let offV = (1 - repV) / 2;
 							const rinset = Math.max(0, Math.min(0.30, railingUvInset || 0));
-							if (rinset > 0) { const cutU = Math.min(repU - 0.01, rinset * 2); const cutV = Math.min(repV - 0.01, rinset * 2); if (cutU > 0) { repU -= cutU; offU += cutU / 2; } if (cutV > 0) { repV -= cutV; offV += cutV / 2; } }
+							if (rinset > 0) {
+								const cutU = Math.min(repU - 0.01, rinset * 2);
+								const cutV = Math.min(repV - 0.01, rinset * 2);
+								if (cutU > 0) { repU -= cutU; offU += cutU / 2; }
+								if (cutV > 0) { repV -= cutV; offV += cutV / 2; }
+							}
 							const mapTex = railingMap.clone();
 							// @ts-ignore
 							mapTex.colorSpace = SRGBColorSpace;
@@ -1345,8 +1400,8 @@ function Staircase3D({
 							mapTex.offset.set(offU, offV);
 							mapTex.needsUpdate = true;
 							itemsEls.push(
-								<mesh key={`mstep-Lx-${i}`} position={[cx, cy, zPos]} castShadow receiveShadow>
-									<boxGeometry args={[x1 - x0, tH, panelThickness]} />
+								<mesh key={`mstep-Lx-${i}`} castShadow receiveShadow>
+									<primitive object={geom} attach="geometry" />
 									{railingSolidColor ? <meshBasicMaterial color={railingSolidColor} side={2} /> : <meshBasicMaterial map={mapTex} side={2} />}
 								</mesh>
 							);
@@ -1357,17 +1412,37 @@ function Staircase3D({
 							const rX = Math.sin(yaw);
 							const signX = (sidePref === 'right' ? (rX >= 0 ? 1 : -1) : (rX >= 0 ? -1 : 1)) as 1 | -1;
 							const xPos = t.position[0] + signX * (treadWidth / 2 + distance);
-							const cy = b + tH / 2, cz = (z0 + z1) / 2;
-							const len = Math.abs(z1 - z0), h = tH;
+							const geom = new BufferGeometry();
+							const positions = new Float32BufferAttribute([
+								xPos, k * z0 + b, z0,
+								xPos, k * z1 + b, z1,
+								xPos, k * z0 + b + tH, z0,
+								xPos, k * z1 + b + tH, z1,
+							], 3);
+							const uvs = new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2);
+							geom.setAttribute('position', positions);
+							geom.setAttribute('uv', uvs);
+							geom.setIndex([0,1,2,2,1,3]);
+							geom.computeVertexNormals();
+							const len = Math.abs(z1 - z0);
+							const h = tH;
 							const texW = (railingMap.image && (railingMap.image as any).width) || 1024;
 							const texH = (railingMap.image && (railingMap.image as any).height) || 1024;
-							const texAspect = texW / texH, geoAspect = len / h;
+							const texAspect = texW / texH;
+							const geoAspect = len / h;
 							let repU = 1, repV = 1;
 							if (geoAspect > texAspect) { repU = texAspect / geoAspect; repV = 1; } else { repU = 1; repV = geoAspect / texAspect; }
-							repU = Math.max(0.995, Math.min(1, repU)); repV = Math.max(0.995, Math.min(1, repV));
-							let offU = (1 - repU) / 2, offV = (1 - repV) / 2;
+							repU = Math.max(0.995, Math.min(1, repU));
+							repV = Math.max(0.995, Math.min(1, repV));
+							let offU = (1 - repU) / 2;
+							let offV = (1 - repV) / 2;
 							const rinset2 = Math.max(0, Math.min(0.30, railingUvInset || 0));
-							if (rinset2 > 0) { const cutU = Math.min(repU - 0.01, rinset2 * 2); const cutV = Math.min(repV - 0.01, rinset2 * 2); if (cutU > 0) { repU -= cutU; offU += cutU / 2; } if (cutV > 0) { repV -= cutV; offV += cutV / 2; } }
+							if (rinset2 > 0) {
+								const cutU = Math.min(repU - 0.01, rinset2 * 2);
+								const cutV = Math.min(repV - 0.01, rinset2 * 2);
+								if (cutU > 0) { repU -= cutU; offU += cutU / 2; }
+								if (cutV > 0) { repV -= cutV; offV += cutV / 2; }
+							}
 							const mapTex = railingMap.clone();
 							// @ts-ignore
 							mapTex.colorSpace = SRGBColorSpace;
@@ -1378,8 +1453,8 @@ function Staircase3D({
 							mapTex.offset.set(offU, offV);
 							mapTex.needsUpdate = true;
 							itemsEls.push(
-								<mesh key={`mstep-Lz-${i}`} position={[xPos, cy, cz]} castShadow receiveShadow>
-									<boxGeometry args={[panelThickness, tH, z1 - z0]} />
+								<mesh key={`mstep-Lz-${i}`} castShadow receiveShadow>
+									<primitive object={geom} attach="geometry" />
 									{railingSolidColor ? <meshBasicMaterial color={railingSolidColor} side={2} /> : <meshBasicMaterial map={mapTex} side={2} />}
 								</mesh>
 							);
@@ -1403,17 +1478,37 @@ function Staircase3D({
 						const rZ = -Math.cos(yaw);
 						const zSign = (sidePref === 'right' ? (rZ >= 0 ? 1 : -1) : (rZ >= 0 ? -1 : 1)) as 1 | -1;
 						const zPos = t.position[2] + zSign * (treadWidth / 2 + distance);
-						const cx = (x0 + x1) / 2, cy = b + tH / 2;
-						const len = Math.abs(x1 - x0), h = tH;
+						const geom = new BufferGeometry();
+						const positions = new Float32BufferAttribute([
+							x0, k * x0 + b, zPos,
+							x1, k * x1 + b, zPos,
+							x0, k * x0 + b + tH, zPos,
+							x1, k * x1 + b + tH, zPos,
+						], 3);
+						const uvs = new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2);
+						geom.setAttribute('position', positions);
+						geom.setAttribute('uv', uvs);
+						geom.setIndex([0,1,2,2,1,3]);
+						geom.computeVertexNormals();
+						const len = Math.abs(x1 - x0);
+						const h = tH;
 						const texW = (railingMap.image && (railingMap.image as any).width) || 1024;
 						const texH = (railingMap.image && (railingMap.image as any).height) || 1024;
-						const texAspect = texW / texH, geoAspect = len / h;
+						const texAspect = texW / texH;
+						const geoAspect = len / h;
 						let repU = 1, repV = 1;
 						if (geoAspect > texAspect) { repU = texAspect / geoAspect; repV = 1; } else { repU = 1; repV = geoAspect / texAspect; }
-						repU = Math.max(0.995, Math.min(1, repU)); repV = Math.max(0.995, Math.min(1, repV));
-						let offU = (1 - repU) / 2, offV = (1 - repV) / 2;
+						repU = Math.max(0.995, Math.min(1, repU));
+						repV = Math.max(0.995, Math.min(1, repV));
+						let offU = (1 - repU) / 2;
+						let offV = (1 - repV) / 2;
 						const rinset3 = Math.max(0, Math.min(0.30, railingUvInset || 0));
-						if (rinset3 > 0) { const cutU = Math.min(repU - 0.01, rinset3 * 2); const cutV = Math.min(repV - 0.01, rinset3 * 2); if (cutU > 0) { repU -= cutU; offU += cutU / 2; } if (cutV > 0) { repV -= cutV; offV += cutV / 2; } }
+						if (rinset3 > 0) {
+							const cutU = Math.min(repU - 0.01, rinset3 * 2);
+							const cutV = Math.min(repV - 0.01, rinset3 * 2);
+							if (cutU > 0) { repU -= cutU; offU += cutU / 2; }
+							if (cutV > 0) { repV -= cutV; offV += cutV / 2; }
+						}
 						const mapTex = railingMap.clone();
 						// @ts-ignore
 						mapTex.colorSpace = SRGBColorSpace;
@@ -1424,8 +1519,8 @@ function Staircase3D({
 						mapTex.offset.set(offU, offV);
 						mapTex.needsUpdate = true;
 						itemsEls.push(
-							<mesh key={`mstep-x-${i}`} position={[cx, cy, zPos]} castShadow receiveShadow>
-								<boxGeometry args={[x1 - x0, tH, panelThickness]} />
+							<mesh key={`mstep-x-${i}`} castShadow receiveShadow>
+								<primitive object={geom} attach="geometry" />
 								{railingSolidColor ? <meshBasicMaterial color={railingSolidColor} side={2} /> : <meshBasicMaterial map={mapTex} side={2} />}
 							</mesh>
 						);
@@ -1439,17 +1534,37 @@ function Staircase3D({
 						const rX = Math.sin(yaw);
 						const signXDesired = (sidePref === 'right' ? (rX >= 0 ? 1 : -1) : (rX >= 0 ? -1 : 1)) as 1 | -1;
 						const xPos = t.position[0] + signXDesired * (treadWidth / 2 + distance);
-						const cy = b + tH / 2, cz = (z0 + z1) / 2;
-						const len = Math.abs(z1 - z0), h = tH;
+						const geom = new BufferGeometry();
+						const positions = new Float32BufferAttribute([
+							xPos, k * z0 + b, z0,
+							xPos, k * z1 + b, z1,
+							xPos, k * z0 + b + tH, z0,
+							xPos, k * z1 + b + tH, z1,
+						], 3);
+						const uvs = new Float32BufferAttribute([0,0, 1,0, 0,1, 1,1], 2);
+						geom.setAttribute('position', positions);
+						geom.setAttribute('uv', uvs);
+						geom.setIndex([0,1,2,2,1,3]);
+						geom.computeVertexNormals();
+						const len = Math.abs(z1 - z0);
+						const h = tH;
 						const texW = (railingMap.image && (railingMap.image as any).width) || 1024;
 						const texH = (railingMap.image && (railingMap.image as any).height) || 1024;
-						const texAspect = texW / texH, geoAspect = len / h;
+						const texAspect = texW / texH;
+						const geoAspect = len / h;
 						let repU = 1, repV = 1;
 						if (geoAspect > texAspect) { repU = texAspect / geoAspect; repV = 1; } else { repU = 1; repV = geoAspect / texAspect; }
-						repU = Math.max(0.995, Math.min(1, repU)); repV = Math.max(0.995, Math.min(1, repV));
-						let offU = (1 - repU) / 2, offV = (1 - repV) / 2;
+						repU = Math.max(0.995, Math.min(1, repU));
+						repV = Math.max(0.995, Math.min(1, repV));
+						let offU = (1 - repU) / 2;
+						let offV = (1 - repV) / 2;
 						const rinset4 = Math.max(0, Math.min(0.30, railingUvInset || 0));
-						if (rinset4 > 0) { const cutU = Math.min(repU - 0.01, rinset4 * 2); const cutV = Math.min(repV - 0.01, rinset4 * 2); if (cutU > 0) { repU -= cutU; offU += cutU / 2; } if (cutV > 0) { repV -= cutV; offV += cutV / 2; } }
+						if (rinset4 > 0) {
+							const cutU = Math.min(repU - 0.01, rinset4 * 2);
+							const cutV = Math.min(repV - 0.01, rinset4 * 2);
+							if (cutU > 0) { repU -= cutU; offU += cutU / 2; }
+							if (cutV > 0) { repV -= cutV; offV += cutV / 2; }
+						}
 						const mapTex = railingMap.clone();
 						// @ts-ignore
 						mapTex.colorSpace = SRGBColorSpace;
@@ -1460,8 +1575,8 @@ function Staircase3D({
 						mapTex.offset.set(offU, offV);
 						mapTex.needsUpdate = true;
 						itemsEls.push(
-							<mesh key={`mstep-z-${i}`} position={[xPos, cy, cz]} castShadow receiveShadow>
-								<boxGeometry args={[panelThickness, tH, z1 - z0]} />
+							<mesh key={`mstep-z-${i}`} castShadow receiveShadow>
+								<primitive object={geom} attach="geometry" />
 								{railingSolidColor ? <meshBasicMaterial color={railingSolidColor} side={2} /> : <meshBasicMaterial map={mapTex} side={2} />}
 							</mesh>
 						);

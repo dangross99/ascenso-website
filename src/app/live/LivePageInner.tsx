@@ -2411,7 +2411,7 @@ function LivePageInner() {
 						})()}
 
 						{/* פירוט חשבון – מוצג בסוף המובייל מתחת לקטגוריות */}
-						<div className="mt-3 bg-white rounded-md p-3">
+						<div ref={priceRef} className={`mt-3 bg-white rounded-md p-3 ${pricePing ? 'ring-2 ring-[#1a1a2e]' : ''}`}>
 							<div className="font-semibold mb-1">פירוט חשבון (כולל מע״מ)</div>
 							<ul className="text-sm text-gray-700 space-y-1">
 								{breakdown.map(b => (
@@ -2447,42 +2447,6 @@ function LivePageInner() {
 						</div>
 					</div>
 
-
-						{/* אקורדיון מסלול/מעקה הוסר – ניהול דרך הטאבים העליונים בלבד */}
-							<div ref={priceRef} className={`bg-gray-50 rounded-md p-3 ${pricePing ? 'ring-2 ring-[#1a1a2e]' : ''}`}>
-								<div className="font-semibold mb-1">פירוט חשבון (כולל מע״מ)</div>
-								<ul className="text-sm text-gray-700 space-y-1">
-									{breakdown.map(b => (
-										<li key={b.label} className="flex justify-between">
-											<span>
-												{b.label}
-												{typeof b.qty !== 'undefined' && typeof b.unitPrice !== 'undefined' && (
-													<span className="text-gray-500">
-														{' '}
-														(
-														{(() => {
-															const isDecimalQty = b.unitLabel === 'מ׳' || b.unitLabel === 'מ״ר';
-															const qtyStr = isDecimalQty
-																? `${(b.qty as number).toFixed(2)}${b.unitLabel ? ` ${b.unitLabel}` : ''}`
-																: `${Number(b.qty).toLocaleString('he-IL')}${b.unitLabel ? ` ${b.unitLabel}` : ''}`;
-															return `${qtyStr} × ₪${Number(b.unitPrice).toLocaleString('he-IL')}`;
-														})()}
-														)
-													</span>
-												)}
-											</span>
-											<span>₪{b.value.toLocaleString('he-IL')}</span>
-										</li>
-									))}
-								</ul>
-								<div className="mt-2 pt-2 border-t flex justify-between font-bold">
-									<span>סה״כ כולל מע״מ</span>
-									<span>₪{total.toLocaleString('he-IL')}</span>
-								</div>
-								<div className="text-[11px] text-gray-500 mt-1">
-									הערכה משוערת להמחשה בלבד.<br/>המחיר כולל קונסטרוקציה והתקנה.
-								</div>
-							</div>
 
 						{/* ספייסר תחתון בפאנל כדי שלא ייכנס מתחת לסרגל הקבוע בדסקטופ */}
 						<div className="hidden lg:block h-2" />

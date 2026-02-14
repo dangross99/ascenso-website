@@ -659,7 +659,7 @@ function Staircase3D({
 				if (!showOuterWalls) return null;
 				const wallH = 6.0; // מטר – קבוע מהרצפה
 				const wallTh = 0.06; // עובי קיר 6 ס"מ
-				const gap = 0.01; // מרווח מהקצה כדי למנוע זי-פייטינג
+				const gap = 0.001; // מרווח מינימלי (1מ"מ) – קירות נפגשים בלי חריץ, עם מניעת זי-פייטינג
 				// BasicMaterial + toneMapped=false – לבן קרמי עדין, אחיד בכל הגרמים
 				const wallColor = '#FFFBF5';
 

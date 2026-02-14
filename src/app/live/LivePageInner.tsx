@@ -1874,7 +1874,7 @@ function LivePageInner() {
 								)}
 								{/* הטקסטורה הנבחרת – תמונה + סוג חומר + שם */}
 								{(() => {
-									const matLabel = activeMaterial === 'wood' ? 'עץ' : activeMaterial === 'metal' ? 'מתכת' : activeMaterial === 'stone' ? 'אבן' : null;
+									const matLabel = activeMaterial === 'wood' ? 'עץ' : activeMaterial === 'metal' ? 'מתכת' : activeMaterial === 'stone' ? 'אבן טבעית' : null;
 									const sel = activeMaterial === 'wood'
 										? (woodModels.find(m => m.id === activeModelId) || woodModels[0])
 										: (nonWoodModels.find(m => m.id === activeTexId) || nonWoodModels[0]);
@@ -1950,7 +1950,7 @@ function LivePageInner() {
 						)}
 						{/* הטקסטורה הנבחרת – מובייל */}
 						{(() => {
-							const matLabel = activeMaterial === 'wood' ? 'עץ' : activeMaterial === 'metal' ? 'מתכת' : activeMaterial === 'stone' ? 'אבן' : null;
+							const matLabel = activeMaterial === 'wood' ? 'עץ' : activeMaterial === 'metal' ? 'מתכת' : activeMaterial === 'stone' ? 'אבן טבעית' : null;
 							const sel = activeMaterial === 'wood'
 								? (woodModels.find(m => m.id === activeModelId) || woodModels[0])
 								: (nonWoodModels.find(m => m.id === activeTexId) || nonWoodModels[0]);

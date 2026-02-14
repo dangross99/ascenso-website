@@ -529,6 +529,15 @@ function LivePageInner() {
 		return i >= 0 && i < stepOrderForSteps.length - 1 ? stepOrderForSteps[i + 1] : null;
 	};
 
+	const boxDisplayInfo: Record<string, { name: string; desc: string }> = {
+		thick: { name: 'קלאסי', desc: 'תיבה עבה־דופן, עובי אחיד. מתאים לעיצוב קלאסי ויציב.' },
+		thin: { name: 'להב', desc: 'תיבה דקה־דופן, מראה מינימליסטי. חיסכון במשקל ומראה קל.' },
+		rounded: { name: 'קפסולה', desc: 'מדרך מעוגל (קפסולה). מראה רך ומודרני.' },
+		taper: { name: 'דלתא', desc: 'מדרך בצורת דלתא, צר בחלק האחורי. קו עיצובי דינמי.' },
+		wedge: { name: 'טריז', desc: 'מדרך אלכסוני (טריז). מתאים לעיצוב ייחודי.' },
+		ridge: { name: 'מרום', desc: 'דגם רכס מרכזי. מראה מודרני עם רכס בולט.' },
+	};
+
 	// קונפיגורטור מדרגות
 	const [shape, setShape] = React.useState<'straight' | 'L' | 'U'>(qShape);
 	const [steps, setSteps] = React.useState<number>(Number.isFinite(qSteps) ? Math.min(25, Math.max(5, qSteps)) : 15);
@@ -1862,7 +1871,15 @@ function LivePageInner() {
 
 						{/* פירוט חשבון צדדי בדסקטופ */}
 						<div className="hidden lg:block lg:col-span-1">
-							<div className="bg-white rounded-md p-3 h-full">
+							<div className="bg-white rounded-md p-3 h-full space-y-3">
+								{/* הדגם הנבחר + פירוט טכני */}
+								{boxDisplayInfo[box] && (
+									<div className="pb-3 border-b border-gray-200">
+										<div className="font-semibold text-[#1a1a2e] mb-1">הדגם הנבחר</div>
+										<div className="text-sm font-medium text-gray-800">{boxDisplayInfo[box].name}</div>
+										<p className="text-xs text-gray-600 mt-1 leading-relaxed">{boxDisplayInfo[box].desc}</p>
+									</div>
+								)}
 								<div className="font-semibold mb-1">פירוט חשבון (כולל מע״מ)</div>
 								<ul className="text-sm text-gray-700 space-y-1">
 									{breakdown.map(b => (
@@ -1907,7 +1924,15 @@ function LivePageInner() {
 					</div>
 
 					{/* פירוט חשבון מתחת להדמייה – מובייל/טאבלט בלבד */}
-					<div className="mt-3 bg-white rounded-md p-3 lg:hidden">
+					<div className="mt-3 space-y-3 lg:hidden">
+						{boxDisplayInfo[box] && (
+							<div className="bg-white rounded-md p-3 border border-gray-200">
+								<div className="font-semibold text-[#1a1a2e] mb-1">הדגם הנבחר</div>
+								<div className="text-sm font-medium text-gray-800">{boxDisplayInfo[box].name}</div>
+								<p className="text-xs text-gray-600 mt-1 leading-relaxed">{boxDisplayInfo[box].desc}</p>
+							</div>
+						)}
+						<div className="bg-white rounded-md p-3">
 						<div className="font-semibold mb-1">פירוט חשבון (כולל מע״מ)</div>
 						<ul className="text-sm text-gray-700 space-y-1">
 							{breakdown.map(b => (
@@ -1946,6 +1971,7 @@ function LivePageInner() {
 						</button>
 						<div className="text-[11px] text-gray-500 mt-1">
 							הערכה משוערת להמחשה בלבד.<br/>המחיר כולל קונסטרוקציה והתקנה.
+						</div>
 						</div>
 					</div>
 
@@ -2751,6 +2777,14 @@ function LivePageInner() {
 						)}
 
 						{/* אקורדיון מסלול/מעקה הוסר – ניהול דרך הטאבים העליונים בלבד */}
+							{/* הדגם הנבחר + פירוט טכני – בצד */}
+							{boxDisplayInfo[box] && (
+								<div className="bg-white rounded-md p-3 mb-3 border border-gray-200">
+									<div className="font-semibold text-[#1a1a2e] mb-1">הדגם הנבחר</div>
+									<div className="text-sm font-medium text-gray-800">{boxDisplayInfo[box].name}</div>
+									<p className="text-xs text-gray-600 mt-1 leading-relaxed">{boxDisplayInfo[box].desc}</p>
+								</div>
+							)}
 							<div ref={priceRef} className={`bg-gray-50 rounded-md p-3 ${pricePing ? 'ring-2 ring-[#1a1a2e]' : ''}`}>
 								<div className="font-semibold mb-1">פירוט חשבון (כולל מע״מ)</div>
 								<ul className="text-sm text-gray-700 space-y-1">

@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 
 type MaterialKind = 'wood' | 'metal' | 'stone';
 
@@ -16,7 +16,7 @@ export function MaterialKindPicker(props: {
 						className={`px-4 py-2 text-base rounded-full border ${activeMaterial === m ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
 						onClick={() => onChange(m)}
 					>
-						{m === 'wood' ? '׳¢׳¥' : m === 'metal' ? '׳׳×׳›׳×' : '׳׳‘׳ ׳˜׳‘׳¢׳™׳×'}
+						{m === 'wood' ? 'עץ' : m === 'metal' ? 'מתכת' : 'אבן טבעית'}
 					</button>
 				))}
 			</div>

@@ -550,6 +550,7 @@ function LivePageInner() {
 		// ברירת מחדל: ישר עם מספר מדרגות מהשדה הישן
 		return [{ kind: 'straight', steps }];
 	});
+	const [pathFlipped180, setPathFlipped180] = React.useState(false);
 
 	// הוסר: מנגנון "שחזור מצב" למובייל כולל סטייט, שמירה, ושחזורים
 
@@ -786,7 +787,10 @@ function LivePageInner() {
 			if (s.activeTexId) setActiveTexId(s.activeTexId);
 			if (s.activeColor) setActiveColor(s.activeColor);
 			if (s.shape) setShape(s.shape);
-			if (Array.isArray(s.pathSegments)) setPathSegments(s.pathSegments);
+			if (Array.isArray(s.pathSegments)) {
+				setPathSegments(s.pathSegments);
+				setPathFlipped180(false);
+			}
 			if (typeof s.steps === 'number') setSteps(s.steps);
 			if (s.railing) setRailing(s.railing);
 			if (s.glassTone) setGlassTone(s.glassTone);
@@ -1835,14 +1839,17 @@ function LivePageInner() {
 								</button>
 								<button
 									type="button"
-									onClick={() => setPathSegments(prev => prev.map(seg => {
-										if (seg.kind !== 'landing') return seg;
-										if (!seg.turn) return seg;
-										return { kind: 'landing', turn: (seg.turn === 'left' ? 'right' : 'left') };
-									}))}
+									onClick={() => {
+										setPathSegments(prev => prev.map(seg => {
+											if (seg.kind !== 'landing') return seg;
+											if (!seg.turn) return seg;
+											return { kind: 'landing', turn: (seg.turn === 'left' ? 'right' : 'left') };
+										}));
+										setPathFlipped180(prev => !prev);
+									}}
 									aria-label="הפוך כיוון מסלול"
-									title="הפוך כיוון מסלול"
-									className="pointer-events-auto min-w-[2.25rem] h-9 px-1.5 rounded-full border text-[#1a1a2e] bg-white/90 hover:bg-white cursor-pointer shadow inline-flex items-center justify-center font-bold text-sm"
+									title={pathFlipped180 ? 'מסלול בהיפוך 180° (לחץ לביטול)' : 'הפוך כיוון מסלול'}
+									className={`pointer-events-auto min-w-[2.25rem] h-9 px-1.5 rounded-full border cursor-pointer shadow inline-flex items-center justify-center font-bold text-sm ${pathFlipped180 ? 'bg-emerald-500 text-white border-emerald-600 hover:bg-emerald-600' : 'text-[#1a1a2e] bg-white/90 hover:bg-white border'}`}
 								>
 									<span>180<span className="text-[10px] align-super leading-none">°</span></span>
 								</button>
@@ -1893,14 +1900,17 @@ function LivePageInner() {
 								</button>
 								<button
 									type="button"
-									onClick={() => setPathSegments(prev => prev.map(seg => {
-										if (seg.kind !== 'landing') return seg;
-										if (!seg.turn) return seg;
-										return { kind: 'landing', turn: (seg.turn === 'left' ? 'right' : 'left') };
-									}))}
+									onClick={() => {
+										setPathSegments(prev => prev.map(seg => {
+											if (seg.kind !== 'landing') return seg;
+											if (!seg.turn) return seg;
+											return { kind: 'landing', turn: (seg.turn === 'left' ? 'right' : 'left') };
+										}));
+										setPathFlipped180(prev => !prev);
+									}}
 									aria-label="הפוך כיוון מסלול"
-									title="הפוך כיוון מסלול"
-									className="pointer-events-auto min-w-[2rem] h-8 px-1 rounded-full border text-[#1a1a2e] bg-white/90 hover:bg-white cursor-pointer shadow inline-flex items-center justify-center font-bold text-xs"
+									title={pathFlipped180 ? 'מסלול בהיפוך 180° (לחץ לביטול)' : 'הפוך כיוון מסלול'}
+									className={`pointer-events-auto min-w-[2rem] h-8 px-1 rounded-full border cursor-pointer shadow inline-flex items-center justify-center font-bold text-xs ${pathFlipped180 ? 'bg-emerald-500 text-white border-emerald-600 hover:bg-emerald-600' : 'text-[#1a1a2e] bg-white/90 hover:bg-white border'}`}
 								>
 									<span>180<span className="text-[9px] align-super leading-none">°</span></span>
 								</button>

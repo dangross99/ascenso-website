@@ -1465,7 +1465,7 @@ function LivePageInner() {
 											{railing === 'glass' && (
 												<div className="flex items-center justify-center gap-3">
 													{([
-														{ id: 'extra' as const, label: 'אקסטרה', color: '#aee7ff', border: '#81b1cc' },
+														{ id: 'extra' as const, label: 'אקסטרה קליר', color: '#aee7ff', border: '#81b1cc' },
 														{ id: 'smoked' as const, label: 'מושחר', color: '#4a5568', border: '#2d3748' },
 														{ id: 'bronze' as const, label: 'ברונזה', color: '#b08d57', border: '#8a6a3a' },
 													]).map(sw => (

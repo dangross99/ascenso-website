@@ -2012,6 +2012,7 @@ function LivePageInner() {
 															className={`px-3 py-1 text-sm rounded-full border ${box === opt.id ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
 															onClick={() => {
 																setBox(opt.id);
+																setMobileOpenCat('material');
 															}}
 														>
 															{opt.label}
@@ -2089,6 +2090,7 @@ function LivePageInner() {
 																title={m.name || m.id}
 																onClick={() => startTransition(() => {
 																	setActiveModelId(m.id);
+																	setMobileOpenCat('woodColor');
 																})}
 																className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeModelId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
@@ -2132,6 +2134,7 @@ function LivePageInner() {
 																			title={sw.label}
 																			onClick={() => startTransition(() => {
 																				setActiveColor(sw.id);
+																				setMobileOpenCat('path');
 																			})}
 															className={`w-8 h-8 rounded-full border-2 cursor-pointer ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																			style={{
@@ -2185,6 +2188,7 @@ function LivePageInner() {
 													setActiveTexId(m.id);
 													if (activeMaterial === 'metal') setActiveMetalTexId(m.id);
 													if (activeMaterial === 'stone') setActiveStoneTexId(m.id);
+													setMobileOpenCat('path');
 												})}
 																className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, backgroundColor: (!m.images || m.images.length === 0) && (m as any).solid ? (m as any).solid : undefined, borderColor: '#ddd' }}
@@ -2220,6 +2224,7 @@ function LivePageInner() {
 														className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100"
 														onClick={() => {
 															setPathSegments(prev => [...prev, { kind: 'straight', steps: 5 }]);
+															setMobileOpenCat('railing');
 														}}
 													>
 														הוסף ישר (5 מדר׳)
@@ -2232,6 +2237,7 @@ function LivePageInner() {
 																{ kind: 'landing', turn: 'right' },
 																{ kind: 'straight', steps: 1 },
 															]);
+															setMobileOpenCat('railing');
 														}}
 													>
 														פודסט + ימינה
@@ -2244,6 +2250,7 @@ function LivePageInner() {
 																{ kind: 'landing', turn: 'left' },
 																{ kind: 'straight', steps: 1 },
 															]);
+															setMobileOpenCat('railing');
 														}}
 													>
 														פודסט + שמאלה
@@ -2252,6 +2259,7 @@ function LivePageInner() {
 														className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100"
 														onClick={() => {
 															setPathSegments(prev => [...prev, { kind: 'landing' }]);
+															setMobileOpenCat('railing');
 														}}
 													>
 														פודסט
@@ -2473,7 +2481,7 @@ function LivePageInner() {
 											<button
 												key={opt.id}
 												className={`px-3 py-1 text-sm rounded-full border ${box === opt.id ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
-												onClick={() => setBox(opt.id)}
+												onClick={() => { setBox(opt.id); setDesktopOpenCat('material'); }}
 											>
 												{opt.label}
 											</button>
@@ -2534,7 +2542,7 @@ function LivePageInner() {
 														key={m.id}
 														aria-label={m.name || m.id}
 														title={m.name || m.id}
-														onClick={() => startTransition(() => setActiveModelId(m.id))}
+														onClick={() => startTransition(() => { setActiveModelId(m.id); setDesktopOpenCat('woodColor'); })}
 														className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeModelId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 														style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
 													/>
@@ -2568,7 +2576,7 @@ function LivePageInner() {
 																	key={sw.id}
 																	aria-label={sw.label}
 																	title={sw.label}
-																	onClick={() => startTransition(() => setActiveColor(sw.id))}
+																	onClick={() => startTransition(() => { setActiveColor(sw.id); setDesktopOpenCat('path'); })}
 																	className={`w-8 h-8 rounded-full border-2 ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																	style={{
 																		backgroundImage: img ? `url("${encodeURI(img)}")` : undefined,
@@ -2614,7 +2622,9 @@ function LivePageInner() {
 													title={m.name || m.id}
 													onClick={() => startTransition(() => {
 														setActiveTexId(m.id);
-														setActiveMetalTexId(m.id);
+														if (activeMaterial === 'metal') setActiveMetalTexId(m.id);
+														if (activeMaterial === 'stone') setActiveStoneTexId(m.id);
+														setDesktopOpenCat('path');
 													})}
 													className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 													style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, backgroundColor: (!m.images || m.images.length === 0) && (m as any).solid ? (m as any).solid : undefined, borderColor: '#ddd', backgroundSize: (m as any).category === 'metal' ? '140%' as any : undefined }}

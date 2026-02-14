@@ -563,15 +563,12 @@ function Staircase3D({
 
 	return (
 		<group position={[-1.5, 0, 0]}>
-			{/* תאורה אחידה מכל הזוויות: בעיקר ambient + hemisphere, בלי point lights כיווניים */}
-			<ambientLight intensity={1.15} />
-			<hemisphereLight args={['#ffffff', '#e0e6ed', 0.85]} />
-			{/* אור כיווני מינימלי רק להגדרת נפח עדינה – כמעט לא משפיע על ההבדל בין זוויות */}
-			<directionalLight position={[2, 4, 2]} intensity={0.06} color="#ffffff" />
-			<directionalLight position={[-2, 3, -2]} intensity={0.04} color="#ffffff" />
+			{/* תאורה אחידה לגמרי: רק ambient + hemisphere, בלי אור כיווני ו־Environment ממוקד */}
+			<ambientLight intensity={1.35} />
+			<hemisphereLight args={['#ffffff', '#e8ecf0', 1.0]} />
 
-			{/* Environment פשוט עם השתקפויות רכות */}
-			<Environment preset="studio" resolution={64} blur={0.35} />
+			{/* Environment מטושטש מאוד כדי לא ליצור צד מואר/צד מוצל */}
+			<Environment preset="studio" resolution={32} blur={0.95} />
 			{(() => { 
 				if (boxModel === 'rounded') {
 					return buildRoundedTreads({

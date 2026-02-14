@@ -98,7 +98,7 @@ export function BookingModal(props: {
 						</div>
 
 						<div className="mb-2 relative flex justify-center">
-							<div className="absolute left-2 md:left-4 lg:left-20 top-1/2 -translate-y-1/2 mt-1 pointer-events-none text-[#0f1424]">
+							<div className="absolute left-2 md:left-4 lg:left-20 top-1/2 -translate-y-1/2 mt-3 pointer-events-none text-[#0f1424]">
 								<svg
 									className="w-[2.72rem] h-[2.72rem] md:w-[3.2rem] md:h-[3.2rem]"
 									viewBox="0 0 24 24"
@@ -263,10 +263,11 @@ export function BookingModal(props: {
 							</svg>
 						</div>
 						<p className="text-xl font-semibold mb-1">תודה שפנית אלינו</p>
-						<p className="text-gray-600">נחזור אליך בהקדם לקבוע פגישה.</p>
+						<p className="text-gray-600">נציגנו ייצור איתך קשר בהקדם כדי לאשר את הפגישה.</p>
+						<p className="text-gray-500 text-sm mt-2">מחכים לך – נכין עבורך הצעה מותאמת.</p>
 						<div className="mt-6">
 							<button onClick={() => setBookingOpen(false)} className="inline-flex justify-center items-center px-6 py-3 rounded-md font-semibold text-white bg-[#1a1a2e] hover:opacity-95 cursor-pointer">
-									סגור
+								מעולה, להתראות
 							</button>
 						</div>
 					</div>

@@ -1602,29 +1602,44 @@ function LivePageInner() {
 							nodes.push({
 								key: 'railing',
 								el: (
-									<RailingPicker
-										railing={railing}
-										setRailing={setRailing}
-										glassTone={glassTone}
-										setGlassTone={setGlassTone}
-										railingMetalSolid={railingMetalSolid}
-										setRailingMetalSolid={setRailingMetalSolid}
-										setRailingMetalId={setRailingMetalId}
-										cableOptions={cableOptions}
-										cableId={cableId}
-										setCableId={setCableId}
-										setCableColor={setCableColor}
-										pathSegments={pathSegments}
-										landingMeta={landingMeta}
-										stepRailing={stepRailing}
-										setStepRailing={setStepRailing}
-										landingRailing={landingRailing}
-										setLandingRailing={setLandingRailing}
-										stepCableSpanMode={stepCableSpanMode}
-										setStepCableSpanMode={setStepCableSpanMode}
-										landingCableSpanMode={landingCableSpanMode}
-										setLandingCableSpanMode={setLandingCableSpanMode}
-									/>
+									<>
+										<RailingPicker
+											railing={railing}
+											setRailing={setRailing}
+											glassTone={glassTone}
+											setGlassTone={setGlassTone}
+											railingMetalSolid={railingMetalSolid}
+											setRailingMetalSolid={setRailingMetalSolid}
+											setRailingMetalId={setRailingMetalId}
+											cableOptions={cableOptions}
+											cableId={cableId}
+											setCableId={setCableId}
+											setCableColor={setCableColor}
+											pathSegments={pathSegments}
+											landingMeta={landingMeta}
+											stepRailing={stepRailing}
+											setStepRailing={setStepRailing}
+											landingRailing={landingRailing}
+											setLandingRailing={setLandingRailing}
+											stepCableSpanMode={stepCableSpanMode}
+											setStepCableSpanMode={setStepCableSpanMode}
+											landingCableSpanMode={landingCableSpanMode}
+											setLandingCableSpanMode={setLandingCableSpanMode}
+										/>
+										{/* סיום והתקשרות – שלב 5 (מעקה) */}
+										<div className="mt-5 pt-4 border-t border-gray-200 text-center" dir="rtl">
+											<p className="text-sm font-medium text-[#1a1a2e] mb-1">סיימתם את ההתאמה</p>
+											<p className="text-xs text-gray-600 mb-3">רוצים לקבל הצעת מחיר מדויקת או לתאם פגישה? נשמח לעזור.</p>
+											<button
+												type="button"
+												onClick={() => setBookingOpen(true)}
+												className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-md bg-[#1a1a2e] text-white px-5 py-2.5 text-sm font-semibold shadow-sm hover:opacity-95 cursor-pointer"
+												aria-label="תיאום פגישה"
+											>
+												תיאום פגישה
+											</button>
+										</div>
+									</>
 								),
 							});
 

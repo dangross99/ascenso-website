@@ -520,6 +520,14 @@ function LivePageInner() {
 		}
 	}, []);
 	// ללא זרימה כפויה – אין מעבר אוטומטי או אינדקס שלב
+	type Cat = 'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing';
+	const stepOrderForSteps: Cat[] = activeMaterial === 'wood'
+		? ['box', 'material', 'woodTexture', 'woodColor', 'path', 'railing']
+		: ['box', 'material', 'nonWoodTexture', 'path', 'railing'];
+	const getNextCatForSteps = (cat: Cat): Cat | null => {
+		const i = stepOrderForSteps.indexOf(cat);
+		return i >= 0 && i < stepOrderForSteps.length - 1 ? stepOrderForSteps[i + 1] : null;
+	};
 
 	// קונפיגורטור מדרגות
 	const [shape, setShape] = React.useState<'straight' | 'L' | 'U'>(qShape);
@@ -2505,12 +2513,19 @@ function LivePageInner() {
 											<button
 												key={opt.id}
 												className={`px-3 py-1 text-sm rounded-full border ${box === opt.id ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
-												onClick={() => { setBox(opt.id); setDesktopOpenCat('material'); }}
+												onClick={() => setBox(opt.id)}
 											>
 												{opt.label}
 											</button>
 										))}
 									</div>
+									{getNextCatForSteps('box') && (
+										<div className="mt-3">
+											<button type="button" onClick={() => setDesktopOpenCat(getNextCatForSteps('box')!)} className="w-full py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
+												המשך
+											</button>
+										</div>
+									)}
 								</div>
 							)}
 						</div>
@@ -2530,17 +2545,19 @@ function LivePageInner() {
 											<button
 												key={m}
 												className={`px-3 py-1 text-sm rounded-full border ${activeMaterial === m ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
-												onClick={() => {
-													startTransition(() => {
-														setActiveMaterial(m);
-														setDesktopOpenCat(m === 'wood' ? 'woodTexture' : 'nonWoodTexture');
-													});
-												}}
+												onClick={() => startTransition(() => setActiveMaterial(m))}
 											>
 												{m === 'wood' ? 'עץ' : m === 'metal' ? 'מתכת' : 'אבן טבעית'}
 											</button>
 										))}
 									</div>
+									{getNextCatForSteps('material') && (
+										<div className="mt-3">
+											<button type="button" onClick={() => setDesktopOpenCat(getNextCatForSteps('material')!)} className="w-full py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
+												המשך
+											</button>
+										</div>
+									)}
 								</div>
 							)}
 						</div>
@@ -2566,12 +2583,19 @@ function LivePageInner() {
 														key={m.id}
 														aria-label={m.name || m.id}
 														title={m.name || m.id}
-														onClick={() => startTransition(() => { setActiveModelId(m.id); setDesktopOpenCat('woodColor'); })}
+														onClick={() => startTransition(() => setActiveModelId(m.id))}
 														className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeModelId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 														style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
 													/>
 												))}
 											</div>
+											{getNextCatForSteps('woodTexture') && (
+												<div className="mt-3">
+													<button type="button" onClick={() => setDesktopOpenCat(getNextCatForSteps('woodTexture')!)} className="w-full py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
+														המשך
+													</button>
+												</div>
+											)}
 										</div>
 									)}
 								</div>
@@ -2587,35 +2611,44 @@ function LivePageInner() {
 										</span>
 									</button>
 									{desktopOpenCat === 'woodColor' && (
-										<div className="p-3 bg-white border border-t-0 rounded-b-md">
-											{(() => {
-												const items = WOOD_SWATCHES.filter(sw => !!activeModel?.variants?.[sw.id]);
-												return (
-													<div className="flex items-center gap-3 flex-wrap">
-														{items.map(sw => {
-															const img = activeModel?.variants?.[sw.id]?.[0];
-															const solid = COLOR_HEX[sw.id];
-															return (
-																<button
-																	key={sw.id}
-																	aria-label={sw.label}
-																	title={sw.label}
-																	onClick={() => startTransition(() => { setActiveColor(sw.id); setDesktopOpenCat('path'); })}
-																	className={`w-8 h-8 rounded-full border-2 ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-																	style={{
-																		backgroundImage: img ? `url("${encodeURI(img)}")` : undefined,
-																		backgroundColor: img ? undefined : solid,
-																		backgroundSize: 'cover',
-																		backgroundPosition: 'center',
-																		borderColor: '#ddd',
-																	}}
-																/>
-															);
-														})}
-													</div>
-												);
-											})()}
-										</div>
+										<>
+											<div className="p-3 bg-white border border-t-0 rounded-b-md">
+												{(() => {
+													const items = WOOD_SWATCHES.filter(sw => !!activeModel?.variants?.[sw.id]);
+													return (
+														<div className="flex items-center gap-3 flex-wrap">
+															{items.map(sw => {
+																const img = activeModel?.variants?.[sw.id]?.[0];
+																const solid = COLOR_HEX[sw.id];
+																return (
+																	<button
+																		key={sw.id}
+																		aria-label={sw.label}
+																		title={sw.label}
+																		onClick={() => startTransition(() => setActiveColor(sw.id))}
+																		className={`w-8 h-8 rounded-full border-2 ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+																		style={{
+																			backgroundImage: img ? `url("${encodeURI(img)}")` : undefined,
+																			backgroundColor: img ? undefined : solid,
+																			backgroundSize: 'cover',
+																			backgroundPosition: 'center',
+																			borderColor: '#ddd',
+																		}}
+																	/>
+																);
+															})}
+														</div>
+													);
+												})()}
+											</div>
+											{getNextCatForSteps('woodColor') && (
+												<div className="mt-3">
+													<button type="button" onClick={() => setDesktopOpenCat(getNextCatForSteps('woodColor')!)} className="w-full py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
+														המשך
+													</button>
+												</div>
+											)}
+										</>
 									)}
 								</div>
 							</>
@@ -2648,13 +2681,19 @@ function LivePageInner() {
 														setActiveTexId(m.id);
 														if (activeMaterial === 'metal') setActiveMetalTexId(m.id);
 														if (activeMaterial === 'stone') setActiveStoneTexId(m.id);
-														setDesktopOpenCat('path');
 													})}
 													className={`w-10 h-10 rounded-full border-2 bg-center bg-cover ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 													style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, backgroundColor: (!m.images || m.images.length === 0) && (m as any).solid ? (m as any).solid : undefined, borderColor: '#ddd', backgroundSize: (m as any).category === 'metal' ? '140%' as any : undefined }}
 												/>
 											))}
 										</div>
+										{getNextCatForSteps('nonWoodTexture') && (
+											<div className="mt-3">
+												<button type="button" onClick={() => setDesktopOpenCat(getNextCatForSteps('nonWoodTexture')!)} className="w-full py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
+													המשך
+												</button>
+											</div>
+										)}
 									</div>
 								)}
 							</div>

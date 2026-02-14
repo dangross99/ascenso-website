@@ -301,38 +301,42 @@ export function buildTaperBoxTreads(params: {
 					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
+				// L 0° / ישר 0°: סיבוב 180° בגרם הראשון כמו בדגם מרום (ridge) – הפאה העבה תפנה נכון
+				const bodyYaw = t.flight === 0 ? Math.PI : 0;
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>
-						{/* Bottom */}
-						<mesh geometry={geoBottom} receiveShadow castShadow={materialKind !== 'metal'}>
-							{matBottom}
-						</mesh>
+						<group rotation={[0, bodyYaw, 0]}>
+							{/* Bottom */}
+							<mesh geometry={geoBottom} receiveShadow castShadow={materialKind !== 'metal'}>
+								{matBottom}
+							</mesh>
 
-						{/* Front / Back */}
-						<mesh geometry={geoFront} receiveShadow castShadow={materialKind !== 'metal'}>
-							{matFrontBack(forwardSign < 0)}
-						</mesh>
-						<mesh geometry={geoBack} receiveShadow castShadow={materialKind !== 'metal'}>
-							{matFrontBack(forwardSign > 0)}
-						</mesh>
+							{/* Front / Back */}
+							<mesh geometry={geoFront} receiveShadow castShadow={materialKind !== 'metal'}>
+								{matFrontBack(forwardSign < 0)}
+							</mesh>
+							<mesh geometry={geoBack} receiveShadow castShadow={materialKind !== 'metal'}>
+								{matFrontBack(forwardSign > 0)}
+							</mesh>
 
-						{/* Outer / Inner sides */}
-						<mesh geometry={geoOuter} receiveShadow castShadow={materialKind !== 'metal'}>
-							{matSides(forwardSign < 0)}
-						</mesh>
-						<mesh geometry={geoInner} receiveShadow castShadow={materialKind !== 'metal'}>
-							{matSides(forwardSign > 0)}
-						</mesh>
+							{/* Outer / Inner sides */}
+							<mesh geometry={geoOuter} receiveShadow castShadow={materialKind !== 'metal'}>
+								{matSides(forwardSign < 0)}
+							</mesh>
+							<mesh geometry={geoInner} receiveShadow castShadow={materialKind !== 'metal'}>
+								{matSides(forwardSign > 0)}
+							</mesh>
 
-						{/* Top face עם UV רציף */}
-						<mesh
-							position={[0, thickStart / 2 + 0.002, 0]}
-							castShadow={materialKind !== 'metal'}
-							receiveShadow={materialKind !== 'metal'}
-						>
-							<boxGeometry args={[run, 0.004, treadWidth]} />
-							{matTop}
-						</mesh>
+							{/* Top face עם UV רציף */}
+							<mesh
+								position={[0, thickStart / 2 + 0.002, 0]}
+								castShadow={materialKind !== 'metal'}
+								receiveShadow={materialKind !== 'metal'}
+							>
+								<boxGeometry args={[run, 0.004, treadWidth]} />
+								{matTop}
+							</mesh>
+						</group>
 					</group>
 				);
 			})}

@@ -38,11 +38,10 @@ function getForceWallSideFromTable(model: string, pathKey: string): 'right' | 'l
 	return entry?.forceWallSide ?? 'auto';
 }
 
-/** דריסת mirror לפי דגם ומסלול – כש־true, הפאה העבה/חזית תפנה נכון. טריז ב־180°: false כדי שהחלק העבה יופיע בהתחלה */
+/** דריסת mirror לפי דגם ומסלול – כש־true, הפאה העבה/חזית תפנה נכון. טריז ב־180° מתוקן בהיפוך ציר Y במודל (wedge.tsx) */
 const MIRROR_OVERRIDES: Partial<Record<string, Partial<Record<string, boolean>>>> = {
 	ridge: { straight_0: true },
 	taper: { straight_0: true },
-	wedge: { straight_180: false },
 };
 
 function getMirrorOverride(model: string, pathKey: string): boolean | undefined {

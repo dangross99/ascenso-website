@@ -183,8 +183,10 @@ export function buildWedgeTreads(params: {
 							</mesh>
 						);
 
+						{/* היפוך בציר Y לפי יואו המסלול – ב־0° מסובבים את הגוף ב־π כדי שהעבה יהיה לקיר; ב־180° לא מוסיפים (הטread כבר מסובב) */}
+						const bodyYaw = (t.rotation[1] as number) === 0 ? Math.PI : 0;
 						const geomGroup = (
-							<group rotation={[0, Math.PI, 0]}>
+							<group rotation={[0, bodyYaw, 0]}>
 								{front}{back}{right}{left}{bottom}
 							</group>
 						);

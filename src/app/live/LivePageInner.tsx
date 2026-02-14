@@ -535,7 +535,7 @@ function LivePageInner() {
 		thin: { name: 'להב', specs: 'עובי אחיד 7 ס״מ' },
 		rounded: { name: 'קפסולה', specs: 'עובי 8 ס״מ · פינות מעוגלות רדיוס 4 ס״מ' },
 		taper: { name: 'דלתא', specs: 'קצה 5 ס״מ הופך ל־12 ס״מ' },
-		wedge: { name: 'טריז', specs: 'חזית 3.5 ס״מ הופך לעובי 11 ס״מ' },
+		wedge: { name: 'טריז', specs: 'חזית 11 ס״מ הופך לעובי 3.5 ס״מ' },
 		ridge: { name: 'מרום', specs: 'בסיס 2 ס״מ · רכס עולה ל־11 ס״מ' },
 	};
 

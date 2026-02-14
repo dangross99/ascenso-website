@@ -571,11 +571,11 @@ function Staircase3D({
 			{/* תאורת פנים רכה: ambient גבוה, headlight רך */}
 			<ambientLight intensity={1.2} />
 			<hemisphereLight args={['#ffffff', '#e8ecf0', 1.0]} />
-			{/* Headlight רך (אור עוקב מצלמה) – מפוזר יותר, פחות "שורף" */}
-			<pointLight ref={headlightRef} intensity={0.8} distance={20} color="#ffffff" />
+			{/* Headlight רך (אור עוקב מצלמה) – 0.65 להתחלה, לאזן עם ambient */}
+			<pointLight ref={headlightRef} intensity={0.65} distance={20} color="#ffffff" />
 
-			{/* Environment פנים (apartment) – השתקפויות רכות, הסביבה תורמת אור */}
-			<Environment preset="apartment" blur={0.3} environmentIntensity={1.0} />
+			{/* Environment פנים – עוצמה 1.2: יותר אור "מהקירות", מראה טבעי */}
+			<Environment preset="apartment" blur={0.3} environmentIntensity={1.2} />
 			{(() => { 
 				if (boxModel === 'rounded') {
 					return buildRoundedTreads({

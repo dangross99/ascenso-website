@@ -223,7 +223,7 @@ function Staircase3D({
 				return typeof o === 'boolean' ? o : getMirrorForTread(f, p, fl);
 			};
 
-			if (isStraight) {
+			if (isStraight && shape !== 'L') {
 				const n = straightSteps[0];
 				const mirror = resolveMirror('straight', flip, 0);
 				const forceWallSide = fws(0);
@@ -241,14 +241,16 @@ function Staircase3D({
 						bodyRotate180: false,
 					});
 				}
-			} else if (isL) {
-				// L: תמיד אותה גאומטריה (X+ then Z-) – אין רוטציית מסלול. 180° = רק היפוך ימין/שמאל (צד קיר) כדי למנוע התנגשות
-				const [a, b] = straightSteps;
+			} else if (isL || (isStraight && shape === 'L')) {
+				// isL = pathSegments עם 2 ישרים + פודסט; או ישר אחד אבל shape=L – בונים L (פיצול לפי steps)
+				const n = straightSteps[0];
+				const a = isL ? straightSteps[0] : Math.floor(n / 2);
+				const b = isL ? straightSteps[1] : n - a - 1;
+				const podestX = a * treadDepth + treadWidth / 2;
 				const mirror0 = resolveMirror('L', flip, 0);
 				const mirror1 = resolveMirror('L', flip, 1);
 				const fws0 = fws(0);
 				const fws1 = fws(1);
-				const podestX = a * treadDepth + treadWidth / 2;
 				const bodyRotateL0 = !flip; // רק L 0° – דלתא/מרום סיבוב גוף בגרם ראשון
 				for (let i = 0; i < a; i++) {
 					treads.push({

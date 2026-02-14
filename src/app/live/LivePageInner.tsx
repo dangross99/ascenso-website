@@ -16,7 +16,6 @@ import { Schematic } from './components/Schematic';
 import { BoxPicker, BoxShapeIcon } from './components/BoxPicker';
 import { MaterialKindPicker } from './components/MaterialKindPicker';
 import { WoodTexturePicker } from './components/WoodTexturePicker';
-import { WoodColorPicker } from './components/WoodColorPicker';
 import { NonWoodTexturePicker } from './components/NonWoodTexturePicker';
 import { PathPicker } from './components/PathPicker';
 import { RailingPicker } from './components/RailingPicker';
@@ -1530,15 +1529,11 @@ function LivePageInner() {
 												woodModels={woodModels as any}
 												activeModelId={activeModelId}
 												onPick={(id) => startTransition(() => setActiveModelId(id))}
-												bottomSection={
-													<WoodColorPicker
-														swatches={WOOD_SWATCHES}
-														activeModel={activeModel as any}
-														activeColor={activeColor}
-														colorHex={COLOR_HEX}
-														onPick={(id) => startTransition(() => setActiveColor(id))}
-													/>
-												}
+												swatches={WOOD_SWATCHES}
+												activeModel={activeModel as any}
+												activeColor={activeColor}
+												colorHex={COLOR_HEX}
+												onPickColor={(id) => startTransition(() => setActiveColor(id))}
 											/>
 											{getNextCatForSteps('woodTexture') && (
 												<div className="mt-3 mb-4 text-center">

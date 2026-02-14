@@ -2058,7 +2058,11 @@ function LivePageInner() {
 													/>
 												)}
 												<span className="text-xs font-semibold text-[#1a1a2e]/70 shrink-0">המעקה הנבחר</span>
-												<span className="text-sm font-bold text-[#1a1a2e] shrink-0">{formatRailing()}</span>
+												<span className="text-sm font-bold text-[#1a1a2e] shrink-0">
+													{railing === 'cable'
+														? `מערכת כבלי נירוסטה 8 מ״מ (${(cableOptions.find(c => c.id === cableId) || cableOptions[0])?.name || 'כבל'})`
+														: formatRailing()}
+												</span>
 											</div>
 										</div>
 									)}

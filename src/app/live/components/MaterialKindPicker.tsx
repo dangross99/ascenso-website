@@ -13,7 +13,7 @@ export function MaterialKindPicker(props: {
 				{(['wood', 'metal', 'stone'] as const).map(m => (
 					<button
 						key={m}
-						className={`px-4 py-2 text-base rounded-full border ${activeMaterial === m ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
+						className={`px-4 py-2 text-base rounded-full border cursor-pointer ${activeMaterial === m ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
 						onClick={() => onChange(m)}
 					>
 						{m === 'wood' ? 'עץ' : m === 'metal' ? 'מתכת' : 'אבן טבעית'}

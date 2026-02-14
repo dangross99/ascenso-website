@@ -2226,7 +2226,7 @@ function LivePageInner() {
 													{(['wood', 'metal', 'stone'] as const).map(m => (
 														<button
 															key={m}
-															className={`px-3 py-1 text-sm rounded-full border ${activeMaterial === m ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
+															className={`px-3 py-1 text-sm rounded-full border cursor-pointer ${activeMaterial === m ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
 															onClick={() => startTransition(() => setActiveMaterial(m))}
 														>
 															{m === 'wood' ? 'עץ' : m === 'metal' ? 'מתכת' : 'אבן טבעית'}

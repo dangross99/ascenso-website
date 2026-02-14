@@ -551,20 +551,6 @@ function LivePageInner() {
 		return [{ kind: 'straight', steps }];
 	});
 	const [pathFlipped180, setPathFlipped180] = React.useState(false);
-	const [textureHoverPreview, setTextureHoverPreview] = React.useState<{
-		image?: string;
-		backgroundColor?: string;
-		pick?: { type: 'model' | 'color' | 'tex'; id: string };
-	} | null>(null);
-	const TEXTURE_PREVIEW_SIZE = 400; // 40px × 10
-	const textureHoverCloseTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
-	const clearTextureHoverCloseTimeout = React.useCallback(() => {
-		if (textureHoverCloseTimeoutRef.current) {
-			clearTimeout(textureHoverCloseTimeoutRef.current);
-			textureHoverCloseTimeoutRef.current = null;
-		}
-	}, []);
-
 	// הוסר: מנגנון "שחזור מצב" למובייל כולל סטייט, שמירה, ושחזורים
 
 	// עדכון ברירת מחדל של מצב מעקה לכל מדרגה לפי המסלול והבחירה הגלובלית
@@ -1453,40 +1439,6 @@ function LivePageInner() {
 
 	return (
 		<>
-			{textureHoverPreview && (
-				<div
-					className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-3 bg-black/40 cursor-pointer"
-					onMouseEnter={clearTextureHoverCloseTimeout}
-					onMouseLeave={() => { clearTextureHoverCloseTimeout(); setTextureHoverPreview(null); }}
-					onClick={() => {
-						const pick = textureHoverPreview.pick;
-						if (pick) {
-							if (pick.type === 'model') startTransition(() => setActiveModelId(pick.id));
-							else if (pick.type === 'color') startTransition(() => setActiveColor(pick.id));
-							else if (pick.type === 'tex') {
-								startTransition(() => {
-									setActiveTexId(pick.id);
-									if (activeMaterial === 'metal') setActiveMetalTexId(pick.id);
-									if (activeMaterial === 'stone') setActiveStoneTexId(pick.id);
-								});
-							}
-							setTextureHoverPreview(null);
-						}
-					}}
-					aria-hidden
-				>
-					<div
-						className="rounded-full border-4 border-white shadow-2xl bg-center bg-cover ring-2 ring-[#1a1a2e]/30"
-						style={{
-							width: TEXTURE_PREVIEW_SIZE,
-							height: TEXTURE_PREVIEW_SIZE,
-							backgroundImage: textureHoverPreview.image ? `url("${encodeURI(textureHoverPreview.image)}")` : undefined,
-							backgroundColor: textureHoverPreview.backgroundColor,
-						}}
-					/>
-					<span className="text-sm font-medium text-white drop-shadow-md bg-black/30 px-3 py-1.5 rounded-full">לחץ לבחירה</span>
-				</div>
-			)}
 			<div className="min-h-screen w-full bg-[#EFEFEF]">
 			<main className="max-w-7xl mx-auto px-4 lg:px-6 py-6" dir="rtl">
 			<div className="grid grid-cols-1 gap-0">
@@ -2352,11 +2304,9 @@ function LivePageInner() {
 															<button
 																key={m.id}
 																aria-label={m.name || m.id}
-																title={`${m.name || m.id} – לחץ לבחירה`}
+																title={m.name || m.id}
 																onClick={() => startTransition(() => setActiveModelId(m.id))}
-																onMouseEnter={() => { clearTextureHoverCloseTimeout(); setTextureHoverPreview({ image: m.images?.[0], backgroundColor: m.images?.[0] ? undefined : '#e5e5e5', pick: { type: 'model', id: m.id } }); }}
-																onMouseLeave={() => { textureHoverCloseTimeoutRef.current = setTimeout(() => setTextureHoverPreview(null), 220); }}
-																className={`w-10 h-10 rounded-full border-2 bg-center bg-cover cursor-pointer ${activeModelId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+																className={`w-10 h-10 rounded-full border-2 bg-center bg-cover cursor-pointer transition-transform duration-200 hover:scale-110 ${activeModelId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
 															/>
 														))}
@@ -2375,11 +2325,9 @@ function LivePageInner() {
 																			<button
 																				key={sw.id}
 																				aria-label={sw.label}
-																				title={`${sw.label} – לחץ לבחירה`}
+																				title={sw.label}
 																				onClick={() => startTransition(() => setActiveColor(sw.id))}
-																				onMouseEnter={() => { clearTextureHoverCloseTimeout(); setTextureHoverPreview({ image: img, backgroundColor: img ? undefined : solid, pick: { type: 'color', id: sw.id } }); }}
-																				onMouseLeave={() => { textureHoverCloseTimeoutRef.current = setTimeout(() => setTextureHoverPreview(null), 220); }}
-																				className={`w-8 h-8 rounded-full border-2 cursor-pointer ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+																				className={`w-8 h-8 rounded-full border-2 cursor-pointer transition-transform duration-200 hover:scale-110 ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																				style={{
 																					backgroundImage: img ? `url("${encodeURI(img)}")` : undefined,
 																					backgroundColor: img ? undefined : solid,
@@ -2419,19 +2367,13 @@ function LivePageInner() {
 															<button
 																key={m.id}
 																aria-label={m.name || m.id}
-																title={`${m.name || m.id} – לחץ לבחירה`}
+																title={m.name || m.id}
 												onClick={() => startTransition(() => {
 													setActiveTexId(m.id);
 													if (activeMaterial === 'metal') setActiveMetalTexId(m.id);
 													if (activeMaterial === 'stone') setActiveStoneTexId(m.id);
 												})}
-																onMouseEnter={() => { clearTextureHoverCloseTimeout(); setTextureHoverPreview({
-																	image: m.images?.[0],
-																	backgroundColor: (!m.images || m.images.length === 0) && (m as any).solid ? (m as any).solid : undefined,
-																	pick: { type: 'tex', id: m.id },
-																}); }}
-																onMouseLeave={() => { textureHoverCloseTimeoutRef.current = setTimeout(() => setTextureHoverPreview(null), 220); }}
-																className={`w-10 h-10 rounded-full border-2 bg-center bg-cover cursor-pointer ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+																className={`w-10 h-10 rounded-full border-2 bg-center bg-cover cursor-pointer transition-transform duration-200 hover:scale-110 ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
 																style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, backgroundColor: (!m.images || m.images.length === 0) && (m as any).solid ? (m as any).solid : undefined, borderColor: '#ddd' }}
 															/>
 														))}

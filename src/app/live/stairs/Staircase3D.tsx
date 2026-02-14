@@ -660,8 +660,8 @@ function Staircase3D({
 				const wallH = 6.0; // מטר – קבוע מהרצפה
 				const wallTh = 0.06; // עובי קיר 6 ס"מ
 				const gap = 0.01; // מרווח מהקצה כדי למנוע זי-פייטינג
-				// BasicMaterial מבטל השפעת Environment ותאורה – לבן בוהק ואחיד בכל הגרמים (לא אפור/כחלחל)
-				const wallColor = '#ffffff';
+				// BasicMaterial + toneMapped=false – לבן קרמי עדין, אחיד בכל הגרמים
+				const wallColor = '#FFFBF5';
 
 				let sIdx = 0;
 				let lIdx = 0;

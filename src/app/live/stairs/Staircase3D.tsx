@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
-import { useLoader } from '@react-three/fiber';
+import React, { useRef } from 'react';
+import { useLoader, useFrame } from '@react-three/fiber';
 import { Environment, Text } from '@react-three/drei';
-import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, LinearMipmapLinearFilter, BufferGeometry, Float32BufferAttribute, Cache, Vector3 } from 'three';
+import { TextureLoader, RepeatWrapping, ClampToEdgeWrapping, SRGBColorSpace, LinearFilter, LinearMipmapLinearFilter, BufferGeometry, Float32BufferAttribute, Cache, Vector3, type PointLight } from 'three';
 import type { PathSegment } from '../shared/path';
 import { buildRectTreads } from './models/rect';
 import { buildWedgeTreads } from './models/wedge';
@@ -561,14 +561,20 @@ function Staircase3D({
 		}
 	}, [map, bumpMap, roughMap, tileScale]);
 
+	const headlightRef = useRef<PointLight>(null!);
+	useFrame((state) => {
+		if (headlightRef.current) headlightRef.current.position.copy(state.camera.position);
+	});
+
 	return (
 		<group position={[-1.5, 0, 0]}>
-			{/* תאורה אחידה לגמרי: רק ambient + hemisphere, בלי אור כיווני ו־Environment ממוקד */}
 			<ambientLight intensity={1.35} />
 			<hemisphereLight args={['#ffffff', '#e8ecf0', 1.0]} />
+			{/* Headlight – אור עוקב מצלמה כך שהצד שמסתכלים עליו תמיד מואר */}
+			<pointLight ref={headlightRef} intensity={1.5} distance={20} color="#ffffff" />
 
-			{/* Environment מטושטש מאוד כדי לא ליצור צד מואר/צד מוצל */}
-			<Environment preset="studio" resolution={32} blur={0.95} />
+			{/* Environment (קריטי למתכת ואבן) – city עם blur מתון לברק והשתקפויות */}
+			<Environment preset="city" blur={0.2} />
 			{(() => { 
 				if (boxModel === 'rounded') {
 					return buildRoundedTreads({

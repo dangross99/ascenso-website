@@ -115,7 +115,7 @@ export function buildRoundedTreads(params: {
 				const matAll = (() => {
 					const metalness = materialKind === 'metal' ? 1 : 0;
 					const roughness = materialKind === 'metal' ? 0.35 : materialKind === 'stone' ? 0.68 : 0.82;
-					const envMapIntensity = materialKind === 'metal' ? 0.75 : 0.55;
+					const envMapIntensity = materialKind === 'metal' ? 2.0 : 1.5;
 					if (useSolidMat) return <meshStandardMaterial color={solidTopColor || solidSideColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} />;
 					const ft = buildFaceTextures(run, treadWidth, rotTop);
 					return (

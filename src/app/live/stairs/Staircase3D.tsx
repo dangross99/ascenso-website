@@ -695,8 +695,8 @@ function Staircase3D({
 								(axis === 'x' ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
 							if (t.isLanding && axis === 'z') rightLocal = (rightLocal === 1 ? -1 : 1) as 1 | -1;
 							const railingSideSignLocal = (railingSide === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
-							// הקיר בפאה הנגדית למעקה. בהיפוך 180°: גרם שני (flight 1) ופודסטים מחליפים צד
-							const flipWallSide = pathFlipped180 && (t.flight === 1 || t.isLanding);
+							// הקיר בפאה הנגדית למעקה. גרם שני (flight 1) תמיד מפנים לצד החיצוני; פודסטים מפנים רק בהיפוך 180°
+							const flipWallSide = (t.flight === 1) || (pathFlipped180 && t.isLanding);
 							const wallOffset = (flipWallSide ? railingSideSignLocal : -railingSideSignLocal) * (treadWidth / 2 + gap + wallTh / 2);
 
 							// כיוון התקדמות (לקיר חזית בפודסט עם פנייה). בהיפוך 180° מפנים את קיר החזית
@@ -709,7 +709,7 @@ function Staircase3D({
 
 							return (
 								<group key={`outer-wall-${i}`} position={t.position} rotation={t.rotation}>
-									{/* קיר חיצוני: axis x → קיר לאורך X (רוחב ב-Z); axis z → קיר לאורך Z (רוחב ב-X) כדי שלא יחצה את המדרגה */}
+									{/* קיר חיצוני – מיקום בפאה הנגדית; axis z: קיר לאורך Z (לא חוצה מדרגה) */}
 									<mesh position={axis === 'x' ? [0, yLocal, wallOffset] : [wallOffset, yLocal, 0]} castShadow={false} receiveShadow={false}>
 										<boxGeometry args={axis === 'x' ? [t.run, wallH, wallTh] : [wallTh, wallH, t.run]} />
 										<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />

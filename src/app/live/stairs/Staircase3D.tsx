@@ -702,10 +702,10 @@ function Staircase3D({
 
 							return (
 								<group key={`outer-wall-${i}`} position={t.position} rotation={t.rotation}>
-									{/* קיר חיצוני – בלי receiveShadow כדי שהצבע יישאר אחיד (צללים היו מכההים) */}
+									{/* קיר חיצוני – toneMapped={false} כדי שהלבן לא יידחס ע"י ACES ויישאר בוהק */}
 									<mesh position={[0, yLocal, zWall]} castShadow={false} receiveShadow={false}>
 										<boxGeometry args={[t.run, wallH, wallTh]} />
-										<meshBasicMaterial color={wallColor} side={2} />
+										<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
 									</mesh>
 									{/* בפודסט עם פנייה: קיר חזית על כל רוחב הפאה. פודסט שני (flight 1, axis z): חזית ב־-X */}
 									{hasTurn ? (
@@ -720,9 +720,9 @@ function Staircase3D({
 											castShadow={false}
 											receiveShadow={false}
 										>
-											{/* קיר L – רוחב מלא; בלי receiveShadow לצבע אחיד */}
+											{/* קיר L – רוחב מלא; toneMapped={false} ללבן בוהק */}
 											<boxGeometry args={[wallTh, wallH, treadWidth]} />
-											<meshBasicMaterial color={wallColor} side={2} />
+											<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
 						</mesh>
 						) : null}
 					</group>

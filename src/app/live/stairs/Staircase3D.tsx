@@ -706,21 +706,21 @@ function Staircase3D({
 										<boxGeometry args={[t.run, wallH, wallTh]} />
 										<meshBasicMaterial color={wallColor} side={2} />
 									</mesh>
-									{/* בפודסט עם פנייה: הוסף גם קיר חיצוני שני שיוצר "L" בפינה החיצונית */}
+									{/* בפודסט עם פנייה: קיר חזית על כל רוחב הפאה */}
 									{hasTurn ? (
 										<mesh
 											position={[
-												// קיר "חזית" של הפודסט: תמיד בקצה +X במרחב המקומי (שם מתחבר הגרם הבא)
+												// קיר "חזית" של הפודסט: בקצה +X במרחב המקומי (שם מתחבר הגרם הבא)
 												(t.run / 2 + gap + wallTh / 2),
 												yLocal,
-												// רק חצי רוחב חיצוני כדי לא "לגלוש" לפנים
-												outerSignLocal * (treadWidth / 4),
+												// ממורכז ברוחב (Z=0) – הקיר מכסה את כל פאת החזית
+												0,
 											]}
 											castShadow={false}
 											receiveShadow
 										>
-											{/* קיר L – קופסה 6 ס"מ, meshBasicMaterial לצבע אחיד */}
-											<boxGeometry args={[wallTh, wallH, treadWidth / 2]} />
+											{/* קיר L – רוחב מלא (treadWidth) כדי לכסות את כל פאת הפודסט */}
+											<boxGeometry args={[wallTh, wallH, treadWidth]} />
 											<meshBasicMaterial color={wallColor} side={2} />
 						</mesh>
 						) : null}

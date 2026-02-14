@@ -941,13 +941,16 @@ function Staircase3D({
 							const sinY = Math.sin(fw.yaw);
 							let rightLocal: 1 | -1 =
 								(fw.axis === 'x' ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
+							// גרם לאורך Z – אותו היפוך כמו ב-boxShared כדי ש"ימין/שמאל" יתאימו לקצה החיצוני של המדרגה
+							if (fw.axis === 'z') rightLocal = (rightLocal === 1 ? -1 : 1) as 1 | -1;
 							const railingSideSignLocal = (fw.railingSide === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
 							const wallOffset = -railingSideSignLocal * (treadWidth / 2 + gap + wallTh / 2);
 							const yLocal = worldCenterY - fw.wallCenter[1];
+							// היסט קיר תמיד בציר Z מקומי (מאונך לריצה) – אחרת בגרם שני הקיר נחצה באמצע המדרגה
 							return (
 								<group key={`flight-wall-${fw.flight}`} position={fw.wallCenter} rotation={[0, fw.yaw, 0]}>
 									<mesh
-										position={fw.axis === 'x' ? [0, yLocal, wallOffset] : [wallOffset, yLocal, 0]}
+										position={[0, yLocal, wallOffset]}
 										castShadow={false}
 										receiveShadow={false}
 									>

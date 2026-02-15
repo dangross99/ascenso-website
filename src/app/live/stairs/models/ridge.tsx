@@ -160,8 +160,10 @@ export function buildRidgeTreads(params: {
 							</mesh>
 						);
 
+						// L 0°: הסיבוב כבר ב־t.rotation[1] מ־getTreads – לא להוסיף שוב
+						const innerYaw = (t.rotation[1] as number) === Math.PI ? 0 : (t.flight === 0 ? Math.PI : 0);
 						const geomGroup = (
-							<group rotation={[0, (t.flight === 0 ? Math.PI : 0), 0]}>
+							<group rotation={[0, innerYaw, 0]}>
 								{front}{bottom}{back}{sideRight}{sideLeft}
 							</group>
 						);

@@ -251,9 +251,10 @@ function Staircase3D({
 				const mirror1 = resolveMirror('L', flip, 1);
 				const fws0 = fws(0);
 				const fws1 = fws(1);
-				const bodyRotateL0 = !flip; // רק L 0° – דלתא סיבוב גוף בגרם ראשון (רק taper, לא מרום)
-				// סיבוב ב־rotation[1] (ציר Y) רק לדלתא ב־L 0° – הפאה הנכונה צמודה לקיר
-				const rotationY = bodyRotateL0 && boxModel === 'taper' ? Math.PI : 0;
+				const bodyRotateL0 = !flip;
+				// דלתא: היפוך גרם ראשון ב־L 0° וב־L 180° (rotation[1] או bodyRotate180 לפודסט)
+				const taperFlipFirst = boxModel === 'taper' && (bodyRotateL0 || flip);
+				const rotationY = taperFlipFirst ? Math.PI : 0;
 				for (let i = 0; i < a; i++) {
 					treads.push({
 						position: [i * treadDepth + treadDepth / 2, i * riser, 0],
@@ -277,11 +278,12 @@ function Staircase3D({
 					axis: 'x',
 					mirror: mirror0,
 					forceWallSide: fws0,
-					bodyRotate180: bodyRotateL0 && boxModel === 'taper',
+					bodyRotate180: taperFlipFirst,
 				});
-				// גרם שני: L 0° = פנייה ל־Z שלילי; L 180° = פנייה ימינה (Z חיובי)
+				// גרם שני: L 0° = Z שלילי; L 180° = ימינה (Z חיובי). טריז ב־L 180° – היפוך (bodyRotate180)
 				const zSign = flip ? 1 : -1;
 				const yaw1 = flip ? Math.PI / 2 : -Math.PI / 2;
+				const wedgeFlipSecond = flip && boxModel === 'wedge';
 				for (let i = 0; i < b; i++) {
 					const stepY = (a + 1 + i) * riser;
 					const z1 = zSign * (treadWidth / 2 + i * treadDepth + treadDepth / 2);
@@ -294,7 +296,7 @@ function Staircase3D({
 						axis: 'z',
 						mirror: mirror1,
 						forceWallSide: fws1,
-						bodyRotate180: false,
+						bodyRotate180: wedgeFlipSecond,
 					});
 				}
 			} else if (isU) {

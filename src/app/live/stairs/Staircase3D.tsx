@@ -19,20 +19,20 @@ Cache.enabled = true;
 const MODEL_SIDE_OVERRIDES: Partial<Record<string, Partial<Record<string, { forceWallSide: 'right' | 'left' }>>>> = {
 	ridge: {
 		straight_180: { forceWallSide: 'left' },
-		L_180_flight_1: { forceWallSide: 'left' },
+		L_180_flight_1: { forceWallSide: 'right' },
 		U_0_flight_2: { forceWallSide: 'left' },
 	},
 	taper: {
-		L_180_flight_1: { forceWallSide: 'left' },
+		L_180_flight_1: { forceWallSide: 'right' },
 	},
 };
 
-/** דריסת צד קיר לפי מסלול (חל על כל הדגמים). L 0° קיר ימין; L 180° שני הקירות בצד השני (שמאל) */
+/** דריסת צד קיר לפי מסלול. L 0° קיר ימין; L 180° גרם ראשון שמאל, גרם שני קיר בצד החיצוני (ימין) */
 const PATH_WALL_SIDE_OVERRIDES: Partial<Record<string, { forceWallSide: 'right' | 'left' }>> = {
 	L_0_flight_0: { forceWallSide: 'right' },
 	L_0_flight_1: { forceWallSide: 'right' },
 	L_180_flight_0: { forceWallSide: 'left' },
-	L_180_flight_1: { forceWallSide: 'left' },
+	L_180_flight_1: { forceWallSide: 'right' },
 };
 
 function getPathKey(path: 'straight' | 'L' | 'U', flip: boolean, flight: number): string {

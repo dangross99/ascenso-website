@@ -281,10 +281,10 @@ function Staircase3D({
 					forceWallSide: fws0,
 					bodyRotate180: taperFlipFirst,
 				});
-				// גרם שני: L 0° = Z שלילי; L 180° = ימינה (Z חיובי). טריז ב־L 180° – היפוך (bodyRotate180)
+				// גרם שני: L 0° = Z שלילי; L 180° = ימינה. טריז ודלתא ב־L 180° – היפוך (bodyRotate180)
 				const zSign = flip ? 1 : -1;
 				const yaw1 = flip ? Math.PI / 2 : -Math.PI / 2;
-				const wedgeFlipSecond = flip && boxModel === 'wedge';
+				const flipSecond = flip && (boxModel === 'wedge' || boxModel === 'taper');
 				for (let i = 0; i < b; i++) {
 					const stepY = (a + 1 + i) * riser;
 					const z1 = zSign * (treadWidth / 2 + i * treadDepth + treadDepth / 2);
@@ -297,7 +297,7 @@ function Staircase3D({
 						axis: 'z',
 						mirror: mirror1,
 						forceWallSide: fws1,
-						bodyRotate180: wedgeFlipSecond,
+						bodyRotate180: flipSecond,
 					});
 				}
 			} else if (isU) {
@@ -483,7 +483,7 @@ function Staircase3D({
 			});
 			const zSign = flip ? 1 : -1;
 			const yaw1 = flip ? Math.PI / 2 : -Math.PI / 2;
-			const wedgeFlipSecond = flip && boxModel === 'wedge';
+			const flipSecond = flip && (boxModel === 'wedge' || boxModel === 'taper');
 			for (let i = 0; i < steps - half - 1; i++) {
 				const z1 = zSign * (treadWidth / 2 + i * treadDepth + treadDepth / 2);
 				treads.push({
@@ -495,7 +495,7 @@ function Staircase3D({
 					axis: 'z',
 					mirror: false,
 					forceWallSide: fws1,
-					bodyRotate180: wedgeFlipSecond,
+					bodyRotate180: flipSecond,
 				});
 			}
 		} else {

@@ -269,7 +269,7 @@ function Staircase3D({
 				}
 				treads.push({
 					position: [podestX, a * riser, 0],
-					rotation: [0, rotationY, 0],
+					rotation: [0, 0, 0],
 					run: treadWidth,
 					isLanding: true,
 					turn: 'right',

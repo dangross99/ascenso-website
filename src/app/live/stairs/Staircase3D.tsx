@@ -23,6 +23,7 @@ const MODEL_SIDE_OVERRIDES: Partial<Record<string, Partial<Record<string, { forc
 		U_0_flight_2: { forceWallSide: 'left' },
 	},
 	taper: {
+		L_0_flight_0: { forceWallSide: 'left' },
 		L_180_flight_1: { forceWallSide: 'left' },
 	},
 };

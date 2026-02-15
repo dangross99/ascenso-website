@@ -19,7 +19,7 @@ Cache.enabled = true;
 const MODEL_SIDE_OVERRIDES: Partial<Record<string, Partial<Record<string, { forceWallSide: 'right' | 'left' }>>>> = {
 	ridge: {
 		straight_180: { forceWallSide: 'left' },
-		L_180_flight_1: { forceWallSide: 'right' },
+		L_180_flight_1: { forceWallSide: 'left' },
 		U_0_flight_2: { forceWallSide: 'left' },
 	},
 	taper: {

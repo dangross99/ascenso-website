@@ -252,7 +252,7 @@ function Staircase3D({
 				const fws0 = fws(0);
 				const fws1 = fws(1);
 				const bodyRotateL0 = !flip;
-				// דלתא: היפוך גרם ראשון ב־L 0° וב־L 180° (rotation[1] או bodyRotate180 לפודסט)
+				// דלתא: היפוך רק גרם ראשון + פודסט ב־L 0° וב־L 180° (גרם שני דלתא לא מתהפך)
 				const taperFlipFirst = boxModel === 'taper' && (bodyRotateL0 || flip);
 				const rotationY = taperFlipFirst ? Math.PI : 0;
 				for (let i = 0; i < a; i++) {

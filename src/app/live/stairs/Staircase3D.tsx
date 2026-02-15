@@ -277,7 +277,7 @@ function Staircase3D({
 					axis: 'x',
 					mirror: mirror0,
 					forceWallSide: fws0,
-					bodyRotate180: false,
+					bodyRotate180: bodyRotateL0 && boxModel === 'taper',
 				});
 				// גרם שני: מתחיל מיד אחרי קצה הפודסט (Z = -treadWidth/2), בלי רווח
 				for (let i = 0; i < b; i++) {

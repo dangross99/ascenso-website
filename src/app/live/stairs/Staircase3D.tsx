@@ -23,7 +23,6 @@ const MODEL_SIDE_OVERRIDES: Partial<Record<string, Partial<Record<string, { forc
 		U_0_flight_2: { forceWallSide: 'left' },
 	},
 	taper: {
-		L_0_flight_0: { forceWallSide: 'left' },
 		L_180_flight_1: { forceWallSide: 'left' },
 	},
 };
@@ -578,7 +577,11 @@ function Staircase3D({
 			if (list.length === 0) continue;
 			const first = list[0];
 			const last = list[list.length - 1];
-			const yaw = first.t.rotation[1] as number;
+			// כיוון הגרם ממיקומי המדרגות (לא מ־rotation) – בדלתא L 0° המדרגות מסתובבות ל־π והקיר לא יתהפך
+			const dx = last.t.position[0] - first.t.position[0];
+			const dz = last.t.position[2] - first.t.position[2];
+			const segLen = Math.hypot(dx, dz);
+			const yaw = segLen > 1e-6 ? Math.atan2(dz, dx) : (first.t.rotation[1] as number);
 			const dirX = Math.cos(yaw);
 			const dirZ = Math.sin(yaw);
 			// קיר מתחיל מקצה אחורי של המדרגה הראשונה (לא נכנס לפודסט או למדרגה)

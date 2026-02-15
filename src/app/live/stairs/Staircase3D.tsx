@@ -454,10 +454,11 @@ function Staircase3D({
 			}
 		} else if (shape === 'L') {
 			const half = Math.floor(steps / 2);
-			const fws0 = getForceWallSideFromTable(boxModel ?? 'rect', 'L_0_flight_0');
-			const fws1 = getForceWallSideFromTable(boxModel ?? 'rect', 'L_0_flight_1');
+			const flip = pathFlipped180 === true;
+			const fws0 = getForceWallSideFromTable(boxModel ?? 'rect', flip ? 'L_180_flight_0' : 'L_0_flight_0');
+			const fws1 = getForceWallSideFromTable(boxModel ?? 'rect', flip ? 'L_180_flight_1' : 'L_0_flight_1');
 			// דלתא L 0°: סיבוב רק במדרגות גרם ראשון (גם כשנכנסים מכאן בלי pathSegments)
-			const bodyRotateL0 = true;
+			const bodyRotateL0 = !flip;
 			for (let i = 0; i < half; i++) {
 				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, 0, 0], run: treadDepth, isLanding: false, flight: 0, axis: 'x', mirror: false, forceWallSide: fws0, bodyRotate180: bodyRotateL0 });
 			}
@@ -475,10 +476,14 @@ function Staircase3D({
 				forceWallSide: fws0,
 				bodyRotate180: false,
 			});
+			// L 180°: פנייה ימינה (Z חיובי); L 0°: Z שלילי
+			const zSign = flip ? 1 : -1;
+			const yaw1 = flip ? Math.PI / 2 : -Math.PI / 2;
 			for (let i = 0; i < steps - half - 1; i++) {
+				const z1 = zSign * (treadWidth / 2 + i * treadDepth + treadDepth / 2);
 				treads.push({
-					position: [lxStart + runL, (half + 1 + i) * riser, -(i * treadDepth + treadDepth / 2)],
-					rotation: [0, -Math.PI / 2, 0],
+					position: [lxStart + runL, (half + 1 + i) * riser, z1],
+					rotation: [0, yaw1, 0],
 					run: treadDepth,
 					isLanding: false,
 					flight: 1,

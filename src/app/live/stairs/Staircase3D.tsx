@@ -251,9 +251,9 @@ function Staircase3D({
 				const mirror1 = resolveMirror('L', flip, 1);
 				const fws0 = fws(0);
 				const fws1 = fws(1);
-				const bodyRotateL0 = !flip; // רק L 0° – דלתא/מרום סיבוב גוף בגרם ראשון
-				// סיבוב ב־rotation[1] (ציר Y) – הפאה הנכונה צמודה לקיר; taper/ridge לא יסתובבו שוב ב־bodyRotate180
-				const rotationY = bodyRotateL0 && (boxModel === 'taper' || boxModel === 'ridge') ? Math.PI : 0;
+				const bodyRotateL0 = !flip; // רק L 0° – דלתא סיבוב גוף בגרם ראשון (רק taper, לא מרום)
+				// סיבוב ב־rotation[1] (ציר Y) רק לדלתא ב־L 0° – הפאה הנכונה צמודה לקיר
+				const rotationY = bodyRotateL0 && boxModel === 'taper' ? Math.PI : 0;
 				for (let i = 0; i < a; i++) {
 					treads.push({
 						position: [i * treadDepth + treadDepth / 2, i * riser, 0],

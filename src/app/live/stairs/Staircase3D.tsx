@@ -279,12 +279,15 @@ function Staircase3D({
 					forceWallSide: fws0,
 					bodyRotate180: bodyRotateL0 && boxModel === 'taper',
 				});
-				// גרם שני: מתחיל מיד אחרי קצה הפודסט (Z = -treadWidth/2), בלי רווח
+				// גרם שני: L 0° = פנייה ל־Z שלילי; L 180° = פנייה ימינה (Z חיובי)
+				const zSign = flip ? 1 : -1;
+				const yaw1 = flip ? Math.PI / 2 : -Math.PI / 2;
 				for (let i = 0; i < b; i++) {
 					const stepY = (a + 1 + i) * riser;
+					const z1 = zSign * (treadWidth / 2 + i * treadDepth + treadDepth / 2);
 					treads.push({
-						position: [podestX, stepY, -treadWidth / 2 - i * treadDepth - treadDepth / 2],
-						rotation: [0, -Math.PI / 2, 0],
+						position: [podestX, stepY, z1],
+						rotation: [0, yaw1, 0],
 						run: treadDepth,
 						isLanding: false,
 						flight: 1,

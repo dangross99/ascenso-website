@@ -148,9 +148,9 @@ export function buildTaperBoxTreads(params: {
 				const innerSignLocalRaw = (sidePref === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
 				// בגרם הראשון (flight=0) כיוון ההתקדמות מתהפך, וזה גם הופך את "ימין מקומי" ביחס לפנים/חוץ.
 				const innerSignLocal = (t.flight === 0 ? (-innerSignLocalRaw as 1 | -1) : innerSignLocalRaw);
-				// היפוך פנימי: ב־L 0° (או L/U במצבים שהפאה הפוכה) מתקנים כיוון פאות רק בתוך המודל
-				const isL0 = shape === 'L' && pathFlipped180 !== true;
-				const finalInnerSign = (isL0 ? (-innerSignLocal as 1 | -1) : innerSignLocal);
+				// היפוך פנימי: ב־L (גם L 0° וגם L 180°) מתקנים כיוון פאות רק בתוך המודל
+				const isL = shape === 'L';
+				const finalInnerSign = (isL ? (-innerSignLocal as 1 | -1) : innerSignLocal);
 				const outerSignLocal = (-innerSignLocal as 1 | -1);
 				const rotateFrontBack = (axis === 'x');
 				const rotateSides = (axis === 'z');

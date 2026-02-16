@@ -153,7 +153,7 @@ export function buildTaperBoxTreads(params: {
 				const innerSignLocalRaw = (sidePref === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
 				// בגרם הראשון (flight=0) כיוון ההתקדמות מתהפך, וזה גם הופך את "ימין מקומי" ביחס לפנים/חוץ.
 				const innerSignLocal = (t.flight === 0 ? (-innerSignLocalRaw as 1 | -1) : innerSignLocalRaw);
-				// היפוך פנימי רק למדרגות ב־L 180° (גרם ראשון ושני) – לא ל־L 0°, לא לפודסטים
+				// היפוך פנימי רק למדרגות ב־L 180° (גרם 0 ו-1) – לא ל־L 0°, לא ל־U/ישר, לא לפודסטים
 				const flipFaceStepsL180 = shape === 'L' && isL180 && !t.isLanding;
 				const finalInnerSign = (flipFaceStepsL180 ? (-innerSignLocal as 1 | -1) : innerSignLocal);
 				const outerSignLocal = (-innerSignLocal as 1 | -1);
@@ -314,10 +314,13 @@ export function buildTaperBoxTreads(params: {
 					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
-				// L 180°: גרם ראשון ושני – סיבוב π; פודסט – סיבוב −π. כל השאר – רק bodyRotate180 מ־Staircase3D.
+				// L 180° בלבד: שליטה מלאה כאן – גרם 0+1 סיבוב π, פודסט −π. לא משתמשים ב־bodyRotate180 ב־L 180°.
+				// מחוץ ל־L 180°: רק מה ש־Staircase3D שולח (bodyRotate180) – לא נוגעים ב־L 0° / ישר / U.
 				const flipPodestL180 = shape === 'L' && isL180 && t.isLanding;
 				const flipStepsL180 = shape === 'L' && isL180 && !t.isLanding;
-				const bodyYaw = flipPodestL180 ? -Math.PI : (flipStepsL180 || t.bodyRotate180) ? Math.PI : 0;
+				const bodyYaw = flipPodestL180 ? -Math.PI
+					: (shape === 'L' && isL180) ? (flipStepsL180 ? Math.PI : 0)
+					: (t.bodyRotate180 ? Math.PI : 0);
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>
 						<group rotation={[0, bodyYaw, 0]}>

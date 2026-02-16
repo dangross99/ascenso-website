@@ -314,7 +314,7 @@ export function buildTaperBoxTreads(params: {
 					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
-				// רק L 180°: גרם ראשון + פודסט. שאר המקרים (L 0°, ישר, U, גרם שני) – רק מה ש־Staircase3D שולח (bodyRotate180).
+				// L 180° בלבד: גרם ראשון – היפוך; פודסט – היפוך כיוון (−π). שאר המקרים – רק bodyRotate180 מ־Staircase3D.
 				const flipPodestL180 = shape === 'L' && isL180 && t.isLanding;
 				const flipFlight0L180 = shape === 'L' && isL180 && !t.isLanding && t.flight === 0;
 				const bodyYaw = flipPodestL180 ? -Math.PI : (flipFlight0L180 || t.bodyRotate180) ? Math.PI : 0;

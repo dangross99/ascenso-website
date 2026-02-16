@@ -314,8 +314,8 @@ export function buildTaperBoxTreads(params: {
 					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
-				// סיבוב רק ב־L 180° אמיתי (גאומטריה) וגם pathFlipped180: גרם שני + פודסט. ב־L 0° או גרם ראשון – לא מסתובבים מכאן.
-				const bodyYaw = (shape === 'L' && pathFlipped180 && isL180 && (t.flight === 1 || t.isLanding)) ? Math.PI
+				// סיבוב ב־L 180° אמיתי: גרם 1, גרם 2 ופודסט.
+				const bodyYaw = (shape === 'L' && pathFlipped180 && isL180) ? Math.PI
 					: (t.bodyRotate180 ? Math.PI : 0);
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>

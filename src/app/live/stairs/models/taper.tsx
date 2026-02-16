@@ -98,10 +98,9 @@ export function buildTaperBoxTreads(params: {
 	let stepIdx = 0;
 	let landingIdx = 0;
 
-	// גזירת L 180° מהגאומטריה (yaw של המדרגה הראשונה) – כדי שלא יהיה חוסר סנכרון כשמחליפים מבנה
-	const firstStep = treads.find(t => !t.isLanding);
-	const firstFlightYaw = (firstStep?.rotation[1] as number) ?? 0;
-	const isL180 = shape === 'L' && Math.abs(firstFlightYaw - Math.PI) < 0.01;
+	// L 180° נגזר מגרם 0 בלבד (yaw ≈ π) – כך שינוי בגרם 1 לא משנה את המצב. "חיבור" אחד: isL180 חל על כל המבנה.
+	const hasFlight0WithYawPi = treads.some(t => !t.isLanding && t.flight === 0 && Math.abs((t.rotation[1] as number) - Math.PI) < 0.01);
+	const isL180 = shape === 'L' && hasFlight0WithYawPi;
 
 	const quadGeo = (p0: [number, number, number], p1: [number, number, number], p2: [number, number, number], p3: [number, number, number], uvFor: (p: [number, number, number]) => [number, number]) => {
 		const geo = new BufferGeometry();
@@ -135,6 +134,7 @@ export function buildTaperBoxTreads(params: {
 
 				// ההצטמצמות היא לאורך כל הגרם (לא בתוך כל מדרך): לכל מדרך עובי אחיד,
 				// כאן זה טייפר לרוחב: כל המדרגות זהות, 12cm בחוץ → 5cm בפנים.
+				// חיבור בין גרמים: stepIdx גלובלי (כל המדרגות ברצף), אז שינוי מספר מדרגות בגרם אחד מזיז את האינדקס של הגרם השני ב־stepRailingSides.
 				const curStepIdx = !t.isLanding ? (stepIdx++) : -1;
 				const sidePref: Side = t.isLanding
 					? (landingRailingSides?.[landingIdx] ?? 'right')

@@ -98,6 +98,11 @@ export function buildTaperBoxTreads(params: {
 	let stepIdx = 0;
 	let landingIdx = 0;
 
+	// גזירת L 180° מהגאומטריה (yaw של המדרגה הראשונה) – כדי שלא יהיה חוסר סנכרון כשמחליפים מבנה
+	const firstStep = treads.find(t => !t.isLanding);
+	const firstFlightYaw = (firstStep?.rotation[1] as number) ?? 0;
+	const isL180 = shape === 'L' && Math.abs(firstFlightYaw - Math.PI) < 0.01;
+
 	const quadGeo = (p0: [number, number, number], p1: [number, number, number], p2: [number, number, number], p3: [number, number, number], uvFor: (p: [number, number, number]) => [number, number]) => {
 		const geo = new BufferGeometry();
 		const pos = new Float32Array([
@@ -309,10 +314,10 @@ export function buildTaperBoxTreads(params: {
 					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
-				// L 0°: להפוך מדרגות ופודסט. L 180°: להפוך רק פודסט; מדרגות בלי סיבוב (לא לבטל את כיוונן).
-				const flipAllL0 = shape === 'L' && !pathFlipped180;
-				const flipPodestL180 = shape === 'L' && pathFlipped180 && t.isLanding;
-				const noFlipStepsL180 = shape === 'L' && pathFlipped180 && !t.isLanding;
+				// L 0°: להפוך מדרגות ופודסט. L 180° (נגזר מ־yaw): רק פודסט; מדרגות בלי סיבוב.
+				const flipAllL0 = shape === 'L' && !isL180;
+				const flipPodestL180 = shape === 'L' && isL180 && t.isLanding;
+				const noFlipStepsL180 = shape === 'L' && isL180 && !t.isLanding;
 				const bodyYaw = flipPodestL180 ? -Math.PI : noFlipStepsL180 ? 0 : (t.bodyRotate180 || flipAllL0) ? Math.PI : 0;
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>

@@ -309,8 +309,8 @@ export function buildTaperBoxTreads(params: {
 					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
-				// סיבוב 180°: בכל צורת L (גם L 0° וגם L 180°) – כל המדרגות והפודסטים מתהפכים
-				const bodyYaw = (t.bodyRotate180 || shape === 'L') ? Math.PI : 0;
+				// סיבוב 180°: מדרגות רק כש־bodyRotate180 מ־getTreads; פודסטים תמיד ב־L (גם L 0° וגם L 180°)
+				const bodyYaw = (t.bodyRotate180 || (shape === 'L' && t.isLanding)) ? Math.PI : 0;
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>
 						<group rotation={[0, bodyYaw, 0]}>

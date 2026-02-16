@@ -153,9 +153,9 @@ export function buildTaperBoxTreads(params: {
 				const innerSignLocalRaw = (sidePref === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
 				// בגרם הראשון (flight=0) כיוון ההתקדמות מתהפך, וזה גם הופך את "ימין מקומי" ביחס לפנים/חוץ.
 				const innerSignLocal = (t.flight === 0 ? (-innerSignLocalRaw as 1 | -1) : innerSignLocalRaw);
-				// היפוך פנימי רק למדרגות ב־L 180° (גרם 0 ו-1) – לא ל־L 0°, לא ל־U/ישר, לא לפודסטים
-				const flipFaceStepsL180 = shape === 'L' && isL180 && !t.isLanding;
-				const finalInnerSign = (flipFaceStepsL180 ? (-innerSignLocal as 1 | -1) : innerSignLocal);
+				// היפוך פנימי רק לגרם שני ב־L 180° – לא ל־L 0°, לא לפודסטים, לא לגרם ראשון
+				const flipFaceFlight1L180 = shape === 'L' && isL180 && !t.isLanding && t.flight === 1;
+				const finalInnerSign = (flipFaceFlight1L180 ? (-innerSignLocal as 1 | -1) : innerSignLocal);
 				const outerSignLocal = (-innerSignLocal as 1 | -1);
 				const rotateFrontBack = (axis === 'x');
 				const rotateSides = (axis === 'z');
@@ -314,9 +314,9 @@ export function buildTaperBoxTreads(params: {
 					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
-				// בידוד: סיבוב פנימי (bodyYaw) רק על מדרגות – לעולם לא על פודסט. פודסט תמיד 0.
+				// בידוד: סיבוב פנימי רק על מדרגות; ב־L 180° רק גרם שני. פודסט תמיד 0.
 				const bodyYaw = t.isLanding ? 0
-					: (shape === 'L' && isL180) ? Math.PI
+					: (shape === 'L' && isL180 && t.flight === 1) ? Math.PI
 					: (t.bodyRotate180 ? Math.PI : 0);
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>

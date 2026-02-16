@@ -310,8 +310,8 @@ export function buildTaperBoxTreads(params: {
 					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
-				// סיבוב ב־L (גם L0 וגם L180): גרם 1, גרם 2 ופודסט.
-				const bodyYaw = (shape === 'L') ? Math.PI : (t.bodyRotate180 ? Math.PI : 0);
+				// סיבוב רק לגרם 2 (flight 1) ב־L – גם L0 וגם L180. גרם 1 ופודסט לא מסתובבים.
+				const bodyYaw = (shape === 'L' && !t.isLanding && t.flight === 1) ? Math.PI : (t.bodyRotate180 ? Math.PI : 0);
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>
 						<group rotation={[0, bodyYaw, 0]}>

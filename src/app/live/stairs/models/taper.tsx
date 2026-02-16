@@ -301,14 +301,11 @@ export function buildTaperBoxTreads(params: {
 					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
-				// צד עבה/דק נקבע רק מ־mirror (לא מסיבוב body). bodyRotate180 מטבלה ב־Staircase3D.
+				// רק L 0°: סיבוב 180° בגרם הראשון (bodyRotate180 מוגדר ב־getTreads) – לא בישר 0°/180°
 				const bodyYaw = t.bodyRotate180 ? Math.PI : 0;
-				// סיבוב 180° סביב ציר צמוד לקיר (pivot) כדי שהמדרגה לא "תברח" – היסט treadWidth/2
-				const pivotOffset = t.bodyRotate180 ? treadWidth / 2 : 0;
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>
-						<group position={[0, 0, -pivotOffset]} rotation={[0, bodyYaw, 0]}>
-							<group position={[0, 0, pivotOffset]}>
+						<group rotation={[0, bodyYaw, 0]}>
 							{/* Bottom */}
 							<mesh geometry={geoBottom} receiveShadow castShadow={materialKind !== 'metal'}>
 								{matBottom}
@@ -339,7 +336,6 @@ export function buildTaperBoxTreads(params: {
 								<boxGeometry args={[run, 0.004, treadWidth]} />
 								{matTop}
 							</mesh>
-							</group>
 						</group>
 					</group>
 				);

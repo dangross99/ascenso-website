@@ -251,13 +251,14 @@ function Staircase3D({
 				const mirror1 = resolveMirror('L', flip, 1);
 				const fws0 = fws(0);
 				const fws1 = fws(1);
-				// החלטות סיבוב ומיקום רק לפי boxModel ו־flip (לא פרמטרים חיצוניים)
-				const isL180Taper = flip && boxModel === 'taper';
-				const rotationY = isL180Taper ? Math.PI : 0;
-				const posZFirst = isL180Taper ? -treadWidth / 2 : 0; // היפוך Z כדי שהמדרגה לא 'תברח' מהקיר
+				const bodyRotateL0 = !flip;
+				// דלתא: היפוך גרם ראשון + פודסט ב־L 0° וב־L 180°. L 0° = rotation[1]; L 180° = bodyRotate180 (סיבוב פנימי ב־taper)
+				const taperFlipFirst = boxModel === 'taper' && (bodyRotateL0 || flip);
+				const useRotationY = boxModel === 'taper' && bodyRotateL0; // רק L 0° – סיבוב ב־rotation
+				const rotationY = useRotationY ? Math.PI : 0;
 				for (let i = 0; i < a; i++) {
 					treads.push({
-						position: [i * treadDepth + treadDepth / 2, i * riser, posZFirst],
+						position: [i * treadDepth + treadDepth / 2, i * riser, 0],
 						rotation: [0, rotationY, 0],
 						run: treadDepth,
 						isLanding: false,
@@ -265,11 +266,11 @@ function Staircase3D({
 						axis: 'x',
 						mirror: mirror0,
 						forceWallSide: fws0,
-						bodyRotate180: false,
+						bodyRotate180: taperFlipFirst && !useRotationY,
 					});
 				}
 				treads.push({
-					position: [podestX, a * riser, posZFirst],
+					position: [podestX, a * riser, 0],
 					rotation: [0, 0, 0],
 					run: treadWidth,
 					isLanding: true,
@@ -278,12 +279,12 @@ function Staircase3D({
 					axis: 'x',
 					mirror: mirror0,
 					forceWallSide: fws0,
-					bodyRotate180: isL180Taper,
+					bodyRotate180: taperFlipFirst,
 				});
-				// גרם שני: L 0° = Z שלילי; L 180° = ימינה. טריז/דלתא ב־L 180° – bodyRotate180
+				// גרם שני: L 0° = Z שלילי; L 180° = ימינה (Z חיובי). טריז ב־L 180° – היפוך (bodyRotate180)
 				const zSign = flip ? 1 : -1;
 				const yaw1 = flip ? Math.PI / 2 : -Math.PI / 2;
-				const flipSecond = flip && (boxModel === 'wedge' || boxModel === 'taper');
+				const wedgeFlipSecond = flip && boxModel === 'wedge';
 				for (let i = 0; i < b; i++) {
 					const stepY = (a + 1 + i) * riser;
 					const z1 = zSign * (treadWidth / 2 + i * treadDepth + treadDepth / 2);
@@ -296,7 +297,7 @@ function Staircase3D({
 						axis: 'z',
 						mirror: mirror1,
 						forceWallSide: fws1,
-						bodyRotate180: flipSecond,
+						bodyRotate180: wedgeFlipSecond,
 					});
 				}
 			} else if (isU) {
@@ -459,16 +460,17 @@ function Staircase3D({
 			const flip = pathFlipped180 === true;
 			const fws0 = getForceWallSideFromTable(boxModel ?? 'rect', flip ? 'L_180_flight_0' : 'L_0_flight_0');
 			const fws1 = getForceWallSideFromTable(boxModel ?? 'rect', flip ? 'L_180_flight_1' : 'L_0_flight_1');
-			const isL180Taper = flip && boxModel === 'taper';
-			const rotationY = isL180Taper ? Math.PI : 0;
-			const posZFirst = isL180Taper ? -treadWidth / 2 : 0;
+			const bodyRotateL0 = !flip;
+			const taperFlipFirst = boxModel === 'taper' && (bodyRotateL0 || flip);
+			const useRotationY = boxModel === 'taper' && bodyRotateL0;
+			const rotationY = useRotationY ? Math.PI : 0;
 			for (let i = 0; i < half; i++) {
-				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, posZFirst], rotation: [0, rotationY, 0], run: treadDepth, isLanding: false, flight: 0, axis: 'x', mirror: false, forceWallSide: fws0, bodyRotate180: false });
+				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, rotationY, 0], run: treadDepth, isLanding: false, flight: 0, axis: 'x', mirror: false, forceWallSide: fws0, bodyRotate180: taperFlipFirst && !useRotationY });
 			}
 			const runL = treadWidth;
 			const lxStart = half * treadDepth;
 			treads.push({
-				position: [lxStart + runL / 2, half * riser, posZFirst],
+				position: [lxStart + runL / 2, half * riser, 0],
 				rotation: [0, 0, 0],
 				run: runL,
 				isLanding: true,
@@ -477,11 +479,11 @@ function Staircase3D({
 				axis: 'x',
 				mirror: false,
 				forceWallSide: fws0,
-				bodyRotate180: isL180Taper,
+				bodyRotate180: taperFlipFirst,
 			});
 			const zSign = flip ? 1 : -1;
 			const yaw1 = flip ? Math.PI / 2 : -Math.PI / 2;
-			const flipSecond = flip && (boxModel === 'wedge' || boxModel === 'taper');
+			const wedgeFlipSecond = flip && boxModel === 'wedge';
 			for (let i = 0; i < steps - half - 1; i++) {
 				const z1 = zSign * (treadWidth / 2 + i * treadDepth + treadDepth / 2);
 				treads.push({
@@ -493,7 +495,7 @@ function Staircase3D({
 					axis: 'z',
 					mirror: false,
 					forceWallSide: fws1,
-					bodyRotate180: flipSecond,
+					bodyRotate180: wedgeFlipSecond,
 				});
 			}
 		} else {

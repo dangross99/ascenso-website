@@ -311,9 +311,8 @@ export function buildTaperBoxTreads(params: {
 					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
-				// בידוד: סיבוב פנימי רק על מדרגות; ב־L 180° רק גרם שני – לפי pathFlipped180 (לא מ־treads)
-				const bodyYaw = t.isLanding ? 0
-					: (shape === 'L' && pathFlipped180 && t.flight === 1) ? Math.PI
+				// בידוד: ב־L 180° – גרם שני ופודסט מסתובבים (π). גרם ראשון – רק bodyRotate180 מ־Staircase3D.
+				const bodyYaw = (shape === 'L' && pathFlipped180 && (t.flight === 1 || t.isLanding)) ? Math.PI
 					: (t.bodyRotate180 ? Math.PI : 0);
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>

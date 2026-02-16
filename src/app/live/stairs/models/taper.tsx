@@ -98,10 +98,7 @@ export function buildTaperBoxTreads(params: {
 	let stepIdx = 0;
 	let landingIdx = 0;
 
-	// L 180° נגזר מגרם 0 בלבד (yaw ≈ π) – כך שינוי בגרם 1 לא משנה את המצב. "חיבור" אחד: isL180 חל על כל המבנה.
-	const hasFlight0WithYawPi = treads.some(t => !t.isLanding && t.flight === 0 && Math.abs((t.rotation[1] as number) - Math.PI) < 0.01);
-	const isL180 = shape === 'L' && hasFlight0WithYawPi;
-
+	// בידוד גרמים: לא גוזרים L 180° מ־treads (שינוי בגרם 2 לא ישפיע על גרם 1). משתמשים רק ב־pathFlipped180 מהפרופ.
 	const quadGeo = (p0: [number, number, number], p1: [number, number, number], p2: [number, number, number], p3: [number, number, number], uvFor: (p: [number, number, number]) => [number, number]) => {
 		const geo = new BufferGeometry();
 		const pos = new Float32Array([
@@ -153,8 +150,8 @@ export function buildTaperBoxTreads(params: {
 				const innerSignLocalRaw = (sidePref === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
 				// בגרם הראשון (flight=0) כיוון ההתקדמות מתהפך, וזה גם הופך את "ימין מקומי" ביחס לפנים/חוץ.
 				const innerSignLocal = (t.flight === 0 ? (-innerSignLocalRaw as 1 | -1) : innerSignLocalRaw);
-				// היפוך פנימי רק לגרם שני ב־L 180° – לא ל־L 0°, לא לפודסטים, לא לגרם ראשון
-				const flipFaceFlight1L180 = shape === 'L' && isL180 && !t.isLanding && t.flight === 1;
+				// היפוך פנימי רק לגרם שני ב־L 180° – לפי pathFlipped180 בלבד (לא נגזר מ־treads)
+				const flipFaceFlight1L180 = shape === 'L' && pathFlipped180 && !t.isLanding && t.flight === 1;
 				const finalInnerSign = (flipFaceFlight1L180 ? (-innerSignLocal as 1 | -1) : innerSignLocal);
 				const outerSignLocal = (-innerSignLocal as 1 | -1);
 				const rotateFrontBack = (axis === 'x');
@@ -314,9 +311,9 @@ export function buildTaperBoxTreads(params: {
 					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
-				// בידוד: סיבוב פנימי רק על מדרגות; ב־L 180° רק גרם שני. פודסט תמיד 0.
+				// בידוד: סיבוב פנימי רק על מדרגות; ב־L 180° רק גרם שני – לפי pathFlipped180 (לא מ־treads)
 				const bodyYaw = t.isLanding ? 0
-					: (shape === 'L' && isL180 && t.flight === 1) ? Math.PI
+					: (shape === 'L' && pathFlipped180 && t.flight === 1) ? Math.PI
 					: (t.bodyRotate180 ? Math.PI : 0);
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>

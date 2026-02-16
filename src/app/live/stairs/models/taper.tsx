@@ -73,6 +73,9 @@ export function buildTaperBoxTreads(params: {
 	thickEnd?: number; // default 0.05
 	stepRailingSides?: Array<Side>;
 	landingRailingSides?: Array<Side>;
+	/** למצב L 0° / U – היפוך פנימי של הפאות (רק בתוך המודל, בלי לשנות Staircase3D) */
+	shape?: 'straight' | 'L' | 'U';
+	pathFlipped180?: boolean;
 }) {
 	const {
 		treads,
@@ -86,6 +89,8 @@ export function buildTaperBoxTreads(params: {
 		thickEnd,
 		stepRailingSides,
 		landingRailingSides,
+		shape,
+		pathFlipped180,
 	} = params;
 
 	const thickStart = treadThickness;
@@ -143,6 +148,9 @@ export function buildTaperBoxTreads(params: {
 				const innerSignLocalRaw = (sidePref === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
 				// בגרם הראשון (flight=0) כיוון ההתקדמות מתהפך, וזה גם הופך את "ימין מקומי" ביחס לפנים/חוץ.
 				const innerSignLocal = (t.flight === 0 ? (-innerSignLocalRaw as 1 | -1) : innerSignLocalRaw);
+				// היפוך פנימי: ב־L 0° (או L/U במצבים שהפאה הפוכה) מתקנים כיוון פאות רק בתוך המודל
+				const isL0 = shape === 'L' && pathFlipped180 !== true;
+				const finalInnerSign = (isL0 ? (-innerSignLocal as 1 | -1) : innerSignLocal);
 				const outerSignLocal = (-innerSignLocal as 1 | -1);
 				const rotateFrontBack = (axis === 'x');
 				const rotateSides = (axis === 'z');
@@ -249,11 +257,11 @@ export function buildTaperBoxTreads(params: {
 					);
 				};
 
-				// Geometry points (local) – mirror מחליף צד ימין/שמאל (Z)
+				// Geometry points (local) – finalInnerSign מגדיר איזה צד עבה/דק; mirror מחליף בין zOuter ל-zInner
 				const dx = run / 2;
 				const dz = treadWidth / 2;
-				const baseZOuter = outerSignLocal * dz;
-				const baseZInner = innerSignLocal * dz;
+				const baseZOuter = -finalInnerSign * dz;
+				const baseZInner = finalInnerSign * dz;
 				const zOuter = t.mirror ? baseZInner : baseZOuter;
 				const zInner = t.mirror ? baseZOuter : baseZInner;
 				const yTop = thickStart / 2;

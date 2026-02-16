@@ -913,6 +913,8 @@ function Staircase3D({
 						thickEnd: 0.05, // 5cm בקצה
 						stepRailingSides: railingSides,
 						landingRailingSides,
+						shape,
+						pathFlipped180,
 					});
 				}
 				if (boxModel === 'wedge') {

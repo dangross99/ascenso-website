@@ -314,13 +314,9 @@ export function buildTaperBoxTreads(params: {
 					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
-				// L 180° בלבד: שליטה מלאה כאן – גרם 0+1 סיבוב π, פודסט −π. לא משתמשים ב־bodyRotate180 ב־L 180°.
-				// מחוץ ל־L 180°: רק מה ש־Staircase3D שולח (bodyRotate180) – לא נוגעים ב־L 0° / ישר / U.
-				const flipPodestL180 = shape === 'L' && isL180 && t.isLanding;
+				// L 180°: גרם ראשון ושני – סיבוב π. פודסט – בלי סיבוב. מחוץ ל־L 180° – רק bodyRotate180 מ־Staircase3D.
 				const flipStepsL180 = shape === 'L' && isL180 && !t.isLanding;
-				const bodyYaw = flipPodestL180 ? -Math.PI
-					: (shape === 'L' && isL180) ? (flipStepsL180 ? Math.PI : 0)
-					: (t.bodyRotate180 ? Math.PI : 0);
+				const bodyYaw = (shape === 'L' && isL180) ? (flipStepsL180 ? Math.PI : 0) : (t.bodyRotate180 ? Math.PI : 0);
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>
 						<group rotation={[0, bodyYaw, 0]}>

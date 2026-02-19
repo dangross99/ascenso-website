@@ -5,7 +5,7 @@
  * מפתח: pathKey = getPathKey(path, flip, flight)
  *   ישר:     straight_0, straight_180
  *   L:       L_0_flight_0, L_0_flight_1, L_0_landing (פודסט), L_180_flight_0, L_180_flight_1, L_180_landing
- *   U:       U_0_flight_0, U_0_flight_1, U_0_flight_2 וכו'
+ *   U:       U_0_flight_0, U_0_flight_1, U_0_flight_2, U_0_landing_0, U_0_landing_1 (פודסטים)
  *
  * דגמים: rect | rounded | taper (דלתא) | wedge | ridge
  *
@@ -20,6 +20,8 @@
  * │ L_180_flight_1  │ -          │ -          │ M          │ M          │ M          │
  * │ L_0_landing     │ -          │ -          │ M + R      │ -          │ -          │  (דלתא: הפודסט מתהפך)
  * │ L_180_landing   │ -          │ -          │ M + R      │ -          │ -          │
+ * │ U_0_landing_0   │ -          │ -          │ M + R      │ -          │ -          │  (דלתא: פודסט ראשון)
+ * │ U_0_landing_1   │ -          │ -          │ M + R      │ -          │ -          │  (דלתא: פודסט שני)
  * └─────────────────┴────────────┴────────────┴────────────┴────────────┴────────────┘
  * M = mirror, R = bodyRotate180.
  */
@@ -41,6 +43,10 @@ export type PathKey =
 	| 'L_180_flight_0'
 	| 'L_180_flight_1'
 	| 'L_180_landing'
+	| 'U_0_landing_0'
+	| 'U_0_landing_1'
+	| 'U_180_landing_0'
+	| 'U_180_landing_1'
 	| string;
 
 /**
@@ -92,6 +98,20 @@ export const SEGMENT_CONFIG: Partial<Record<PathKey, Partial<Record<BoxModel, Se
 	L_180_landing: {
 		taper: { mirror: true, bodyRotate180: true },
 	},
+
+	// ─── U פודסטים – דלתא: היפוך שני הפודסטים ─────────────────────────────────
+	U_0_landing_0: {
+		taper: { mirror: true, bodyRotate180: true },
+	},
+	U_0_landing_1: {
+		taper: { mirror: true, bodyRotate180: true },
+	},
+	U_180_landing_0: {
+		taper: { mirror: true, bodyRotate180: true },
+	},
+	U_180_landing_1: {
+		taper: { mirror: true, bodyRotate180: true },
+	},
 };
 
 /** ברירת מחדל ל־mirror לפי path ו־flip (כשאין דריסה בדגם) */
@@ -133,4 +153,10 @@ export function getPathKey(path: 'straight' | 'L' | 'U', flip: boolean, flight: 
 /** מפתח לפודסט ב־L (לשימוש ב־SEGMENT_CONFIG). */
 export function getPathKeyLandingL(flip: boolean): string {
 	return flip ? 'L_180_landing' : 'L_0_landing';
+}
+
+/** מפתח לפודסט ב־U (לשימוש ב־SEGMENT_CONFIG). index: 0 = פודסט ראשון, 1 = פודסט שני. */
+export function getPathKeyLandingU(flip: boolean, index: 0 | 1): string {
+	const suffix = flip ? 180 : 0;
+	return `U_${suffix}_landing_${index}`;
 }

@@ -257,12 +257,14 @@ export function buildTaperBoxTreads(params: {
 				};
 
 				// Geometry points (local) – finalInnerSign מגדיר איזה צד עבה/דק; mirror מחליף בין zOuter ל-zInner
+				// פודסטים: אם mirror/bodyRotate180 לא הועברו מהאבא – מניחים true כדי שהפודסט יתהפך (דלתא L/U)
+				const effectiveMirror = t.mirror ?? (t.isLanding ? true : false);
 				const dx = run / 2;
 				const dz = treadWidth / 2;
 				const baseZOuter = -finalInnerSign * dz;
 				const baseZInner = finalInnerSign * dz;
-				const zOuter = t.mirror ? baseZInner : baseZOuter;
-				const zInner = t.mirror ? baseZOuter : baseZInner;
+				const zOuter = effectiveMirror ? baseZInner : baseZOuter;
+				const zInner = effectiveMirror ? baseZOuter : baseZInner;
 				const yTop = thickStart / 2;
 				const yBotOuter = yTop - thickStart;
 				const yBotInner = yTop - thin;
@@ -308,8 +310,9 @@ export function buildTaperBoxTreads(params: {
 					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
-				// סיבוב גוף 180° – רק מהתצורה (t.bodyRotate180 מ־pathModelConfig דרך Staircase3D)
-				const bodyYaw = t.bodyRotate180 ? Math.PI : 0;
+				// סיבוב גוף 180° – רק מהתצורה (t.bodyRotate180 מ־pathModelConfig דרך Staircase3D). פודסט: ברירת מחדל true.
+				const effectiveBodyRotate180 = t.bodyRotate180 ?? (t.isLanding ? true : false);
+				const bodyYaw = effectiveBodyRotate180 ? Math.PI : 0;
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>
 						<group rotation={[0, bodyYaw, 0]}>

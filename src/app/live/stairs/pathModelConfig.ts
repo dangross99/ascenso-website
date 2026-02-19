@@ -15,7 +15,7 @@
  * ├─────────────────┼────────────┼────────────┼────────────┼────────────┼────────────┤
  * │ straight_0      │ -          │ -          │ M          │ -          │ M          │
  * │ straight_180    │ -          │ -          │ M          │ M          │ M          │
- * │ L_0_flight_0    │ -          │ -          │ M + R      │ M          │ M          │  (דלתא: היפוך גרם 1)
+ * │ L_0_flight_0    │ -          │ -          │ false      │ M          │ M          │  (דלתא: גרם 1 בלי mirror/rotate)
  * │ L_0_flight_1    │ -          │ -          │ M + R      │ M          │ M          │  (דלתא: היפוך גרם 2)
  * │ L_180_flight_0  │ -          │ -          │ false      │ M          │ M          │  (דלתא: גרם 1 בלי היפוך)
  * │ L_180_flight_1  │ -          │ -          │ M + R      │ M          │ M          │  (דלתא: היפוך רק גרם 2)
@@ -68,10 +68,10 @@ export const SEGMENT_CONFIG: Partial<Record<PathKey, Partial<Record<BoxModel, Se
 		wedge: { mirror: true, bodyRotate180: false },
 	},
 
-	// ─── L 0° – דלתא: היפוך גרם 1 וגרם 2 (mirror + bodyRotate180). פודסט בנפרד. ─
+	// ─── L 0° – דלתא: גרם 1 בלי mirror/rotate (השינוי רק דרך innerSign אחיד ב־taper). גרם 2 עם היפוך. ─
 	L_0_flight_0: {
 		ridge: { mirror: true, bodyRotate180: false },
-		taper: { mirror: true, bodyRotate180: true },
+		taper: { mirror: false, bodyRotate180: false },
 		wedge: { mirror: true, bodyRotate180: false },
 	},
 	L_0_flight_1: {

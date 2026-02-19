@@ -97,7 +97,7 @@ export function buildTaperBoxTreads(params: {
 	let stepIdx = 0;
 	let landingIdx = 0;
 
-	// סיבוב ו־mirror רק מהתצורה (pathModelConfig) דרך t.bodyRotate180 ו־t.mirror – בלי לוגיקה בדגם
+	// כל tread עצמאי: t.mirror ו־t.bodyRotate180 מגיעים מ־pathModelConfig דרך Staircase3D (pathKey ייחודי לכל גרם/פודסט). אין לוגיקה מקומית.
 	const quadGeo = (p0: [number, number, number], p1: [number, number, number], p2: [number, number, number], p3: [number, number, number], uvFor: (p: [number, number, number]) => [number, number]) => {
 		const geo = new BufferGeometry();
 		const pos = new Float32Array([

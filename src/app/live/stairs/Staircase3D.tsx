@@ -49,26 +49,7 @@ function getForceWallSideFromTable(model: string, pathKey: string): 'right' | 'l
 	return pathEntry?.forceWallSide ?? 'auto';
 }
 
-/** דריסת mirror לפי דגם ומסלול – כש־true, הפאה העבה/חזית תפנה נכון. דלתא = taper */
-const MIRROR_OVERRIDES: Partial<Record<string, Partial<Record<string, boolean>>>> = {
-	ridge: { straight_0: true, L_0_flight_0: true, L_0_flight_1: true },
-	// דגם דלתא: ב־L 0 גרם 1 וגרם 2 מתהפכים
-	taper: { straight_0: true, L_0_flight_0: true, L_0_flight_1: true },
-	delta: { L_0_flight_0: true, L_0_flight_1: true },
-	wedge: { L_0_flight_0: true, L_0_flight_1: true },
-};
-
-/** היפוך mirror לפי מסלול בלבד (חל על כל הדגמים) – L 0°: להפוך את המדרגות */
-const PATH_MIRROR_OVERRIDES: Partial<Record<string, boolean>> = {
-	L_0_flight_0: true,
-	L_0_flight_1: true,
-};
-
-function getMirrorOverride(model: string, pathKey: string): boolean | undefined {
-	const byModel = MIRROR_OVERRIDES[model]?.[pathKey];
-	if (typeof byModel === 'boolean') return byModel;
-	return PATH_MIRROR_OVERRIDES[pathKey];
-}
+// mirror/bodyRotate180 – מקור אמת יחיד ב־pathModelConfig (getMirror, getBodyRotate180). אין טבלאות דריסה מקומיות.
 
 function Staircase3D({
 	shape,
@@ -187,14 +168,6 @@ function Staircase3D({
 	const treadWidth = 0.90;
 	const riser = 0.18;
 
-	/** טבלת mirror לפי מסלול וגרם – לדגמים א-סימטריים (ridge, taper, wedge) */
-	function getMirrorForTread(flip: boolean, path: 'straight' | 'L' | 'U', flight: number): boolean {
-		if (path === 'straight') return flip; // 0°: false, 180°: true
-		if (path === 'L') return flip; // גרם 1 ו-2: כמו flip
-		// U: גרם 1,2 = flip; גרם 3 = היפוך
-		return flight === 2 ? !flip : flip;
-	}
-
 	function getTreads() {
 		type TreadItem = {
 			position: [number, number, number];
@@ -220,10 +193,7 @@ function Staircase3D({
 			const yaw180 = flip ? Math.PI : 0;
 			const path: 'straight' | 'L' | 'U' = isStraight ? 'straight' : isL ? 'L' : 'U';
 			const fws = (flight: number) => getForceWallSideFromTable(boxModel ?? 'rect', getPathKey(path, flip, flight));
-			const resolveMirror = (p: 'straight' | 'L' | 'U', f: boolean, fl: number) => {
-				const o = getMirrorOverride(boxModel ?? 'rect', getPathKey(p, f, fl));
-				return typeof o === 'boolean' ? o : getMirrorForTread(f, p, fl);
-			};
+			// מקור אמת יחיד: pathModelConfig. כל pathKey משפיע רק על המקטע שלו – אין שיתוף בין גרמים/פודסטים.
 
 			if (isStraight && shape !== 'L') {
 				const n = straightSteps[0];
@@ -246,7 +216,7 @@ function Staircase3D({
 					});
 				}
 			} else if (isL || (isStraight && shape === 'L')) {
-				// בידוד מלא: כל גרם ופודסט לפי אינדקס הגרם בלבד. פודסט – mirror/bodyRotate180 מהתצורה (דלתא: היפוך ב־0 ו־180).
+				// L: גרם 0 ← pathKey0 בלבד, גרם 1 ← pathKey1 בלבד, פודסט ← pathKeyLanding בלבד (אין שיתוף).
 				const n = straightSteps[0];
 				const a = isL ? straightSteps[0] : Math.floor(n / 2);
 				const b = isL ? straightSteps[1] : n - a - 1;
@@ -306,17 +276,24 @@ function Staircase3D({
 					});
 				}
 			} else if (isU) {
+				// U: גרם 0/1/2 ← pathKey U_*_flight_0/1/2 בלבד, פודסטים ← pathKeyLanding0/1 בלבד (מקור אמת יחיד pathModelConfig).
 				const [a, b, c] = straightSteps;
 				const yaw0 = yaw180;
 				const yaw1 = -Math.PI / 2 + yaw180;
 				const yaw2 = Math.PI + yaw180;
-				const mirror0 = resolveMirror('U', flip, 0);
-				const mirror1 = resolveMirror('U', flip, 1);
-				const mirror2 = resolveMirror('U', flip, 2);
+				const pathKeyU0 = getPathKey('U', flip, 0);
+				const pathKeyU1 = getPathKey('U', flip, 1);
+				const pathKeyU2 = getPathKey('U', flip, 2);
 				const pathKeyLanding0 = getPathKeyLandingU(flip, 0);
 				const pathKeyLanding1 = getPathKeyLandingU(flip, 1);
+				const mirror0 = getMirror(boxModel ?? 'rect', pathKeyU0, getDefaultMirror(flip, 'U', 0));
+				const mirror1 = getMirror(boxModel ?? 'rect', pathKeyU1, getDefaultMirror(flip, 'U', 1));
+				const mirror2 = getMirror(boxModel ?? 'rect', pathKeyU2, getDefaultMirror(flip, 'U', 2));
 				const mirrorLanding0 = getMirror(boxModel ?? 'rect', pathKeyLanding0, mirror0);
 				const mirrorLanding1 = getMirror(boxModel ?? 'rect', pathKeyLanding1, mirror1);
+				const bodyRotate180U0 = getBodyRotate180(boxModel ?? 'rect', pathKeyU0);
+				const bodyRotate180U1 = getBodyRotate180(boxModel ?? 'rect', pathKeyU1);
+				const bodyRotate180U2 = getBodyRotate180(boxModel ?? 'rect', pathKeyU2);
 				const bodyRotate180Landing0 = getBodyRotate180(boxModel ?? 'rect', pathKeyLanding0);
 				const bodyRotate180Landing1 = getBodyRotate180(boxModel ?? 'rect', pathKeyLanding1);
 				const fws0 = fws(0);
@@ -333,6 +310,7 @@ function Staircase3D({
 						axis: 'x',
 						mirror: mirror0,
 						forceWallSide: fws0,
+						bodyRotate180: bodyRotate180U0,
 					});
 				}
 				const p1x = flip ? -(a * treadDepth + treadWidth / 2) : a * treadDepth + treadWidth / 2;
@@ -348,7 +326,6 @@ function Staircase3D({
 					forceWallSide: fws0,
 					bodyRotate180: bodyRotate180Landing0,
 				});
-				// גרם שני: מתחיל מיד אחרי קצה הפודסט (Z = ±treadWidth/2), בלי רווח
 				for (let i = 0; i < b; i++) {
 					const stepY = (a + 1 + i) * riser;
 					const z = flip ? treadWidth / 2 + i * treadDepth + treadDepth / 2 : -treadWidth / 2 - i * treadDepth - treadDepth / 2;
@@ -361,6 +338,7 @@ function Staircase3D({
 						axis: 'z',
 						mirror: mirror1,
 						forceWallSide: fws1,
+						bodyRotate180: bodyRotate180U1,
 					});
 				}
 				const p2z = flip ? treadWidth / 2 + b * treadDepth + treadWidth / 2 : -treadWidth / 2 - b * treadDepth - treadWidth / 2;
@@ -389,6 +367,7 @@ function Staircase3D({
 						axis: 'x',
 						mirror: mirror2,
 						forceWallSide: fws2,
+						bodyRotate180: bodyRotate180U2,
 					});
 				}
 			} else {
@@ -469,6 +448,7 @@ function Staircase3D({
 				});
 			}
 		} else if (shape === 'L') {
+			// L (ללא pathSegments): גרם 0 ← pathKey0, גרם 1 ← pathKey1, פודסט ← pathKeyLanding – כל אחד מתצורה בלבד.
 			const half = Math.floor(steps / 2);
 			const flip = pathFlipped180 === true;
 			const pathKey0 = getPathKey('L', flip, 0);
@@ -517,20 +497,29 @@ function Staircase3D({
 				});
 			}
 		} else {
+			// U (ללא pathSegments): כל גרם ופודסט מ־pathKey משלו ב־pathModelConfig.
 			const third = Math.floor(steps / 3);
 			const flipU = pathFlipped180 === true;
+			const pathKeyU0 = getPathKey('U', flipU, 0);
+			const pathKeyU1 = getPathKey('U', flipU, 1);
+			const pathKeyU2 = getPathKey('U', flipU, 2);
 			const pathKeyLanding0 = getPathKeyLandingU(flipU, 0);
 			const pathKeyLanding1 = getPathKeyLandingU(flipU, 1);
-			const mirrorLanding0 = getMirror(boxModel ?? 'rect', pathKeyLanding0, false);
-			const mirrorLanding1 = getMirror(boxModel ?? 'rect', pathKeyLanding1, false);
+			const mirror0 = getMirror(boxModel ?? 'rect', pathKeyU0, getDefaultMirror(flipU, 'U', 0));
+			const mirror1 = getMirror(boxModel ?? 'rect', pathKeyU1, getDefaultMirror(flipU, 'U', 1));
+			const mirror2 = getMirror(boxModel ?? 'rect', pathKeyU2, getDefaultMirror(flipU, 'U', 2));
+			const mirrorLanding0 = getMirror(boxModel ?? 'rect', pathKeyLanding0, mirror0);
+			const mirrorLanding1 = getMirror(boxModel ?? 'rect', pathKeyLanding1, mirror1);
 			const bodyRotate180Landing0 = getBodyRotate180(boxModel ?? 'rect', pathKeyLanding0);
 			const bodyRotate180Landing1 = getBodyRotate180(boxModel ?? 'rect', pathKeyLanding1);
-			const mirror2 = getMirrorForTread(false, 'U', 2);
+			const bodyRotate180U0 = getBodyRotate180(boxModel ?? 'rect', pathKeyU0);
+			const bodyRotate180U1 = getBodyRotate180(boxModel ?? 'rect', pathKeyU1);
+			const bodyRotate180U2 = getBodyRotate180(boxModel ?? 'rect', pathKeyU2);
 			const fws0 = getForceWallSideFromTable(boxModel ?? 'rect', 'U_0_flight_0');
 			const fws1 = getForceWallSideFromTable(boxModel ?? 'rect', 'U_0_flight_1');
 			const fws2 = getForceWallSideFromTable(boxModel ?? 'rect', 'U_0_flight_2');
 			for (let i = 0; i < third; i++) {
-				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, 0, 0], run: treadDepth, isLanding: false, flight: 0, axis: 'x', mirror: false, forceWallSide: fws0 });
+				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, 0, 0], run: treadDepth, isLanding: false, flight: 0, axis: 'x', mirror: mirror0, forceWallSide: fws0, bodyRotate180: bodyRotate180U0 });
 			}
 			const runL1 = treadWidth;
 			const l1xStart = third * treadDepth;
@@ -554,8 +543,9 @@ function Staircase3D({
 					isLanding: false,
 					flight: 1,
 					axis: 'z',
-					mirror: false,
+					mirror: mirror1,
 					forceWallSide: fws1,
+					bodyRotate180: bodyRotate180U1,
 				});
 			}
 			const runL2 = treadWidth;
@@ -583,6 +573,7 @@ function Staircase3D({
 					axis: 'x',
 					mirror: mirror2,
 					forceWallSide: fws2,
+					bodyRotate180: bodyRotate180U2,
 				});
 			}
 		}

@@ -18,10 +18,10 @@
  * │ L_0_flight_1    │ -          │ -          │ M          │ M          │ M          │
  * │ L_180_flight_0  │ -          │ -          │ false      │ M          │ M          │
  * │ L_180_flight_1  │ -          │ -          │ M          │ M          │ M          │
- * │ L_0_landing     │ -          │ -          │ M + R      │ -          │ -          │  (דלתא: הפודסט מתהפך)
- * │ L_180_landing   │ -          │ -          │ M + R      │ -          │ -          │
- * │ U_0_landing_0   │ -          │ -          │ M + R      │ -          │ -          │  (דלתא: פודסט ראשון)
- * │ U_0_landing_1   │ -          │ -          │ M + R      │ -          │ -          │  (דלתא: פודסט שני)
+ * │ L_0_landing     │ -          │ -          │ false      │ -          │ -          │  (דלתא: פודסט בלי היפוך)
+ * │ L_180_landing   │ -          │ -          │ false      │ -          │ -          │
+ * │ U_0_landing_0   │ -          │ -          │ false      │ -          │ -          │
+ * │ U_0_landing_1   │ -          │ -          │ false      │ -          │ -          │
  * └─────────────────┴────────────┴────────────┴────────────┴────────────┴────────────┘
  * M = mirror, R = bodyRotate180.
  */
@@ -91,26 +91,26 @@ export const SEGMENT_CONFIG: Partial<Record<PathKey, Partial<Record<BoxModel, Se
 		wedge: { mirror: true, bodyRotate180: false },
 	},
 
-	// ─── L פודסט – דלתא: היפוך גם ב־0° וגם ב־180° ─────────────────────────────
+	// ─── L פודסט – דלתא: בלי היפוך (mirror/bodyRotate180 false) ─────────────────
 	L_0_landing: {
-		taper: { mirror: true, bodyRotate180: true },
+		taper: { mirror: false, bodyRotate180: false },
 	},
 	L_180_landing: {
-		taper: { mirror: true, bodyRotate180: true },
+		taper: { mirror: false, bodyRotate180: false },
 	},
 
-	// ─── U פודסטים – דלתא: היפוך שני הפודסטים ─────────────────────────────────
+	// ─── U פודסטים – דלתא: בלי היפוך ───────────────────────────────────────────
 	U_0_landing_0: {
-		taper: { mirror: true, bodyRotate180: true },
+		taper: { mirror: false, bodyRotate180: false },
 	},
 	U_0_landing_1: {
-		taper: { mirror: true, bodyRotate180: true },
+		taper: { mirror: false, bodyRotate180: false },
 	},
 	U_180_landing_0: {
-		taper: { mirror: true, bodyRotate180: true },
+		taper: { mirror: false, bodyRotate180: false },
 	},
 	U_180_landing_1: {
-		taper: { mirror: true, bodyRotate180: true },
+		taper: { mirror: false, bodyRotate180: false },
 	},
 };
 

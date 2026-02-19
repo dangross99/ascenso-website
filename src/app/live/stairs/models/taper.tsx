@@ -98,6 +98,10 @@ export function buildTaperBoxTreads(params: {
 	let stepIdx = 0;
 	let landingIdx = 0;
 
+	// L 180° = גרם 0 עם yaw 0 (ב־L 0° גרם 0 עם yaw π). היפוך רק לגרם שני ב־L180.
+	const hasFlight0Yaw0 = treads.some(t => !t.isLanding && t.flight === 0 && Math.abs((t.rotation[1] as number) ?? 0) < 0.01);
+	const isL180 = shape === 'L' && hasFlight0Yaw0;
+
 	const quadGeo = (p0: [number, number, number], p1: [number, number, number], p2: [number, number, number], p3: [number, number, number], uvFor: (p: [number, number, number]) => [number, number]) => {
 		const geo = new BufferGeometry();
 		const pos = new Float32Array([
@@ -149,9 +153,9 @@ export function buildTaperBoxTreads(params: {
 				const innerSignLocalRaw = (sidePref === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
 				// בגרם הראשון (flight=0) כיוון ההתקדמות מתהפך, וזה גם הופך את "ימין מקומי" ביחס לפנים/חוץ.
 				const innerSignLocal = (t.flight === 0 ? (-innerSignLocalRaw as 1 | -1) : innerSignLocalRaw);
-				// היפוך פנימי לגרם שני ב־L (גם L0 וגם L180)
-				const flipFaceFlight1L = shape === 'L' && !t.isLanding && t.flight === 1;
-				const finalInnerSign = (flipFaceFlight1L ? (-innerSignLocal as 1 | -1) : innerSignLocal);
+				// היפוך פנימי רק לדלתא גרם שני ב־L180
+				const flipFaceFlight1L180 = isL180 && !t.isLanding && t.flight === 1;
+				const finalInnerSign = (flipFaceFlight1L180 ? (-innerSignLocal as 1 | -1) : innerSignLocal);
 				const outerSignLocal = (-innerSignLocal as 1 | -1);
 				const rotateFrontBack = (axis === 'x');
 				const rotateSides = (axis === 'z');
@@ -310,8 +314,8 @@ export function buildTaperBoxTreads(params: {
 					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
-				// סיבוב רק לגרם 2 (flight 1) ב־L – גם L0 וגם L180. גרם 1 ופודסט לא מסתובבים.
-				const bodyYaw = (shape === 'L' && !t.isLanding && t.flight === 1) ? Math.PI : (t.bodyRotate180 ? Math.PI : 0);
+				// סיבוב רק לדלתא גרם שני ב־L180. ב־L0 ובגרם 1/פודסט – לא.
+				const bodyYaw = (isL180 && !t.isLanding && t.flight === 1) ? Math.PI : (t.bodyRotate180 ? Math.PI : 0);
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>
 						<group rotation={[0, bodyYaw, 0]}>

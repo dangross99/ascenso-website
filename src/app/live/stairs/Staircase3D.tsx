@@ -281,7 +281,7 @@ function Staircase3D({
 				});
 				const zSign = flip ? 1 : -1;
 				const yaw1 = flip ? Math.PI / 2 : -Math.PI / 2;
-				const bodyRotate180Flight1 = flip && (boxModel === 'wedge' || boxModel === 'taper');
+				const bodyRotate180Flight1 = !flip && (boxModel === 'wedge' || boxModel === 'taper');
 				for (let i = 0; i < b; i++) {
 					const stepY = (a + 1 + i) * riser;
 					const z1 = zSign * (treadWidth / 2 + i * treadDepth + treadDepth / 2);
@@ -482,7 +482,7 @@ function Staircase3D({
 			});
 			const zSign = flip ? 1 : -1;
 			const yaw1 = flip ? Math.PI / 2 : -Math.PI / 2;
-			const bodyRotate180Flight1 = flip && (boxModel === 'wedge' || boxModel === 'taper');
+			const bodyRotate180Flight1 = !flip && (boxModel === 'wedge' || boxModel === 'taper');
 			for (let i = 0; i < steps - half - 1; i++) {
 				const z1 = zSign * (treadWidth / 2 + i * treadDepth + treadDepth / 2);
 				treads.push({

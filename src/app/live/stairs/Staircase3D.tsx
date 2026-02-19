@@ -51,7 +51,7 @@ function getForceWallSideFromTable(model: string, pathKey: string): 'right' | 'l
 /** דריסת mirror לפי דגם ומסלול – כש־true, הפאה העבה/חזית תפנה נכון. דלתא = taper */
 const MIRROR_OVERRIDES: Partial<Record<string, Partial<Record<string, boolean>>>> = {
 	ridge: { straight_0: true, L_0_flight_0: true, L_0_flight_1: true },
-	// דלתא: ב־L 0 רק גרם 1 (flight 0) מתהפך
+	// דגם דלתא: ב־L 0 רק גרם ראשון (flight 0) מתהפך
 	taper: { straight_0: true, L_0_flight_0: true, L_0_flight_1: false },
 	delta: { L_0_flight_0: true, L_0_flight_1: false },
 	wedge: { L_0_flight_0: true, L_0_flight_1: true },
@@ -250,7 +250,7 @@ function Staircase3D({
 				const podestX = a * treadDepth + treadWidth / 2;
 				let mirrorFlight0 = resolveMirror('L', flip, 0);
 				let mirrorFlight1 = resolveMirror('L', flip, 1);
-				// דלתא/טריז: ב־L 0 רק גרם 1 (flight 0) מתהפך; ב־L 180 גרם 2 הפוך מגרם 1
+				// דגם דלתא (וטריז): ב־L 0 רק גרם ראשון (flight 0) מתהפך; ב־L 180 גרם 2 הפוך מגרם 1
 				if (boxModel === 'taper' || boxModel === 'wedge') {
 					if (!flip) {
 						mirrorFlight0 = true;
@@ -262,6 +262,7 @@ function Staircase3D({
 				const fws0 = fws(0);
 				const fws1 = fws(1);
 				const rotationYFlight0 = 0;
+				// דלתא/טריז L 0: סיבוב גוף 180° רק לגרם ראשון (flight 0)
 				const bodyRotate180Flight0 = !flip && (boxModel === 'wedge' || boxModel === 'taper');
 				for (let i = 0; i < a; i++) {
 					treads.push({
@@ -470,6 +471,7 @@ function Staircase3D({
 			const fws1 = getForceWallSideFromTable(boxModel ?? 'rect', pathKey1);
 			let mirrorFlight0 = (() => { const o = getMirrorOverride(boxModel ?? 'rect', pathKey0); return typeof o === 'boolean' ? o : getMirrorForTread(flip, 'L', 0); })();
 			let mirrorFlight1 = (() => { const o = getMirrorOverride(boxModel ?? 'rect', pathKey1); return typeof o === 'boolean' ? o : getMirrorForTread(flip, 'L', 1); })();
+			// דגם דלתא (וטריז): ב־L 0 רק גרם ראשון (flight 0) מתהפך
 			if (boxModel === 'taper' || boxModel === 'wedge') {
 				if (!flip) {
 					mirrorFlight0 = true;

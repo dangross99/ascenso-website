@@ -147,7 +147,8 @@ export function buildTaperBoxTreads(params: {
 				// שים לב: stepRailingSide/landingRailingSide אצלנו מוגדרים כברירת מחדל כ*צד פנימי* (ראו LivePageInner.tsx).
 				// לכן sidePref מייצג "פנים". החוץ הוא הצד ההפוך.
 				const innerSignLocalRaw = (sidePref === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
-				// innerSign אחיד לכל הגרמים – השינוי הפיזי רק דרך t.mirror/t.bodyRotate180 (pathModelConfig), בלי תלות ב־flight.
+				// צד אחיד: finalInnerSign = innerSignLocalRaw ישירות (ללא בדיקת t.flight). השינוי הפיזי רק דרך Mirror חיצוני:
+				// t.mirror ו־t.bodyRotate180 שמגיעים מה־Map ב־Staircase3D (pathModelConfig).
 				const finalInnerSign = innerSignLocalRaw;
 				const outerSignLocal = (-finalInnerSign as 1 | -1);
 				const rotateFrontBack = (axis === 'x');

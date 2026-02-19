@@ -227,7 +227,9 @@ function Staircase3D({
 
 			if (isStraight && shape !== 'L') {
 				const n = straightSteps[0];
-				const mirror = resolveMirror('straight', flip, 0);
+				const pathKeyStraight = getPathKey('straight', flip, 0);
+				const mirror = getMirror(boxModel ?? 'rect', pathKeyStraight, getDefaultMirror(flip, 'straight', 0));
+				const bodyRotate180Straight = getBodyRotate180(boxModel ?? 'rect', pathKeyStraight);
 				const forceWallSide = fws(0);
 				for (let i = 0; i < n; i++) {
 					const x = flip ? -(i * treadDepth + treadDepth / 2) : i * treadDepth + treadDepth / 2;
@@ -240,7 +242,7 @@ function Staircase3D({
 						axis: 'x',
 						mirror,
 						forceWallSide,
-						bodyRotate180: false,
+						bodyRotate180: bodyRotate180Straight,
 					});
 				}
 			} else if (isL || (isStraight && shape === 'L')) {

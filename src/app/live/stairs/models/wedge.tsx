@@ -183,8 +183,8 @@ export function buildWedgeTreads(params: {
 							</mesh>
 						);
 
-						{/* היפוך: ב־0° גרם ראשון מסובבים π; ב־L 180° גרם שני (bodyRotate180) גם */}
-						const bodyYaw = t.bodyRotate180 ? Math.PI : ((t.rotation[1] as number) === 0 ? Math.PI : 0);
+						{/* סיבוב רק מהתצורה (t.bodyRotate180 מ־pathModelConfig) – בלי לוגיקה בדגם */}
+						const bodyYaw = t.bodyRotate180 ? Math.PI : 0;
 						const geomGroup = (
 							<group rotation={[0, bodyYaw, 0]}>
 								{front}{back}{right}{left}{bottom}

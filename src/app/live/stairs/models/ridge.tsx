@@ -160,8 +160,10 @@ export function buildRidgeTreads(params: {
 							</mesh>
 						);
 
+						{/* סיבוב רק מהתצורה (t.bodyRotate180 מ־pathModelConfig) – בלי לוגיקה בדגם */}
+						const bodyYaw = t.bodyRotate180 ? Math.PI : 0;
 						const geomGroup = (
-							<group rotation={[0, (t.flight === 0 ? Math.PI : 0), 0]}>
+							<group rotation={[0, bodyYaw, 0]}>
 								{front}{bottom}{back}{sideRight}{sideLeft}
 							</group>
 						);

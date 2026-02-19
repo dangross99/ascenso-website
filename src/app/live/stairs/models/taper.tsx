@@ -97,7 +97,9 @@ export function buildTaperBoxTreads(params: {
 	let stepIdx = 0;
 	let landingIdx = 0;
 
-	// היפוך פנימי נקבע רק מ־mirror ו־bodyRotate180 שמגיעים מ־Staircase3D – בלי היפוך כפול
+	// L 0 נגזר מגאומטריה: גרם 2 עם yaw ≈ -π/2. ב־L 180 גרם 2 עם yaw ≈ π/2 – כדי שהגיבוי לא יסובב גרם 1 ב־L180
+	const hasL0Geometry = shape === 'L' && treads.some(t => !t.isLanding && t.flight === 1 && Math.abs(((t.rotation?.[1] ?? 0) as number) + Math.PI / 2) < 0.1);
+
 	const quadGeo = (p0: [number, number, number], p1: [number, number, number], p2: [number, number, number], p3: [number, number, number], uvFor: (p: [number, number, number]) => [number, number]) => {
 		const geo = new BufferGeometry();
 		const pos = new Float32Array([
@@ -308,9 +310,9 @@ export function buildTaperBoxTreads(params: {
 					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
-				// סיבוב גוף 180° – מ־Staircase3D (דלתא L 0 גרם 1+2) או גיבוי מגאומטריה אם הפרופ לא מגיע
-				const isL0Flight0 = shape === 'L' && !t.isLanding && t.flight === 0 && Math.abs((t.rotation?.[1] ?? 0)) < 0.01;
-				const isL0Flight1 = shape === 'L' && !t.isLanding && t.flight === 1 && Math.abs(((t.rotation?.[1] ?? 0) as number) + Math.PI / 2) < 0.1;
+				// סיבוב גוף 180° – רק דלתא L 0 גרם 1+2 (מ־Staircase3D או גיבוי רק כש־hasL0Geometry, כדי לא לסובב גרם 1 ב־L180)
+				const isL0Flight0 = hasL0Geometry && !t.isLanding && t.flight === 0;
+				const isL0Flight1 = hasL0Geometry && !t.isLanding && t.flight === 1;
 				const bodyYaw = (t.bodyRotate180 === true || isL0Flight0 || isL0Flight1) ? Math.PI : 0;
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>

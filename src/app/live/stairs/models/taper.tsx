@@ -308,8 +308,10 @@ export function buildTaperBoxTreads(params: {
 					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
-				// סיבוב גוף 180° – מגיע מ־Staircase3D (דלתא/טריז גרם 2 ב־L180 מקבלים bodyRotate180)
-				const bodyYaw = t.bodyRotate180 ? Math.PI : 0;
+				// סיבוב גוף 180° – מ־Staircase3D (דלתא L 0 גרם 1+2) או גיבוי מגאומטריה אם הפרופ לא מגיע
+				const isL0Flight0 = shape === 'L' && !t.isLanding && t.flight === 0 && Math.abs((t.rotation?.[1] ?? 0)) < 0.01;
+				const isL0Flight1 = shape === 'L' && !t.isLanding && t.flight === 1 && Math.abs(((t.rotation?.[1] ?? 0) as number) + Math.PI / 2) < 0.1;
+				const bodyYaw = (t.bodyRotate180 === true || isL0Flight0 || isL0Flight1) ? Math.PI : 0;
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>
 						<group rotation={[0, bodyYaw, 0]}>

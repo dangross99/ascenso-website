@@ -97,6 +97,10 @@ export function buildTaperBoxTreads(params: {
 	let stepIdx = 0;
 	let landingIdx = 0;
 
+	// דלתא ב־L 180°: גרם שני (flight 1) עם יאו π/2 – היפוך פנימי הפוך מגרם ראשון, בהתאם לסיבוב המהלך.
+	const isFlight1L180 = (t: (typeof treads)[0]) =>
+		shape === 'L' && !t.isLanding && t.flight === 1 && Math.abs(((t.rotation?.[1] ?? 0) as number) - Math.PI / 2) < 0.1;
+
 	const quadGeo = (p0: [number, number, number], p1: [number, number, number], p2: [number, number, number], p3: [number, number, number], uvFor: (p: [number, number, number]) => [number, number]) => {
 		const geo = new BufferGeometry();
 		const pos = new Float32Array([
@@ -148,8 +152,8 @@ export function buildTaperBoxTreads(params: {
 				const innerSignLocalRaw = (sidePref === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
 				// בגרם הראשון (flight=0) כיוון ההתקדמות מתהפך, וזה גם הופך את "ימין מקומי" ביחס לפנים/חוץ.
 				const innerSignLocal = (t.flight === 0 ? (-innerSignLocalRaw as 1 | -1) : innerSignLocalRaw);
-				// בלי היפוך מיוחד לגרם 2 ב־L180 – כל הגרמים והפודסט אותו דבר
-				const finalInnerSign = innerSignLocal;
+				// ב־L 180° גרם שני מקבל היפוך (finalInnerSign) הפוך מגרם ראשון – כיווניות טייפר נכונה
+				const finalInnerSign = (isFlight1L180(t) ? (-innerSignLocal as 1 | -1) : innerSignLocal);
 				const outerSignLocal = (-innerSignLocal as 1 | -1);
 				const rotateFrontBack = (axis === 'x');
 				const rotateSides = (axis === 'z');
@@ -308,7 +312,7 @@ export function buildTaperBoxTreads(params: {
 					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
-				// בלי סיבוב מיוחד – רק bodyRotate180 מהפרופ (דלתא L: כולם 0)
+				// סיבוב גוף 180° – מגיע מ־Staircase3D (דלתא/טריז גרם 2 ב־L180 מקבלים bodyRotate180)
 				const bodyYaw = t.bodyRotate180 ? Math.PI : 0;
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>

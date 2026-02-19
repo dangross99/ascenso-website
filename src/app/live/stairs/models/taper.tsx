@@ -97,8 +97,11 @@ export function buildTaperBoxTreads(params: {
 	let stepIdx = 0;
 	let landingIdx = 0;
 
-	// מקור אמת יחיד: L 180° נגזר רק מהגאומטריה (יואו גרם 2 ≈ π/2). בלי pathFlipped180 – מנתק תלות.
-	const isL180 = shape === 'L' && treads.some(t => !t.isLanding && t.flight === 1 && Math.abs(((t.rotation?.[1] ?? 0) as number) - Math.PI / 2) < 0.1);
+	// רק גרם 2 ב־L180 מסתובב: מקור אמת יחיד מהגאומטריה (יואו גרם 2 ≈ π/2).
+	const hasFlight1YawPi2 = treads.some(t => !t.isLanding && t.flight === 1 && Math.abs(((t.rotation?.[1] ?? 0) as number) - Math.PI / 2) < 0.1);
+	const isL180 = shape === 'L' && hasFlight1YawPi2;
+	// רק המדרגות של גרם 2 (flight 1) ב־L180 – לא גרם 1, לא פודסט, לא L0.
+	const onlyFlight1InL180 = (t: (typeof treads)[0]) => isL180 && !t.isLanding && t.flight === 1;
 
 	const quadGeo = (p0: [number, number, number], p1: [number, number, number], p2: [number, number, number], p3: [number, number, number], uvFor: (p: [number, number, number]) => [number, number]) => {
 		const geo = new BufferGeometry();
@@ -151,9 +154,8 @@ export function buildTaperBoxTreads(params: {
 				const innerSignLocalRaw = (sidePref === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
 				// בגרם הראשון (flight=0) כיוון ההתקדמות מתהפך, וזה גם הופך את "ימין מקומי" ביחס לפנים/חוץ.
 				const innerSignLocal = (t.flight === 0 ? (-innerSignLocalRaw as 1 | -1) : innerSignLocalRaw);
-				// היפוך פנימי רק לדלתא גרם שני ב־L180
-				const flipFaceFlight1L180 = isL180 && !t.isLanding && t.flight === 1;
-				const finalInnerSign = (flipFaceFlight1L180 ? (-innerSignLocal as 1 | -1) : innerSignLocal);
+				// היפוך פנימי רק לגרם 2 ב־L180
+				const finalInnerSign = (onlyFlight1InL180(t) ? (-innerSignLocal as 1 | -1) : innerSignLocal);
 				const outerSignLocal = (-innerSignLocal as 1 | -1);
 				const rotateFrontBack = (axis === 'x');
 				const rotateSides = (axis === 'z');
@@ -312,8 +314,8 @@ export function buildTaperBoxTreads(params: {
 					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
-				// סיבוב רק לדלתא גרם שני ב־L180
-				const bodyYaw = (isL180 && !t.isLanding && t.flight === 1) ? Math.PI : (t.bodyRotate180 ? Math.PI : 0);
+				// סיבוב רק לגרם 2 ב־L180 (שום גרם אחר)
+				const bodyYaw = onlyFlight1InL180(t) ? Math.PI : (t.bodyRotate180 ? Math.PI : 0);
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>
 						<group rotation={[0, bodyYaw, 0]}>

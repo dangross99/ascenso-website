@@ -90,7 +90,6 @@ export function buildTaperBoxTreads(params: {
 		stepRailingSides,
 		landingRailingSides,
 		shape,
-		pathFlipped180,
 	} = params;
 
 	const thickStart = treadThickness;
@@ -98,10 +97,8 @@ export function buildTaperBoxTreads(params: {
 	let stepIdx = 0;
 	let landingIdx = 0;
 
-	// L 180°: גאומטריה (יואו גרם 2 ≈ π/2) או pathFlipped180 כגיבוי – כדי שגרם שני ב־L180 תמיד יתהפך.
-	const yaw1 = (t: (typeof treads)[0]) => (t.rotation?.[1] ?? 0) as number;
-	const isL180FromTreads = shape === 'L' && treads.some(t => !t.isLanding && t.flight === 1 && Math.abs(yaw1(t) - Math.PI / 2) < 0.1);
-	const isL180 = shape === 'L' && (isL180FromTreads || pathFlipped180 === true);
+	// מקור אמת יחיד: L 180° נגזר רק מהגאומטריה (יואו גרם 2 ≈ π/2). בלי pathFlipped180 – מנתק תלות.
+	const isL180 = shape === 'L' && treads.some(t => !t.isLanding && t.flight === 1 && Math.abs(((t.rotation?.[1] ?? 0) as number) - Math.PI / 2) < 0.1);
 
 	const quadGeo = (p0: [number, number, number], p1: [number, number, number], p2: [number, number, number], p3: [number, number, number], uvFor: (p: [number, number, number]) => [number, number]) => {
 		const geo = new BufferGeometry();

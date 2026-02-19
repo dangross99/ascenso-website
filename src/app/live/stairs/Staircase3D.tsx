@@ -912,7 +912,6 @@ function Staircase3D({
 						stepRailingSides: railingSides,
 						landingRailingSides,
 						shape,
-						pathFlipped180,
 					});
 				}
 				if (boxModel === 'wedge') {

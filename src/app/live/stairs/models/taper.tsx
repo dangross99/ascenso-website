@@ -97,10 +97,7 @@ export function buildTaperBoxTreads(params: {
 	let stepIdx = 0;
 	let landingIdx = 0;
 
-	// דלתא ב־L 0°: גרם שני (flight 1) עם יאו -π/2 – היפוך פנימי כך שהטייפר מתיישר נכון (רק ב־L0 מסתובב).
-	const isFlight1L0 = (t: (typeof treads)[0]) =>
-		shape === 'L' && !t.isLanding && t.flight === 1 && Math.abs(((t.rotation?.[1] ?? 0) as number) + Math.PI / 2) < 0.1;
-
+	// היפוך פנימי נקבע רק מ־mirror ו־bodyRotate180 שמגיעים מ־Staircase3D – בלי היפוך כפול
 	const quadGeo = (p0: [number, number, number], p1: [number, number, number], p2: [number, number, number], p3: [number, number, number], uvFor: (p: [number, number, number]) => [number, number]) => {
 		const geo = new BufferGeometry();
 		const pos = new Float32Array([
@@ -152,8 +149,7 @@ export function buildTaperBoxTreads(params: {
 				const innerSignLocalRaw = (sidePref === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
 				// בגרם הראשון (flight=0) כיוון ההתקדמות מתהפך, וזה גם הופך את "ימין מקומי" ביחס לפנים/חוץ.
 				const innerSignLocal = (t.flight === 0 ? (-innerSignLocalRaw as 1 | -1) : innerSignLocalRaw);
-				// ב־L 0° גרם שני מקבל היפוך (finalInnerSign) – כיווניות טייפר נכונה כש־bodyRotate180 מופעל
-				const finalInnerSign = (isFlight1L0(t) ? (-innerSignLocal as 1 | -1) : innerSignLocal);
+				const finalInnerSign = innerSignLocal;
 				const outerSignLocal = (-innerSignLocal as 1 | -1);
 				const rotateFrontBack = (axis === 'x');
 				const rotateSides = (axis === 'z');

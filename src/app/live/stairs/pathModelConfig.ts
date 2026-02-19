@@ -14,8 +14,8 @@
  * ├─────────────────┼────────────┼────────────┼────────────┼────────────┼────────────┤
  * │ straight_0      │ -          │ -          │ M          │ -          │ M          │
  * │ straight_180    │ -          │ -          │ M          │ M          │ M          │
- * │ L_0_flight_0    │ -          │ -          │ M + R      │ M          │ M          │
- * │ L_0_flight_1    │ -          │ -          │ M + R      │ M          │ M          │
+ * │ L_0_flight_0    │ -          │ -          │ M          │ M          │ M          │  (דלתא: רק mirror, סיבוב רק לפודסט)
+ * │ L_0_flight_1    │ -          │ -          │ M          │ M          │ M          │
  * │ L_180_flight_0  │ -          │ -          │ false      │ M          │ M          │
  * │ L_180_flight_1  │ -          │ -          │ M          │ M          │ M          │
  * │ L_0_landing     │ -          │ -          │ M + R      │ -          │ -          │  (דלתא: הפודסט מתהפך)
@@ -67,15 +67,15 @@ export const SEGMENT_CONFIG: Partial<Record<PathKey, Partial<Record<BoxModel, Se
 		wedge: { mirror: true, bodyRotate180: false },
 	},
 
-	// ─── L 0° – גרם ראשון, פודסט (לא בטבלה = false/false), גרם שני ─────────
+	// ─── L 0° – גרם ראשון, פודסט (landing בנפרד), גרם שני. בדלתא רק mirror לגרמים, סיבוב 180° רק לפודסט ─
 	L_0_flight_0: {
 		ridge: { mirror: true, bodyRotate180: false },
-		taper: { mirror: true, bodyRotate180: true },
+		taper: { mirror: true, bodyRotate180: false },
 		wedge: { mirror: true, bodyRotate180: false },
 	},
 	L_0_flight_1: {
 		ridge: { mirror: true, bodyRotate180: false },
-		taper: { mirror: true, bodyRotate180: true },
+		taper: { mirror: true, bodyRotate180: false },
 		wedge: { mirror: true, bodyRotate180: false },
 	},
 

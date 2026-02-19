@@ -256,9 +256,9 @@ export function buildTaperBoxTreads(params: {
 					);
 				};
 
-				// Geometry points (local) – finalInnerSign מגדיר איזה צד עבה/דק; mirror מחליף בין zOuter ל-zInner
-				// פודסטים בדלתא: תמיד להפוך (L/U) – דריסה מפורשת כדי לוודא שהפודסט נראה עם טייפר נכון
-				const effectiveMirror = t.isLanding ? true : (t.mirror ?? false);
+				// Geometry points (local) – finalInnerSign מגדיר איזה צד עבה/דק; mirror מחליף בין zOuter ל-zInner.
+				// מקור אמת יחיד: pathModelConfig דרך Staircase3D – אין לוגיקה מקומית, רק t.mirror / t.bodyRotate180.
+				const effectiveMirror = t.mirror ?? false;
 				const dx = run / 2;
 				const dz = treadWidth / 2;
 				const baseZOuter = -finalInnerSign * dz;
@@ -310,9 +310,8 @@ export function buildTaperBoxTreads(params: {
 					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
-				// סיבוב גוף 180° – פודסטים בדלתא תמיד מסתובבים 180° (L/U), שאר המדרגות מהתצורה
-				const effectiveBodyRotate180 = t.isLanding ? true : (t.bodyRotate180 ?? false);
-				const bodyYaw = effectiveBodyRotate180 ? Math.PI : 0;
+				// סיבוב גוף 180° – רק מהתצורה (pathModelConfig דרך Staircase3D), ללא דריסה לפי isLanding
+				const bodyYaw = (t.bodyRotate180 === true) ? Math.PI : 0;
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>
 						<group rotation={[0, bodyYaw, 0]}>

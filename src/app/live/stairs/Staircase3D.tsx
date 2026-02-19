@@ -11,6 +11,7 @@ import { buildRidgeTreads } from './models/ridge';
 import { buildRoundedTreads } from './models/rounded';
 import { buildTaperBoxTreads } from './models/taper';
 import { HitechPlates } from './models/hitech';
+import { getMirror, getBodyRotate180, getDefaultMirror } from './pathModelConfig';
 
 // ׳”׳₪׳¢׳׳× ׳§׳׳© ׳©׳ three ׳¢׳‘׳•׳¨ ׳˜׳¢׳™׳ ׳•׳× ׳—׳׳§׳•׳×
 Cache.enabled = true;
@@ -248,22 +249,15 @@ function Staircase3D({
 				const a = isL ? straightSteps[0] : Math.floor(n / 2);
 				const b = isL ? straightSteps[1] : n - a - 1;
 				const podestX = a * treadDepth + treadWidth / 2;
-				let mirrorFlight0 = resolveMirror('L', flip, 0);
-				let mirrorFlight1 = resolveMirror('L', flip, 1);
-				// דגם דלתא בלבד: ב־L 0 גרם 1 וגרם 2 מסתובבים; ב־L 180 גרם 2 הפוך מגרם 1
-				if (boxModel === 'taper') {
-					if (!flip) {
-						mirrorFlight0 = true;
-						mirrorFlight1 = true;
-					} else {
-						mirrorFlight1 = !mirrorFlight0;
-					}
-				}
+				const pathKey0 = getPathKey('L', flip, 0);
+				const pathKey1 = getPathKey('L', flip, 1);
+				const mirrorFlight0 = getMirror(boxModel ?? 'rect', pathKey0, getDefaultMirror(flip, 'L', 0));
+				const mirrorFlight1 = getMirror(boxModel ?? 'rect', pathKey1, getDefaultMirror(flip, 'L', 1));
 				const fws0 = fws(0);
 				const fws1 = fws(1);
 				const rotationYFlight0 = 0;
-				// דגם דלתא L 0: סיבוב גוף 180° לגרם 1 ולגרם 2
-				const bodyRotate180Flight0 = !flip && boxModel === 'taper';
+				const bodyRotate180Flight0 = getBodyRotate180(boxModel ?? 'rect', pathKey0);
+				const bodyRotate180Flight1 = getBodyRotate180(boxModel ?? 'rect', pathKey1);
 				for (let i = 0; i < a; i++) {
 					treads.push({
 						position: [i * treadDepth + treadDepth / 2, i * riser, 0],
@@ -291,7 +285,6 @@ function Staircase3D({
 				});
 				const zSign = flip ? 1 : -1;
 				const yaw1 = flip ? Math.PI / 2 : -Math.PI / 2;
-				const bodyRotate180Flight1 = !flip && boxModel === 'taper';
 				for (let i = 0; i < b; i++) {
 					const stepY = (a + 1 + i) * riser;
 					const z1 = zSign * (treadWidth / 2 + i * treadDepth + treadDepth / 2);
@@ -469,19 +462,10 @@ function Staircase3D({
 			const pathKey1 = getPathKey('L', flip, 1);
 			const fws0 = getForceWallSideFromTable(boxModel ?? 'rect', pathKey0);
 			const fws1 = getForceWallSideFromTable(boxModel ?? 'rect', pathKey1);
-			let mirrorFlight0 = (() => { const o = getMirrorOverride(boxModel ?? 'rect', pathKey0); return typeof o === 'boolean' ? o : getMirrorForTread(flip, 'L', 0); })();
-			let mirrorFlight1 = (() => { const o = getMirrorOverride(boxModel ?? 'rect', pathKey1); return typeof o === 'boolean' ? o : getMirrorForTread(flip, 'L', 1); })();
-			// דגם דלתא בלבד: ב־L 0 גרם 1 וגרם 2 מסתובבים
-			if (boxModel === 'taper') {
-				if (!flip) {
-					mirrorFlight0 = true;
-					mirrorFlight1 = true;
-				} else {
-					mirrorFlight1 = !mirrorFlight0;
-				}
-			}
+			const mirrorFlight0 = getMirror(boxModel ?? 'rect', pathKey0, getDefaultMirror(flip, 'L', 0));
+			const mirrorFlight1 = getMirror(boxModel ?? 'rect', pathKey1, getDefaultMirror(flip, 'L', 1));
 			const rotationYFlight0 = 0;
-			const bodyRotate180Flight0 = !flip && boxModel === 'taper';
+			const bodyRotate180Flight0 = getBodyRotate180(boxModel ?? 'rect', pathKey0);
 			for (let i = 0; i < half; i++) {
 				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, rotationYFlight0, 0], run: treadDepth, isLanding: false, flight: 0, axis: 'x', mirror: mirrorFlight0, forceWallSide: fws0, bodyRotate180: bodyRotate180Flight0 });
 			}
@@ -501,7 +485,7 @@ function Staircase3D({
 			});
 			const zSign = flip ? 1 : -1;
 			const yaw1 = flip ? Math.PI / 2 : -Math.PI / 2;
-			const bodyRotate180Flight1 = !flip && boxModel === 'taper';
+			const bodyRotate180Flight1 = getBodyRotate180(boxModel ?? 'rect', pathKey1);
 			for (let i = 0; i < steps - half - 1; i++) {
 				const z1 = zSign * (treadWidth / 2 + i * treadDepth + treadDepth / 2);
 				treads.push({

@@ -97,11 +97,6 @@ export function buildTaperBoxTreads(params: {
 	let stepIdx = 0;
 	let landingIdx = 0;
 
-	// הפרדה מלאה: כל גרם וכל פודסט נקבעים רק לפי הנתונים של אותו tread (לא סריקה על כל ה־treads).
-	// רק מדרגה של גרם 2 (flight 1) עם יאו π/2 מקבלת סיבוב/היפוך – נקבע רק מ־t.flight, t.isLanding, t.rotation.
-	const onlyFlight1InL180 = (t: (typeof treads)[0]) =>
-		shape === 'L' && !t.isLanding && t.flight === 1 && Math.abs(((t.rotation?.[1] ?? 0) as number) - Math.PI / 2) < 0.1;
-
 	const quadGeo = (p0: [number, number, number], p1: [number, number, number], p2: [number, number, number], p3: [number, number, number], uvFor: (p: [number, number, number]) => [number, number]) => {
 		const geo = new BufferGeometry();
 		const pos = new Float32Array([
@@ -153,8 +148,8 @@ export function buildTaperBoxTreads(params: {
 				const innerSignLocalRaw = (sidePref === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
 				// בגרם הראשון (flight=0) כיוון ההתקדמות מתהפך, וזה גם הופך את "ימין מקומי" ביחס לפנים/חוץ.
 				const innerSignLocal = (t.flight === 0 ? (-innerSignLocalRaw as 1 | -1) : innerSignLocalRaw);
-				// היפוך פנימי רק לגרם 2 ב־L180
-				const finalInnerSign = (onlyFlight1InL180(t) ? (-innerSignLocal as 1 | -1) : innerSignLocal);
+				// בלי היפוך מיוחד לגרם 2 ב־L180 – כל הגרמים והפודסט אותו דבר
+				const finalInnerSign = innerSignLocal;
 				const outerSignLocal = (-innerSignLocal as 1 | -1);
 				const rotateFrontBack = (axis === 'x');
 				const rotateSides = (axis === 'z');
@@ -313,8 +308,8 @@ export function buildTaperBoxTreads(params: {
 					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
-				// סיבוב רק לגרם 2 ב־L180 (שום גרם אחר)
-				const bodyYaw = onlyFlight1InL180(t) ? Math.PI : (t.bodyRotate180 ? Math.PI : 0);
+				// בלי סיבוב מיוחד – רק bodyRotate180 מהפרופ (דלתא L: כולם 0)
+				const bodyYaw = t.bodyRotate180 ? Math.PI : 0;
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>
 						<group rotation={[0, bodyYaw, 0]}>

@@ -97,10 +97,9 @@ export function buildTaperBoxTreads(params: {
 	let stepIdx = 0;
 	let landingIdx = 0;
 
-	// רק גרם 2 ב־L180 מסתובב: מקור אמת יחיד מהגאומטריה (יואו גרם 2 ≈ π/2).
+	// רק גרם 2 ב־L180 מסתובב; גרם 1 ופודסט – בלי סיבוב ובלי היפוך פאות (גם ב־L0 וגם ב־L180).
 	const hasFlight1YawPi2 = treads.some(t => !t.isLanding && t.flight === 1 && Math.abs(((t.rotation?.[1] ?? 0) as number) - Math.PI / 2) < 0.1);
 	const isL180 = shape === 'L' && hasFlight1YawPi2;
-	// רק המדרגות של גרם 2 (flight 1) ב־L180 – לא גרם 1, לא פודסט, לא L0.
 	const onlyFlight1InL180 = (t: (typeof treads)[0]) => isL180 && !t.isLanding && t.flight === 1;
 
 	const quadGeo = (p0: [number, number, number], p1: [number, number, number], p2: [number, number, number], p3: [number, number, number], uvFor: (p: [number, number, number]) => [number, number]) => {

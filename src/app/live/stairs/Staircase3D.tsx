@@ -251,8 +251,8 @@ function Staircase3D({
 				const mirrorFlight1 = resolveMirror('L', flip, 1);
 				const fws0 = fws(0);
 				const fws1 = fws(1);
-				// גרם 0: rotation רק לדלתא L 0° (לא משתנה גלובלי שמשפיע על פודסט/גרם 1)
-				const rotationYFlight0 = (boxModel === 'taper' && !flip) ? Math.PI : 0;
+				// גרם 0: בלי סיבוב – רק דלתא גרם 2 ב־L180 מסתובב (ב־taper.tsx)
+				const rotationYFlight0 = 0;
 				for (let i = 0; i < a; i++) {
 					treads.push({
 						position: [i * treadDepth + treadDepth / 2, i * riser, 0],
@@ -460,7 +460,8 @@ function Staircase3D({
 			const fws1 = getForceWallSideFromTable(boxModel ?? 'rect', pathKey1);
 			const mirrorFlight0 = (() => { const o = getMirrorOverride(boxModel ?? 'rect', pathKey0); return typeof o === 'boolean' ? o : getMirrorForTread(flip, 'L', 0); })();
 			const mirrorFlight1 = (() => { const o = getMirrorOverride(boxModel ?? 'rect', pathKey1); return typeof o === 'boolean' ? o : getMirrorForTread(flip, 'L', 1); })();
-			const rotationYFlight0 = (boxModel === 'taper' && !flip) ? Math.PI : 0;
+			// גרם 0 בלי סיבוב – רק דלתא גרם 2 ב־L180 מסתובב (ב־taper.tsx)
+			const rotationYFlight0 = 0;
 			for (let i = 0; i < half; i++) {
 				treads.push({ position: [i * treadDepth + treadDepth / 2, i * riser, 0], rotation: [0, rotationYFlight0, 0], run: treadDepth, isLanding: false, flight: 0, axis: 'x', mirror: mirrorFlight0, forceWallSide: fws0, bodyRotate180: false });
 			}

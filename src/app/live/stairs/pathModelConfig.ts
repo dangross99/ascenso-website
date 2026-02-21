@@ -13,8 +13,8 @@
  * ┌─────────────────┬────────────┬────────────┬────────────┬────────────┬────────────┐
  * │ pathKey         │ rect       │ rounded    │ taper      │ wedge      │ ridge      │
  * ├─────────────────┼────────────┼────────────┼────────────┼────────────┼────────────┤
- * │ straight_0      │ -          │ -          │ M          │ -          │ M          │
- * │ straight_180    │ -          │ -          │ M          │ M          │ M          │
+ * │ straight_0      │ -          │ -          │ M + R      │ -          │ M + R      │  (סיבוב במבנה ישר)
+ * │ straight_180    │ -          │ -          │ M + R      │ M + R      │ M + R      │
  * │ L_0_flight_0    │ -          │ -          │ false      │ M          │ M          │  (דלתא: גרם 1 מצב טבעי)
  * │ L_0_flight_1    │ -          │ -          │ M + R      │ M          │ M          │  (דלתא: רק גרם 2 היפוך+סיבוב)
  * │ L_180_flight_0  │ -          │ -          │ M + R      │ M          │ M          │  (דלתא: סיבוב גרם 1)
@@ -56,17 +56,17 @@ export type PathKey =
  * רק דגמים שצריכים דריסה מופיעים; השאר משתמשים בברירת מחדל (getMirrorForTread, bodyRotate180: false).
  */
 export const SEGMENT_CONFIG: Partial<Record<PathKey, Partial<Record<BoxModel, SegmentConfig>>>> = {
-	// ─── ישר 0° ─────────────────────────────────────────────────────────────
+	// ─── ישר 0° – סיבוב הדגמים (bodyRotate180) ───────────────────────────────
 	straight_0: {
-		ridge: { mirror: true, bodyRotate180: false },
-		taper: { mirror: true, bodyRotate180: false },
-		wedge: { mirror: false, bodyRotate180: false },
+		ridge: { mirror: true, bodyRotate180: true },
+		taper: { mirror: true, bodyRotate180: true },
+		wedge: { mirror: false, bodyRotate180: true },
 	},
-	// ─── ישר 180° ───────────────────────────────────────────────────────────
+	// ─── ישר 180° – סיבוב הדגמים ─────────────────────────────────────────────
 	straight_180: {
-		ridge: { mirror: true, bodyRotate180: false },
-		taper: { mirror: true, bodyRotate180: false },
-		wedge: { mirror: true, bodyRotate180: false },
+		ridge: { mirror: true, bodyRotate180: true },
+		taper: { mirror: true, bodyRotate180: true },
+		wedge: { mirror: true, bodyRotate180: true },
 	},
 
 	// ─── L 0° – דלתא: גרם 1 במצב טבעי, רק גרם 2 מתהפך ונסובב (להיצמד לקיר החיצוני). ─

@@ -11,7 +11,7 @@ import { buildRidgeTreads } from './models/ridge';
 import { buildRoundedTreads } from './models/rounded';
 import { buildTaperBoxTreads } from './models/taper';
 import { HitechPlates } from './models/hitech';
-import { getMirror, getBodyRotate180, getDefaultMirror, getPathKeyLandingL, getPathKeyLandingU, getLandingWalls } from './pathModelConfig';
+import { getMirror, getBodyRotate180, getDefaultMirror, getPathKeyLandingL, getPathKeyLandingU, getLandingWalls, getForceWallSide } from './pathModelConfig';
 
 // ׳”׳₪׳¢׳׳× ׳§׳׳© ׳©׳ three ׳¢׳‘׳•׳¨ ׳˜׳¢׳™׳ ׳•׳× ׳—׳׳§׳•׳×
 Cache.enabled = true;
@@ -28,13 +28,12 @@ const MODEL_SIDE_OVERRIDES: Partial<Record<string, Partial<Record<string, { forc
 	},
 };
 
-/** דריסת צד קיר לפי מסלול. L 0° קיר ימין; L 180° גרם ראשון שמאל, גרם שני קיר בצד החיצוני (ימין); U 0° גרם ראשון קיר בשמאל */
+/** דריסת צד קיר לפי מסלול (כשאין ב־pathModelConfig). L 0° קיר ימין; L 180° גרם ראשון שמאל, גרם שני ימין. U 0° גרם ראשון – pathModelConfig (forceWallSide: 'left'). */
 const PATH_WALL_SIDE_OVERRIDES: Partial<Record<string, { forceWallSide: 'right' | 'left' }>> = {
 	L_0_flight_0: { forceWallSide: 'right' },
 	L_0_flight_1: { forceWallSide: 'right' },
 	L_180_flight_0: { forceWallSide: 'left' },
 	L_180_flight_1: { forceWallSide: 'right' },
-	U_0_flight_0: { forceWallSide: 'left' },
 };
 
 function getPathKey(path: 'straight' | 'L' | 'U', flip: boolean, flight: number): string {
@@ -44,6 +43,8 @@ function getPathKey(path: 'straight' | 'L' | 'U', flip: boolean, flight: number)
 }
 
 function getForceWallSideFromTable(model: string, pathKey: string): 'right' | 'left' | 'auto' {
+	const fromConfig = getForceWallSide(model, pathKey);
+	if (fromConfig != null) return fromConfig;
 	const modelEntry = MODEL_SIDE_OVERRIDES[model]?.[pathKey];
 	if (modelEntry) return modelEntry.forceWallSide;
 	const pathEntry = PATH_WALL_SIDE_OVERRIDES[pathKey];

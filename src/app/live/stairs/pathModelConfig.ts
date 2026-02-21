@@ -11,6 +11,8 @@ export type BoxModel = 'rect' | 'rounded' | 'taper' | 'wedge' | 'ridge';
 export interface SegmentConfig {
 	mirror: boolean;
 	bodyRotate180: boolean;
+	/** צד קיר בגרם: 'right' | 'left'. אם לא מוגדר – Staircase3D ישתמש בטבלאות המקומיות/ברירת מחדל. */
+	forceWallSide?: 'right' | 'left';
 	/**
 	 * מערך פאות שיקבלו קיר בפודסט (0–3). ברירת מחדל [1] אם לא הוגדר.
 	 * מקור אמת יחיד: כל החלטה על אילו קירות להציג – רק כאן. Staircase3D רק קורא את הערך ומרנדר.
@@ -80,6 +82,13 @@ export const SEGMENT_CONFIG: Partial<Record<PathKey, Partial<Record<BoxModel, Se
 		wedge: { mirror: false, bodyRotate180: false, landingWalls: [0, 1] },
 		ridge: { mirror: false, bodyRotate180: false, landingWalls: [0, 1] },
 	},
+	U_0_flight_0: {
+		rect: { mirror: false, bodyRotate180: false, forceWallSide: 'left' },
+		rounded: { mirror: false, bodyRotate180: false, forceWallSide: 'left' },
+		taper: { mirror: false, bodyRotate180: false, forceWallSide: 'left' },
+		wedge: { mirror: false, bodyRotate180: false, forceWallSide: 'left' },
+		ridge: { mirror: false, bodyRotate180: false, forceWallSide: 'left' },
+	},
 	U_0_landing_0: {
 		taper: { mirror: false, bodyRotate180: false },
 	},
@@ -116,6 +125,13 @@ export function getLandingWalls(model: string, pathKey: string): number[] {
 	const cfg = SEGMENT_CONFIG[pathKey as PathKey]?.[model as BoxModel];
 	if (cfg != null && cfg.landingWalls != null) return cfg.landingWalls;
 	return [1];
+}
+
+/** צד קיר בגרם (לפי pathKey). אם לא מוגדר – מחזיר undefined (Staircase3D ישתמש בטבלאות/ברירת מחדל). */
+export function getForceWallSide(model: string, pathKey: string): 'right' | 'left' | undefined {
+	const cfg = SEGMENT_CONFIG[pathKey as PathKey]?.[model as BoxModel];
+	if (cfg != null && cfg.forceWallSide != null) return cfg.forceWallSide;
+	return undefined;
 }
 
 export function getPathKey(path: 'straight' | 'L' | 'U', flip: boolean, flight: number): string {

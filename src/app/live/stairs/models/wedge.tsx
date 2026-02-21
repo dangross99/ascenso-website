@@ -67,13 +67,17 @@ export function buildWedgeTreads(params: {
 						if (t.isLanding) landingIdx++;
 
 						const axisFromYawLocal = axisFromYaw(yaw);
-						// החלפת עבה/דק דרך forwardSign בלבד (מקור: t.bodyRotate180) – בלי bodyYaw שמסתובב סביב מרכז ונכשל
+						// החלפת עבה/דק דרך forwardSign – מקור: t.bodyRotate180 (pathModelConfig)
+						// Fallback: L 0° גרם ראשון – bodyRotate180 חסר (למשל fallback ב-Staircase3D) → true
+						const bodyRotate180ForFrame =
+							t.bodyRotate180 ??
+							(t.flight === 0 && Math.abs(yaw) < 0.01 && !t.isLanding ? true : false);
 						const { forwardSign, innerSignLocal } = computeLocalFrame({
 							yaw,
 							isLanding: t.isLanding,
 							axis: axisFromYawLocal,
 							innerIsRight,
-							bodyRotate180: t.bodyRotate180,
+							bodyRotate180: bodyRotate180ForFrame,
 						});
 
 						const xFront = forwardSign * (t.run / 2);

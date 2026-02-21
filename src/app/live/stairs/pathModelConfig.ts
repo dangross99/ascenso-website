@@ -12,8 +12,9 @@ export interface SegmentConfig {
 	mirror: boolean;
 	bodyRotate180: boolean;
 	/**
-	 * אילו פאות מקבלות קיר (0–3). ברירת מחדל [3] אם לא הוגדר.
-	 * מספור: 0=אחור (-Z), 1=ימין (+X), 2=חזית (+Z), 3=שמאל (-X).
+	 * אילו פאות מקבלות קיר (0–3). ברירת מחדל [1] אם לא הוגדר.
+	 * קונבנציית פאות קבועה (ללא השפעת bodyRotate180):
+	 *   0 = ימין (+X)  1 = גב (-Z)  2 = שמאל (-X)  3 = חזית (+Z)
 	 */
 	landingWalls?: number[];
 }
@@ -68,7 +69,7 @@ export const SEGMENT_CONFIG: Partial<Record<PathKey, Partial<Record<BoxModel, Se
 		taper: { mirror: true, bodyRotate180: true, landingWalls: [0, 1] },
 	},
 	L_180_landing: {
-		taper: { mirror: true, bodyRotate180: true, landingWalls: [0, 3] },
+		taper: { mirror: true, bodyRotate180: true, landingWalls: [1, 2] },
 	},
 	U_0_landing_0: {
 		taper: { mirror: false, bodyRotate180: false },
@@ -105,7 +106,7 @@ export function getBodyRotate180(model: string, pathKey: string): boolean {
 export function getLandingWalls(model: string, pathKey: string): number[] {
 	const cfg = SEGMENT_CONFIG[pathKey as PathKey]?.[model as BoxModel];
 	if (cfg != null && cfg.landingWalls != null) return cfg.landingWalls;
-	return [3];
+	return [1];
 }
 
 export function getPathKey(path: 'straight' | 'L' | 'U', flip: boolean, flight: number): string {

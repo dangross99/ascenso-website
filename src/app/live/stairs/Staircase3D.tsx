@@ -1034,36 +1034,40 @@ function Staircase3D({
 								</group>
 							);
 						})}
-						{/* קירות פודסטים: 4 פאות (0–3) לפי landingWalls. rotation קבוע [0,0,0] כדי שהקירות יישארו נעולים גם כשהפודסט מסתובב (bodyRotate180). */}
+						{/* קירות פודסטים: 4 פאות (0–3) לפי landingWalls. Group עם rotation [0,0,0] – קירות מנותקים מסיבוב המדרגה (bodyRotate180). */}
 						{treads.map((t, i) => {
 							if (!t.isLanding) return null;
-							const walls = t.landingWalls ?? [3];
+							const activeWalls = t.landingWalls ?? [1];
 							const yLocal = worldCenterY - t.position[1];
 							const offZ = treadWidth / 2 + gap + wallTh / 2;
 							const offX = t.run / 2 + gap + wallTh / 2;
 							return (
 								<group key={`outer-wall-landing-${i}`} position={t.position} rotation={[0, 0, 0]}>
-									{walls.includes(0) && (
-										<mesh position={[0, yLocal, -offZ]} castShadow={false} receiveShadow={false}>
-											<boxGeometry args={[t.run, wallH, wallTh]} />
-											<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
-										</mesh>
-									)}
-									{walls.includes(1) && (
+									{/* 0 = ימין (+X) */}
+									{activeWalls.includes(0) && (
 										<mesh position={[offX, yLocal, 0]} rotation={[0, Math.PI / 2, 0]} castShadow={false} receiveShadow={false}>
 											<boxGeometry args={[wallTh, wallH, treadWidth]} />
 											<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
 										</mesh>
 									)}
-									{walls.includes(2) && (
-										<mesh position={[0, yLocal, offZ]} castShadow={false} receiveShadow={false}>
+									{/* 1 = גב (-Z) */}
+									{activeWalls.includes(1) && (
+										<mesh position={[0, yLocal, -offZ]} castShadow={false} receiveShadow={false}>
 											<boxGeometry args={[t.run, wallH, wallTh]} />
 											<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
 										</mesh>
 									)}
-									{walls.includes(3) && (
+									{/* 2 = שמאל (-X) */}
+									{activeWalls.includes(2) && (
 										<mesh position={[-offX, yLocal, 0]} rotation={[0, -Math.PI / 2, 0]} castShadow={false} receiveShadow={false}>
 											<boxGeometry args={[wallTh, wallH, treadWidth]} />
+											<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
+										</mesh>
+									)}
+									{/* 3 = חזית (+Z) */}
+									{activeWalls.includes(3) && (
+										<mesh position={[0, yLocal, offZ]} rotation={[0, Math.PI, 0]} castShadow={false} receiveShadow={false}>
+											<boxGeometry args={[t.run, wallH, wallTh]} />
 											<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
 										</mesh>
 									)}

@@ -60,9 +60,9 @@ export function buildRidgeTreads(params: {
 						const { forwardSign, innerSignLocal } = computeLocalFrame({
 							yaw,
 							isLanding: t.isLanding,
-							flight: t.flight,
 							axis,
 							innerIsRight,
+							bodyRotate180: t.bodyRotate180,
 						});
 
 						const xFront = forwardSign * (t.run / 2);

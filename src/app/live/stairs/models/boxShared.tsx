@@ -38,22 +38,25 @@ function rightLocalSignFor(yaw: number, axis: Axis, isLanding: boolean): 1 | -1 
 	return sign;
 }
 
+/**
+ * מסגרת מקומית למדרגה. כיוון ההתקדמות (forwardSign) נגזר מ־bodyRotate180 בלבד –
+ * מקור אמת חיצוני (pathModelConfig דרך Staircase3D), ללא לוגיקה סמויה לפי מספר גרם.
+ */
 export function computeLocalFrame(params: {
 	yaw: number;
 	isLanding: boolean;
-	flight: number;
 	axis?: Axis;
 	innerIsRight: boolean;
+	/** היפוך כיוון התקדמות – מ־pathModelConfig (Staircase3D), לא מ־flight */
+	bodyRotate180?: boolean;
 }) {
-	const { yaw, isLanding, flight, innerIsRight } = params;
+	const { yaw, isLanding, innerIsRight, bodyRotate180 } = params;
 	const axis = params.axis ?? axisFromYaw(yaw);
 	const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
 	const forwardSignBase = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
-	// היפוך חד-פעמי בגרם הראשון כדי להציג "1" בתחילת המסע
-	const forwardSign = (flight === 0 ? -forwardSignBase : forwardSignBase) as 1 | -1;
+	const forwardSign = (bodyRotate180 === true ? -forwardSignBase : forwardSignBase) as 1 | -1;
 	const rightLocal = rightLocalSignFor(yaw, axis, isLanding);
 	const innerSignLocal = (innerIsRight ? rightLocal : -rightLocal) as 1 | -1;
-	// כיווני סיבוב טקסטורות
 	const rotateFrontBack = (axis === 'x');
 	const rotateSides = (axis === 'z');
 	return { axis, forwardSign, innerSignLocal, rotateFrontBack, rotateSides } as const;

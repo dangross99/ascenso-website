@@ -136,9 +136,9 @@ export function buildRectTreads(params: {
 						const { forwardSign, innerSignLocal, rotateFrontBack, rotateSides } = computeLocalFrame({
 							yaw,
 							isLanding: t.isLanding,
-							flight: t.flight,
 							axis,
 							innerIsRight,
+							bodyRotate180: t.bodyRotate180,
 						});
 
 						const matFrontBack = (flipU: boolean = false) => {

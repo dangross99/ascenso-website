@@ -1037,7 +1037,7 @@ function Staircase3D({
 							const railingSideSignLocal = (railingSide === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
 							const wallOffset = -railingSideSignLocal * (treadWidth / 2 + gap + wallTh / 2);
 							const forwardSignBase = (axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
-							const forwardSign = (t.flight === 0 ? -forwardSignBase : forwardSignBase) as 1 | -1;
+							const forwardSign = (t.bodyRotate180 === true ? -forwardSignBase : forwardSignBase) as 1 | -1;
 							// L 0°: קיר הפנייה צריך להיות בפינה החיצונית (+X), לא ב־-X – הופכים כש־forceWallSide מוגדר
 							const forwardSignTurn = t.forceWallSide !== 'auto' ? -forwardSign : forwardSign;
 							const yLocal = worldCenterY - t.position[1];

@@ -622,24 +622,27 @@ function Staircase3D({
 			if (list.length === 0) continue;
 			const first = list[0];
 			const last = list[list.length - 1];
-			// כיוון הגרם ממיקומי המדרגות (לא מ־rotation) – בדלתא L 0° המדרגות מסתובבות ל־π והקיר לא יתהפך
+			// כיוון הקיר = כיוון המדרגות (rotation), לא סדר במערך – כך ב־U180 גרם ראשון הקיר לא יסתובב ל־π
 			const dx = last.t.position[0] - first.t.position[0];
 			const dz = last.t.position[2] - first.t.position[2];
-			const segLen = Math.hypot(dx, dz);
-			const yaw = segLen > 1e-6 ? Math.atan2(dz, dx) : (first.t.rotation[1] as number);
+			const yaw = first.t.rotation[1] as number;
 			const dirX = Math.cos(yaw);
 			const dirZ = Math.sin(yaw);
-			// קיר מתחיל מקצה אחורי של המדרגה הראשונה (לא נכנס לפודסט או למדרגה)
-			const extendBack = first.t.run / 2;
+			// התחלה/סוף קיר לפי כיוון התנועה: הנקודה ש־dir "מצביע" אליה פחות = תחתית הגרם
+			const dotFirst = first.t.position[0] * dirX + first.t.position[2] * dirZ;
+			const dotLast = last.t.position[0] * dirX + last.t.position[2] * dirZ;
+			const startTread = dotFirst <= dotLast ? first : last;
+			const endTread = dotFirst <= dotLast ? last : first;
+			const extendBack = startTread.t.run / 2;
 			const wallStart: [number, number, number] = [
-				first.t.position[0] - dirX * extendBack,
-				first.t.position[1],
-				first.t.position[2] - dirZ * extendBack,
+				startTread.t.position[0] - dirX * extendBack,
+				startTread.t.position[1],
+				startTread.t.position[2] - dirZ * extendBack,
 			];
 			const wallEnd: [number, number, number] = [
-				last.t.position[0] + dirX * (last.t.run / 2),
-				last.t.position[1],
-				last.t.position[2] + dirZ * (last.t.run / 2),
+				endTread.t.position[0] + dirX * (endTread.t.run / 2),
+				endTread.t.position[1],
+				endTread.t.position[2] + dirZ * (endTread.t.run / 2),
 			];
 			const wallCenter: [number, number, number] = [
 				(wallStart[0] + wallEnd[0]) / 2,

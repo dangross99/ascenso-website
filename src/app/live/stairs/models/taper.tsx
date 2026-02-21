@@ -137,10 +137,10 @@ export function buildTaperBoxTreads(params: {
 					: (stepRailingSides?.[curStepIdx] ?? 'right');
 				if (t.isLanding) landingIdx++;
 
-				// forwardSign נגזר מ־t.bodyRotate180 בלבד (pathModelConfig דרך Staircase3D), כמו computeLocalFrame.
+				// forwardSign לפי יאו בלבד; היפוך גוף רק ב־bodyYaw (למניעת כפילות עם bodyRotate180)
 				const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
 				const forwardSignBase = axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1);
-				const forwardSign = (t.bodyRotate180 === true ? -forwardSignBase : forwardSignBase) as 1 | -1;
+				const forwardSign = forwardSignBase as 1 | -1;
 				let rightLocal: 1 | -1 = (axis === 'x' ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
 				// פודסטים לאורך Z – היפוך כדי לשמור "פנימה" עקבי בין גרמים (כמו ב-boxShared)
 				if (t.isLanding && axis === 'z') rightLocal = (rightLocal === 1 ? -1 : 1) as 1 | -1;

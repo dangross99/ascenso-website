@@ -275,11 +275,11 @@ function Staircase3D({
 					});
 				}
 			} else if (isU) {
-				// U: גרם 0/1/2 ← pathKey U_*_flight_0/1/2. U 180 כמו L 180: גרם 0 יאו 0, גרם 1 כמו ב-L (zSign + yaw1), גרם 2 תמיד π.
+				// U: גרם 0/1/2 ← pathKey U_*_flight_0/1/2. U 180 כמו L 180: גרם אמצעי פונה ימינה (-Z), לא שמאלה (+Z).
 				const [a, b, c] = straightSteps;
-				const zSign = flip ? 1 : -1; // כמו ב-L – גרם שני באותו כיוון ב-U180 כמו ב-L180
+				const zSignMiddle = -1; // גרם אמצעי תמיד ב-U לכיוון -Z (פניה ימינה אחרי הפודסט), כמו L180
 				const yaw0 = 0;
-				const yaw1 = flip ? Math.PI / 2 : -Math.PI / 2;
+				const yaw1Middle = -Math.PI / 2; // פניית מדרגות לכיוון -Z
 				const yaw2 = Math.PI;
 				const pathKeyU0 = getPathKey('U', flip, 0);
 				const pathKeyU1 = getPathKey('U', flip, 1);
@@ -330,10 +330,10 @@ function Staircase3D({
 				});
 				for (let i = 0; i < b; i++) {
 					const stepY = (a + 1 + i) * riser;
-					const z = zSign * (treadWidth / 2 + i * treadDepth + treadDepth / 2);
+					const z = zSignMiddle * (treadWidth / 2 + i * treadDepth + treadDepth / 2);
 					treads.push({
 						position: [p1x, stepY, z],
-						rotation: [0, yaw1, 0],
+						rotation: [0, yaw1Middle, 0],
 						run: treadDepth,
 						isLanding: false,
 						flight: 1,
@@ -343,10 +343,10 @@ function Staircase3D({
 						bodyRotate180: bodyRotate180U1,
 					});
 				}
-				const p2z = zSign * (treadWidth / 2 + b * treadDepth + treadWidth / 2);
+				const p2z = zSignMiddle * (treadWidth / 2 + b * treadDepth + treadWidth / 2);
 				treads.push({
 					position: [p1x, (a + b + 1) * riser, p2z],
-					rotation: [0, yaw1, 0],
+					rotation: [0, yaw1Middle, 0],
 					run: treadWidth,
 					isLanding: true,
 					turn: 'right',

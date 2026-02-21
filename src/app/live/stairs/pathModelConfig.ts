@@ -66,7 +66,7 @@ export const SEGMENT_CONFIG: Partial<Record<PathKey, Partial<Record<BoxModel, Se
 		wedge: { mirror: true, bodyRotate180: false },
 	},
 	L_0_landing: {
-		taper: { mirror: true, bodyRotate180: true, landingWalls: [0, 1] },
+		taper: { mirror: true, bodyRotate180: true, landingWalls: [1, 2] },
 	},
 	L_180_landing: {
 		taper: { mirror: true, bodyRotate180: true, landingWalls: [1, 2] },

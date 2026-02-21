@@ -1051,7 +1051,7 @@ function Staircase3D({
 										</mesh>
 									)}
 									{wallsToRender.includes(1) && (
-										<mesh position={[0, yLocal, -offZ]} rotation={[0, 0, 0]} castShadow={false} receiveShadow={false}>
+										<mesh position={[0, yLocal, -offZ]} rotation={[0, Math.PI, 0]} castShadow={false} receiveShadow={false}>
 											<boxGeometry args={[t.run, wallH, wallTh]} />
 											<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
 										</mesh>

@@ -16,6 +16,8 @@ export type Tread = {
 	forceWallSide?: 'right' | 'left' | 'auto';
 	/** סיבוב 180° לגוף המדרגה – רק L 0° גרם ראשון (דלתא/מרום), לא ישר */
 	bodyRotate180?: boolean;
+	/** pathKey מהמסלול (בעיקר לפודסטים) – לדגמים שצריכים לזהות L_0_landing וכו' */
+	pathKey?: string;
 };
 
 export type BuildFaceTextures = (

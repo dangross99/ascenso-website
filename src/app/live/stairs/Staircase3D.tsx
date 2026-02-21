@@ -247,7 +247,7 @@ function Staircase3D({
 				}
 				treads.push({
 					position: [podestX, a * riser, 0],
-					rotation: [0, 0, 0],
+					rotation: [0, rotationYFlight0, 0],
 					run: treadWidth,
 					isLanding: true,
 					turn: 'right',
@@ -481,7 +481,7 @@ function Staircase3D({
 			const lxStart = half * treadDepth;
 			treads.push({
 				position: [lxStart + runL / 2, half * riser, 0],
-				rotation: [0, 0, 0],
+				rotation: [0, rotationYFlight0, 0],
 				run: runL,
 				isLanding: true,
 				turn: 'right',
@@ -536,9 +536,11 @@ function Staircase3D({
 			}
 			const runL1 = treadWidth;
 			const l1xStart = third * treadDepth;
+			const yawU0 = 0;
+			const yawU1Middle = -Math.PI / 2;
 			treads.push({
 				position: [l1xStart + runL1 / 2, third * riser, 0],
-				rotation: [0, 0, 0],
+				rotation: [0, yawU0, 0],
 				run: runL1,
 				isLanding: true,
 				turn: 'right',
@@ -553,7 +555,7 @@ function Staircase3D({
 			for (let i = 0; i < third; i++) {
 				treads.push({
 					position: [l1xStart + runL1, (third + 1 + i) * riser, -(i * treadDepth + treadDepth / 2)],
-					rotation: [0, -Math.PI / 2, 0],
+					rotation: [0, yawU1Middle, 0],
 					run: treadDepth,
 					isLanding: false,
 					flight: 1,
@@ -568,7 +570,7 @@ function Staircase3D({
 			const rStartZ = -third * treadDepth;
 			treads.push({
 				position: [rStartX + runL2 / 2, (third * 2 + 1) * riser, rStartZ],
-				rotation: [0, 0, 0],
+				rotation: [0, yawU1Middle, 0],
 				run: runL2,
 				isLanding: true,
 				landingWalls: getLandingWalls(boxModel ?? 'rect', pathKeyLanding1),
@@ -580,10 +582,11 @@ function Staircase3D({
 				forceWallSide: fws1,
 				bodyRotate180: bodyRotate180Landing1,
 			});
+			const yawU2 = Math.PI;
 			for (let i = 0; i < steps - third * 2 - 1; i++) {
 				treads.push({
 					position: [rStartX + runL2 + i * treadDepth + treadDepth / 2, (third * 2 + 2 + i) * riser, rStartZ],
-					rotation: [0, Math.PI, 0],
+					rotation: [0, yawU2, 0],
 					run: treadDepth,
 					isLanding: false,
 					flight: 2,

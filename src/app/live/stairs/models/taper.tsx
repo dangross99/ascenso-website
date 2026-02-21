@@ -155,7 +155,9 @@ export function buildTaperBoxTreads(params: {
 				const rotateSides = (axis === 'z');
 
 				const matTop = (() => {
-					const ft = buildFaceTextures(run, treadWidth, rotTop);
+					// היפוך UV כמו בפאות הצד – כולל כשהגוף מסתובב (bodyRotate180) כדי שסיבי העץ יתהפכו עם הגוף
+					const flipUTop = (forwardSign < 0) !== !!t.bodyRotate180;
+					const ft = buildFaceTextures(run, treadWidth, rotTop, flipUTop);
 					const metalness = materialKind === 'metal' ? 1 : 0;
 					const roughness = materialKind === 'metal' ? 0.35 : materialKind === 'stone' ? 0.68 : 0.82;
 					const envMapIntensity = useSolidMat ? (materialKind === 'metal' ? 2.0 : 1.5) : 0.2;

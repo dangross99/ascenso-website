@@ -1037,9 +1037,8 @@ function Staircase3D({
 							const railingSideSignLocal = (railingSide === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
 							const wallOffset = -railingSideSignLocal * (treadWidth / 2 + gap + wallTh / 2);
 							const forwardSignBase = (axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
-							const forwardSign = (t.bodyRotate180 === true ? -forwardSignBase : forwardSignBase) as 1 | -1;
-							// L 0°: קיר הפנייה צריך להיות בפינה החיצונית (+X), לא ב־-X – הופכים כש־forceWallSide מוגדר
-							const forwardSignTurn = t.forceWallSide !== 'auto' ? -forwardSign : forwardSign;
+							// מיקום קירות פודסט קבוע – לא תלוי ב־bodyRotate180 של המדרגה (מראה הפודסט לא משפיע על הקירות).
+							const forwardSignTurn = t.forceWallSide !== 'auto' ? -forwardSignBase : forwardSignBase;
 							const yLocal = worldCenterY - t.position[1];
 							return (
 								<group key={`outer-wall-landing-${i}`} position={t.position} rotation={t.rotation}>

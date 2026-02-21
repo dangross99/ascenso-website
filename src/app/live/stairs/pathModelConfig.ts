@@ -46,7 +46,7 @@ export const SEGMENT_CONFIG: Partial<Record<PathKey, Partial<Record<BoxModel, Se
 	straight_180: {
 		ridge: { mirror: true, bodyRotate180: true },
 		taper: { mirror: true, bodyRotate180: true },
-		wedge: { mirror: false, bodyRotate180: true },
+		wedge: { mirror: true, bodyRotate180: true },
 	},
 	L_0_flight_0: {
 		ridge: { mirror: true, bodyRotate180: false },

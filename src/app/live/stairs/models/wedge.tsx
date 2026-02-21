@@ -67,13 +67,13 @@ export function buildWedgeTreads(params: {
 						if (t.isLanding) landingIdx++;
 
 						const axisFromYawLocal = axisFromYaw(yaw);
-						// forwardSign מ־bodyRotate180 (pathModelConfig) – עקביות עם rect ו־taper; ההיפוך הגאומטרי רק ב־bodyYaw למטה
+						// forwardSign לפי יאו בלבד; ההיפוך הגאומטרי רק ב־bodyYaw למטה (מניעת כפילות שמבטלת את ההיפוך)
 						const { forwardSign, innerSignLocal } = computeLocalFrame({
 							yaw,
 							isLanding: t.isLanding,
 							axis: axisFromYawLocal,
 							innerIsRight,
-							bodyRotate180: t.bodyRotate180,
+							bodyRotate180: false,
 						});
 
 						const xFront = forwardSign * (t.run / 2);

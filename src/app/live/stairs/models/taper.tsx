@@ -310,8 +310,8 @@ export function buildTaperBoxTreads(params: {
 					(p) => [(p[0] + dx) / run, (p[1] - yBotOuter) / thickStart],
 				);
 
-				// סיבוב גוף 180° – רק מהתצורה (pathModelConfig דרך Staircase3D), ללא דריסה לפי isLanding
-				const bodyYaw = (t.bodyRotate180 === true) ? Math.PI : 0;
+				// סיבוב גוף 180° – רק מהתצורה (pathModelConfig דרך Staircase3D). truthy כמו wedge/ridge.
+				const bodyYaw = t.bodyRotate180 ? Math.PI : 0;
 				return (
 					<group key={idx} position={t.position} rotation={t.rotation}>
 						<group rotation={[0, bodyYaw, 0]}>

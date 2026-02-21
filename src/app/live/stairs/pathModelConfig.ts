@@ -146,11 +146,11 @@ export const SEGMENT_CONFIG: Partial<Record<PathKey, Partial<Record<BoxModel, Se
 		ridge: { mirror: false, bodyRotate180: false, landingWalls: [2, 3] },
 	},
 	U_180_landing_1: {
-		rect: { mirror: false, bodyRotate180: false, landingWalls: [0, 1] },
-		rounded: { mirror: false, bodyRotate180: false, landingWalls: [0, 1] },
-		taper: { mirror: false, bodyRotate180: false, landingWalls: [0, 1] },
-		wedge: { mirror: false, bodyRotate180: false, landingWalls: [0, 1] },
-		ridge: { mirror: false, bodyRotate180: false, landingWalls: [0, 1] },
+		rect: { mirror: false, bodyRotate180: false, landingWalls: [0, 3] },
+		rounded: { mirror: false, bodyRotate180: false, landingWalls: [0, 3] },
+		taper: { mirror: false, bodyRotate180: false, landingWalls: [0, 3] },
+		wedge: { mirror: false, bodyRotate180: false, landingWalls: [0, 3] },
+		ridge: { mirror: false, bodyRotate180: false, landingWalls: [0, 3] },
 	},
 };
 
@@ -177,7 +177,7 @@ export function getLandingWalls(model: string, pathKey: string): number[] {
 	if (cfg != null && cfg.landingWalls != null) return cfg.landingWalls;
 	// U180: פודסט 1 → פאות 2,3 | פודסט 2 → פאות 0,1
 	if (pathKey === 'U_180_landing_0') return [2, 3];
-	if (pathKey === 'U_180_landing_1') return [0, 1];
+	if (pathKey === 'U_180_landing_1') return [0, 3];
 	return [1];
 }
 

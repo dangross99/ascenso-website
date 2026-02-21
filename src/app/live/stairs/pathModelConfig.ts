@@ -19,8 +19,8 @@
  * │ L_0_flight_1    │ -          │ -          │ M + R      │ M          │ M          │  (דלתא: רק גרם 2 היפוך+סיבוב)
  * │ L_180_flight_0  │ -          │ -          │ M + R      │ M          │ M          │  (דלתא: סיבוב גרם 1)
  * │ L_180_flight_1  │ -          │ -          │ M + R      │ M          │ M          │  (דלתא: סיבוב גרם 2)
- * │ L_0_landing     │ -          │ -          │ false      │ -          │ -          │  (דלתא: פודסט בלי היפוך)
- * │ L_180_landing   │ -          │ -          │ false      │ -          │ -          │
+ * │ L_0_landing     │ -          │ -          │ M + R      │ -          │ -          │  (דלתא: הפודסט מתהפך)
+ * │ L_180_landing   │ -          │ -          │ M + R      │ -          │ -          │
  * │ U_0_landing_0   │ -          │ -          │ false      │ -          │ -          │
  * │ U_0_landing_1   │ -          │ -          │ false      │ -          │ -          │
  * └─────────────────┴────────────┴────────────┴────────────┴────────────┴────────────┘
@@ -93,12 +93,12 @@ export const SEGMENT_CONFIG: Partial<Record<PathKey, Partial<Record<BoxModel, Se
 		wedge: { mirror: true, bodyRotate180: false },
 	},
 
-	// ─── L פודסט – דלתא: בלי היפוך (mirror/bodyRotate180 false) ─────────────────
+	// ─── L פודסט – דלתא: היפוך גם ב־0° וגם ב־180° ─────────────────────────────
 	L_0_landing: {
-		taper: { mirror: false, bodyRotate180: false },
+		taper: { mirror: true, bodyRotate180: true },
 	},
 	L_180_landing: {
-		taper: { mirror: false, bodyRotate180: false },
+		taper: { mirror: true, bodyRotate180: true },
 	},
 
 	// ─── U פודסטים – דלתא: בלי היפוך ───────────────────────────────────────────

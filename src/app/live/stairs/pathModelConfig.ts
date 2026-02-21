@@ -139,7 +139,11 @@ export const SEGMENT_CONFIG: Partial<Record<PathKey, Partial<Record<BoxModel, Se
 		ridge: { mirror: false, bodyRotate180: false, landingWalls: [0, 1] },
 	},
 	U_180_landing_0: {
-		taper: { mirror: false, bodyRotate180: false },
+		rect: { mirror: false, bodyRotate180: false, landingWalls: [0, 1] },
+		rounded: { mirror: false, bodyRotate180: false, landingWalls: [0, 1] },
+		taper: { mirror: false, bodyRotate180: false, landingWalls: [0, 1] },
+		wedge: { mirror: false, bodyRotate180: false, landingWalls: [0, 1] },
+		ridge: { mirror: false, bodyRotate180: false, landingWalls: [0, 1] },
 	},
 	U_180_landing_1: {
 		rect: { mirror: false, bodyRotate180: false, landingWalls: [0, 1] },
@@ -171,8 +175,8 @@ export function getBodyRotate180(model: string, pathKey: string): boolean {
 export function getLandingWalls(model: string, pathKey: string): number[] {
 	const cfg = SEGMENT_CONFIG[pathKey as PathKey]?.[model as BoxModel];
 	if (cfg != null && cfg.landingWalls != null) return cfg.landingWalls;
-	// פודסט 1 ב־U180 – כמו L180: שתי פאות (0 ו־1)
-	if (pathKey === 'U_180_landing_1') return [0, 1];
+	// שני הפודסטים ב־U180 – כמו L180: שתי פאות (0 ו־1)
+	if (pathKey === 'U_180_landing_0' || pathKey === 'U_180_landing_1') return [0, 1];
 	return [1];
 }
 

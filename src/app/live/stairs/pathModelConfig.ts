@@ -171,6 +171,8 @@ export function getBodyRotate180(model: string, pathKey: string): boolean {
 export function getLandingWalls(model: string, pathKey: string): number[] {
 	const cfg = SEGMENT_CONFIG[pathKey as PathKey]?.[model as BoxModel];
 	if (cfg != null && cfg.landingWalls != null) return cfg.landingWalls;
+	// פודסט 1 ב־U180 – כמו L180: שתי פאות (0 ו־1)
+	if (pathKey === 'U_180_landing_1') return [0, 1];
 	return [1];
 }
 

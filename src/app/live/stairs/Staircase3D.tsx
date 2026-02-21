@@ -290,8 +290,8 @@ function Staircase3D({
 				const mirror0 = getMirror(boxModel ?? 'rect', pathKeyU0, getDefaultMirror(flip, 'U', 0));
 				const mirror1 = getMirror(boxModel ?? 'rect', pathKeyU1, getDefaultMirror(flip, 'U', 1));
 				const mirror2 = getMirror(boxModel ?? 'rect', pathKeyU2, getDefaultMirror(flip, 'U', 2));
-				const mirrorLanding0 = getMirror(boxModel ?? 'rect', pathKeyLanding0, mirror0);
-				const mirrorLanding1 = getMirror(boxModel ?? 'rect', pathKeyLanding1, mirror1);
+				const mirrorLanding0 = getMirror(boxModel ?? 'rect', pathKeyLanding0, false);
+				const mirrorLanding1 = getMirror(boxModel ?? 'rect', pathKeyLanding1, false);
 				const bodyRotate180U0 = getBodyRotate180(boxModel ?? 'rect', pathKeyU0);
 				const bodyRotate180U1 = getBodyRotate180(boxModel ?? 'rect', pathKeyU1);
 				const bodyRotate180U2 = getBodyRotate180(boxModel ?? 'rect', pathKeyU2);
@@ -521,8 +521,8 @@ function Staircase3D({
 			const mirror0 = getMirror(boxModel ?? 'rect', pathKeyU0, getDefaultMirror(flipU, 'U', 0));
 			const mirror1 = getMirror(boxModel ?? 'rect', pathKeyU1, getDefaultMirror(flipU, 'U', 1));
 			const mirror2 = getMirror(boxModel ?? 'rect', pathKeyU2, getDefaultMirror(flipU, 'U', 2));
-			const mirrorLanding0 = getMirror(boxModel ?? 'rect', pathKeyLanding0, mirror0);
-			const mirrorLanding1 = getMirror(boxModel ?? 'rect', pathKeyLanding1, mirror1);
+			const mirrorLanding0 = getMirror(boxModel ?? 'rect', pathKeyLanding0, false);
+			const mirrorLanding1 = getMirror(boxModel ?? 'rect', pathKeyLanding1, false);
 			const bodyRotate180Landing0 = getBodyRotate180(boxModel ?? 'rect', pathKeyLanding0);
 			const bodyRotate180Landing1 = getBodyRotate180(boxModel ?? 'rect', pathKeyLanding1);
 			const bodyRotate180U0 = getBodyRotate180(boxModel ?? 'rect', pathKeyU0);

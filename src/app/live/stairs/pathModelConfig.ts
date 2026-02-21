@@ -170,8 +170,6 @@ export function getMirror(model: string, pathKey: string, fallback: boolean): bo
 export function getBodyRotate180(model: string, pathKey: string): boolean {
 	const cfg = SEGMENT_CONFIG[pathKey as PathKey]?.[model as BoxModel];
 	if (cfg != null && cfg.bodyRotate180 != null) return cfg.bodyRotate180;
-	// פודסט ראשון L0 דלתא – כמו גרם ראשון (התהפך)
-	if (pathKey === 'L_0_landing' && model === 'taper') return true;
 	return false;
 }
 

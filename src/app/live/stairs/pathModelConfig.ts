@@ -33,7 +33,12 @@ export type BoxModel = 'rect' | 'rounded' | 'taper' | 'wedge' | 'ridge';
 export interface SegmentConfig {
 	mirror: boolean;
 	bodyRotate180: boolean;
-	/** אילו פאות מקבלות קיר (0–3). ברירת מחדל [3] אם לא הוגדר. */
+	/**
+	 * אילו פאות מקבלות קיר (0–3). ברירת מחדל [3] אם לא הוגדר.
+	 * מספור הפאות במערכת המקומית של הפודסט:
+	 *   0 = אחור (-Z)  1 = ימין (+X)  2 = חזית (+Z)  3 = שמאל (-X)
+	 * להסתרת קיר – פשוט לא לכלול את המספר במערך.
+	 */
 	landingWalls?: number[];
 }
 

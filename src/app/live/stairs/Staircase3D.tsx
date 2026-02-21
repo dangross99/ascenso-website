@@ -1024,7 +1024,8 @@ function Staircase3D({
 								</group>
 							);
 						})}
-						{/* קירות פודסטים: 4 פאות (0–3), מוצגות לפי landingWalls */}
+						{/* קירות פודסטים: 4 פאות (0–3), מוצגות לפי landingWalls. להסתרה – לא לכלול במערך.
+						    פאה 0 = אחור (-Z) | 1 = ימין (+X) | 2 = חזית (+Z) | 3 = שמאל (-X) */}
 						{treads.map((t, i) => {
 							if (!t.isLanding) return null;
 							const walls = t.landingWalls ?? [3];
@@ -1033,24 +1034,28 @@ function Staircase3D({
 							const offX = t.run / 2 + gap + wallTh / 2;
 							return (
 								<group key={`outer-wall-landing-${i}`} position={t.position} rotation={t.rotation}>
+									{/* 0: אחור (-Z) */}
 									{walls.includes(0) && (
 										<mesh position={[0, yLocal, -offZ]} castShadow={false} receiveShadow={false}>
 											<boxGeometry args={[t.run, wallH, wallTh]} />
 											<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
 										</mesh>
 									)}
+									{/* 1: ימין (+X) */}
 									{walls.includes(1) && (
 										<mesh position={[offX, yLocal, 0]} rotation={[0, Math.PI / 2, 0]} castShadow={false} receiveShadow={false}>
 											<boxGeometry args={[wallTh, wallH, treadWidth]} />
 											<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
 										</mesh>
 									)}
+									{/* 2: חזית (+Z) */}
 									{walls.includes(2) && (
 										<mesh position={[0, yLocal, offZ]} castShadow={false} receiveShadow={false}>
 											<boxGeometry args={[t.run, wallH, wallTh]} />
 											<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
 										</mesh>
 									)}
+									{/* 3: שמאל (-X) */}
 									{walls.includes(3) && (
 										<mesh position={[-offX, yLocal, 0]} rotation={[0, -Math.PI / 2, 0]} castShadow={false} receiveShadow={false}>
 											<boxGeometry args={[wallTh, wallH, treadWidth]} />

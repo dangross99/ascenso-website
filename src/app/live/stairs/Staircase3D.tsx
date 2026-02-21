@@ -183,6 +183,8 @@ function Staircase3D({
 			bodyRotate180?: boolean;
 			landingWalls?: number[];
 			pathKey?: string;
+			/** היפוך צד קיר (גרם 3 ב-U180 – יאו 0 מחזיר right/left בצד השני) */
+			invertWallSide?: boolean;
 		};
 		const treads: TreadItem[] = [];
 
@@ -372,6 +374,7 @@ function Staircase3D({
 						mirror: mirror2,
 						forceWallSide: fws2,
 						bodyRotate180: bodyRotate180U2,
+						invertWallSide: flip,
 					});
 				}
 			} else {
@@ -652,8 +655,9 @@ function Staircase3D({
 			const wallLength = Math.hypot(wallEnd[0] - wallStart[0], wallEnd[2] - wallStart[2]);
 			const axis = (Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z') as 'x' | 'z';
 			const sides = stepRailingSidesForRailing ?? stepRailingSides;
-			const railingSide: 'right' | 'left' =
+			let railingSide: 'right' | 'left' =
 				first.t.forceWallSide !== 'auto' ? first.t.forceWallSide : (sides?.[sIdx] ?? 'right');
+			if (first.t.invertWallSide) railingSide = railingSide === 'right' ? 'left' : 'right';
 			sIdx += list.length;
 			out.push({
 				wallStart,

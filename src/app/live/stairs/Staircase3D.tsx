@@ -49,6 +49,11 @@ function getForceWallSideFromTable(model: string, pathKey: string): 'right' | 'l
 	return pathEntry?.forceWallSide ?? 'auto';
 }
 
+/** דריסת פאות קיר לפודסט לפי pathKey (0=אחור, 1=ימין, 2=חזית, 3=שמאל). */
+const LANDING_WALLS_OVERRIDES: Partial<Record<string, number[]>> = {
+	L_0_landing: [1, 2], // L 0° – פאה 1 (ימין) ופאה 2 (חזית)
+};
+
 // mirror/bodyRotate180 – מקור אמת יחיד ב־pathModelConfig (getMirror, getBodyRotate180). אין טבלאות דריסה מקומיות.
 
 function Staircase3D({
@@ -252,7 +257,7 @@ function Staircase3D({
 					mirror: getMirror(boxModel ?? 'rect', pathKeyLanding, false),
 					forceWallSide: fws0,
 					bodyRotate180: getBodyRotate180(boxModel ?? 'rect', pathKeyLanding),
-					landingWalls: getLandingWalls(boxModel ?? 'rect', pathKeyLanding),
+					landingWalls: LANDING_WALLS_OVERRIDES[pathKeyLanding] ?? getLandingWalls(boxModel ?? 'rect', pathKeyLanding),
 				});
 				const zSign = flip ? 1 : -1;
 				const yaw1 = flip ? Math.PI / 2 : -Math.PI / 2;

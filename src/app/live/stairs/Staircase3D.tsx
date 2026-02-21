@@ -271,12 +271,12 @@ function Staircase3D({
 						isLanding: false,
 						flight: 1,
 						axis: 'z',
-						mirror: getMirror(boxModel ?? 'rect', pathKey1, getDefaultMirror(flip, 'L', 1)),
-						forceWallSide: fws1,
-						bodyRotate180: getBodyRotate180(boxModel ?? 'rect', pathKey1),
-					});
-				}
-			} else if (isU) {
+					mirror: getMirror(boxModel ?? 'rect', pathKey1, false),
+					forceWallSide: fws1,
+					bodyRotate180: getBodyRotate180(boxModel ?? 'rect', pathKey1),
+				});
+			}
+		} else if (isU) {
 				// U: גרם 0/1/2 ← pathKey U_*_flight_0/1/2. U 180 כמו L 180: גרם אמצעי פונה ימינה (-Z), לא שמאלה (+Z).
 				const [a, b, c] = straightSteps;
 				const zSignMiddle = -1; // גרם אמצעי תמיד ב-U לכיוון -Z (פניה ימינה אחרי הפודסט), כמו L180
@@ -504,7 +504,7 @@ function Staircase3D({
 					isLanding: false,
 					flight: 1,
 					axis: 'z',
-					mirror: getMirror(boxModel ?? 'rect', pathKey1, getDefaultMirror(flip, 'L', 1)),
+					mirror: getMirror(boxModel ?? 'rect', pathKey1, false),
 					forceWallSide: fws1,
 					bodyRotate180: getBodyRotate180(boxModel ?? 'rect', pathKey1),
 				});

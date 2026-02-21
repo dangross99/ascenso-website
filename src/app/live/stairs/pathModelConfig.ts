@@ -83,11 +83,11 @@ export const SEGMENT_CONFIG: Partial<Record<PathKey, Partial<Record<BoxModel, Se
 		ridge: { mirror: false, bodyRotate180: false, landingWalls: [0, 1] },
 	},
 	U_0_flight_0: {
-		rect: { mirror: false, bodyRotate180: false, forceWallSide: 'left' },
-		rounded: { mirror: false, bodyRotate180: false, forceWallSide: 'left' },
-		taper: { mirror: false, bodyRotate180: false, forceWallSide: 'left' },
-		wedge: { mirror: false, bodyRotate180: false, forceWallSide: 'left' },
-		ridge: { mirror: false, bodyRotate180: false, forceWallSide: 'left' },
+		rect: { mirror: false, bodyRotate180: false, forceWallSide: 'right' },
+		rounded: { mirror: false, bodyRotate180: false, forceWallSide: 'right' },
+		taper: { mirror: false, bodyRotate180: false, forceWallSide: 'right' },
+		wedge: { mirror: false, bodyRotate180: false, forceWallSide: 'right' },
+		ridge: { mirror: false, bodyRotate180: false, forceWallSide: 'right' },
 	},
 	U_0_landing_0: {
 		taper: { mirror: false, bodyRotate180: false },

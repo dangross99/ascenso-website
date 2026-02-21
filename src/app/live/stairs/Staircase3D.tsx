@@ -357,7 +357,7 @@ function Staircase3D({
 					landingWalls: getLandingWalls(boxModel ?? 'rect', pathKeyLanding1),
 					pathKey: pathKeyLanding1,
 				});
-				const p3xStart = flip ? p1x + treadWidth : p1x - treadWidth;
+				const p3xStart = flip ? p1x + treadWidth / 2 : p1x - treadWidth / 2;
 				for (let i = 0; i < c; i++) {
 					const stepY = (a + b + 2 + i) * riser;
 					const x = flip ? p3xStart + i * treadDepth + treadDepth / 2 : p3xStart - i * treadDepth - treadDepth / 2;

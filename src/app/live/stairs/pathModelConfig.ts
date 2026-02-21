@@ -70,7 +70,7 @@ export const SEGMENT_CONFIG: Partial<Record<PathKey, Partial<Record<BoxModel, Se
 		taper: { mirror: true, bodyRotate180: true, landingWalls: [0, 3] },
 	},
 	L_180_landing: {
-		taper: { mirror: true, bodyRotate180: true, landingWalls: [1, 2] },
+		taper: { mirror: true, bodyRotate180: true, landingWalls: [0, 2] },
 	},
 	U_0_landing_0: {
 		taper: { mirror: false, bodyRotate180: false },

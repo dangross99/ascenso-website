@@ -563,6 +563,19 @@ function LivePageInner() {
 		return [{ kind: 'straight', steps }];
 	});
 	const [pathFlipped180, setPathFlipped180] = React.useState(false);
+	// כשמהפכים מסלול ל־180° – מסובבים את המצלמה באותו כיוון (180° סביב Y)
+	React.useEffect(() => {
+		const id = requestAnimationFrame(() => {
+			const ctrl = orbitRef.current;
+			if (!ctrl) return;
+			const a = typeof ctrl.getAzimuthalAngle === 'function' ? ctrl.getAzimuthalAngle() : (ctrl as any).azimuthalAngle ?? 0;
+			const next = a + Math.PI;
+			if (typeof (ctrl as any).setAzimuthalAngle === 'function') (ctrl as any).setAzimuthalAngle(next);
+			else (ctrl as any).azimuthalAngle = next;
+			if (typeof ctrl.update === 'function') ctrl.update();
+		});
+		return () => cancelAnimationFrame(id);
+	}, [pathFlipped180]);
 	// הוסר: מנגנון "שחזור מצב" למובייל כולל סטייט, שמירה, ושחזורים
 
 	// עדכון ברירת מחדל של מצב מעקה לכל מדרגה לפי המסלול והבחירה הגלובלית

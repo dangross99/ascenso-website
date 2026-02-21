@@ -1034,7 +1034,7 @@ function Staircase3D({
 								</group>
 							);
 						})}
-						{/* קירות פודסט: מיקום קבוע לפי פאות (0–3), בלי rotation על ה-Group – נשארים במקום גם כש-bodyRotate180 מסובב את המדרגה. */}
+						{/* קירות פודסט: פאות קבועות (0–3), סיבוב קבוע לכל פאה. Group בלי rotation – קירות מנותקים מ־t.rotation (bodyRotate180). אילו פאות להציג נקבע רק ב־pathModelConfig (landingWalls). */}
 						{treads.map((t, i) => {
 							if (!t.isLanding) return null;
 							const wallsToRender = t.landingWalls ?? [1];
@@ -1043,7 +1043,7 @@ function Staircase3D({
 							const offX = t.run / 2 + gap + wallTh / 2;
 							return (
 								<group key={`outer-wall-landing-${i}`} position={t.position}>
-									{/* קירות בפאות קבועות – לא מסתובבים עם t.rotation */}
+									{/* 0=ימין π/2 | 1=גב 0 | 2=שמאל -π/2 | 3=חזית π – סיבובים קבועים, לא לשנות */}
 									{wallsToRender.includes(0) && (
 										<mesh position={[offX, yLocal, 0]} rotation={[0, Math.PI / 2, 0]} castShadow={false} receiveShadow={false}>
 											<boxGeometry args={[wallTh, wallH, treadWidth]} />
@@ -1051,7 +1051,7 @@ function Staircase3D({
 										</mesh>
 									)}
 									{wallsToRender.includes(1) && (
-										<mesh position={[0, yLocal, -offZ]} rotation={[0, Math.PI, 0]} castShadow={false} receiveShadow={false}>
+										<mesh position={[0, yLocal, -offZ]} rotation={[0, 0, 0]} castShadow={false} receiveShadow={false}>
 											<boxGeometry args={[t.run, wallH, wallTh]} />
 											<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
 										</mesh>

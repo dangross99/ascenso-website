@@ -181,6 +181,7 @@ function Staircase3D({
 			forceWallSide: 'right' | 'left' | 'auto';
 			bodyRotate180?: boolean;
 			landingWalls?: number[];
+			pathKey?: string;
 		};
 		const treads: TreadItem[] = [];
 
@@ -253,6 +254,7 @@ function Staircase3D({
 					forceWallSide: fws0,
 					bodyRotate180: getBodyRotate180(boxModel ?? 'rect', pathKeyLanding),
 					landingWalls: getLandingWalls(boxModel ?? 'rect', pathKeyLanding),
+					pathKey: pathKeyLanding,
 				});
 				const zSign = flip ? 1 : -1;
 				const yaw1 = flip ? Math.PI / 2 : -Math.PI / 2;
@@ -322,6 +324,7 @@ function Staircase3D({
 					forceWallSide: fws0,
 					bodyRotate180: bodyRotate180Landing0,
 					landingWalls: getLandingWalls(boxModel ?? 'rect', pathKeyLanding0),
+					pathKey: pathKeyLanding0,
 				});
 				for (let i = 0; i < b; i++) {
 					const stepY = (a + 1 + i) * riser;
@@ -351,6 +354,7 @@ function Staircase3D({
 					forceWallSide: fws1,
 					bodyRotate180: bodyRotate180Landing1,
 					landingWalls: getLandingWalls(boxModel ?? 'rect', pathKeyLanding1),
+					pathKey: pathKeyLanding1,
 				});
 				const p3xStart = flip ? p1x + treadWidth : p1x - treadWidth;
 				for (let i = 0; i < c; i++) {
@@ -481,6 +485,8 @@ function Staircase3D({
 				mirror: getMirror(boxModel ?? 'rect', pathKeyLanding, false),
 				forceWallSide: fws0,
 				bodyRotate180: getBodyRotate180(boxModel ?? 'rect', pathKeyLanding),
+				landingWalls: getLandingWalls(boxModel ?? 'rect', pathKeyLanding),
+				pathKey: pathKeyLanding,
 			});
 			const zSign = flip ? 1 : -1;
 			const yaw1 = flip ? Math.PI / 2 : -Math.PI / 2;
@@ -536,6 +542,8 @@ function Staircase3D({
 				mirror: mirrorLanding0,
 				forceWallSide: fws0,
 				bodyRotate180: bodyRotate180Landing0,
+				landingWalls: getLandingWalls(boxModel ?? 'rect', pathKeyLanding0),
+				pathKey: pathKeyLanding0,
 			});
 			for (let i = 0; i < third; i++) {
 				treads.push({
@@ -558,6 +566,8 @@ function Staircase3D({
 				rotation: [0, 0, 0],
 				run: runL2,
 				isLanding: true,
+				landingWalls: getLandingWalls(boxModel ?? 'rect', pathKeyLanding1),
+				pathKey: pathKeyLanding1,
 				turn: 'right',
 				flight: 1,
 				axis: 'z',
@@ -1046,10 +1056,17 @@ function Staircase3D({
 										</mesh>
 									)}
 									{walls.includes(2) && (
-										<mesh position={[0, yLocal, offZ]} castShadow={false} receiveShadow={false}>
-											<boxGeometry args={[t.run, wallH, wallTh]} />
-											<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
-										</mesh>
+										t.pathKey === 'L_0_landing' ? (
+											<mesh position={[0, yLocal, offZ]} rotation={[0, Math.PI / 2, 0]} castShadow={false} receiveShadow={false}>
+												<boxGeometry args={[wallTh, wallH, treadWidth]} />
+												<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
+											</mesh>
+										) : (
+											<mesh position={[0, yLocal, offZ]} castShadow={false} receiveShadow={false}>
+												<boxGeometry args={[t.run, wallH, wallTh]} />
+												<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
+											</mesh>
+										)
 									)}
 									{walls.includes(3) && (
 										<mesh position={[-offX, yLocal, 0]} rotation={[0, -Math.PI / 2, 0]} castShadow={false} receiveShadow={false}>

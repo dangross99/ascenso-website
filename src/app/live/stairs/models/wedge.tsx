@@ -184,9 +184,10 @@ export function buildWedgeTreads(params: {
 							</mesh>
 						);
 
-						{/* החלפת עבה/דק רק ב־forwardSign (computeLocalFrame) – לא bodyYaw כדי למנוע כפילות */}
+						{/* סיבוב גוף מהתצורה (pathModelConfig) – t.bodyRotate180 בלבד */}
+						const bodyYaw = t.bodyRotate180 ? Math.PI : 0;
 						const geomGroup = (
-							<group>
+							<group rotation={[0, bodyYaw, 0]}>
 								{front}{back}{right}{left}{bottom}
 							</group>
 						);

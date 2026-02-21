@@ -280,7 +280,6 @@ function Staircase3D({
 				const zSignMiddle = -1; // גרם אמצעי תמיד ב-U לכיוון -Z (פניה ימינה אחרי הפודסט), כמו L180
 				const yaw0 = 0;
 				const yaw1Middle = -Math.PI / 2; // פניית מדרגות לכיוון -Z
-				const yaw2 = Math.PI;
 				const pathKeyU0 = getPathKey('U', flip, 0);
 				const pathKeyU1 = getPathKey('U', flip, 1);
 				const pathKeyU2 = getPathKey('U', flip, 2);
@@ -359,12 +358,13 @@ function Staircase3D({
 					pathKey: pathKeyLanding1,
 				});
 				const p3xStart = flip ? p1x + treadWidth / 2 : p1x - treadWidth / 2;
+				const yaw2U = flip ? 0 : Math.PI; // U180: גרם 3 לכיוון +X (כמו בהתחלה), U0: לכיוון -X
 				for (let i = 0; i < c; i++) {
 					const stepY = (a + b + 2 + i) * riser;
-					const x = p3xStart - i * treadDepth - treadDepth / 2;
+					const x = flip ? p3xStart + i * treadDepth + treadDepth / 2 : p3xStart - i * treadDepth - treadDepth / 2;
 					treads.push({
 						position: [x, stepY, p2z],
-						rotation: [0, yaw2, 0],
+						rotation: [0, yaw2U, 0],
 						run: treadDepth,
 						isLanding: false,
 						flight: 2,

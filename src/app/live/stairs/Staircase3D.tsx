@@ -1045,9 +1045,9 @@ function Staircase3D({
 							const offX = t.run / 2 + gap + wallTh / 2;
 							return (
 								<group key={`outer-wall-landing-${i}`} position={t.position}>
-									{/* סיבובים אבסולוטיים: 0=ימין π/2 | 1=גב 0 | 2=שמאל 0 (לאורך ציר גרם 2) | 3=חזית π */}
+									{/* סיבובים אבסולוטיים: 0=ימין 0 (לאורך ציר גרם 2) | 1=גב 0 | 2=שמאל 0 (לאורך ציר גרם 2) | 3=חזית π */}
 									{wallsToRender.includes(0) && (
-										<mesh position={[offX, yLocal, 0]} rotation={[0, Math.PI / 2, 0]} castShadow={false} receiveShadow={false}>
+										<mesh position={[offX, yLocal, 0]} rotation={[0, 0, 0]} castShadow={false} receiveShadow={false}>
 											<boxGeometry args={[wallTh, wallH, treadWidth]} />
 											<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
 										</mesh>

@@ -11,7 +11,7 @@ import { buildRidgeTreads } from './models/ridge';
 import { buildRoundedTreads } from './models/rounded';
 import { buildTaperBoxTreads } from './models/taper';
 import { HitechPlates } from './models/hitech';
-import { getMirror, getBodyRotate180, getDefaultMirror, getPathKeyLandingL, getPathKeyLandingU } from './pathModelConfig';
+import { getMirror, getBodyRotate180, getDefaultMirror, getPathKeyLandingL, getPathKeyLandingU, getLandingWalls } from './pathModelConfig';
 
 // ׳”׳₪׳¢׳׳× ׳§׳׳© ׳©׳ three ׳¢׳‘׳•׳¨ ׳˜׳¢׳™׳ ׳•׳× ׳—׳׳§׳•׳×
 Cache.enabled = true;
@@ -180,6 +180,7 @@ function Staircase3D({
 			mirror: boolean;
 			forceWallSide: 'right' | 'left' | 'auto';
 			bodyRotate180?: boolean;
+			landingWalls?: number[];
 		};
 		const treads: TreadItem[] = [];
 
@@ -251,6 +252,7 @@ function Staircase3D({
 					mirror: getMirror(boxModel ?? 'rect', pathKeyLanding, false),
 					forceWallSide: fws0,
 					bodyRotate180: getBodyRotate180(boxModel ?? 'rect', pathKeyLanding),
+					landingWalls: getLandingWalls(boxModel ?? 'rect', pathKeyLanding),
 				});
 				const zSign = flip ? 1 : -1;
 				const yaw1 = flip ? Math.PI / 2 : -Math.PI / 2;
@@ -319,6 +321,7 @@ function Staircase3D({
 					mirror: mirrorLanding0,
 					forceWallSide: fws0,
 					bodyRotate180: bodyRotate180Landing0,
+					landingWalls: getLandingWalls(boxModel ?? 'rect', pathKeyLanding0),
 				});
 				for (let i = 0; i < b; i++) {
 					const stepY = (a + 1 + i) * riser;
@@ -347,6 +350,7 @@ function Staircase3D({
 					mirror: mirrorLanding1,
 					forceWallSide: fws1,
 					bodyRotate180: bodyRotate180Landing1,
+					landingWalls: getLandingWalls(boxModel ?? 'rect', pathKeyLanding1),
 				});
 				const p3xStart = flip ? p1x + treadWidth : p1x - treadWidth;
 				for (let i = 0; i < c; i++) {
@@ -1020,42 +1024,39 @@ function Staircase3D({
 								</group>
 							);
 						})}
-						{/* קירות פודסטים: ריצה + קיר חזית L */}
+						{/* קירות פודסטים: 4 פאות (0–3), מוצגות לפי landingWalls */}
 						{treads.map((t, i) => {
 							if (!t.isLanding) return null;
-							const yaw = t.rotation[1] as number;
-							const axis = (Math.abs(Math.cos(yaw)) > 0.5 ? 'x' : 'z') as 'x' | 'z';
-							const hasTurn = !!(t as { turn?: 'left' | 'right' }).turn;
-							const lIdx = treads.slice(0, i).filter((x) => x.isLanding).length;
-							const railingSide: 'right' | 'left' =
-								t.forceWallSide !== 'auto' ? t.forceWallSide : (landingRailingSides?.[lIdx] ?? 'right');
-							const cosY = Math.cos(yaw);
-							const sinY = Math.sin(yaw);
-							let rightLocal: 1 | -1 =
-								(axis === 'x' ? (cosY >= 0 ? -1 : 1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
-							if (axis === 'z') rightLocal = (rightLocal === 1 ? -1 : 1) as 1 | -1;
-							const railingSideSignLocal = (railingSide === 'right' ? rightLocal : (-rightLocal as 1 | -1)) as 1 | -1;
-							const wallOffset = -railingSideSignLocal * (treadWidth / 2 + gap + wallTh / 2);
-							const forwardSignBase = (axis === 'x' ? (cosY >= 0 ? 1 : -1) : (sinY >= 0 ? 1 : -1)) as 1 | -1;
-							// מיקום קירות פודסט קבוע – לא תלוי ב־bodyRotate180 של המדרגה (מראה הפודסט לא משפיע על הקירות).
-							const forwardSignTurn = t.forceWallSide !== 'auto' ? -forwardSignBase : forwardSignBase;
+							const walls = t.landingWalls ?? [3];
 							const yLocal = worldCenterY - t.position[1];
+							const offZ = treadWidth / 2 + gap + wallTh / 2;
+							const offX = t.run / 2 + gap + wallTh / 2;
 							return (
 								<group key={`outer-wall-landing-${i}`} position={t.position} rotation={t.rotation}>
-									<mesh position={[0, yLocal, wallOffset]} castShadow={false} receiveShadow={false}>
-										<boxGeometry args={[t.run, wallH, wallTh]} />
-										<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
-									</mesh>
-									{hasTurn ? (
-										<mesh
-											position={[forwardSignTurn * (t.run / 2 + gap + wallTh / 2), yLocal, 0]}
-											castShadow={false}
-											receiveShadow={false}
-										>
+									{walls.includes(0) && (
+										<mesh position={[0, yLocal, -offZ]} castShadow={false} receiveShadow={false}>
+											<boxGeometry args={[t.run, wallH, wallTh]} />
+											<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
+										</mesh>
+									)}
+									{walls.includes(1) && (
+										<mesh position={[offX, yLocal, 0]} rotation={[0, Math.PI / 2, 0]} castShadow={false} receiveShadow={false}>
 											<boxGeometry args={[wallTh, wallH, treadWidth]} />
 											<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
 										</mesh>
-									) : null}
+									)}
+									{walls.includes(2) && (
+										<mesh position={[0, yLocal, offZ]} castShadow={false} receiveShadow={false}>
+											<boxGeometry args={[t.run, wallH, wallTh]} />
+											<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
+										</mesh>
+									)}
+									{walls.includes(3) && (
+										<mesh position={[-offX, yLocal, 0]} rotation={[0, -Math.PI / 2, 0]} castShadow={false} receiveShadow={false}>
+											<boxGeometry args={[wallTh, wallH, treadWidth]} />
+											<meshBasicMaterial color={wallColor} side={2} toneMapped={false} />
+										</mesh>
+									)}
 								</group>
 							);
 						})}

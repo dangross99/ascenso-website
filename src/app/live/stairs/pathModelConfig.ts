@@ -33,6 +33,8 @@ export type BoxModel = 'rect' | 'rounded' | 'taper' | 'wedge' | 'ridge';
 export interface SegmentConfig {
 	mirror: boolean;
 	bodyRotate180: boolean;
+	/** אילו פאות מקבלות קיר (0–3). ברירת מחדל [3] אם לא הוגדר. */
+	landingWalls?: number[];
 }
 
 /** מפתח מסלול – תואם ל־getPathKey(path, flip, flight) */
@@ -93,12 +95,12 @@ export const SEGMENT_CONFIG: Partial<Record<PathKey, Partial<Record<BoxModel, Se
 		wedge: { mirror: true, bodyRotate180: false },
 	},
 
-	// ─── L פודסט – דלתא: היפוך גם ב־0° וגם ב־180° ─────────────────────────────
+	// ─── L פודסט – דלתא: היפוך גם ב־0° וגם ב־180°; קירות לפי פאות ─────────────
 	L_0_landing: {
-		taper: { mirror: true, bodyRotate180: true },
+		taper: { mirror: true, bodyRotate180: true, landingWalls: [0, 3] },
 	},
 	L_180_landing: {
-		taper: { mirror: true, bodyRotate180: true },
+		taper: { mirror: true, bodyRotate180: true, landingWalls: [0, 3] },
 	},
 
 	// ─── U פודסטים – דלתא: בלי היפוך ───────────────────────────────────────────
@@ -141,6 +143,16 @@ export function getBodyRotate180(model: string, pathKey: string): boolean {
 	const cfg = SEGMENT_CONFIG[pathKey as PathKey]?.[model as BoxModel];
 	if (cfg != null) return cfg.bodyRotate180;
 	return false;
+}
+
+/**
+ * מחזיר אילו פאות (0–3) מקבלות קיר בפודסט.
+ * אם יש ערך ב־SEGMENT_CONFIG משתמשים בו; אחרת [3].
+ */
+export function getLandingWalls(model: string, pathKey: string): number[] {
+	const cfg = SEGMENT_CONFIG[pathKey as PathKey]?.[model as BoxModel];
+	if (cfg != null && cfg.landingWalls != null) return cfg.landingWalls;
+	return [3];
 }
 
 /**

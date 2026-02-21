@@ -1034,7 +1034,9 @@ function Staircase3D({
 								</group>
 							);
 						})}
-						{/* קירות פודסט: פאות קבועות (0–3), סיבוב קבוע לכל פאה. Group בלי rotation – קירות מנותקים מ־t.rotation (bodyRotate180). אילו פאות להציג נקבע רק ב־pathModelConfig (landingWalls). */}
+						{/* קירות פודסט – מקור אמת יחיד: pathModelConfig.
+						    Staircase3D כאן טיפש וקבוע: רק t.landingWalls קובע אילו פאות לרנדר; סיבוב קבוע לכל פאה, בלי לוגיקה. Group בלי rotation (קירות מנותקים מ־bodyRotate180).
+						    הרחבה עתידית (סיבוב שונה לפאה): רק ב־pathModelConfig, לא כאן. */}
 						{treads.map((t, i) => {
 							if (!t.isLanding) return null;
 							const wallsToRender = t.landingWalls ?? [1];
@@ -1043,7 +1045,7 @@ function Staircase3D({
 							const offX = t.run / 2 + gap + wallTh / 2;
 							return (
 								<group key={`outer-wall-landing-${i}`} position={t.position}>
-									{/* 0=ימין π/2 | 1=גב 0 | 2=שמאל -π/2 | 3=חזית π – סיבובים קבועים, לא לשנות */}
+									{/* סיבובים אבסולוטיים: 0=ימין π/2 | 1=גב 0 | 2=שמאל -π/2 | 3=חזית π */}
 									{wallsToRender.includes(0) && (
 										<mesh position={[offX, yLocal, 0]} rotation={[0, Math.PI / 2, 0]} castShadow={false} receiveShadow={false}>
 											<boxGeometry args={[wallTh, wallH, treadWidth]} />

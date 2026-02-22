@@ -11,7 +11,7 @@ import { buildRidgeTreads } from './models/ridge';
 import { buildRoundedTreads } from './models/rounded';
 import { buildTaperBoxTreads } from './models/taper';
 import { HitechPlates } from './models/hitech';
-import { getMirror, getBodyRotate180, getDefaultMirror, getPathKeyLandingL, getPathKeyLandingU, getLandingWalls, getForceWallSide } from './pathModelConfig';
+import { getMirror, getBodyRotate180, getDefaultMirror, getPathKeyLandingL, getPathKeyLandingU, getLandingWalls, getForceWallSide, SEGMENT_CONFIG } from './pathModelConfig';
 
 // ׳”׳₪׳¢׳׳× ׳§׳׳© ׳©׳ three ׳¢׳‘׳•׳¨ ׳˜׳¢׳™׳ ׳•׳× ׳—׳׳§׳•׳×
 Cache.enabled = true;
@@ -222,7 +222,7 @@ function Staircase3D({
 				}
 			} else if (isL || (isStraight && shape === 'L')) {
 				// L: כל push קורא getMirror/getBodyRotate180 עם ה־pathKey של המקטע בלבד – בידוד מלא.
-				// פודסט מקבל את יאו גרם 0 (rotationYFlight0) כדי ש-axisFromYaw בדגמים (מרום וכו') יעבוד נכון.
+				// גרם ראשון מסתובב לפי flip (yaw180) כדי שמסלול הפוך יוצג נכון.
 				const n = straightSteps[0];
 				const a = isL ? straightSteps[0] : Math.floor(n / 2);
 				const b = isL ? straightSteps[1] : n - a - 1;
@@ -232,7 +232,7 @@ function Staircase3D({
 				const pathKeyLanding = getPathKeyLandingL(flip);
 				const fws0 = fws(0);
 				const fws1 = fws(1);
-				const rotationYFlight0 = 0;
+				const rotationYFlight0 = yaw180;
 				for (let i = 0; i < a; i++) {
 					treads.push({
 						position: [i * treadDepth + treadDepth / 2, i * riser, 0],
@@ -458,15 +458,16 @@ function Staircase3D({
 				});
 			}
 		} else if (shape === 'L') {
-			// L (ללא pathSegments): כל push עם pathKey משלו. פודסט מקבל יאו גרם 0 (rotationYFlight0) ל-axisFromYaw.
+			// L (ללא pathSegments): גרם ראשון מסתובב לפי flip (yaw180) כדי שמסלול הפוך יוצג נכון.
 			const half = Math.floor(steps / 2);
 			const flip = pathFlipped180 === true;
+			const yaw180 = flip ? Math.PI : 0;
 			const pathKey0 = getPathKey('L', flip, 0);
 			const pathKey1 = getPathKey('L', flip, 1);
 			const pathKeyLanding = getPathKeyLandingL(flip);
 			const fws0 = getForceWallSideFromTable(boxModel ?? 'rect', pathKey0);
 			const fws1 = getForceWallSideFromTable(boxModel ?? 'rect', pathKey1);
-			const rotationYFlight0 = 0;
+			const rotationYFlight0 = yaw180;
 			for (let i = 0; i < half; i++) {
 				treads.push({
 					position: [i * treadDepth + treadDepth / 2, i * riser, 0],
@@ -603,10 +604,8 @@ function Staircase3D({
 		return treads;
 	}
 
-	// תלות ב־config כדי ששינוי ב־pathModelConfig (mirror/bodyRotate180) יגרום לחישוב treads מחדש
-	const _pathKey0 = shape === 'L' ? (pathFlipped180 ? 'L_180_flight_0' : 'L_0_flight_0') : shape === 'straight' ? 'straight_0' : null;
-	const _configDeps = _pathKey0 != null ? [getBodyRotate180(boxModel ?? 'rect', _pathKey0), getMirror(boxModel ?? 'rect', _pathKey0, false)] : [];
-	const treads = React.useMemo(getTreads, [shape, steps, JSON.stringify(pathSegments), pathFlipped180, boxModel, _pathKey0, ..._configDeps]);
+	// תלות ב־SEGMENT_CONFIG – כל שינוי בטבלה יגרום לחישוב treads מחדש (reactivity מלא)
+	const treads = React.useMemo(getTreads, [shape, steps, JSON.stringify(pathSegments), pathFlipped180, boxModel, JSON.stringify(SEGMENT_CONFIG)]);
 
 	// במבנה ישר ללא 180: דגמי מרום ודלתא מוצגים הפוכים – מפצים בהוספת 180° לרוטציה
 	// נתוני קיר רציף לכל גרם: התחלה (עם מתיחה אחורה אחרי פודסט), סוף, אורך, ויואו – לאיחוד עם עוגן הפודסט

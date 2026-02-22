@@ -67,16 +67,12 @@ export function buildWedgeTreads(params: {
 						if (t.isLanding) landingIdx++;
 
 						const axisFromYawLocal = axisFromYaw(yaw);
-						const bodyRotate180ForFrame =
-							t.bodyRotate180 ??
-							(t.flight === 0 && Math.abs(yaw) < 0.01 && !t.isLanding ? true : false);
-						// גאומטריה תמיד באותו כיוון; היפוך רק דרך סיבוב קבוצה (בלי forwardSign כדי למנוע ביטול)
 						const { forwardSign, innerSignLocal } = computeLocalFrame({
 							yaw,
 							isLanding: t.isLanding,
 							axis: axisFromYawLocal,
 							innerIsRight,
-							bodyRotate180: false,
+							bodyRotate180: t.bodyRotate180,
 						});
 
 						const xFront = forwardSign * (t.run / 2);
@@ -187,9 +183,9 @@ export function buildWedgeTreads(params: {
 							</mesh>
 						);
 
-						{/* bodyRotate180: רק סיבוב גוף הטריז 180° – החלפת עבה/דק ויזואלית */}
+						{/* החלפת עבה/דק רק דרך forwardSign (t.bodyRotate180 ב-computeLocalFrame) – בלי סיבוב קבוצה */}
 						const geomGroup = (
-							<group rotation={bodyRotate180ForFrame ? [0, Math.PI, 0] : [0, 0, 0]}>
+							<group>
 								{front}{back}{right}{left}{bottom}
 							</group>
 						);

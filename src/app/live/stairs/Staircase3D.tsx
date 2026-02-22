@@ -378,7 +378,7 @@ function Staircase3D({
 					});
 				}
 			} else {
-				// fallback: מסלול לא סטנדרטי – חישוב דינמי (ללא cumulative error ככל האפשר)
+				// fallback: מסלול לא סטנדרטי – חישוב דינמי (ללא cumulative error ככל האפשר). אין pathKey → mirror/bodyRotate180 ברירת מחדל; wedge משלים bodyRotate180 לגרם 0 yaw 0.
 				let dirIndex = 0;
 				const dirs: Array<[number, number]> = [[1, 0], [0, 1], [-1, 0], [0, -1]];
 				const yaws = [0, Math.PI / 2, Math.PI, -Math.PI / 2];
@@ -398,6 +398,7 @@ function Staircase3D({
 								axis: (dirIndex & 1) === 0 ? 'x' : 'z',
 								mirror: false,
 								forceWallSide: 'auto',
+								bodyRotate180: undefined,
 							});
 							sx += dx * treadDepth;
 							sz += dz * treadDepth;
@@ -418,6 +419,7 @@ function Staircase3D({
 							axis: (dirIndex & 1) === 0 ? 'x' : 'z',
 							mirror: false,
 							forceWallSide: 'auto',
+							bodyRotate180: undefined,
 						});
 						stepIndex += 1;
 						if (seg.turn === 'right') dirIndex = (dirIndex + 1) & 3;

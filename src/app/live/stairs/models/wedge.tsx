@@ -67,8 +67,8 @@ export function buildWedgeTreads(params: {
 						if (t.isLanding) landingIdx++;
 
 						const axisFromYawLocal = axisFromYaw(yaw);
-						// החלפת עבה/דק דרך forwardSign – מקור: t.bodyRotate180 (pathModelConfig)
-						// Fallback: L 0° גרם ראשון – bodyRotate180 חסר (למשל fallback ב-Staircase3D) → true
+						// מקור אמת: t.bodyRotate180 מ־pathModelConfig דרך Staircase3D. חל רק פעם אחת ב־computeLocalFrame (forwardSign).
+						// השלמה רק כשחסר (מסלול לא סטנדרטי ב-Staircase3D): גרם 0 yaw 0 → true, אחרת false.
 						const bodyRotate180ForFrame =
 							t.bodyRotate180 ??
 							(t.flight === 0 && Math.abs(yaw) < 0.01 && !t.isLanding ? true : false);

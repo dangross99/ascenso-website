@@ -160,20 +160,25 @@ export function getDefaultMirror(flip: boolean, path: 'straight' | 'L' | 'U', fl
 	return flight === 2 ? !flip : flip;
 }
 
+function normalizeModel(model: string): BoxModel {
+	const key = model?.toLowerCase() as BoxModel;
+	return key === 'rect' || key === 'rounded' || key === 'taper' || key === 'wedge' || key === 'ridge' ? key : 'rect';
+}
+
 export function getMirror(model: string, pathKey: string, fallback: boolean): boolean {
-	const cfg = SEGMENT_CONFIG[pathKey as PathKey]?.[model as BoxModel];
+	const cfg = SEGMENT_CONFIG[pathKey as PathKey]?.[normalizeModel(model)];
 	if (cfg != null) return cfg.mirror;
 	return fallback;
 }
 
 export function getBodyRotate180(model: string, pathKey: string): boolean {
-	const cfg = SEGMENT_CONFIG[pathKey as PathKey]?.[model as BoxModel];
+	const cfg = SEGMENT_CONFIG[pathKey as PathKey]?.[normalizeModel(model)];
 	if (cfg != null && cfg.bodyRotate180 != null) return cfg.bodyRotate180;
 	return false;
 }
 
 export function getLandingWalls(model: string, pathKey: string): number[] {
-	const cfg = SEGMENT_CONFIG[pathKey as PathKey]?.[model as BoxModel];
+	const cfg = SEGMENT_CONFIG[pathKey as PathKey]?.[normalizeModel(model)];
 	if (cfg != null && cfg.landingWalls != null) return cfg.landingWalls;
 	// U180: פודסט 1 → פאות 2,3 | פודסט 2 → פאות 0,1
 	if (pathKey === 'U_180_landing_0') return [2, 3];
@@ -183,7 +188,7 @@ export function getLandingWalls(model: string, pathKey: string): number[] {
 
 /** צד קיר בגרם (לפי pathKey). אם לא מוגדר – מחזיר undefined (Staircase3D ישתמש בטבלאות/ברירת מחדל). */
 export function getForceWallSide(model: string, pathKey: string): 'right' | 'left' | undefined {
-	const cfg = SEGMENT_CONFIG[pathKey as PathKey]?.[model as BoxModel];
+	const cfg = SEGMENT_CONFIG[pathKey as PathKey]?.[normalizeModel(model)];
 	if (cfg != null && cfg.forceWallSide != null) return cfg.forceWallSide;
 	return undefined;
 }

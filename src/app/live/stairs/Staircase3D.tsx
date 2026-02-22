@@ -603,7 +603,10 @@ function Staircase3D({
 		return treads;
 	}
 
-	const treads = React.useMemo(getTreads, [shape, steps, JSON.stringify(pathSegments), pathFlipped180, boxModel]);
+	// תלות ב־config כדי ששינוי ב־pathModelConfig (mirror/bodyRotate180) יגרום לחישוב treads מחדש
+	const _pathKey0 = shape === 'L' ? (pathFlipped180 ? 'L_180_flight_0' : 'L_0_flight_0') : shape === 'straight' ? 'straight_0' : null;
+	const _configDeps = _pathKey0 != null ? [getBodyRotate180(boxModel ?? 'rect', _pathKey0), getMirror(boxModel ?? 'rect', _pathKey0, false)] : [];
+	const treads = React.useMemo(getTreads, [shape, steps, JSON.stringify(pathSegments), pathFlipped180, boxModel, _pathKey0, ..._configDeps]);
 
 	// במבנה ישר ללא 180: דגמי מרום ודלתא מוצגים הפוכים – מפצים בהוספת 180° לרוטציה
 	// נתוני קיר רציף לכל גרם: התחלה (עם מתיחה אחורה אחרי פודסט), סוף, אורך, ויואו – לאיחוד עם עוגן הפודסט

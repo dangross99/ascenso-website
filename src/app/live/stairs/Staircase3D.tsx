@@ -222,6 +222,7 @@ function Staircase3D({
 				}
 			} else if (isL || (isStraight && shape === 'L')) {
 				// L: כל push קורא getMirror/getBodyRotate180 עם ה־pathKey של המקטע בלבד – בידוד מלא.
+				// פודסט מקבל את יאו גרם 0 (rotationYFlight0) כדי ש-axisFromYaw בדגמים (מרום וכו') יעבוד נכון.
 				const n = straightSteps[0];
 				const a = isL ? straightSteps[0] : Math.floor(n / 2);
 				const b = isL ? straightSteps[1] : n - a - 1;
@@ -457,7 +458,7 @@ function Staircase3D({
 				});
 			}
 		} else if (shape === 'L') {
-			// L (ללא pathSegments): כל push עם pathKey משלו – קריאה ישירה ל־getMirror/getBodyRotate180, בלי משתנים משותפים.
+			// L (ללא pathSegments): כל push עם pathKey משלו. פודסט מקבל יאו גרם 0 (rotationYFlight0) ל-axisFromYaw.
 			const half = Math.floor(steps / 2);
 			const flip = pathFlipped180 === true;
 			const pathKey0 = getPathKey('L', flip, 0);

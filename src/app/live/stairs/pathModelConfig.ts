@@ -160,14 +160,20 @@ export function getDefaultMirror(flip: boolean, path: 'straight' | 'L' | 'U', fl
 	return flight === 2 ? !flip : flip;
 }
 
+function normalizeModel(model: string): BoxModel {
+	const key = model?.toLowerCase();
+	if (key === 'rect' || key === 'rounded' || key === 'taper' || key === 'wedge' || key === 'ridge') return key;
+	return 'rect';
+}
+
 export function getMirror(model: string, pathKey: string, fallback: boolean): boolean {
-	const cfg = SEGMENT_CONFIG[pathKey as PathKey]?.[model as BoxModel];
+	const cfg = SEGMENT_CONFIG[pathKey as PathKey]?.[normalizeModel(model)];
 	if (cfg != null) return cfg.mirror;
 	return fallback;
 }
 
 export function getBodyRotate180(model: string, pathKey: string): boolean {
-	const cfg = SEGMENT_CONFIG[pathKey as PathKey]?.[model as BoxModel];
+	const cfg = SEGMENT_CONFIG[pathKey as PathKey]?.[normalizeModel(model)];
 	if (cfg != null && cfg.bodyRotate180 != null) return cfg.bodyRotate180;
 	return false;
 }

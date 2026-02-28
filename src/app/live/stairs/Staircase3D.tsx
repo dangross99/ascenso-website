@@ -221,7 +221,7 @@ function Staircase3D({
 					});
 				}
 			} else if (isL || (isStraight && shape === 'L')) {
-				// L: כל push קורא getMirror/getBodyRotate180 עם ה־pathKey של המקטע בלבד – בידוד מלא.
+				// L: כל push משתמש ב־pathKey של המקטע – בידוד מלא. גרם ראשון: mirror ו־bodyRotate180 נמשכים מ־pathKey0.
 				// גרם ראשון מסתובב לפי flip (yaw180) כדי שמסלול הפוך יוצג נכון.
 				const n = straightSteps[0];
 				const a = isL ? straightSteps[0] : Math.floor(n / 2);
@@ -230,6 +230,8 @@ function Staircase3D({
 				const pathKey0 = getPathKey('L', flip, 0);
 				const pathKey1 = getPathKey('L', flip, 1);
 				const pathKeyLanding = getPathKeyLandingL(flip);
+				const mirror0 = getMirror(boxModel ?? 'rect', pathKey0, getDefaultMirror(flip, 'L', 0));
+				const bodyRotate180_0 = getBodyRotate180(boxModel ?? 'rect', pathKey0);
 				const fws0 = fws(0);
 				const fws1 = fws(1);
 				const rotationYFlight0 = yaw180;
@@ -241,9 +243,9 @@ function Staircase3D({
 						isLanding: false,
 						flight: 0,
 						axis: 'x',
-						mirror: getMirror(boxModel ?? 'rect', pathKey0, getDefaultMirror(flip, 'L', 0)),
+						mirror: mirror0,
 						forceWallSide: fws0,
-						bodyRotate180: getBodyRotate180(boxModel ?? 'rect', pathKey0),
+						bodyRotate180: bodyRotate180_0,
 					});
 				}
 				treads.push({
@@ -458,13 +460,15 @@ function Staircase3D({
 				});
 			}
 		} else if (shape === 'L') {
-			// L (ללא pathSegments): גרם ראשון מסתובב לפי flip (yaw180) כדי שמסלול הפוך יוצג נכון.
+			// L (ללא pathSegments): גרם ראשון – mirror ו־bodyRotate180 נמשכים מ־pathKey0.
 			const half = Math.floor(steps / 2);
 			const flip = pathFlipped180 === true;
 			const yaw180 = flip ? Math.PI : 0;
 			const pathKey0 = getPathKey('L', flip, 0);
 			const pathKey1 = getPathKey('L', flip, 1);
 			const pathKeyLanding = getPathKeyLandingL(flip);
+			const mirror0 = getMirror(boxModel ?? 'rect', pathKey0, getDefaultMirror(flip, 'L', 0));
+			const bodyRotate180_0 = getBodyRotate180(boxModel ?? 'rect', pathKey0);
 			const fws0 = getForceWallSideFromTable(boxModel ?? 'rect', pathKey0);
 			const fws1 = getForceWallSideFromTable(boxModel ?? 'rect', pathKey1);
 			const rotationYFlight0 = yaw180;
@@ -476,9 +480,9 @@ function Staircase3D({
 					isLanding: false,
 					flight: 0,
 					axis: 'x',
-					mirror: getMirror(boxModel ?? 'rect', pathKey0, getDefaultMirror(flip, 'L', 0)),
+					mirror: mirror0,
 					forceWallSide: fws0,
-					bodyRotate180: getBodyRotate180(boxModel ?? 'rect', pathKey0),
+					bodyRotate180: bodyRotate180_0,
 				});
 			}
 			const runL = treadWidth;
@@ -604,8 +608,9 @@ function Staircase3D({
 		return treads;
 	}
 
-	// חישוב treads בכל רינדור – כך שהטבלה (pathModelConfig) תמיד מתקבלת עדכנית. בלי useMemo כדי ששינוי ב-SEGMENT_CONFIG יופיע מיד.
-	const treads = getTreads();
+	// עוגן בטוח: React יזהה שינוי בטבלה החיצונית (pathModelConfig) כי ה-Key משתנה.
+	const segmentConfigKey = JSON.stringify(SEGMENT_CONFIG);
+	const treads = React.useMemo(() => getTreads(), [shape, steps, JSON.stringify(pathSegments), pathFlipped180, boxModel, segmentConfigKey]);
 
 	// במבנה ישר ללא 180: דגמי מרום ודלתא מוצגים הפוכים – מפצים בהוספת 180° לרוטציה
 	// נתוני קיר רציף לכל גרם: התחלה (עם מתיחה אחורה אחרי פודסט), סוף, אורך, ויואו – לאיחוד עם עוגן הפודסט

@@ -67,13 +67,14 @@ export function buildWedgeTreads(params: {
 						if (t.isLanding) landingIdx++;
 
 						const axisFromYawLocal = axisFromYaw(yaw);
-						// החלפת עבה/דק: רק דרך forwardSign (קודקודים) – בלי סיבוב group. אם נוסיף bodyYaw נקבל היפוך כפול.
+						// החלפת עבה/דק: רק דרך forwardSign. בגרם 1 (axis 'z') הכיוון ההפוך – מפצים כדי ש-bodyRotate180 מהטבלה יתאים לויזואלי.
+						const bodyRotate180ForFrame = axisFromYawLocal === 'z' ? !t.bodyRotate180 : t.bodyRotate180;
 						const { forwardSign, innerSignLocal } = computeLocalFrame({
 							yaw,
 							isLanding: t.isLanding,
 							axis: axisFromYawLocal,
 							innerIsRight,
-							bodyRotate180: t.bodyRotate180,
+							bodyRotate180: bodyRotate180ForFrame,
 						});
 
 						const xFront = forwardSign * (t.run / 2);

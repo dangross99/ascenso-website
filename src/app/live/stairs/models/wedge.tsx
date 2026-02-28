@@ -67,6 +67,7 @@ export function buildWedgeTreads(params: {
 						if (t.isLanding) landingIdx++;
 
 						const axisFromYawLocal = axisFromYaw(yaw);
+						// החלפת עבה/דק: רק דרך forwardSign (קודקודים) – בלי סיבוב group. אם נוסיף bodyYaw נקבל היפוך כפול.
 						const { forwardSign, innerSignLocal } = computeLocalFrame({
 							yaw,
 							isLanding: t.isLanding,
@@ -183,7 +184,7 @@ export function buildWedgeTreads(params: {
 							</mesh>
 						);
 
-						{/* החלפת עבה/דק רק דרך forwardSign (t.bodyRotate180 ב-computeLocalFrame) – בלי סיבוב קבוצה */}
+						{/* אין bodyYaw – רק forwardSign משפיע על עבה/דק. סיבוב group כאן יגרום להיפוך כפול. */}
 						const geomGroup = (
 							<group>
 								{front}{back}{right}{left}{bottom}

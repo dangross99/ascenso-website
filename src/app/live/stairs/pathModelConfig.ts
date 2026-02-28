@@ -64,12 +64,12 @@ export const SEGMENT_CONFIG: Partial<Record<PathKey, Partial<Record<BoxModel, Se
 	},
 	L_180_flight_0: {
 		ridge: { mirror: true, bodyRotate180: false },
-		taper: { mirror: true, bodyRotate180: false },
+		taper: { mirror: true, bodyRotate180: true },
 		wedge: { mirror: true, bodyRotate180: false },
 	},
 	L_180_flight_1: {
 		ridge: { mirror: true, bodyRotate180: false },
-		taper: { mirror: true, bodyRotate180: false },
+		taper: { mirror: true, bodyRotate180: true },
 		wedge: { mirror: true, bodyRotate180: false },
 	},
 	L_0_landing: {

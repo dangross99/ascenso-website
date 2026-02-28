@@ -184,8 +184,10 @@ export function buildWedgeTreads(params: {
 							</mesh>
 						);
 
-						{/* הטבלה שולטת: bodyRotate180 true = סיבוב גוף 180°. ב-L180 גרם 1 ה-step ב-180° – מוסיפים 180° כדי לקבל 360° (תצוגה לא הפוכה). */}
-						const bodyYaw = t.bodyRotate180 ? Math.PI : 0;
+						{/* הטבלה: bodyRotate180 true = היפוך גוף. ב-L180 גרם 1 ה-step כבר ב־rotation 180° – אם נוסיף bodyYaw=180° סה"כ 360°=ללא היפוך. לכן כשהשלב ב־~180° לא מוסיפים (bodyYaw=0) כדי לקבל היפוך ויזואלי אחד. */}
+						const stepYaw = (t.rotation[1] as number);
+						const stepAlready180 = Math.abs(Math.abs(stepYaw) - Math.PI) < 0.01;
+						const bodyYaw = t.bodyRotate180 ? (stepAlready180 ? 0 : Math.PI) : 0;
 						const geomGroup = (
 							<group rotation={[0, bodyYaw, 0]}>
 								{front}{back}{right}{left}{bottom}

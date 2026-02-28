@@ -604,8 +604,8 @@ function Staircase3D({
 		return treads;
 	}
 
-	// תלות ב־SEGMENT_CONFIG – כל שינוי בטבלה יגרום לחישוב treads מחדש (reactivity מלא)
-	const treads = React.useMemo(getTreads, [shape, steps, JSON.stringify(pathSegments), pathFlipped180, boxModel, JSON.stringify(SEGMENT_CONFIG)]);
+	// חישוב treads בכל רינדור – כך שהטבלה (pathModelConfig) תמיד מתקבלת עדכנית. בלי useMemo כדי ששינוי ב-SEGMENT_CONFIG יופיע מיד.
+	const treads = getTreads();
 
 	// במבנה ישר ללא 180: דגמי מרום ודלתא מוצגים הפוכים – מפצים בהוספת 180° לרוטציה
 	// נתוני קיר רציף לכל גרם: התחלה (עם מתיחה אחורה אחרי פודסט), סוף, אורך, ויואו – לאיחוד עם עוגן הפודסט

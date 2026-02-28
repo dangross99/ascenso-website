@@ -608,9 +608,8 @@ function Staircase3D({
 		return treads;
 	}
 
-	// עוגן בטוח: React יזהה שינוי בטבלה החיצונית (pathModelConfig) כי ה-Key משתנה.
-	const segmentConfigKey = JSON.stringify(SEGMENT_CONFIG);
-	const treads = React.useMemo(() => getTreads(), [shape, steps, JSON.stringify(pathSegments), pathFlipped180, boxModel, segmentConfigKey]);
+	// חישוב treads בכל רינדור – מבטיח ששינוי ב-pathModelConfig (כולל HMR) משתקף מיד. בלי useMemo כדי שגרם 1 (flight 0) ו־2 יקבלו תמיד bodyRotate180 מהטבלה.
+	const treads = getTreads();
 
 	// במבנה ישר ללא 180: דגמי מרום ודלתא מוצגים הפוכים – מפצים בהוספת 180° לרוטציה
 	// נתוני קיר רציף לכל גרם: התחלה (עם מתיחה אחורה אחרי פודסט), סוף, אורך, ויואו – לאיחוד עם עוגן הפודסט

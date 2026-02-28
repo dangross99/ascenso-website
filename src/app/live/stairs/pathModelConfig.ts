@@ -4,6 +4,9 @@
  *
  * מפתח: pathKey = getPathKey(path, flip, flight) או getPathKeyLandingL/U.
  * דגמים: rect | rounded | taper (דלתא) | wedge | ridge.
+ *
+ * L0 vs L180: אין שיתוף לוגיקה – L_0_* נבחר כש־pathFlipped180=false, L_180_* כש־true.
+ * שינוי ב־L_180_* לא משפיע על L_0_* ולהיפך.
  */
 
 export type BoxModel = 'rect' | 'rounded' | 'taper' | 'wedge' | 'ridge';
@@ -52,14 +55,14 @@ export const SEGMENT_CONFIG: Partial<Record<PathKey, Partial<Record<BoxModel, Se
 		rect: { mirror: true, bodyRotate180: true },
 		rounded: { mirror: true, bodyRotate180: true },
 		ridge: { mirror: true, bodyRotate180: true },
-		taper: { mirror: true, bodyRotate180: false },
+		taper: { mirror: true, bodyRotate180: true },
 		wedge: { mirror: true, bodyRotate180: false },
 	},
 	L_0_flight_1: {
 		rect: { mirror: true, bodyRotate180: false },
 		rounded: { mirror: true, bodyRotate180: false },
 		ridge: { mirror: true, bodyRotate180: false },
-		taper: { mirror: true, bodyRotate180: true },
+		taper: { mirror: true, bodyRotate180: false },
 		wedge: { mirror: true, bodyRotate180: false },
 	},
 	L_180_flight_0: {

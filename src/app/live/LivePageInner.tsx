@@ -1763,17 +1763,6 @@ function LivePageInner() {
 										</div>
 									</div>
 								</div>
-								<div className="font-semibold mb-1">מפרט לוח</div>
-								<table className="w-full text-sm text-gray-700" dir="rtl">
-									<tbody>
-										{panelSpecRows.map(row => (
-											<tr key={row.label} className="border-b border-gray-100">
-												<td className="py-1.5 text-gray-600">{row.label}</td>
-												<td className="py-1.5 font-medium text-[#1a1a2e] text-left">{row.value}</td>
-											</tr>
-										))}
-									</tbody>
-								</table>
 								<button
 									onClick={() => setBookingOpen(true)}
 									className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-md bg-[#1a1a2e] text-white px-5 py-3 text-base font-semibold shadow-sm hover:opacity-95 cursor-pointer"
@@ -1791,17 +1780,6 @@ function LivePageInner() {
 					{/* פירוט מתחת להדמייה – מובייל/טאבלט */}
 					<div className="mt-3 space-y-3 lg:hidden">
 						<div className="bg-white rounded-md p-3">
-						<div className="font-semibold mb-1">מפרט לוח</div>
-						<table className="w-full text-sm text-gray-700" dir="rtl">
-							<tbody>
-								{panelSpecRows.map(row => (
-									<tr key={row.label} className="border-b border-gray-100">
-										<td className="py-1.5 text-gray-600">{row.label}</td>
-										<td className="py-1.5 font-medium text-[#1a1a2e] text-left">{row.value}</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
 						<button
 							onClick={() => setBookingOpen(true)}
 							className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-md bg-[#1a1a2e] text-white px-5 py-3 text-base font-semibold shadow-sm hover:opacity-95 cursor-pointer"
@@ -2038,19 +2016,7 @@ function LivePageInner() {
 							);
 						})()}
 
-						{/* מפרט לוח – מוצג בסוף המובייל מתחת לקטגוריות */}
 						<div ref={priceRef} className={`mt-3 bg-white rounded-md p-3 ${pricePing ? 'ring-2 ring-[#1a1a2e]' : ''}`}>
-							<div className="font-semibold mb-1">מפרט לוח</div>
-							<table className="w-full text-sm text-gray-700" dir="rtl">
-								<tbody>
-									{panelSpecRows.map(row => (
-										<tr key={row.label} className="border-b border-gray-100">
-											<td className="py-1.5 text-gray-600">{row.label}</td>
-											<td className="py-1.5 font-medium text-[#1a1a2e] text-left">{row.value}</td>
-										</tr>
-									))}
-								</tbody>
-							</table>
 							<div className="text-[11px] text-gray-500 mt-1">
 								לוח {panelSizeLabel} מ"מ · {panelSurfaceM2} מ"ר. MIRZA – לוחות חיפוי הנדסיים.
 							</div>

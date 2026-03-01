@@ -1238,6 +1238,15 @@ function LivePageInner() {
 		return { breakdown: items, total };
 	}
 
+	// מפרט לוח חיפוי (300×150 ס"מ = 4.5 מ"ר) – להצגה במקום תמחור מדרגות
+	const PANEL_SURFACE_M2 = 4.5;
+	const panelSpecStoneName = (nonWoodModels.find(m => m.id === activeTexId) || nonWoodModels[0])?.name || '—';
+	const panelSpecRows: Array<{ label: string; value: string }> = [
+		{ label: 'סוג אבן', value: panelSpecStoneName },
+		{ label: 'עובי מערכת', value: `${panelThicknessMm} מ"מ` },
+		{ label: 'סוג ליבה', value: 'Aluminum Honeycomb' },
+		{ label: 'שטח פנים', value: `${PANEL_SURFACE_M2} מ"ר` },
+	];
 	const { breakdown, total } = calculatePrice();
 	const priceFormatted = React.useMemo(() => {
 		try {
@@ -1389,64 +1398,36 @@ function LivePageInner() {
 
 	// (הוסר) צילום תמונות – לפי בקשתך נשאר רק טקסט הודעה ל‑WhatsApp
 
-	// שליחת טופס מודאל: הודעת וואטסאפ מאוחדת (פרטי הדמייה + פרטי לקוח)
+	// שליחת טופס מודאל: הודעת וואטסאפ – בקשת מפרט טכני ומארז דוגמאות (לוח חיפוי)
 	function handleBookingSubmit(e: React.FormEvent) {
 		e.preventDefault();
-		// הגנה: לא שולחים לפני שלב הזמן
-		if (bookingStep !== 'time' || !preferredTime) {
-			return;
-		}
-		const materialLabel = activeMaterial === 'wood' ? 'עץ' : activeMaterial === 'metal' ? 'מתכת' : 'אבן טבעית';
-		const textureName = activeMaterial === 'wood'
-			? (activeModel?.name || activeModel?.id || 'דגם עץ')
-			: (nonWoodModels.find(r => r.id === activeTexId)?.name || 'טקסטורה');
-		const colorName = activeMaterial === 'wood'
-			? (WOOD_SWATCHES.find(w => w.id === activeColor)?.label || activeColor)
-			: undefined;
-		const pathText = formatPathForShare(pathSegments);
-		const railingText = formatRailing();
-		const boxText = box === 'thick'
-			? 'קלאסי'
-			: box === 'thin'
-			? 'להב'
-			: box === 'rounded'
-			? 'קפסולה'
-			: box === 'taper'
-			? 'דלתא'
-			: box === 'wedge'
-			? 'טריז'
-			: box === 'ridge'
-			? 'מרום'
-			: '';
-		const totalText = `₪${total.toLocaleString('he-IL')}`;
+		if (bookingStep !== 'time' || !preferredTime) return;
+		const materialLabel = activeMaterial === 'metal' ? 'מתכת' : 'אבן טבעית';
+		const textureName = nonWoodModels.find(r => r.id === activeTexId)?.name || 'טקסטורה';
 		const leadId = generateLeadId();
 		const timeLabel = preferredTime || '-';
 
 		const lines = [
-			'\u202B*ASCENSO*\u200F',
-			`מס׳ הדמייה: ${formatLeadIdRTL(leadId)}`,
-			`פרטי ההדמייה:`,
-			`- דגם תיבה: ${boxText}`,
-			`- חומר: ${materialLabel}${colorName ? `, צבע: ${colorName}` : ''}`,
-			`- טקסטורה: ${textureName}`,
-			`- מבנה המדרגות: ${pathText}`,
-			`- מעקה: ${railingText}`,
-			`- מחיר משוער: ${totalText}`,
+			'\u202B*ASCENSO – לוחות חיפוי*\u200F',
+			`מס׳ פנייה: ${formatLeadIdRTL(leadId)}`,
+			`מפרט לוח:`,
+			`- סוג אבן/חומר: ${textureName} (${materialLabel})`,
+			`- עובי מערכת: ${panelThicknessMm} מ"מ`,
+			`- ליבה: Aluminum Honeycomb`,
+			`- שטח פנים: 4.5 מ"ר`,
 			``,
 			`פרטי התקשרות:`,
 			`- שם מלא: ${fullName}`,
 			`- כתובת הפרויקט: ${projectAddress}`,
-			
 			`- תאריך מועדף: ${preferredDate || '-'}`,
 			`- חלון זמן מועדף: ${timeLabel}`,
 			``,
-			`מעוניינ/ת לתאם מדידה ולקבל הצעת מחיר מסודרת בהתאם לשטח.`,
+			`מעוניינ/ת לקבל מפרט טכני ומארז דוגמאות לפרויקט חיפוי קירות.`,
 			'\u202C',
 		].join('\n');
 
 		const phone = whatsappPhone.replace('+', '');
-		const url = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(lines)}`;
-		window.open(url, '_blank');
+		window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(lines)}`, '_blank');
 		setBookingSubmitted(true);
 	}
 
@@ -1791,35 +1772,17 @@ function LivePageInner() {
 										);
 									})()}
 								</div>
-								<div className="font-semibold mb-1">פירוט חשבון (כולל מע״מ)</div>
-								<ul className="text-sm text-gray-700 space-y-1">
-									{breakdown.map(b => (
-										<li key={b.label} className="flex justify-between">
-											<span>
-												{b.label}
-												{typeof b.qty !== 'undefined' && typeof b.unitPrice !== 'undefined' && (
-													<span className="text-gray-500">
-														{' '}
-														(
-														{(() => {
-															const isDecimalQty = b.unitLabel === 'מ׳' || b.unitLabel === 'מ״ר';
-															const qtyStr = isDecimalQty
-																? `${(b.qty as number).toFixed(2)}${b.unitLabel ? ` ${b.unitLabel}` : ''}`
-																: `${Number(b.qty).toLocaleString('he-IL')}${b.unitLabel ? ` ${b.unitLabel}` : ''}`;
-															return `${qtyStr} × ₪${Number(b.unitPrice).toLocaleString('he-IL')}`;
-														})()}
-														)
-													</span>
-												)}
-											</span>
-											<span>₪{b.value.toLocaleString('he-IL')}</span>
-										</li>
-									))}
-								</ul>
-								<div className="mt-2 pt-2 border-t flex justify-between font-bold">
-									<span>סה״כ כולל מע״מ</span>
-									<span>₪{total.toLocaleString('he-IL')}</span>
-								</div>
+								<div className="font-semibold mb-1">מפרט לוח</div>
+								<table className="w-full text-sm text-gray-700" dir="rtl">
+									<tbody>
+										{panelSpecRows.map(row => (
+											<tr key={row.label} className="border-b border-gray-100">
+												<td className="py-1.5 text-gray-600">{row.label}</td>
+												<td className="py-1.5 font-medium text-[#1a1a2e] text-left">{row.value}</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
 								<button
 									onClick={() => setBookingOpen(true)}
 									className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-md bg-[#1a1a2e] text-white px-5 py-3 text-base font-semibold shadow-sm hover:opacity-95 cursor-pointer"
@@ -1828,7 +1791,7 @@ function LivePageInner() {
 									<span>בקשת מפרט טכני ומארז דוגמאות</span>
 								</button>
 								<div className="text-[11px] text-gray-500 mt-1">
-									הערכה משוערת להמחשה בלבד. לוחות חיפוי – מפרט טכני ומארז דוגמאות לפי בקשתכם.
+									לוח 300×150 ס״מ. מפרט טכני ומארז דוגמאות לפי בקשתכם.
 								</div>
 							</div>
 						</div>
@@ -1856,35 +1819,17 @@ function LivePageInner() {
 							);
 						})()}
 						<div className="bg-white rounded-md p-3">
-						<div className="font-semibold mb-1">פירוט חשבון (כולל מע״מ)</div>
-						<ul className="text-sm text-gray-700 space-y-1">
-							{breakdown.map(b => (
-								<li key={b.label} className="flex justify-between">
-									<span>
-										{b.label}
-										{typeof b.qty !== 'undefined' && typeof b.unitPrice !== 'undefined' && (
-											<span className="text-gray-500">
-												{' '}
-												(
-												{(() => {
-													const isDecimalQty = b.unitLabel === 'מ׳' || b.unitLabel === 'מ״ר';
-													const qtyStr = isDecimalQty
-														? `${(b.qty as number).toFixed(2)}${b.unitLabel ? ` ${b.unitLabel}` : ''}`
-														: `${Number(b.qty).toLocaleString('he-IL')}${b.unitLabel ? ` ${b.unitLabel}` : ''}`;
-													return `${qtyStr} × ₪${Number(b.unitPrice).toLocaleString('he-IL')}`;
-												})()}
-												)
-											</span>
-										)}
-									</span>
-									<span>₪{b.value.toLocaleString('he-IL')}</span>
-								</li>
-							))}
-						</ul>
-						<div className="mt-2 pt-2 border-t flex justify-between font-bold">
-							<span>סה״כ כולל מע״מ</span>
-							<span>₪{total.toLocaleString('he-IL')}</span>
-						</div>
+						<div className="font-semibold mb-1">מפרט לוח</div>
+						<table className="w-full text-sm text-gray-700" dir="rtl">
+							<tbody>
+								{panelSpecRows.map(row => (
+									<tr key={row.label} className="border-b border-gray-100">
+										<td className="py-1.5 text-gray-600">{row.label}</td>
+										<td className="py-1.5 font-medium text-[#1a1a2e] text-left">{row.value}</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
 						<button
 							onClick={() => setBookingOpen(true)}
 							className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-md bg-[#1a1a2e] text-white px-5 py-3 text-base font-semibold shadow-sm hover:opacity-95 cursor-pointer"
@@ -1893,7 +1838,7 @@ function LivePageInner() {
 							<span>בקשת מפרט טכני ומארז דוגמאות</span>
 						</button>
 						<div className="text-[11px] text-gray-500 mt-1">
-							לוחות חיפוי – מפרט טכני ומארז דוגמאות לפי בקשתכם.
+							לוח 300×150 ס״מ · 4.5 מ״ר. מפרט טכני ומארז דוגמאות לפי בקשתכם.
 						</div>
 						</div>
 					</div>
@@ -2089,39 +2034,21 @@ function LivePageInner() {
 							);
 						})()}
 
-						{/* פירוט חשבון – מוצג בסוף המובייל מתחת לקטגוריות */}
+						{/* מפרט לוח – מוצג בסוף המובייל מתחת לקטגוריות */}
 						<div ref={priceRef} className={`mt-3 bg-white rounded-md p-3 ${pricePing ? 'ring-2 ring-[#1a1a2e]' : ''}`}>
-							<div className="font-semibold mb-1">פירוט חשבון (כולל מע״מ)</div>
-							<ul className="text-sm text-gray-700 space-y-1">
-								{breakdown.map(b => (
-									<li key={b.label} className="flex justify-between">
-										<span>
-											{b.label}
-											{typeof b.qty !== 'undefined' && typeof b.unitPrice !== 'undefined' && (
-												<span className="text-gray-500">
-													{' '}
-													(
-													{(() => {
-														const isDecimalQty = b.unitLabel === 'מ׳' || b.unitLabel === 'מ״ר';
-														const qtyStr = isDecimalQty
-															? `${(b.qty as number).toFixed(2)}${b.unitLabel ? ` ${b.unitLabel}` : ''}`
-															: `${Number(b.qty).toLocaleString('he-IL')}${b.unitLabel ? ` ${b.unitLabel}` : ''}`;
-														return `${qtyStr} × ₪${Number(b.unitPrice).toLocaleString('he-IL')}`;
-													})()}
-													)
-												</span>
-											)}
-										</span>
-										<span>₪{b.value.toLocaleString('he-IL')}</span>
-									</li>
-								))}
-							</ul>
-							<div className="mt-2 pt-2 border-t flex justify-between font-bold">
-								<span>סה״כ כולל מע״מ</span>
-								<span>₪{total.toLocaleString('he-IL')}</span>
-							</div>
+							<div className="font-semibold mb-1">מפרט לוח</div>
+							<table className="w-full text-sm text-gray-700" dir="rtl">
+								<tbody>
+									{panelSpecRows.map(row => (
+										<tr key={row.label} className="border-b border-gray-100">
+											<td className="py-1.5 text-gray-600">{row.label}</td>
+											<td className="py-1.5 font-medium text-[#1a1a2e] text-left">{row.value}</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
 							<div className="text-[11px] text-gray-500 mt-1">
-								הערכה משוערת להמחשה בלבד.<br/>המחיר כולל קונסטרוקציה והתקנה.
+								לוח 300×150 ס״מ · 4.5 מ״ר. MIRZA – לוחות חיפוי הנדסיים.
 							</div>
 						</div>
 					</div>
@@ -2149,10 +2076,8 @@ function LivePageInner() {
 						<span>בקשת מפרט טכני ומארז דוגמאות</span>
 					</button>
 					<div className="text-right text-[#1a1a2e]">
-						<div className="text-lg font-bold">
-							<span>{`סה\"כ `}₪{total.toLocaleString('he-IL')}</span>
-						</div>
-						<div className="text-[11px] text-gray-500 leading-snug">כולל מע״מ 18%</div>
+						<div className="text-sm font-semibold">לוח 4.5 מ״ר</div>
+						<div className="text-[11px] text-gray-500 leading-snug">300×150 ס״מ · Aluminum Honeycomb</div>
 					</div>
 				</div>
 			</div>

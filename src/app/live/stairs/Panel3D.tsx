@@ -1,6 +1,8 @@
 'use client';
 
 import React from 'react';
+import { useLoader } from '@react-three/fiber';
+import { TextureLoader, SRGBColorSpace } from 'three';
 
 /** מידות לוח: 300×150 ס"מ. עובי 16 או 25 מ"מ (שכבת אבן + Honeycomb + אלומיניום). */
 const WIDTH_M = 3;
@@ -8,6 +10,12 @@ const HEIGHT_M = 1.5;
 
 const STONE_LAYER_MM = 4;
 const ALUMINUM_BACK_MM = 5;
+
+/** במבט מפוצץ: הזזה של 50 מ"מ (0.05 מ') כדי לחשוף את ה-Honeycomb – "Money Shot". */
+const EXPLODED_OFFSET_M = 0.05;
+
+/** URL פלייסהולדר כשאין טקסטורה – useLoader דורש URL קבוע (לא null). */
+const FALLBACK_TEX = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
 
 function panelLayers(thicknessMm: 16 | 25) {
 	const totalM = thicknessMm / 1000;
@@ -24,22 +32,33 @@ export default function Panel3D(props: {
 	materialSolidColor?: string | null;
 	materialKind: 'metal' | 'stone';
 }) {
-	const { thicknessMm, explodedView, materialSolidColor, materialKind } = props;
+	const { thicknessMm, explodedView, textureUrl, materialSolidColor, materialKind } = props;
 	const { totalM, stoneM, honeycombM, backM } = panelLayers(thicknessMm);
 
-	const stoneZ = explodedView ? stoneM / 2 + 0.02 : totalM / 2 - stoneM / 2;
+	const texUrl = textureUrl && !materialSolidColor ? textureUrl : FALLBACK_TEX;
+	const tex = useLoader(TextureLoader, texUrl);
+	React.useEffect(() => {
+		if (tex && texUrl !== FALLBACK_TEX) {
+			tex.colorSpace = SRGBColorSpace;
+		}
+	}, [tex, texUrl]);
+
+	const stoneZ = explodedView ? stoneM / 2 + EXPLODED_OFFSET_M : totalM / 2 - stoneM / 2;
 	const honeycombZ = explodedView ? -honeycombM / 2 : 0;
-	const backZ = explodedView ? -totalM / 2 + backM / 2 - 0.02 : -totalM / 2 + backM / 2;
+	const backZ = explodedView ? -totalM / 2 + backM / 2 - EXPLODED_OFFSET_M : -totalM / 2 + backM / 2;
+
+	const useTexture = !materialSolidColor && textureUrl && texUrl !== FALLBACK_TEX;
 
 	return (
 		<group position={[0, HEIGHT_M / 2, 0]}>
-			{/* שכבת אבן עליונה */}
+			{/* שכבת אבן עליונה – טקסטורה Wild/גידים להמחשת Bookmatch */}
 			<mesh position={[0, 0, stoneZ]} castShadow receiveShadow>
 				<boxGeometry args={[WIDTH_M, HEIGHT_M, stoneM]} />
 				<meshStandardMaterial
 					color={materialSolidColor || '#e8e4df'}
 					roughness={0.5}
 					metalness={materialKind === 'metal' ? 0.3 : 0.12}
+					map={useTexture ? tex : undefined}
 				/>
 			</mesh>
 			{/* ליבת Honeycomb */}

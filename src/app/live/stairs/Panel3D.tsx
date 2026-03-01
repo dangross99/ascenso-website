@@ -31,8 +31,9 @@ export default function Panel3D(props: {
 	textureUrl?: string | null;
 	materialSolidColor?: string | null;
 	materialKind: 'metal' | 'stone';
+	backlit?: boolean;
 }) {
-	const { thicknessMm, explodedView, textureUrl, materialSolidColor, materialKind } = props;
+	const { thicknessMm, explodedView, textureUrl, materialSolidColor, materialKind, backlit = false } = props;
 	const { totalM, stoneM, honeycombM, backM } = panelLayers(thicknessMm);
 
 	const texUrl = textureUrl && !materialSolidColor ? textureUrl : FALLBACK_TEX;
@@ -49,27 +50,34 @@ export default function Panel3D(props: {
 
 	const useTexture = !materialSolidColor && textureUrl && texUrl !== FALLBACK_TEX;
 
+	/** צבע בסיס – לבן/אפור בהיר כדי שאם הטקסטורה לא נטענת או הנתיב שגוי הלוח לא ייראה שחור */
+	const stoneColor = materialSolidColor || '#ffffff';
+	const stoneEmissive = backlit ? '#e8e8e8' : '#000000';
+	const stoneEmissiveIntensity = backlit ? 1.2 : 0;
+
 	return (
 		<group position={[0, HEIGHT_M / 2, 0]}>
-			{/* שכבת אבן עליונה – טקסטורה Wild/גידים להמחשת Bookmatch */}
+			{/* שכבת אבן עליונה – טקסטורה Wild/גידים להמחשת Bookmatch; color לבן = גיבוי אם map חסר */}
 			<mesh position={[0, 0, stoneZ]} castShadow receiveShadow>
 				<boxGeometry args={[WIDTH_M, HEIGHT_M, stoneM]} />
 				<meshStandardMaterial
-					color={materialSolidColor || '#e8e4df'}
+					color={stoneColor}
 					roughness={0.5}
 					metalness={materialKind === 'metal' ? 0.3 : 0.12}
 					map={useTexture ? tex : undefined}
+					emissive={stoneEmissive}
+					emissiveIntensity={stoneEmissiveIntensity}
 				/>
 			</mesh>
 			{/* ליבת Honeycomb */}
 			<mesh position={[0, 0, honeycombZ]} castShadow receiveShadow>
 				<boxGeometry args={[WIDTH_M, HEIGHT_M, honeycombM]} />
-				<meshStandardMaterial color="#9ca3af" roughness={0.8} metalness={0.05} />
+				<meshStandardMaterial color="#ffffff" roughness={0.8} metalness={0.05} />
 			</mesh>
 			{/* גב אלומיניום */}
 			<mesh position={[0, 0, backZ]} castShadow receiveShadow>
 				<boxGeometry args={[WIDTH_M, HEIGHT_M, backM]} />
-				<meshStandardMaterial color="#94a3b8" metalness={0.9} roughness={0.25} />
+				<meshStandardMaterial color="#ffffff" metalness={0.9} roughness={0.25} />
 			</mesh>
 		</group>
 	);

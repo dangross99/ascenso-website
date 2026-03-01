@@ -4,7 +4,7 @@ import Image from 'next/image';
 import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, useProgress } from '@react-three/drei';
+import { OrbitControls, useProgress, Environment } from '@react-three/drei';
 import { ACESFilmicToneMapping, PCFSoftShadowMap, SRGBColorSpace } from 'three';
 import Footer from '@/components/Footer';
 import Panel3D, { PANEL_CENTER } from './stairs/Panel3D';
@@ -1616,10 +1616,13 @@ function LivePageInner() {
 							}}
 						>
 							<React.Suspense fallback={null}>
+								<Environment preset="city" />
 								<Panel3D
 									thicknessMm={panelThicknessMm}
 									explodedView={explodedView}
+									backlit={backlit}
 									textureUrl={(() => {
+										// נתיבי images ב-materials.json חייבים להתחיל ב-/ (למשל /textures/stone1.jpg) ולהצביע לקבצים ב-public
 										const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0];
 										return (sel as any)?.solid ? null : (sel?.images?.[0] || null);
 									})()}

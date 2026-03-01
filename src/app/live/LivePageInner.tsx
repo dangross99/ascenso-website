@@ -31,12 +31,15 @@ function ExampleHouseScene(props: {
 	const gapM = shadowGapMm / 1000;
 	const panelSizeW = 2.9;
 	const panelSizeH = 1.45;
-	const panelsAlongWidth = 3;
+	const buildingW = 12;
+	const buildingH = 6.5;
+	const buildingD = 5.5;
+	const panelsAlongWidth = 4;
 	const panelsAlongHeight = 4;
 	const totalWidth = panelsAlongWidth * panelSizeW + (panelsAlongWidth - 1) * gapM;
 	const totalHeight = panelsAlongHeight * panelSizeH + (panelsAlongHeight - 1) * gapM;
 	const uvScale: [number, number] = [1 / panelsAlongWidth, 1 / panelsAlongHeight];
-	const frontZ = 2.75;
+	const frontZ = buildingD / 2;
 	const cladCenterY = 0.6 + totalHeight / 2;
 	const cladZ = frontZ + 0.02;
 	const cells: React.ReactNode[] = [];
@@ -64,65 +67,65 @@ function ExampleHouseScene(props: {
 	}
 	return (
 		<>
-			{/* גוף ראשי – וילה לבנה, נפח דומיננטי */}
-			<mesh position={[0, 3.2, 0]} castShadow receiveShadow>
-				<boxGeometry args={[11, 6.4, 5.5]} />
+			{/* גוף ראשי – 12×6.5 מ' (רוחב×גובה) */}
+			<mesh position={[0, buildingH / 2, 0]} castShadow receiveShadow>
+				<boxGeometry args={[buildingW, buildingH, buildingD]} />
 				<meshStandardMaterial color="#faf9f6" roughness={0.88} metalness={0.02} />
 			</mesh>
 			{/* אגף משני – נמוך יותר, אפור אנטרציט (ניגוד) */}
-			<mesh position={[5.8, 1.5, -0.4]} castShadow receiveShadow>
+			<mesh position={[6.5, 1.5, -0.4]} castShadow receiveShadow>
 				<boxGeometry args={[4, 3, 4.5]} />
 				<meshStandardMaterial color="#3d3d3d" roughness={0.82} metalness={0.12} />
 			</mesh>
 			{/* בסיס אבן/בטון – כהה, מרשים */}
 			<mesh position={[0, 0.35, frontZ + 0.06]} castShadow>
-				<boxGeometry args={[11.2, 0.7, 0.2]} />
+				<boxGeometry args={[buildingW + 0.2, 0.7, 0.2]} />
 				<meshStandardMaterial color="#2d2d2d" roughness={0.8} metalness={0.1} />
 			</mesh>
 			{/* גג שטוח – זיז גדול, קו נקי */}
-			<mesh position={[0, 6.55, 0]} castShadow>
-				<boxGeometry args={[11.8, 0.2, 6.2]} />
+			<mesh position={[0, buildingH + 0.1, 0]} castShadow>
+				<boxGeometry args={[buildingW + 0.8, 0.2, buildingD + 0.7]} />
 				<meshStandardMaterial color="#e8e6e0" roughness={0.85} metalness={0.04} />
 			</mesh>
-			<mesh position={[0, 6.5, frontZ + 0.55]} castShadow>
-				<boxGeometry args={[11.4, 0.15, 0.7]} />
+			<mesh position={[0, buildingH + 0.08, frontZ + 0.55]} castShadow>
+				<boxGeometry args={[buildingW + 0.4, 0.15, 0.7]} />
 				<meshStandardMaterial color="#dddcd6" roughness={0.88} metalness={0.03} />
 			</mesh>
-			{/* חיפוי לוחות – כוכב החזית, גריד 3×4 דומיננטי */}
+			{/* חיפוי לוחות – כוכב החזית, גריד 4×4 */}
 			<group position={[0, cladCenterY, cladZ]}>
 				{cells}
 			</group>
 			{/* פתח כניסה – זכוכית גדולה, מסגרת דקה */}
-			<mesh position={[-3.8, 2.2, frontZ + 0.038]} castShadow>
+			<mesh position={[-4.2, 2.2, frontZ + 0.038]} castShadow>
 				<boxGeometry args={[2.4, 2.8, 0.06]} />
 				<meshStandardMaterial color="#1a1a1a" roughness={0.45} metalness={0.3} />
 			</mesh>
-			<mesh position={[-3.8, 2.2, frontZ + 0.07]}>
+			<mesh position={[-4.2, 2.2, frontZ + 0.07]}>
 				<planeGeometry args={[2.2, 2.6]} />
 				<meshStandardMaterial color="#88b4c8" roughness={0.15} metalness={0} />
 			</mesh>
 			{/* חלון אופקי – פס זכוכית */}
-			<mesh position={[3.2, 4.5, frontZ + 0.038]} castShadow>
+			<mesh position={[3.5, 4.8, frontZ + 0.038]} castShadow>
 				<boxGeometry args={[3.2, 0.9, 0.05]} />
 				<meshStandardMaterial color="#1a1a1a" roughness={0.45} metalness={0.3} />
 			</mesh>
-			<mesh position={[3.2, 4.5, frontZ + 0.065]}>
+			<mesh position={[3.5, 4.8, frontZ + 0.065]}>
 				<planeGeometry args={[3, 0.7]} />
 				<meshStandardMaterial color="#7aa8bc" roughness={0.2} metalness={0} />
 			</mesh>
 			{/* טרסה / מדרגת כניסה */}
 			<mesh position={[0, -0.02, frontZ + 0.5]} castShadow>
-				<boxGeometry args={[6, 0.12, 1.8]} />
+				<boxGeometry args={[7, 0.12, 1.8]} />
 				<meshStandardMaterial color="#4a4a4a" roughness={0.75} metalness={0.08} />
 			</mesh>
 			{/* רצפה – דשא/אבן */}
 			<mesh position={[0, -0.08, frontZ + 2.5]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-				<planeGeometry args={[18, 14]} />
+				<planeGeometry args={[20, 14]} />
 				<meshStandardMaterial color="#5a6b4a" roughness={0.98} metalness={0.02} />
 			</mesh>
 			{/* צל – עומק ויזואלי */}
 			<mesh position={[0, -0.02, frontZ + 1]} rotation={[-Math.PI / 2, 0, 0]}>
-				<planeGeometry args={[10, 4]} />
+				<planeGeometry args={[12, 4]} />
 				<meshBasicMaterial color="#000000" transparent opacity={0.18} depthWrite={false} />
 			</mesh>
 		</>
@@ -1660,7 +1663,7 @@ function LivePageInner() {
 									enableDamping
 									makeDefault
 									zoomToCursor
-									target={[0, 3, 0]}
+									target={[0, 3.25, 0]}
 								/>
 							</React.Suspense>
 						</Canvas>

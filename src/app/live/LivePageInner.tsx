@@ -1761,30 +1761,8 @@ function LivePageInner() {
 													<button key={opt.id} type="button" onClick={() => setPanelSize(opt.w, opt.h)} className={`px-2 py-1 rounded text-xs font-medium border ${panelSizeW === opt.w && panelSizeH === opt.h ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white border-gray-300 hover:border-gray-400'}`}>{opt.label}</button>
 												))}
 											</div>
-											<p className="text-xs text-[#1a1a2e]">עובי {panelThicknessMm} מ״מ · ניתוק {shadowGapMm} מ״מ</p>
 										</div>
 									</div>
-									{/* הטקסטורה הנבחרת – תמונה + סוג חומר + שם */}
-									{(() => {
-										const matLabel = activeMaterial === 'metal' ? 'מתכת' : 'אבן טבעית';
-										const sel = nonWoodModels.find(m => m.id === activeTexId) || nonWoodModels[0];
-										if (!sel) return null;
-										const img = sel.images?.[0];
-										const solid = (sel as any)?.solid;
-										return (
-											<div>
-												<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-2 border border-[#e8e2dc] shadow-sm flex items-center gap-2 flex-wrap">
-													<div
-														className="w-9 h-9 rounded-lg shrink-0 bg-center bg-cover border border-[#e8e2dc]"
-														style={{ backgroundImage: img ? `url("${encodeURI(img)}")` : undefined, backgroundColor: solid || '#e8e2dc' }}
-													/>
-													<span className="text-xs font-semibold text-[#1a1a2e]/70 shrink-0">הטקסטורה הנבחרת</span>
-													<span className="text-sm font-bold text-[#1a1a2e] shrink-0">{sel.name || sel.id}</span>
-													<span className="text-xs text-gray-600">{matLabel}</span>
-												</div>
-											</div>
-										);
-									})()}
 								</div>
 								<div className="font-semibold mb-1">מפרט לוח</div>
 								<table className="w-full text-sm text-gray-700" dir="rtl">
@@ -1813,25 +1791,6 @@ function LivePageInner() {
 
 					{/* פירוט מתחת להדמייה – מובייל/טאבלט */}
 					<div className="mt-3 space-y-3 lg:hidden">
-						{/* הטקסטורה הנבחרת – מובייל */}
-						{(() => {
-							const matLabel = activeMaterial === 'metal' ? 'מתכת' : 'אבן טבעית';
-							const sel = nonWoodModels.find(m => m.id === activeTexId) || nonWoodModels[0];
-							if (!sel) return null;
-							const img = sel.images?.[0];
-							const solid = (sel as any)?.solid;
-							return (
-								<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-2 border border-[#e8e2dc] shadow-sm flex items-center gap-2 flex-wrap">
-									<div
-										className="w-10 h-10 rounded-lg shrink-0 bg-center bg-cover border border-[#e8e2dc]"
-										style={{ backgroundImage: img ? `url("${encodeURI(img)}")` : undefined, backgroundColor: solid || '#e8e2dc' }}
-									/>
-									<span className="text-xs font-semibold text-[#1a1a2e]/70 shrink-0">הטקסטורה הנבחרת</span>
-									<span className="text-sm font-bold text-[#1a1a2e] shrink-0">{sel.name || sel.id}</span>
-									<span className="text-xs text-gray-600">{matLabel}</span>
-								</div>
-							);
-						})()}
 						<div className="bg-white rounded-md p-3">
 						<div className="font-semibold mb-1">מפרט לוח</div>
 						<table className="w-full text-sm text-gray-700" dir="rtl">

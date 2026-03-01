@@ -475,6 +475,9 @@ function LivePageInner() {
 		setPanelSizeW(w);
 		setPanelSizeH(h);
 	};
+	/** גודל הקיר אומדן (מ') – הלקוח מזין רוחב×גובה קיר */
+	const [wallWidthM, setWallWidthM] = React.useState(6);
+	const [wallHeightM, setWallHeightM] = React.useState(3.5);
 	const [box, setBox] = React.useState<'thick' | 'thin' | 'rounded' | 'taper' | 'wedge' | 'ridge'>(qBox as any);
 	const [railing, setRailing] = React.useState<'none' | 'glass' | 'metal' | 'cable'>('none');
 	const [glassTone, setGlassTone] = React.useState<'extra' | 'smoked' | 'bronze'>('extra');
@@ -1252,6 +1255,7 @@ function LivePageInner() {
 
 	// מפרט לוח חיפוי – שטח פנים מחושב לפי המידה הנבחרת
 	const panelSurfaceM2 = Math.round(panelSizeW * panelSizeH * 100) / 100;
+	const wallSurfaceM2 = Math.round(wallWidthM * wallHeightM * 100) / 100;
 	const panelSpecStoneName = (nonWoodModels.find(m => m.id === activeTexId) || nonWoodModels[0])?.name || '—';
 	const panelSizeLabel = PANEL_SIZE_OPTIONS.find(o => o.w === panelSizeW && o.h === panelSizeH)?.label || `${panelSizeW * 1000}×${panelSizeH * 1000}`;
 	const panelSpecRows: Array<{ label: string; value: string }> = [
@@ -1260,7 +1264,7 @@ function LivePageInner() {
 		{ label: 'עובי מערכת', value: `${panelThicknessMm} מ"מ` },
 		{ label: 'סוג ליבה', value: 'Aluminum Honeycomb' },
 		{ label: 'שטח פנים', value: `${panelSurfaceM2} מ"ר` },
-		{ label: 'גודל הקיר (אומדן)', value: `${panelSurfaceM2} מ"ר` },
+		{ label: 'גודל הקיר (אומדן)', value: `${wallSurfaceM2} מ"ר` },
 	];
 	const { breakdown, total } = calculatePrice();
 	const priceFormatted = React.useMemo(() => {
@@ -1665,6 +1669,13 @@ function LivePageInner() {
 											))}
 										</div>
 										<p className="text-sm text-[#1a1a2e]">עובי {panelThicknessMm} מ״מ · ניתוק {shadowGapMm} מ״מ</p>
+										<p className="text-sm font-medium text-[#1a1a2e] mt-2 mb-1">גודל הקיר (אומדן, מ')</p>
+										<div className="flex flex-wrap items-center gap-2">
+											<input type="number" min={0.1} max={50} step={0.1} value={wallWidthM} onChange={e => setWallWidthM(Math.max(0.1, Math.min(50, Number(e.target.value) || 0.1)))} className="w-16 px-2 py-1 text-sm border border-gray-300 rounded" aria-label="רוחב קיר במטרים" />
+											<span className="text-gray-500">×</span>
+											<input type="number" min={0.1} max={50} step={0.1} value={wallHeightM} onChange={e => setWallHeightM(Math.max(0.1, Math.min(50, Number(e.target.value) || 0.1)))} className="w-16 px-2 py-1 text-sm border border-gray-300 rounded" aria-label="גובה קיר במטרים" />
+											<span className="text-sm text-[#1a1a2e]">= {wallSurfaceM2} מ"ר</span>
+										</div>
 									</div>
 									{/* הטקסטורה הנבחרת – תמונה + סוג חומר + שם */}
 									{(() => {
@@ -1890,6 +1901,15 @@ function LivePageInner() {
 														{([3, 5, 10] as const).map((mm) => (
 															<button key={mm} type="button" onClick={() => setShadowGapMm(mm)} className={`px-3 py-1.5 rounded-lg text-sm border-2 ${shadowGapMm === mm ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white border-gray-300'}`}>{mm} מ״מ</button>
 														))}
+													</div>
+												</div>
+												<div>
+													<p className="text-xs font-semibold text-[#1a1a2e] mb-1">גודל הקיר (אומדן, מ')</p>
+													<div className="flex flex-wrap items-center gap-2">
+														<input type="number" min={0.1} max={50} step={0.1} value={wallWidthM} onChange={e => setWallWidthM(Math.max(0.1, Math.min(50, Number(e.target.value) || 0.1)))} className="w-14 px-2 py-1.5 text-sm border-2 border-gray-300 rounded-lg" aria-label="רוחב קיר במטרים" />
+														<span className="text-gray-500">×</span>
+														<input type="number" min={0.1} max={50} step={0.1} value={wallHeightM} onChange={e => setWallHeightM(Math.max(0.1, Math.min(50, Number(e.target.value) || 0.1)))} className="w-14 px-2 py-1.5 text-sm border-2 border-gray-300 rounded-lg" aria-label="גובה קיר במטרים" />
+														<span className="text-xs text-[#1a1a2e]">= {wallSurfaceM2} מ"ר</span>
 													</div>
 												</div>
 											</div>

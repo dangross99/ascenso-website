@@ -13,7 +13,7 @@ import { encodePath, decodePath } from './shared/path';
 import { BookingModal } from './components/BookingModal';
 import { BrandWordmark } from './components/BrandWordmark';
 import { Schematic } from './components/Schematic';
-import { MaterialKindPicker, type MaterialKind } from './components/MaterialKindPicker';
+import type { MaterialKind } from './components/MaterialKindPicker';
 import { NonWoodTexturePicker } from './components/NonWoodTexturePicker';
 
 // Overlay ׳˜׳¢׳™׳ ׳” ׳׳§׳ ׳‘׳¡ ג€“ ׳׳•׳¦׳’ ׳‘׳–׳׳ ׳˜׳¢׳™׳ ׳× ׳˜׳§׳¡׳˜׳•׳¨׳•׳×/׳ ׳›׳¡׳™׳
@@ -1464,175 +1464,90 @@ function LivePageInner() {
 			<main className="max-w-7xl mx-auto px-4 lg:px-6 py-6" dir="rtl">
 			<div className="grid grid-cols-1 gap-0">
 				<section>
-					{/* טאבים עליונים – מוצגים לפני ההדמייה בכל הגדלים */}
+					{/* בחירת חומר – שני כפתורים בלבד, בלי שלבים */}
 					<div id="live-top-tabs" ref={topTabsRef} className="bg-white/95 backdrop-blur border rounded-md mb-2" dir="rtl">
-						{(() => {
-							const nodes: Array<{ key: Cat; el: React.ReactElement }> = [];
-							nodes.push({
-								key: 'material',
-								el: (
-									<div className="px-4">
-										<MaterialKindPicker
-											activeMaterial={activeMaterial}
-											onChange={(m) => startTransition(() => setActiveMaterial(m === 'wood' ? 'stone' : m))}
-										/>
-										{getNextCatForSteps('material') && (
-											<div className="mt-3 mb-4 text-center">
-												<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('material')!)} className="px-5 py-2 rounded-lg bg-emerald-600 text-white font-medium text-sm shadow-sm hover:bg-emerald-700 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer">
-													המשך
-												</button>
-											</div>
-										)}
-									</div>
-								),
-							});
-							nodes.push({
-								key: 'nonWoodTexture',
-								el: (
-									<div className="px-4">
-										<NonWoodTexturePicker
-											nonWoodModels={nonWoodModels as any}
-											activeTexId={activeTexId}
-											onPick={(id) =>
-												startTransition(() => {
-													setActiveTexId(id);
-													if (activeMaterial === 'metal') setActiveMetalTexId(id);
-													if (activeMaterial === 'stone') setActiveStoneTexId(id);
-												})
-											}
-										/>
-										{getNextCatForSteps('nonWoodTexture') && (
-											<div className="mt-3 mb-4 text-center">
-												<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('nonWoodTexture')!)} className="px-5 py-2 rounded-lg bg-emerald-600 text-white font-medium text-sm shadow-sm hover:bg-emerald-700 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer">
-													המשך
-												</button>
-											</div>
-										)}
-									</div>
-								),
-							});
-							nodes.push({
-								key: 'panel',
-								el: (
-									<div className="px-4 space-y-4">
-										<div>
-											<p className="text-sm font-semibold text-[#1a1a2e] mb-2">מידות לוח (מ"מ)</p>
-											<div className="flex flex-wrap gap-2 mb-1">
-												{PANEL_SIZE_OPTIONS.map(opt => (
-													<button
-														key={opt.id}
-														type="button"
-														onClick={() => setPanelSize(opt.w, opt.h)}
-														className={`px-3 py-2 rounded-lg text-sm font-medium border-2 ${panelSizeW === opt.w && panelSizeH === opt.h ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'}`}
-													>
-														{opt.label}
-													</button>
-												))}
-											</div>
-										</div>
-										<div>
-											<p className="text-sm font-semibold text-[#1a1a2e] mb-2">עובי לוח (מ״מ)</p>
-											<div className="flex gap-2">
-												{([16, 25] as const).map((mm) => (
-													<button
-														key={mm}
-														type="button"
-														onClick={() => setPanelThicknessMm(mm)}
-														className={`px-4 py-2 rounded-lg text-sm font-medium border-2 ${panelThicknessMm === mm ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'}`}
-													>
-														{mm} מ״מ
-													</button>
-												))}
-											</div>
-										</div>
-										<div>
-											<p className="text-sm font-semibold text-[#1a1a2e] mb-2">מרווח ניתוק (Shadow Gap)</p>
-											<div className="flex gap-2 flex-wrap">
-												{([3, 5, 10] as const).map((mm) => (
-													<button
-														key={mm}
-														type="button"
-														onClick={() => setShadowGapMm(mm)}
-														className={`px-4 py-2 rounded-lg text-sm font-medium border-2 ${shadowGapMm === mm ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'}`}
-													>
-														{mm} מ״מ
-													</button>
-												))}
-											</div>
-										</div>
-										<div className="flex items-center justify-between">
-											<span className="text-sm font-semibold text-[#1a1a2e]">תאורה אחורית (Backlit)</span>
+						<div className="px-4 py-4">
+							<div className="flex flex-wrap justify-center gap-3 mb-4">
+								<button
+									type="button"
+									onClick={() => startTransition(() => setActiveMaterial('metal'))}
+									className={`px-6 py-3 rounded-xl text-base font-semibold border-2 transition-colors ${activeMaterial === 'metal' ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'}`}
+								>
+									מתכת
+								</button>
+								<button
+									type="button"
+									onClick={() => startTransition(() => setActiveMaterial('stone'))}
+									className={`px-6 py-3 rounded-xl text-base font-semibold border-2 transition-colors ${activeMaterial === 'stone' ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'}`}
+								>
+									אבן טבעית
+								</button>
+							</div>
+							<div className="border-t border-gray-200 pt-4">
+								<p className="text-sm font-semibold text-[#1a1a2e] mb-2 text-center">דגם / טקסטורה</p>
+								<NonWoodTexturePicker
+									nonWoodModels={nonWoodModels as any}
+									activeTexId={activeTexId}
+									onPick={(id) =>
+										startTransition(() => {
+											setActiveTexId(id);
+											if (activeMaterial === 'metal') setActiveMetalTexId(id);
+											if (activeMaterial === 'stone') setActiveStoneTexId(id);
+										})
+									}
+								/>
+							</div>
+							<div className="border-t border-gray-200 pt-4 mt-4 space-y-4">
+								<div>
+									<p className="text-sm font-semibold text-[#1a1a2e] mb-2">מידות לוח (מ"מ)</p>
+									<div className="flex flex-wrap gap-2">
+										{PANEL_SIZE_OPTIONS.map(opt => (
 											<button
+												key={opt.id}
 												type="button"
-												onClick={() => setBacklit((b) => !b)}
-												className={`relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 transition-colors ${backlit ? 'bg-emerald-600 border-emerald-600' : 'bg-gray-200 border-gray-300'}`}
-												aria-label={backlit ? 'כבוי' : 'הפעלה'}
+												onClick={() => setPanelSize(opt.w, opt.h)}
+												className={`px-3 py-2 rounded-lg text-sm font-medium border-2 ${panelSizeW === opt.w && panelSizeH === opt.h ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'}`}
 											>
-												<span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${backlit ? 'translate-x-5' : 'translate-x-1'}`} />
+												{opt.label}
 											</button>
-										</div>
-										<div className="flex items-center justify-between">
-											<span className="text-sm font-semibold text-[#1a1a2e]">מבט מפוצץ</span>
-											<button
-												type="button"
-												onClick={() => setExplodedView((e) => !e)}
-												className={`relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 transition-colors ${explodedView ? 'bg-emerald-600 border-emerald-600' : 'bg-gray-200 border-gray-300'}`}
-												aria-label={explodedView ? 'סגור מבט מפוצץ' : 'הצג מבט מפוצץ'}
-											>
-												<span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${explodedView ? 'translate-x-5' : 'translate-x-1'}`} />
-											</button>
-										</div>
-										<div className="mt-1.5 pt-1.5 pb-3 border-t border-gray-200 text-center" dir="rtl">
-											<p className="text-sm font-medium text-[#1a1a2e] mb-1.5">לוח חיפוי בהתאמה לפרויקט שלכם</p>
-											<a
-												href={`https://api.whatsapp.com/send?phone=${(whatsappPhone || '').replace(/\D/g, '')}&text=${encodeURIComponent(buildWhatsappText(generateLeadId(), '', false))}`}
-												target="_blank"
-												rel="noopener noreferrer"
-												className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-md bg-emerald-600 text-white px-5 py-2.5 text-sm font-semibold shadow-sm hover:bg-emerald-700 hover:opacity-95 cursor-pointer"
-												aria-label="שלח הודעה בוואטסאפ"
-											>
-												<span>בקשת מפרט טכני ומארז דוגמאות</span>
-											</a>
-										</div>
-									</div>
-								),
-							});
-
-							const mapNodes = new Map(nodes.map(n => [n.key, n.el]));
-							const order: Cat[] = stepOrderForSteps;
-							return (
-								<>
-									<div className="flex items-center overflow-x-auto px-3 py-3 w-full lg:justify-center gap-0 border-b border-gray-200" dir="rtl">
-										{order.map((tab, i) => (
-											<React.Fragment key={tab}>
-												<button
-													type="button"
-													onClick={() => setMobileOpenCat(tab)}
-													className={`inline-flex items-center gap-2 shrink-0 cursor-default py-1.5 px-2 rounded-md ${mobileOpenCat === tab ? 'bg-[#1a1a2e]/5' : ''}`}
-													aria-selected={mobileOpenCat === tab}
-													role="tab"
-												>
-													<span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${mobileOpenCat === tab ? 'bg-[#1a1a2e] text-white' : 'border-2 border-gray-300 text-gray-500'}`}>
-														{i + 1}
-													</span>
-													<span className={`text-sm md:text-base whitespace-nowrap ${mobileOpenCat === tab ? 'font-semibold text-[#1a1a2e]' : 'text-gray-600'}`}>
-														{getCatTitle(tab)}
-													</span>
-												</button>
-												{i < order.length - 1 && (
-													<span className="mx-1 w-6 min-w-[8px] shrink-0 border-t border-gray-300" aria-hidden />
-												)}
-											</React.Fragment>
 										))}
 									</div>
-									<div className="pt-1 flex justify-center">
-										<div className="w-full max-w-5xl text-center">
-											{mapNodes.get((mobileOpenCat || order[0]) as Cat) as React.ReactElement}
-										</div>
+								</div>
+								<div>
+									<p className="text-sm font-semibold text-[#1a1a2e] mb-2">עובי לוח (מ״מ)</p>
+									<div className="flex gap-2">
+										{([16, 25] as const).map((mm) => (
+											<button key={mm} type="button" onClick={() => setPanelThicknessMm(mm)} className={`px-4 py-2 rounded-lg text-sm font-medium border-2 ${panelThicknessMm === mm ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'}`}>{mm} מ״מ</button>
+										))}
 									</div>
-								</>
-							);
-						})()}
+								</div>
+								<div>
+									<p className="text-sm font-semibold text-[#1a1a2e] mb-2">מרווח ניתוק (מ״מ)</p>
+									<div className="flex gap-2 flex-wrap">
+										{([3, 5, 10] as const).map((mm) => (
+											<button key={mm} type="button" onClick={() => setShadowGapMm(mm)} className={`px-4 py-2 rounded-lg text-sm font-medium border-2 ${shadowGapMm === mm ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'}`}>{mm} מ״מ</button>
+										))}
+									</div>
+								</div>
+								<div className="flex items-center justify-between">
+									<span className="text-sm font-semibold text-[#1a1a2e]">תאורה אחורית</span>
+									<button type="button" onClick={() => setBacklit((b) => !b)} className={`relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 transition-colors ${backlit ? 'bg-emerald-600 border-emerald-600' : 'bg-gray-200 border-gray-300'}`} aria-label={backlit ? 'כבוי' : 'הפעלה'}>
+										<span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${backlit ? 'translate-x-5' : 'translate-x-1'}`} />
+									</button>
+								</div>
+								<div className="flex items-center justify-between">
+									<span className="text-sm font-semibold text-[#1a1a2e]">מבט מפוצץ</span>
+									<button type="button" onClick={() => setExplodedView((e) => !e)} className={`relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 transition-colors ${explodedView ? 'bg-emerald-600 border-emerald-600' : 'bg-gray-200 border-gray-300'}`} aria-label={explodedView ? 'סגור מבט מפוצץ' : 'הצג מבט מפוצץ'}>
+										<span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${explodedView ? 'translate-x-5' : 'translate-x-1'}`} />
+									</button>
+								</div>
+								<div className="pt-3 border-t border-gray-200 text-center">
+									<a href={`https://api.whatsapp.com/send?phone=${(whatsappPhone || '').replace(/\D/g, '')}&text=${encodeURIComponent(buildWhatsappText(generateLeadId(), '', false))}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-md bg-emerald-600 text-white px-5 py-2.5 text-sm font-semibold shadow-sm hover:bg-emerald-700 hover:opacity-95 cursor-pointer" aria-label="שלח הודעה בוואטסאפ">
+										בקשת מפרט טכני ומארז דוגמאות
+									</a>
+								</div>
+							</div>
+						</div>
 					</div>
 
 					<div className="grid grid-cols-1 lg:grid-cols-3 gap-3">

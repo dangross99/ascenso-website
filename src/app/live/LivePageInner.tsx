@@ -1698,9 +1698,9 @@ function LivePageInner() {
 								<button
 									onClick={handleWhatsappShare}
 									className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-md bg-[#1a1a2e] text-white px-5 py-3 text-base font-semibold shadow-sm hover:opacity-95 cursor-pointer"
-									aria-label="שלח מפרט ודוגמאות בוואטסאפ"
+									aria-label="ייעוץ ותיאום פגישה בוואטסאפ"
 								>
-									<span>שלח לי מפרט ודוגמאות בוואטסאפ</span>
+									<span>ייעוץ ותיאום פגישה</span>
 								</button>
 							</div>
 						</div>
@@ -1712,9 +1712,9 @@ function LivePageInner() {
 						<button
 							onClick={handleWhatsappShare}
 							className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-md bg-[#1a1a2e] text-white px-5 py-3 text-base font-semibold shadow-sm hover:opacity-95 cursor-pointer"
-							aria-label="שלח מפרט ודוגמאות בוואטסאפ"
+							aria-label="ייעוץ ותיאום פגישה בוואטסאפ"
 						>
-							<span>שלח לי מפרט ודוגמאות בוואטסאפ</span>
+							<span>ייעוץ ותיאום פגישה</span>
 						</button>
 						</div>
 					</div>
@@ -1932,10 +1932,10 @@ function LivePageInner() {
 				<div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
 					<button
 						onClick={handleWhatsappShare}
-						aria-label="שלח מפרט ודוגמאות בוואטסאפ"
+						aria-label="ייעוץ ותיאום פגישה בוואטסאפ"
 						className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-4 py-2 text-base font-semibold shadow-md hover:opacity-95 cursor-pointer"
 					>
-						<span>שלח לי מפרט ודוגמאות בוואטסאפ</span>
+						<span>ייעוץ ותיאום פגישה</span>
 					</button>
 					<div className="text-right text-[#1a1a2e]">
 						<div className="text-sm font-semibold">לוח {panelSurfaceM2} מ״ר</div>

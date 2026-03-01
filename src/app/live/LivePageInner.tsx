@@ -1253,9 +1253,12 @@ function LivePageInner() {
 		return { breakdown: items, total };
 	}
 
-	// מפרט לוח חיפוי – שטח פנים מחושב לפי המידה הנבחרת
+	// מפרט לוח חיפוי – שטח פנים, גודל קיר, חלוקה לפלטות
 	const panelSurfaceM2 = Math.round(panelSizeW * panelSizeH * 100) / 100;
 	const wallSurfaceM2 = Math.round(wallWidthM * wallHeightM * 100) / 100;
+	const panelsAlongWidth = Math.max(1, Math.ceil(wallWidthM / panelSizeW));
+	const panelsAlongHeight = Math.max(1, Math.ceil(wallHeightM / panelSizeH));
+	const panelsTotal = panelsAlongWidth * panelsAlongHeight;
 	const panelSpecStoneName = (nonWoodModels.find(m => m.id === activeTexId) || nonWoodModels[0])?.name || '—';
 	const panelSizeLabel = PANEL_SIZE_OPTIONS.find(o => o.w === panelSizeW && o.h === panelSizeH)?.label || `${panelSizeW * 1000}×${panelSizeH * 1000}`;
 	const panelSpecRows: Array<{ label: string; value: string }> = [
@@ -1265,6 +1268,7 @@ function LivePageInner() {
 		{ label: 'סוג ליבה', value: 'Aluminum Honeycomb' },
 		{ label: 'שטח פנים', value: `${panelSurfaceM2} מ"ר` },
 		{ label: 'גודל הקיר (אומדן)', value: `${wallSurfaceM2} מ"ר` },
+		{ label: 'חלוקה לפלטות', value: `${panelsAlongWidth} × ${panelsAlongHeight} = ${panelsTotal} פלטות` },
 	];
 	const { breakdown, total } = calculatePrice();
 	const priceFormatted = React.useMemo(() => {
@@ -1661,6 +1665,7 @@ function LivePageInner() {
 											<input type="number" min={0.1} max={50} step={0.1} value={wallHeightM} onChange={e => setWallHeightM(Math.max(0.1, Math.min(50, Number(e.target.value) || 0.1)))} className="w-16 px-2 py-1 text-sm border border-gray-300 rounded" aria-label="גובה קיר במטרים" />
 											<span className="text-sm text-[#1a1a2e]">= {wallSurfaceM2} מ"ר</span>
 										</div>
+										<p className="text-xs text-[#1a1a2e]/80 mt-1.5">חלוקה לפלטות: {panelsAlongWidth} × {panelsAlongHeight} = {panelsTotal} פלטות</p>
 									</div>
 									{/* הגדרות לוח */}
 									<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-2 border border-[#e8e2dc] shadow-sm">
@@ -1937,6 +1942,7 @@ function LivePageInner() {
 											<input type="number" min={0.1} max={50} step={0.1} value={wallHeightM} onChange={e => setWallHeightM(Math.max(0.1, Math.min(50, Number(e.target.value) || 0.1)))} className="w-14 px-2 py-1.5 text-sm border-2 border-gray-300 rounded-lg" aria-label="גובה קיר במטרים" />
 											<span className="text-xs text-[#1a1a2e]">= {wallSurfaceM2} מ"ר</span>
 										</div>
+										<p className="text-xs text-[#1a1a2e]/80 mt-1.5">חלוקה לפלטות: {panelsAlongWidth} × {panelsAlongHeight} = {panelsTotal} פלטות</p>
 									</div>
 									<div className="sticky top-0 z-20 bg-white/95 backdrop-blur border-b">
 										<div className="flex items-center overflow-x-auto px-2 py-3 w-full lg:justify-center gap-0" dir="rtl">

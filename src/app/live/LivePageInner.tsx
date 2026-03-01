@@ -8,6 +8,16 @@ import { OrbitControls, useProgress, Environment } from '@react-three/drei';
 import { ACESFilmicToneMapping, PCFSoftShadowMap, SRGBColorSpace } from 'three';
 import Footer from '@/components/Footer';
 import Panel3D, { getPanelCenter } from './stairs/Panel3D';
+
+/** מרכז הקיר (גריד פלטות + מרווחים) למטרת OrbitControls */
+function getWallCenter(
+	panelsAlongHeight: number,
+	panelSizeH: number,
+	gapM: number
+): [number, number, number] {
+	const totalHeight = panelsAlongHeight * panelSizeH + (panelsAlongHeight - 1) * gapM;
+	return [0, totalHeight / 2, 0];
+}
 import type { PathSegment } from './shared/path';
 import { encodePath, decodePath } from './shared/path';
 import { BookingModal } from './components/BookingModal';
@@ -1525,28 +1535,46 @@ function LivePageInner() {
 								<ambientLight intensity={1.5} />
 								<pointLight position={[10, 10, 10]} intensity={1} />
 								<Environment preset="city" />
-								<Panel3D
-									thicknessMm={panelThicknessMm}
-									explodedView={false}
-									widthM={panelSizeW}
-									heightM={panelSizeH}
-									textureUrl={(() => {
-										// נתיבי images ב-materials.json חייבים להתחיל ב-/ (למשל /textures/stone1.jpg) ולהצביע לקבצים ב-public
+								{(() => {
+									const gapM = shadowGapMm / 1000;
+									const totalWidth = panelsAlongWidth * panelSizeW + (panelsAlongWidth - 1) * gapM;
+									const textureUrl = (() => {
 										const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0];
 										return (sel as any)?.solid ? null : (sel?.images?.[0] || null);
-									})()}
-									materialSolidColor={(() => {
+									})();
+									const materialSolidColor = (() => {
 										const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0];
 										return (sel as any)?.solid || null;
-									})()}
-									materialKind={activeMaterial === 'metal' ? 'metal' : 'stone'}
-								/>
+									})();
+									const materialKind = activeMaterial === 'metal' ? 'metal' : 'stone';
+									const cells: React.ReactNode[] = [];
+									for (let i = 0; i < panelsAlongHeight; i++) {
+										for (let j = 0; j < panelsAlongWidth; j++) {
+											const px = -totalWidth / 2 + panelSizeW / 2 + j * (panelSizeW + gapM);
+											const py = i * (panelSizeH + gapM);
+											cells.push(
+												<group key={`${i}-${j}`} position={[px, py, 0]}>
+													<Panel3D
+														thicknessMm={panelThicknessMm}
+														explodedView={false}
+														widthM={panelSizeW}
+														heightM={panelSizeH}
+														textureUrl={textureUrl}
+														materialSolidColor={materialSolidColor}
+														materialKind={materialKind}
+													/>
+												</group>
+											);
+										}
+									}
+									return <>{cells}</>;
+								})()}
 								<OrbitControls
 									ref={orbitRef}
 									enableDamping
 									makeDefault
 									zoomToCursor
-									target={getPanelCenter(panelSizeH)}
+									target={getWallCenter(panelsAlongHeight, panelSizeH, shadowGapMm / 1000)}
 								/>
 							</React.Suspense>
 						</Canvas>

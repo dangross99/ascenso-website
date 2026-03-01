@@ -1264,14 +1264,18 @@ function LivePageInner() {
 		return { breakdown: items, total };
 	}
 
-	// מפרט לוח חיפוי – שטח פנים, גודל קיר, חלוקה לפלטות
+	// מפרט לוח חיפוי – שטח פנים, גודל קיר, חלוקה לפלטות (שורה/עמודה אחרונה חתוכה להתאמה לקיר)
+	const gapM = shadowGapMm / 1000;
 	const panelSurfaceM2 = Math.round(panelSizeW * panelSizeH * 100) / 100;
 	const wallSurfaceM2 = Math.round(wallWidthM * wallHeightM * 100) / 100;
 	const panelsAlongWidth = Math.max(1, Math.ceil(wallWidthM / panelSizeW));
 	const panelsAlongHeight = Math.max(1, Math.ceil(wallHeightM / panelSizeH));
+	const lastColWidth = Math.max(0.01, Math.min(panelSizeW, wallWidthM - (panelsAlongWidth - 1) * (panelSizeW + gapM)));
+	const lastRowHeight = Math.max(0.01, Math.min(panelSizeH, wallHeightM - (panelsAlongHeight - 1) * (panelSizeH + gapM)));
 	const panelsTotal = panelsAlongWidth * panelsAlongHeight;
 	const panelSpecStoneName = (nonWoodModels.find(m => m.id === activeTexId) || nonWoodModels[0])?.name || '—';
 	const panelSizeLabel = PANEL_SIZE_OPTIONS.find(o => o.w === panelSizeW && o.h === panelSizeH)?.label || `${panelSizeW * 1000}×${panelSizeH * 1000}`;
+	const hasCutPanels = lastColWidth < panelSizeW - 0.001 || lastRowHeight < panelSizeH - 0.001;
 	const panelSpecRows: Array<{ label: string; value: string }> = [
 		{ label: 'סוג אבן', value: panelSpecStoneName },
 		{ label: 'מידות (מ"מ)', value: panelSizeLabel },
@@ -1279,7 +1283,7 @@ function LivePageInner() {
 		{ label: 'סוג ליבה', value: 'Aluminum Honeycomb' },
 		{ label: 'שטח פנים', value: `${panelSurfaceM2} מ"ר` },
 		{ label: 'גודל הקיר (אומדן)', value: `${wallSurfaceM2} מ"ר` },
-		{ label: 'חלוקה לפלטות', value: `${panelsAlongWidth} × ${panelsAlongHeight} = ${panelsTotal} פלטות` },
+		{ label: 'חלוקה לפלטות', value: `${panelsAlongWidth} × ${panelsAlongHeight} = ${panelsTotal} פלטות${hasCutPanels ? ' (חתיכות חתוכות)' : ''}` },
 	];
 	const { breakdown, total } = calculatePrice();
 	const priceFormatted = React.useMemo(() => {
@@ -1536,8 +1540,7 @@ function LivePageInner() {
 								<pointLight position={[10, 10, 10]} intensity={1} />
 								<Environment preset="city" />
 								{(() => {
-									const gapM = shadowGapMm / 1000;
-									const totalWidth = panelsAlongWidth * panelSizeW + (panelsAlongWidth - 1) * gapM;
+									const g = shadowGapMm / 1000;
 									const textureUrl = (() => {
 										const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0];
 										return (sel as any)?.solid ? null : (sel?.images?.[0] || null);
@@ -1551,16 +1554,18 @@ function LivePageInner() {
 									const cells: React.ReactNode[] = [];
 									for (let i = 0; i < panelsAlongHeight; i++) {
 										for (let j = 0; j < panelsAlongWidth; j++) {
-											const px = -totalWidth / 2 + panelSizeW / 2 + j * (panelSizeW + gapM);
-											const py = i * (panelSizeH + gapM);
+											const cellW = j === panelsAlongWidth - 1 ? lastColWidth : panelSizeW;
+											const cellH = i === panelsAlongHeight - 1 ? lastRowHeight : panelSizeH;
+											const px = -wallWidthM / 2 + (j === 0 ? cellW / 2 : (j * (panelSizeW + g) - (panelSizeW - (j === panelsAlongWidth - 1 ? lastColWidth : panelSizeW)) / 2) + cellW / 2);
+											const py = i === 0 ? cellH / 2 : (i * (panelSizeH + g) - (panelSizeH - (i === panelsAlongHeight - 1 ? lastRowHeight : panelSizeH)) / 2) + cellH / 2;
 											const uvOffset: [number, number] = [j / panelsAlongWidth, i / panelsAlongHeight];
 											cells.push(
 												<group key={`${i}-${j}`} position={[px, py, 0]}>
 													<Panel3D
 														thicknessMm={panelThicknessMm}
 														explodedView={false}
-														widthM={panelSizeW}
-														heightM={panelSizeH}
+														widthM={cellW}
+														heightM={cellH}
 														textureUrl={textureUrl}
 														materialSolidColor={materialSolidColor}
 														materialKind={materialKind}
@@ -1578,7 +1583,7 @@ function LivePageInner() {
 									enableDamping
 									makeDefault
 									zoomToCursor
-									target={getWallCenter(panelsAlongHeight, panelSizeH, shadowGapMm / 1000)}
+									target={[0, wallHeightM / 2, 0]}
 								/>
 							</React.Suspense>
 						</Canvas>

@@ -1573,8 +1573,10 @@ function LivePageInner() {
 											const px = -wallWidthM / 2 + (j < panelsAlongWidth - 1 ? j * (panelSizeW + g) + panelSizeW / 2 : (panelsAlongWidth - 1) * (panelSizeW + g) + lastColWidth / 2);
 											const py = i < panelsAlongHeight - 1 ? i * (panelSizeH + g) + panelSizeH / 2 : (panelsAlongHeight - 1) * (panelSizeH + g) + lastRowHeight / 2;
 											const uvOffset: [number, number] = [j / panelsAlongWidth, i / panelsAlongHeight];
+											/* סטיית עומק זעירה לכל פלטה – מונעת z-fighting ומרצדות לאורך המרווחים */
+											const zBias = (i * panelsAlongWidth + j) * 0.00008;
 											cells.push(
-												<group key={`${i}-${j}`} position={[px, py, 0]}>
+												<group key={`${i}-${j}`} position={[px, py, zBias]}>
 													<Panel3D
 														thicknessMm={panelThicknessMm}
 														explodedView={false}

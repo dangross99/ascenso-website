@@ -1,13 +1,15 @@
 /**
- * תצורת Mirror, bodyRotate180 ו־landingWalls לכל מבנה, זווית ודגם.
+ * תצורת Mirror, bodyRotate180 ו־landingWalls לכל מבנה, זווית ודגם (מדרגות – לשימוש ב-Staircase3D).
  * מקור אמת יחיד – מגדיר בדיוק איזה גרם/פודסט מקבל היפוך, סיבוב ואילו פאות קיר.
  *
  * מפתח: pathKey = getPathKey(path, flip, flight) או getPathKeyLandingL/U.
  * דגמים: rect | rounded | taper (דלתא) | wedge | ridge.
  *
- * L0 vs L180: אין שיתוף לוגיקה – L_0_* נבחר כש־pathFlipped180=false, L_180_* כש־true.
- * שינוי ב־L_180_* לא משפיע על L_0_* ולהיפך.
+ * לוחות חיפוי (Panel Configurator): עובי ברירת מחדל לכל החישובים הוויזואליים – ראו PANEL_THICKNESS_MM.
  */
+
+/** עובי לוח חיפוי ברירת מחדל (מ"מ) – בסיס לחישובים ויזואליים ב-Panel3D. */
+export const PANEL_THICKNESS_MM = 25;
 
 export type BoxModel = 'rect' | 'rounded' | 'taper' | 'wedge' | 'ridge';
 

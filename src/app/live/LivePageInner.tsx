@@ -7,18 +7,14 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useProgress } from '@react-three/drei';
 import { ACESFilmicToneMapping, PCFSoftShadowMap, SRGBColorSpace } from 'three';
 import Footer from '@/components/Footer';
-import Staircase3D from './stairs/Staircase3D';
+import Panel3D, { PANEL_CENTER } from './stairs/Panel3D';
 import type { PathSegment } from './shared/path';
 import { encodePath, decodePath } from './shared/path';
 import { BookingModal } from './components/BookingModal';
 import { BrandWordmark } from './components/BrandWordmark';
 import { Schematic } from './components/Schematic';
-import { BoxPicker, BoxShapeIcon } from './components/BoxPicker';
 import { MaterialKindPicker, type MaterialKind } from './components/MaterialKindPicker';
-import { WoodTexturePicker } from './components/WoodTexturePicker';
 import { NonWoodTexturePicker } from './components/NonWoodTexturePicker';
-import { PathPicker } from './components/PathPicker';
-import { RailingPicker } from './components/RailingPicker';
 
 // Overlay ׳˜׳¢׳™׳ ׳” ׳׳§׳ ׳‘׳¡ ג€“ ׳׳•׳¦׳’ ׳‘׳–׳׳ ׳˜׳¢׳™׳ ׳× ׳˜׳§׳¡׳˜׳•׳¨׳•׳×/׳ ׳›׳¡׳™׳
 function CanvasLoadingOverlay() {
@@ -462,6 +458,11 @@ function LivePageInner() {
 	// מזהים ייעודיים לכל קטגוריה כדי לשמר בחירה בין מעברים
 	const [activeMetalTexId, setActiveMetalTexId] = React.useState<string | null>(activeMaterial === 'metal' ? (qTex || null) : null);
 	const [activeStoneTexId, setActiveStoneTexId] = React.useState<string | null>(activeMaterial === 'stone' ? (qTex || null) : null);
+	// לוחות חיפוי – בקרים הנדסיים
+	const [panelThicknessMm, setPanelThicknessMm] = React.useState<16 | 25>(25);
+	const [shadowGapMm, setShadowGapMm] = React.useState<3 | 5 | 10>(5);
+	const [backlit, setBacklit] = React.useState(false);
+	const [explodedView, setExplodedView] = React.useState(false);
 	const [box, setBox] = React.useState<'thick' | 'thin' | 'rounded' | 'taper' | 'wedge' | 'ridge'>(qBox as any);
 	const [railing, setRailing] = React.useState<'none' | 'glass' | 'metal' | 'cable'>('none');
 	const [glassTone, setGlassTone] = React.useState<'extra' | 'smoked' | 'bronze'>('extra');
@@ -483,13 +484,13 @@ function LivePageInner() {
 	// מאסטר: מצבים מחזוריים להפעלה/ביטול ולצד
 	const [masterApply, setMasterApply] = React.useState<'none' | 'add' | 'remove'>('none');
 	const [masterSide, setMasterSide] = React.useState<'none' | 'right' | 'left'>('none');
-	// מובייל: אקורדיון קטגוריות בפאנל (ברירת מחדל: סגור כדי שלא ייווצר מרווח נוסף מתחת לקנבס)
+	// מובייל: אקורדיון קטגוריות בפאנל (לוחות חיפוי: חומר, טקסטורה, הגדרות לוח)
 	const [mobileOpenCat, setMobileOpenCat] = React.useState<
-		'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing' | null
-	>('box');
+		'material' | 'nonWoodTexture' | 'panel' | null
+	>('material');
 	// דסקטופ: אקורדיון קטגוריות – סגורות כברירת מחדל, נפתח בלחיצה
 	const [desktopOpenCat, setDesktopOpenCat] = React.useState<
-		'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing' | null
+		'material' | 'nonWoodTexture' | 'panel' | null
 	>(null);
 	// עזרת מובייל: באנר פתיחה והסבר קצר
 	const [mobileHelpDismissed, setMobileHelpDismissed] = React.useState(false);
@@ -505,38 +506,27 @@ function LivePageInner() {
 		setMobileHelpDismissed(true);
 	}, []);
 	const getMobileHint = React.useCallback((
-		cat: 'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing'
+		cat: 'material' | 'nonWoodTexture' | 'panel'
 	): string => {
 		switch (cat) {
-			case 'box': return 'בחרו את עובי הדופן של המדרך – עבה או דקה. אפשר לשנות בכל שלב.';
-			case 'material': return 'בחרו חומר בסיסי לעיבוד המדרך: עץ, מתכת או אבן טבעית.';
-			case 'woodTexture': return 'בחרו דגם עץ (טקסטורה) וגוון שמתאימים לקו העיצובי שלכם.';
-			case 'woodColor': return 'בחרו גוון לעץ (טבעי/ווריאציות כהות/בהירות) לפי התמונות.';
-			case 'nonWoodTexture': return 'בחרו טקסטורה למתכת/אבן. מומלץ לבחון את ההשתקפויות במודל.';
-			case 'path': return 'בנו את מבנה המדרגות: הוסיפו ישרים/פודסטים והתאימו מספר מדרגות לפי הצורך.';
-			case 'railing': return 'בחרו סוג מעקה: זכוכית/מתכת/כבלי נירוסטה והתאימו גוון/צד לפי ההעדפה.';
+			case 'material': return 'בחרו חומר: אבן טבעית או מתכת.';
+			case 'nonWoodTexture': return 'בחרו דגם/טקסטורה ללוח החיפוי.';
+			case 'panel': return 'עובי לוח, מרווח ניתוק ותאורה אחורית.';
 			default: return '';
 		}
 	}, []);
 	const getCatTitle = React.useCallback((
-		cat: 'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing'
+		cat: 'material' | 'nonWoodTexture' | 'panel'
 	): string => {
 		switch (cat) {
-			case 'box': return 'דגם';
 			case 'material': return 'חומר';
-			case 'woodTexture': return 'טקסטורה';
-			case 'woodColor': return 'צבע (עץ)';
 			case 'nonWoodTexture': return 'טקסטורה';
-			case 'path': return 'מבנה המדרגות';
-			case 'railing': return 'מעקה';
+			case 'panel': return 'הגדרות לוח';
 			default: return '';
 		}
 	}, []);
-	// ללא זרימה כפויה – אין מעבר אוטומטי או אינדקס שלב
-	type Cat = 'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing';
-	const stepOrderForSteps: Cat[] = activeMaterial === 'wood'
-		? ['box', 'material', 'woodTexture', 'path', 'railing']
-		: ['box', 'material', 'nonWoodTexture', 'path', 'railing'];
+	type Cat = 'material' | 'nonWoodTexture' | 'panel';
+	const stepOrderForSteps: Cat[] = ['material', 'nonWoodTexture', 'panel'];
 	const getNextCatForSteps = (cat: Cat): Cat | null => {
 		const i = stepOrderForSteps.indexOf(cat);
 		return i >= 0 && i < stepOrderForSteps.length - 1 ? stepOrderForSteps[i + 1] : null;
@@ -1332,56 +1322,32 @@ function LivePageInner() {
 		return '\u200F' + groups.join('\u2011') + '\u200F'; // \u2011 = non-breaking hyphen
 	}, []);
 
-	// בניית טקסט שיתוף לוואטסאפ (עם/בלי קישור)
+	// בניית טקסט שיתוף לוואטסאפ – פרויקט חיפוי קירות (מפרט טכני ומארז דוגמאות)
 	const buildWhatsappText = React.useCallback((leadId: string, shareUrl: string, includeUrl: boolean = true): string => {
-		const materialLabel = activeMaterial === 'wood' ? 'עץ' : activeMaterial === 'metal' ? 'מתכת' : 'אבן טבעית';
-		const textureName = activeMaterial === 'wood'
-			? (activeModel?.name || activeModel?.id || 'דגם עץ')
-			: (nonWoodModels.find(r => r.id === activeTexId)?.name || 'טקסטורה');
-		const colorName = activeMaterial === 'wood'
-			? (WOOD_SWATCHES.find(w => w.id === activeColor)?.label || activeColor)
-			: undefined;
-		const pathText = formatPathForShare(pathSegments);
-		const railingText = formatRailing();
-		const boxText = box === 'thick'
-			? 'קלאסי'
-			: box === 'thin'
-			? 'להב'
-			: box === 'rounded'
-			? 'קפסולה'
-			: box === 'taper'
-			? 'דלתא'
-			: box === 'wedge'
-			? 'טריז'
-			: box === 'ridge'
-			? 'מרום'
-			: '';
-		const totalText = `₪${total.toLocaleString('he-IL')}`;
+		const materialLabel = activeMaterial === 'metal' ? 'מתכת' : 'אבן טבעית';
+		const textureName = nonWoodModels.find(r => r.id === activeTexId)?.name || 'טקסטורה';
 		// הכרחת כיוון LTR עבור ה‑URL באמצעות LRI/PDI (איסולציה) למניעת שבירה RTL
 		const ltrUrl = `\u2066${shareUrl}\u2069`;
 
 		const lines = [
-			`*ASCENSO*\u200F`,
-			`היי, צפיתי בהדמייה באתר ומעוניינ/ת להתקדם.`,
-			`מס׳ הדמייה: ${formatLeadIdRTL(leadId)}`,
-			`פרטי הבחירה שלי:`,
-			`- דגם תיבה: ${boxText}`,
-			`- חומר: ${materialLabel}${colorName ? `, צבע: ${colorName}` : ''}`,
-			`- טקסטורה: ${textureName}`,
-			`- מבנה המדרגות: ${pathText}`,
-			`- מעקה: ${railingText}`,
-			`- מחיר משוער: ${totalText}`,
+			`*ASCENSO – לוחות חיפוי*\u200F`,
+			`היי, צפיתי בהדמייה של לוח חיפוי באתר ומעוניינ/ת בפרטים.`,
+			`מס׳ פנייה: ${formatLeadIdRTL(leadId)}`,
+			`פרטי הבחירה:`,
+			`- חומר: ${materialLabel}`,
+			`- דגם/טקסטורה: ${textureName}`,
+			`- עובי לוח: ${panelThicknessMm} מ״מ`,
+			`- מרווח ניתוק: ${shadowGapMm} מ״מ`,
 			``,
-			`מעוניינ/ת לתאם מדידה ולקבל הצעת מחיר מסודרת בהתאם לשטח.`,
+			`מעוניינ/ת לקבל מפרט טכני ומארז דוגמאות לפרויקט חיפוי קירות.`,
 		];
 		if (includeUrl) {
 			lines.push(`פתיחת ההדמייה:`);
 			lines.push(`${ltrUrl}`);
 		}
 		const body = lines.join('\n');
-		// עטיפה כוללת ב‑RLE/PDF כדי לאלץ יישור RTL בווטסאפ
 		return `\u202B${body}\u202C`;
-	}, [activeMaterial, activeModel?.name, activeModel?.id, nonWoodModels, activeTexId, activeColor, pathSegments, formatPathForShare, formatRailing, box, total]);
+	}, [activeMaterial, nonWoodModels, activeTexId, panelThicknessMm, shadowGapMm]);
 
 	// Handler: שיתוף לוואטסאפ
 	const handleWhatsappShare = React.useCallback(async () => {
@@ -1498,70 +1464,14 @@ function LivePageInner() {
 					{/* טאבים עליונים – מוצגים לפני ההדמייה בכל הגדלים */}
 					<div id="live-top-tabs" ref={topTabsRef} className="bg-white/95 backdrop-blur border rounded-md mb-2" dir="rtl">
 						{(() => {
-							type Cat = 'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing';
 							const nodes: Array<{ key: Cat; el: React.ReactElement }> = [];
-							// נשתמש באותן מחלקות/תכנים מהפאנל הקיים
-							nodes.push({
-								key: 'box',
-								el: (
-									<div className="px-4">
-										<BoxPicker box={box as any} setBox={setBox as any} />
-										{getNextCatForSteps('box') && (
-											<div className="mt-3 mb-4 text-center">
-												<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('box')!)} className="px-5 py-2 rounded-lg bg-emerald-600 text-white font-medium text-sm shadow-sm hover:bg-emerald-700 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer">
-													המשך
-												</button>
-											</div>
-										)}
-										{/* צבעי מעקה לפי סוג שנבחר */}
-										<div className="mb-3">
-											{railing === 'glass' && (
-												<div className="flex items-center justify-center gap-3">
-													{([
-														{ id: 'extra' as const, label: 'אקסטרה קליר', color: '#aee7ff', border: '#81b1cc' },
-														{ id: 'smoked' as const, label: 'מושחר', color: '#4a5568', border: '#2d3748' },
-														{ id: 'bronze' as const, label: 'ברונזה', color: '#b08d57', border: '#8a6a3a' },
-													]).map(sw => (
-														<button
-															key={sw.id}
-															title={sw.label}
-															aria-label={sw.label}
-															onClick={() => setGlassTone(sw.id)}
-															className={`w-[22px] h-[22px] rounded-full border-2 cursor-pointer ${glassTone === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-															style={{ backgroundColor: sw.color, borderColor: sw.border }}
-														/>
-													))}
-												</div>
-											)}
-											{railing === 'metal' && (
-												<div className="flex items-center justify-center gap-3">
-													<button
-														title="שחור"
-														aria-label="שחור"
-														onClick={() => { setRailingMetalSolid('#111111'); setRailingMetalId(null); }}
-														className={`w-[22px] h-[22px] rounded-full border-2 cursor-pointer ${railingMetalSolid === '#111111' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-														style={{ backgroundColor: '#111111', borderColor: '#333' }}
-													/>
-													<button
-														title="לבן"
-														aria-label="לבן"
-														onClick={() => { setRailingMetalSolid('#F5F5F5'); setRailingMetalId(null); }}
-														className={`w-[22px] h-[22px] rounded-full border-2 cursor-pointer ${railingMetalSolid === '#F5F5F5' ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-														style={{ backgroundColor: '#F5F5F5', borderColor: '#ddd' }}
-													/>
-												</div>
-											)}
-										</div>
-									</div>
-								),
-							});
 							nodes.push({
 								key: 'material',
 								el: (
 									<div className="px-4">
 										<MaterialKindPicker
 											activeMaterial={activeMaterial}
-											onChange={(m) => startTransition(() => setActiveMaterial(m))}
+											onChange={(m) => startTransition(() => setActiveMaterial(m === 'wood' ? 'stone' : m))}
 										/>
 										{getNextCatForSteps('material') && (
 											<div className="mt-3 mb-4 text-center">
@@ -1573,73 +1483,24 @@ function LivePageInner() {
 									</div>
 								),
 							});
-							if (activeMaterial === 'wood') {
-								nodes.push({
-									key: 'woodTexture',
-									el: (
-										<div className="px-4">
-											<WoodTexturePicker
-												woodModels={woodModels as any}
-												activeModelId={activeModelId}
-												onPick={(id) => startTransition(() => setActiveModelId(id))}
-												swatches={WOOD_SWATCHES}
-												activeModel={activeModel as any}
-												activeColor={activeColor}
-												colorHex={COLOR_HEX}
-												onPickColor={(id) => startTransition(() => setActiveColor(id))}
-											/>
-											{getNextCatForSteps('woodTexture') && (
-												<div className="mt-3 mb-4 text-center">
-													<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('woodTexture')!)} className="px-5 py-2 rounded-lg bg-emerald-600 text-white font-medium text-sm shadow-sm hover:bg-emerald-700 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer">
-														המשך
-													</button>
-												</div>
-											)}
-										</div>
-									),
-								});
-							} else {
-								nodes.push({
-									key: 'nonWoodTexture',
-									el: (
-										<div className="px-4">
-											<NonWoodTexturePicker
-												nonWoodModels={nonWoodModels as any}
-												activeTexId={activeTexId}
-												onPick={(id) =>
-													startTransition(() => {
-														setActiveTexId(id);
-														if (activeMaterial === 'metal') setActiveMetalTexId(id);
-														if (activeMaterial === 'stone') setActiveStoneTexId(id);
-													})
-												}
-											/>
-											{getNextCatForSteps('nonWoodTexture') && (
-												<div className="mt-3 mb-4 text-center">
-													<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('nonWoodTexture')!)} className="px-5 py-2 rounded-lg bg-emerald-600 text-white font-medium text-sm shadow-sm hover:bg-emerald-700 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer">
-														המשך
-													</button>
-												</div>
-											)}
-										</div>
-									),
-								});
-							}
 							nodes.push({
-								key: 'path',
+								key: 'nonWoodTexture',
 								el: (
 									<div className="px-4">
-										<PathPicker
-											shape={shape}
-											steps={steps}
-											stepsTotalForPath={stepsTotalForPath}
-											pathSegments={pathSegments}
-											setShape={setShape}
-											setPathSegments={setPathSegments}
+										<NonWoodTexturePicker
+											nonWoodModels={nonWoodModels as any}
+											activeTexId={activeTexId}
+											onPick={(id) =>
+												startTransition(() => {
+													setActiveTexId(id);
+													if (activeMaterial === 'metal') setActiveMetalTexId(id);
+													if (activeMaterial === 'stone') setActiveStoneTexId(id);
+												})
+											}
 										/>
-										{getNextCatForSteps('path') && (
+										{getNextCatForSteps('nonWoodTexture') && (
 											<div className="mt-3 mb-4 text-center">
-												<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('path')!)} className="px-5 py-2 rounded-lg bg-emerald-600 text-white font-medium text-sm shadow-sm hover:bg-emerald-700 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer">
+												<button type="button" onClick={() => setMobileOpenCat(getNextCatForSteps('nonWoodTexture')!)} className="px-5 py-2 rounded-lg bg-emerald-600 text-white font-medium text-sm shadow-sm hover:bg-emerald-700 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer">
 													המשך
 												</button>
 											</div>
@@ -1648,36 +1509,63 @@ function LivePageInner() {
 								),
 							});
 							nodes.push({
-								key: 'railing',
+								key: 'panel',
 								el: (
-									<>
-										<RailingPicker
-											railing={railing}
-											setRailing={setRailing}
-											glassTone={glassTone}
-											setGlassTone={setGlassTone}
-											railingMetalSolid={railingMetalSolid}
-											setRailingMetalSolid={setRailingMetalSolid}
-											setRailingMetalId={setRailingMetalId}
-											cableOptions={cableOptions}
-											cableId={cableId}
-											setCableId={setCableId}
-											setCableColor={setCableColor}
-											pathSegments={pathSegments}
-											landingMeta={landingMeta}
-											stepRailing={stepRailing}
-											setStepRailing={setStepRailing}
-											landingRailing={landingRailing}
-											setLandingRailing={setLandingRailing}
-											stepCableSpanMode={stepCableSpanMode}
-											setStepCableSpanMode={setStepCableSpanMode}
-											landingCableSpanMode={landingCableSpanMode}
-											setLandingCableSpanMode={setLandingCableSpanMode}
-										/>
-										{/* סיום והתקשרות – שלב 5 (מעקה) */}
+									<div className="px-4 space-y-4">
+										<div>
+											<p className="text-sm font-semibold text-[#1a1a2e] mb-2">עובי לוח (מ״מ)</p>
+											<div className="flex gap-2">
+												{([16, 25] as const).map((mm) => (
+													<button
+														key={mm}
+														type="button"
+														onClick={() => setPanelThicknessMm(mm)}
+														className={`px-4 py-2 rounded-lg text-sm font-medium border-2 ${panelThicknessMm === mm ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'}`}
+													>
+														{mm} מ״מ
+													</button>
+												))}
+											</div>
+										</div>
+										<div>
+											<p className="text-sm font-semibold text-[#1a1a2e] mb-2">מרווח ניתוק (Shadow Gap)</p>
+											<div className="flex gap-2 flex-wrap">
+												{([3, 5, 10] as const).map((mm) => (
+													<button
+														key={mm}
+														type="button"
+														onClick={() => setShadowGapMm(mm)}
+														className={`px-4 py-2 rounded-lg text-sm font-medium border-2 ${shadowGapMm === mm ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'}`}
+													>
+														{mm} מ״מ
+													</button>
+												))}
+											</div>
+										</div>
+										<div className="flex items-center justify-between">
+											<span className="text-sm font-semibold text-[#1a1a2e]">תאורה אחורית (Backlit)</span>
+											<button
+												type="button"
+												onClick={() => setBacklit((b) => !b)}
+												className={`relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 transition-colors ${backlit ? 'bg-emerald-600 border-emerald-600' : 'bg-gray-200 border-gray-300'}`}
+												aria-label={backlit ? 'כבוי' : 'הפעלה'}
+											>
+												<span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${backlit ? 'translate-x-5' : 'translate-x-1'}`} />
+											</button>
+										</div>
+										<div className="flex items-center justify-between">
+											<span className="text-sm font-semibold text-[#1a1a2e]">מבט מפוצץ</span>
+											<button
+												type="button"
+												onClick={() => setExplodedView((e) => !e)}
+												className={`relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 transition-colors ${explodedView ? 'bg-emerald-600 border-emerald-600' : 'bg-gray-200 border-gray-300'}`}
+												aria-label={explodedView ? 'סגור מבט מפוצץ' : 'הצג מבט מפוצץ'}
+											>
+												<span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${explodedView ? 'translate-x-5' : 'translate-x-1'}`} />
+											</button>
+										</div>
 										<div className="mt-1.5 pt-1.5 pb-3 border-t border-gray-200 text-center" dir="rtl">
-											<p className="text-sm font-medium text-[#1a1a2e] mb-1.5">כך נראות מדרגות החלום שלכם</p>
-											<p className="text-xs text-gray-600 mb-3">צעד אחד מלהפוך אותן למציאות – כתבו לנו בוואטסאפ ונחזור בהקדם.</p>
+											<p className="text-sm font-medium text-[#1a1a2e] mb-1.5">לוח חיפוי בהתאמה לפרויקט שלכם</p>
 											<a
 												href={`https://api.whatsapp.com/send?phone=${(whatsappPhone || '').replace(/\D/g, '')}&text=${encodeURIComponent(buildWhatsappText(generateLeadId(), '', false))}`}
 												target="_blank"
@@ -1685,18 +1573,17 @@ function LivePageInner() {
 												className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-md bg-emerald-600 text-white px-5 py-2.5 text-sm font-semibold shadow-sm hover:bg-emerald-700 hover:opacity-95 cursor-pointer"
 												aria-label="שלח הודעה בוואטסאפ"
 											>
-												<span>כתבו לנו, ונתקדם..</span>
+												<span>בקשת מפרט טכני ומארז דוגמאות</span>
 											</a>
 										</div>
-									</>
+									</div>
 								),
 							});
 
 							const mapNodes = new Map(nodes.map(n => [n.key, n.el]));
-							const order: Cat[] = activeMaterial === 'wood' ? ['box','material','woodTexture','path','railing'] : ['box','material','nonWoodTexture','path','railing'];
+							const order: Cat[] = stepOrderForSteps;
 							return (
 								<>
-									{/* ציר שלבים – מספור וחיבור בין קטגוריות */}
 									<div className="flex items-center overflow-x-auto px-3 py-3 w-full lg:justify-center gap-0 border-b border-gray-200" dir="rtl">
 										{order.map((tab, i) => (
 											<React.Fragment key={tab}>
@@ -1722,7 +1609,7 @@ function LivePageInner() {
 									</div>
 									<div className="pt-1 flex justify-center">
 										<div className="w-full max-w-5xl text-center">
-											{mapNodes.get((order.includes((mobileOpenCat || order[0]) as Cat) ? (mobileOpenCat || order[0]) : (mobileOpenCat === 'woodColor' ? 'woodTexture' : order[0])) as Cat) as React.ReactElement}
+											{mapNodes.get((mobileOpenCat || order[0]) as Cat) as React.ReactElement}
 										</div>
 									</div>
 								</>
@@ -1748,119 +1635,25 @@ function LivePageInner() {
 							}}
 						>
 							<React.Suspense fallback={null}>
-								{/* רינדור PBR (תאורה/סביבה בתוך Staircase3D) */}
-								<Staircase3D
-									shape={shape}
-									steps={steps}
-									color={COLOR_HEX[activeColor] || '#C8A165'}
-									materialKind={activeMaterial}
-									railingKind={railing}
-									railingSolidColor={railingMetalSolid}
-									cablePreviewHeight={5}
-									cableColor={cableColor}
-									cableSpanMode={cableSpanMode}
-									stepCableSpanModes={stepCableSpanMode}
-									landingCableSpanModes={landingCableSpanMode}
-									// בדגם מעוגל: גובה/עובי מדרגה קבוע 8 ס"מ
-									treadThicknessOverride={box === 'thick' ? 0.11 : (box === 'wedge' ? 0.11 : (box === 'ridge' ? 0.02 : ((box === 'rounded') ? 0.08 : (box === 'taper' ? 0.12 : 0.07))))}
-									boxModel={box === 'rounded' ? 'rounded' : (box === 'taper' ? 'taper' : (box === 'wedge' ? 'wedge' : (box === 'ridge' ? 'ridge' : 'rect')))}
-									wedgeFrontThicknessM={0.035}
-									ridgeFrontCenterThicknessM={0.09}
-									ridgeFrontEdgeThicknessM={0.03}
-									pathSegments={pathSegments}
-									pathFlipped180={pathFlipped180}
-									// דגם "הייטק" מוסתר כרגע
-									hitech={false}
-									hitechPlateThickness={0.012}
-									hitechPlateHeight={0.27}
-									hitechPlateTopOffsetM={0.03}
-									hitechPlateInsetFromEdge={0.03}
-									glassTone={glassTone}
-									stepRailingStates={stepRailing}
-									landingRailingStates={landingRailing}
-									stepRailingSides={stepRailingSide}
-									stepRailingSidesForRailing={stepRailingSideForRailing}
-									landingRailingSides={landingRailingSide}
-									highQuality={isDesktopViewport}
-									railingTextureUrl={(() => {
-										if (railing === 'metal' && railingMetalId) {
-											const rec = metalRailingOptions.find(r => r.id === railingMetalId);
-											return rec?.images?.[0] || null;
-										}
-										return null;
-									})()}
-									railingBumpUrl={(() => {
-										if (railing === 'metal' && railingMetalId) {
-											const rec = metalRailingOptions.find(r => r.id === railingMetalId);
-											return rec?.pbr?.bump?.[0] || null;
-										}
-										return null;
-									})()}
-									railingRoughnessUrl={(() => {
-										if (railing === 'metal' && railingMetalId) {
-											const rec = metalRailingOptions.find(r => r.id === railingMetalId);
-											return rec?.pbr?.roughness?.[0] || null;
-										}
-										return null;
-									})()}
-									railingUvInset={(() => {
-										if (railing === 'metal' && railingMetalId) {
-											const rec = metalRailingOptions.find(r => r.id === railingMetalId);
-											const cfg = MODEL_CONFIG[rec?.id || ''] || DEFAULT_MODEL_CONFIG;
-											return cfg.inset || 0;
-										}
-										return 0;
-									})()}
+								<Panel3D
+									thicknessMm={panelThicknessMm}
+									explodedView={explodedView}
 									textureUrl={(() => {
-										if (activeMaterial === 'wood') {
-											return activeModel?.variants?.[activeColor]?.[0] || activeModel?.images?.[0] || null;
-										}
 										const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0];
-										if (sel?.solid) return null;
-										return sel?.images?.[0] || null;
+										return (sel as any)?.solid ? null : (sel?.images?.[0] || null);
 									})()}
-									bumpUrl={
-										activeMaterial === 'wood'
-											? activeModel?.pbrVariants?.[activeColor]?.bump?.[0] || null
-											: (() => { const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0]; return sel?.solid ? null : (sel?.pbr?.bump?.[0] || null); })()
-									}
-									roughnessUrl={
-										activeMaterial === 'wood'
-											? activeModel?.pbrVariants?.[activeColor]?.roughness?.[0] || null
-											: (() => { const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0]; return sel?.solid ? null : (sel?.pbr?.roughness?.[0] || null); })()
-									}
-									materialSolidColor={(() => { if (activeMaterial === 'wood') return null; const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0]; return (sel as any)?.solid || null; })()}
-									tileScale={(() => {
-										if (activeMaterial === 'wood') {
-											const cfg = MODEL_CONFIG[activeModel?.id || ''] || DEFAULT_MODEL_CONFIG;
-											return cfg.tile ?? DEFAULT_MODEL_CONFIG.tile!;
-										}
-										const cfg = MODEL_CONFIG[activeTexId || ''] || DEFAULT_MODEL_CONFIG;
-										return cfg.tile ?? DEFAULT_MODEL_CONFIG.tile!;
+									materialSolidColor={(() => {
+										const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0];
+										return (sel as any)?.solid || null;
 									})()}
-									bumpScaleOverride={(() => {
-										if (activeMaterial === 'wood') {
-											const cfg = MODEL_CONFIG[activeModel?.id || ''] || DEFAULT_MODEL_CONFIG;
-											return cfg.bump;
-										}
-										const cfg = MODEL_CONFIG[activeTexId || ''] || DEFAULT_MODEL_CONFIG;
-										return cfg.bump;
-									})()}
-									uvInset={(() => {
-										if (activeMaterial === 'wood') {
-											const cfg = MODEL_CONFIG[activeModel?.id || ''] || DEFAULT_MODEL_CONFIG;
-											return cfg.inset || 0;
-										}
-										const cfg = MODEL_CONFIG[activeTexId || ''] || DEFAULT_MODEL_CONFIG;
-										return cfg.inset || 0;
-									})()}
+									materialKind={activeMaterial === 'metal' ? 'metal' : 'stone'}
 								/>
 								<OrbitControls
 									ref={orbitRef}
 									enableDamping
 									makeDefault
 									zoomToCursor
-									target={[0.304, 0.930, -0.053]}
+									target={PANEL_CENTER}
 								/>
 							</React.Suspense>
 						</Canvas>
@@ -1900,23 +1693,6 @@ function LivePageInner() {
 											<path d="M20 20l-6-6"></path>
 										</svg>
 									)}
-								</button>
-								<button
-									type="button"
-									onClick={() => {
-										setPathSegments(prev => prev.map(seg => {
-											if (seg.kind !== 'landing') return seg;
-											if (!seg.turn) return seg;
-											return { kind: 'landing', turn: (seg.turn === 'left' ? 'right' : 'left') };
-										}));
-										setPathFlipped180(prev => !prev);
-									}}
-									aria-label="הפוך כיוון מסלול"
-									title={pathFlipped180 ? 'מסלול בהיפוך 180° (לחץ לביטול)' : 'הפוך כיוון מסלול'}
-									className="pointer-events-auto min-w-[2.25rem] h-9 px-1.5 rounded-full border border-[#1a1a2e]/20 cursor-pointer shadow inline-flex items-center justify-center font-bold text-sm bg-white/90 hover:bg-white"
-									style={pathFlipped180 ? { backgroundColor: '#10b981', color: '#fff', borderColor: '#059669' } : undefined}
-								>
-									<span>180<span className="text-[10px] align-super leading-none">°</span></span>
 								</button>
 							</div>
 						</div>
@@ -1963,23 +1739,6 @@ function LivePageInner() {
 										</svg>
 									)}
 								</button>
-								<button
-									type="button"
-									onClick={() => {
-										setPathSegments(prev => prev.map(seg => {
-											if (seg.kind !== 'landing') return seg;
-											if (!seg.turn) return seg;
-											return { kind: 'landing', turn: (seg.turn === 'left' ? 'right' : 'left') };
-										}));
-										setPathFlipped180(prev => !prev);
-									}}
-									aria-label="הפוך כיוון מסלול"
-									title={pathFlipped180 ? 'מסלול בהיפוך 180° (לחץ לביטול)' : 'הפוך כיוון מסלול'}
-									className="pointer-events-auto min-w-[2rem] h-8 px-1 rounded-full border border-[#1a1a2e]/20 cursor-pointer shadow inline-flex items-center justify-center font-bold text-xs bg-white/90 hover:bg-white"
-									style={pathFlipped180 ? { backgroundColor: '#10b981', color: '#fff', borderColor: '#059669' } : undefined}
-								>
-									<span>180<span className="text-[9px] align-super leading-none">°</span></span>
-								</button>
 							</div>
 						</div>
 						{/* טוסט שיתוף */}
@@ -2000,28 +1759,21 @@ function LivePageInner() {
 					<div className="block lg:hidden h-3" />
 						</div>
 
-						{/* פירוט חשבון צדדי בדסקטופ */}
+						{/* פירוט צדדי בדסקטופ – לוח חיפוי */}
 						<div className="hidden lg:block lg:col-span-1">
 							<div className="bg-white rounded-md p-3 h-full space-y-3">
 								<div className="space-y-2">
-									{/* הדגם הנבחר – שורה אחת: צורה, שם, נתונים טכניים */}
-									{boxDisplayInfo[box] && (
-										<div>
-											<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-2 border border-[#e8e2dc] shadow-sm flex items-center gap-2 flex-wrap">
-												<BoxShapeIcon boxId={box as any} size={36} className="shrink-0" />
-												<span className="text-xs font-semibold text-[#1a1a2e]/70 shrink-0">הדגם הנבחר</span>
-												<span className="text-sm font-bold text-[#1a1a2e] shrink-0">{boxDisplayInfo[box].name}</span>
-												<span className="text-xs text-gray-600 tabular-nums">{boxDisplayInfo[box].specs}</span>
-											</div>
-										</div>
-									)}
+									{/* הגדרות לוח */}
+									<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-2 border border-[#e8e2dc] shadow-sm">
+										<span className="text-xs font-semibold text-[#1a1a2e]/70 block mb-1">הגדרות לוח</span>
+										<p className="text-sm text-[#1a1a2e]">עובי {panelThicknessMm} מ״מ · ניתוק {shadowGapMm} מ״מ</p>
+										<p className="text-xs text-gray-600">{backlit ? 'תאורה אחורית: מופעלת' : 'תאורה אחורית: כבויה'} · {explodedView ? 'מבט מפוצץ' : 'תצוגה רגילה'}</p>
+									</div>
 									{/* הטקסטורה הנבחרת – תמונה + סוג חומר + שם */}
 									{(() => {
-										const matLabel = activeMaterial === 'wood' ? 'עץ' : activeMaterial === 'metal' ? 'מתכת' : activeMaterial === 'stone' ? 'אבן טבעית' : null;
-										const sel = activeMaterial === 'wood'
-											? (woodModels.find(m => m.id === activeModelId) || woodModels[0])
-											: (nonWoodModels.find(m => m.id === activeTexId) || nonWoodModels[0]);
-										if (!matLabel || !sel) return null;
+										const matLabel = activeMaterial === 'metal' ? 'מתכת' : 'אבן טבעית';
+										const sel = nonWoodModels.find(m => m.id === activeTexId) || nonWoodModels[0];
+										if (!sel) return null;
 										const img = sel.images?.[0];
 										const solid = (sel as any)?.solid;
 										return (
@@ -2038,50 +1790,6 @@ function LivePageInner() {
 											</div>
 										);
 									})()}
-									{/* המעקה הנבחר – מוצג רק כשיש מעקה */}
-									{railing !== 'none' && (
-										<div>
-											<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-2 border border-[#e8e2dc] shadow-sm flex items-center gap-2 flex-wrap">
-												{railing === 'glass' && (
-													<div
-														className="w-9 h-9 rounded-lg shrink-0 border border-[#e8e2dc]"
-														style={{
-															backgroundColor: glassTone === 'smoked' ? '#4a5568' : glassTone === 'bronze' ? '#b08d57' : '#aee7ff',
-														}}
-													/>
-												)}
-												{railing === 'metal' && (
-													<div
-														className="w-9 h-9 rounded-lg shrink-0 bg-center bg-cover border border-[#e8e2dc]"
-														style={{
-															backgroundColor: railingMetalSolid || '#e8e2dc',
-															backgroundImage: railingMetalId && !railingMetalSolid
-																? `url("${encodeURI(metalRailingOptions.find(r => r.id === railingMetalId)?.images?.[0] || '')}")`
-																: undefined,
-														}}
-													/>
-												)}
-												{railing === 'cable' && (
-													<div
-														className="w-9 h-9 rounded-lg shrink-0 bg-center bg-cover border border-[#e8e2dc]"
-														style={{
-															backgroundImage: (() => {
-																const sel = cableOptions.find(c => c.id === cableId) || cableOptions[0];
-																return sel?.image ? `url("${encodeURI(sel.image)}")` : undefined;
-															})(),
-															backgroundColor: '#c7ccd1',
-														}}
-													/>
-												)}
-												<span className="text-xs font-semibold text-[#1a1a2e]/70 shrink-0">המעקה הנבחר</span>
-												<span className="text-sm font-bold text-[#1a1a2e] shrink-0">
-													{railing === 'cable'
-														? `מערכת כבלים 8 מ״מ (${(cableOptions.find(c => c.id === cableId) || cableOptions[0])?.name || 'כבל'})`
-														: formatRailing()}
-												</span>
-											</div>
-										</div>
-									)}
 								</div>
 								<div className="font-semibold mb-1">פירוט חשבון (כולל מע״מ)</div>
 								<ul className="text-sm text-gray-700 space-y-1">
@@ -2115,34 +1823,24 @@ function LivePageInner() {
 								<button
 									onClick={() => setBookingOpen(true)}
 									className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-md bg-[#1a1a2e] text-white px-5 py-3 text-base font-semibold shadow-sm hover:opacity-95 cursor-pointer"
-									aria-label="פתח טופס תיאום פגישה"
+									aria-label="פתח טופס בקשת מפרט טכני"
 								>
-									<span>תיאום פגישה</span>
+									<span>בקשת מפרט טכני ומארז דוגמאות</span>
 								</button>
 								<div className="text-[11px] text-gray-500 mt-1">
-									הערכה משוערת להמחשה בלבד.<br/>המחיר כולל קונסטרוקציה והתקנה.
+									הערכה משוערת להמחשה בלבד. לוחות חיפוי – מפרט טכני ומארז דוגמאות לפי בקשתכם.
 								</div>
 							</div>
 						</div>
 					</div>
 
-					{/* פירוט חשבון מתחת להדמייה – מובייל/טאבלט בלבד */}
+					{/* פירוט מתחת להדמייה – מובייל/טאבלט */}
 					<div className="mt-3 space-y-3 lg:hidden">
-						{boxDisplayInfo[box] && (
-							<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-2 border border-[#e8e2dc] shadow-sm flex items-center gap-2 flex-wrap">
-								<BoxShapeIcon boxId={box as any} size={40} className="shrink-0" />
-								<span className="text-xs font-semibold text-[#1a1a2e]/70 shrink-0">הדגם הנבחר</span>
-								<span className="text-sm font-bold text-[#1a1a2e] shrink-0">{boxDisplayInfo[box].name}</span>
-								<span className="text-xs text-gray-600 tabular-nums">{boxDisplayInfo[box].specs}</span>
-							</div>
-						)}
 						{/* הטקסטורה הנבחרת – מובייל */}
 						{(() => {
-							const matLabel = activeMaterial === 'wood' ? 'עץ' : activeMaterial === 'metal' ? 'מתכת' : activeMaterial === 'stone' ? 'אבן טבעית' : null;
-							const sel = activeMaterial === 'wood'
-								? (woodModels.find(m => m.id === activeModelId) || woodModels[0])
-								: (nonWoodModels.find(m => m.id === activeTexId) || nonWoodModels[0]);
-							if (!matLabel || !sel) return null;
+							const matLabel = activeMaterial === 'metal' ? 'מתכת' : 'אבן טבעית';
+							const sel = nonWoodModels.find(m => m.id === activeTexId) || nonWoodModels[0];
+							if (!sel) return null;
 							const img = sel.images?.[0];
 							const solid = (sel as any)?.solid;
 							return (
@@ -2190,48 +1888,15 @@ function LivePageInner() {
 						<button
 							onClick={() => setBookingOpen(true)}
 							className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-md bg-[#1a1a2e] text-white px-5 py-3 text-base font-semibold shadow-sm hover:opacity-95 cursor-pointer"
-							aria-label="פתח טופס תיאום פגישה"
+							aria-label="פתח טופס בקשת מפרט טכני"
 						>
-							<span>תיאום פגישה</span>
+							<span>בקשת מפרט טכני ומארז דוגמאות</span>
 						</button>
 						<div className="text-[11px] text-gray-500 mt-1">
-							הערכה משוערת להמחשה בלבד.<br/>המחיר כולל קונסטרוקציה והתקנה.
+							לוחות חיפוי – מפרט טכני ומארז דוגמאות לפי בקשתכם.
 						</div>
 						</div>
 					</div>
-
-					{/* בחירת דגם מדרגה – אינליין בסגנון טאבים אופקיים (מובייל) */}
-					<div className="lg:hidden bg-white border rounded-md px-3 py-2">
-						<div className="text-xs font-medium mb-2" dir="rtl">דגם מדרגה</div>
-						<div role="tablist" aria-label="בחירת דגם מדרגה" className="flex items-center gap-2 overflow-x-auto">
-							<button
-								role="tab"
-								aria-selected={box === 'thick'}
-								className={`flex items-center gap-2 px-3 py-2 rounded-full border text-sm whitespace-nowrap ${box === 'thick' ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white hover:bg-gray-100'}`}
-								onClick={() => setBox('thick')}
-							>
-								{/* Icon: thick profile */}
-								<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
-									<rect x="3" y="9" width="18" height="6" rx="2" fill="currentColor" opacity="0.2" />
-									<rect x="4" y="10" width="16" height="4" rx="1" stroke="currentColor" fill="none" />
-								</svg>
-								דופן עבה
-							</button>
-							<button
-								role="tab"
-								aria-selected={box === 'thin'}
-								className={`flex items-center gap-2 px-3 py-2 rounded-full border text-sm whitespace-nowrap ${box === 'thin' ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white hover:bg-gray-100'}`}
-								onClick={() => setBox('thin')}
-							>
-								{/* Icon: thin profile */}
-								<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
-									<rect x="4" y="11" width="16" height="2" rx="1" stroke="currentColor" fill="none" />
-								</svg>
-								קצר
-							</button>
-						</div>
-					</div>
-					{/* פירוט צבעים/מעקה – הוסר. מוצג רק בטאב העליון. */}
 				</section>
 
 				<aside ref={assignAsideRef} className="lg:col-span-4">
@@ -2280,51 +1945,10 @@ function LivePageInner() {
 						)}
 
 						{(() => {
-							type Cat = 'box' | 'material' | 'woodTexture' | 'woodColor' | 'nonWoodTexture' | 'path' | 'railing';
 							const nodes: Array<{ key: Cat; el: React.ReactElement }> = [];
-							const stepOrder: Cat[] = activeMaterial === 'wood'
-								? ['box','material','woodTexture','path','railing']
-								: ['box','material','nonWoodTexture','path','railing'];
-							const getNextCat = (cat: Cat): Cat | null => {
-								const i = stepOrder.indexOf(cat);
-								return i >= 0 && i < stepOrder.length - 1 ? stepOrder[i + 1] : null;
-							};
+							const tabOrder: Cat[] = stepOrderForSteps;
+							const getNextCat = (cat: Cat): Cat | null => getNextCatForSteps(cat);
 
-							// Box
-							nodes.push({
-								key: 'box',
-								el: (
-									<div>
-										{mobileOpenCat === 'box' && (
-											<div className="p-3 bg-white border border-t-0 rounded-b-md">
-												<div className="flex flex-wrap gap-2">
-													{([
-														{ id: 'thick', label: 'תיבה עבה‑דופן' },
-														{ id: 'thin', label: 'תיבה דקה‑דופן' },
-													] as const).map(opt => (
-														<button
-															key={opt.id}
-															className={`px-3 py-1 text-sm rounded-full border ${box === opt.id ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
-															onClick={() => setBox(opt.id)}
-														>
-															{opt.label}
-														</button>
-													))}
-												</div>
-												{getNextCat('box') && (
-													<div className="mt-3 px-3 pb-2">
-														<button type="button" onClick={() => setMobileOpenCat(getNextCat('box')!)} className="w-full py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
-															המשך
-														</button>
-													</div>
-												)}
-											</div>
-										)}
-									</div>
-								),
-							});
-
-							// Material
 							nodes.push({
 								key: 'material',
 								el: (
@@ -2332,13 +1956,13 @@ function LivePageInner() {
 										{mobileOpenCat === 'material' && (
 											<div className="p-3 bg-white border border-t-0 rounded-b-md">
 												<div className="flex flex-wrap gap-2">
-													{(['wood', 'metal', 'stone'] as const).map(m => (
+													{(['metal', 'stone'] as const).map(m => (
 														<button
 															key={m}
 															className={`px-3 py-1 text-sm rounded-full border cursor-pointer ${activeMaterial === m ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
 															onClick={() => startTransition(() => setActiveMaterial(m))}
 														>
-															{m === 'wood' ? 'עץ' : m === 'metal' ? 'מתכת' : 'אבן טבעית'}
+															{m === 'metal' ? 'מתכת' : 'אבן טבעית'}
 														</button>
 													))}
 												</div>
@@ -2354,213 +1978,31 @@ function LivePageInner() {
 									</div>
 								),
 							});
-
-							// Wood sections
-							if (activeMaterial === 'wood') {
-								nodes.push({
-									key: 'woodTexture',
-									el: (
-										<div>
-											{mobileOpenCat === 'woodTexture' && (
-												<div className="p-3 bg-white border border-t-0 rounded-b-md space-y-4">
-													<div className="flex flex-wrap gap-3">
-														{woodModels.map(m => (
-															<button
-																key={m.id}
-																aria-label={m.name || m.id}
-																title={m.name || m.id}
-																onClick={() => startTransition(() => setActiveModelId(m.id))}
-																className={`w-10 h-10 rounded-full border-2 bg-center bg-cover cursor-pointer transition-transform duration-200 hover:scale-110 ${activeModelId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-																style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, borderColor: '#ddd' }}
-															/>
-														))}
-													</div>
-													{(() => {
-														const items = WOOD_SWATCHES.filter(sw => !!activeModel?.variants?.[sw.id]);
-														if (items.length === 0) return null;
-														return (
-															<div>
-																<span className="text-xs font-semibold text-[#1a1a2e]/70 block mb-2">גוון</span>
-																<div className="flex items-center gap-3 flex-wrap">
-																	{items.map(sw => {
-																		const img = activeModel?.variants?.[sw.id]?.[0];
-																		const solid = COLOR_HEX[sw.id];
-																		return (
-																			<button
-																				key={sw.id}
-																				aria-label={sw.label}
-																				title={sw.label}
-																				onClick={() => startTransition(() => setActiveColor(sw.id))}
-																				className={`w-8 h-8 rounded-full border-2 cursor-pointer transition-transform duration-200 hover:scale-110 ${activeColor === sw.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-																				style={{
-																					backgroundImage: img ? `url("${encodeURI(img)}")` : undefined,
-																					backgroundColor: img ? undefined : solid,
-																					backgroundSize: 'cover',
-																					backgroundPosition: 'center',
-																					borderColor: '#ddd',
-																				}}
-																			/>
-																		);
-																	})}
-																</div>
-															</div>
-														);
-													})()}
-													{getNextCat('woodTexture') && (
-														<div className="pt-1 pb-2">
-															<button type="button" onClick={() => setMobileOpenCat(getNextCat('woodTexture')!)} className="w-full py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
-																המשך
-															</button>
-														</div>
-													)}
-												</div>
-											)}
-										</div>
-									),
-								});
-							} else {
-								// Non-wood texture
-								nodes.push({
-									key: 'nonWoodTexture',
-									el: (
-										<div>
-											{mobileOpenCat === 'nonWoodTexture' && (
-												<div className="p-3 bg-white border border-t-0 rounded-b-md">
-													<div className="flex flex-wrap gap-3">
-														{nonWoodModels.map(m => (
-															<button
-																key={m.id}
-																aria-label={m.name || m.id}
-																title={m.name || m.id}
-												onClick={() => startTransition(() => {
-													setActiveTexId(m.id);
-													if (activeMaterial === 'metal') setActiveMetalTexId(m.id);
-													if (activeMaterial === 'stone') setActiveStoneTexId(m.id);
-												})}
-																className={`w-10 h-10 rounded-full border-2 bg-center bg-cover cursor-pointer transition-transform duration-200 hover:scale-110 ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
-																style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, backgroundColor: (!m.images || m.images.length === 0) && (m as any).solid ? (m as any).solid : undefined, borderColor: '#ddd' }}
-															/>
-														))}
-													</div>
-													{getNextCat('nonWoodTexture') && (
-														<div className="mt-3 px-3 pb-2">
-															<button type="button" onClick={() => setMobileOpenCat(getNextCat('nonWoodTexture')!)} className="w-full py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
-																המשך
-															</button>
-														</div>
-													)}
-												</div>
-											)}
-										</div>
-									),
-								});
-							}
-
-							// Path
 							nodes.push({
-								key: 'path',
+								key: 'nonWoodTexture',
 								el: (
 									<div>
-										{mobileOpenCat === 'path' && (
-											<div className="p-3 bg-white border border-t-0 rounded-b-md space-y-3">
-												<div className="flex flex-wrap gap-2">
-													<button
-														className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100"
-														onClick={() => setPathSegments(prev => [...prev, { kind: 'straight', steps: 5 }])}
-													>
-														הוסף ישר (5 מדר׳)
-													</button>
-													<button
-														className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100"
-														onClick={() => setPathSegments(prev => [
-																...prev,
-																{ kind: 'landing', turn: 'right' },
-																{ kind: 'straight', steps: 1 },
-															])}
-													>
-														פודסט + ימינה
-													</button>
-													<button
-														className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100"
-														onClick={() => setPathSegments(prev => [
-																...prev,
-																{ kind: 'landing', turn: 'left' },
-																{ kind: 'straight', steps: 1 },
-															])}
-													>
-														פודסט + שמאלה
-													</button>
-													<button
-														className="px-3 py-1 text-sm rounded-full border bg-white hover:bg-gray-100"
-														onClick={() => setPathSegments(prev => [...prev, { kind: 'landing' }])}
-													>
-														פודסט
-													</button>
+										{mobileOpenCat === 'nonWoodTexture' && (
+											<div className="p-3 bg-white border border-t-0 rounded-b-md">
+												<div className="flex flex-wrap gap-3">
+													{nonWoodModels.map(m => (
+														<button
+															key={m.id}
+															aria-label={m.name || m.id}
+															title={m.name || m.id}
+															onClick={() => startTransition(() => {
+																setActiveTexId(m.id);
+																if (activeMaterial === 'metal') setActiveMetalTexId(m.id);
+																if (activeMaterial === 'stone') setActiveStoneTexId(m.id);
+															})}
+															className={`w-10 h-10 rounded-full border-2 bg-center bg-cover cursor-pointer transition-transform duration-200 hover:scale-110 ${activeTexId === m.id ? 'ring-2 ring-[#1a1a2e]' : ''}`}
+															style={{ backgroundImage: m.images?.[0] ? `url("${encodeURI(m.images[0])}")` : undefined, backgroundColor: (!m.images || m.images.length === 0) && (m as any).solid ? (m as any).solid : undefined, borderColor: '#ddd' }}
+														/>
+													))}
 												</div>
-												<div className="space-y-2">
-													<ul className="space-y-2">
-														{pathSegments.map((seg, idx) => (
-															<li key={idx} className="flex items-center gap-3 justify-between border rounded-md px-2 py-1 bg-white">
-																<div className="flex items-center gap-3">
-																	<span className="text-sm text-gray-700">
-																		{seg.kind === 'straight' ? 'ישר' : seg.turn ? `פודסט + ${seg.turn === 'right' ? 'ימינה' : 'שמאלה'}` : 'פודסט'}
-																	</span>
-																	{seg.kind === 'straight' && (
-																		<div className="flex items-center gap-2">
-																			<button
-																				className="px-2 py-1 rounded border"
-																				aria-label="פחות מדרגות"
-																				onClick={() => {
-																					setPathSegments(prev =>
-																						prev.map((seg2, i) =>
-																							i === idx && seg2.kind === 'straight'
-																								? { kind: 'straight', steps: Math.max(1, (seg2 as any).steps - 1) }
-																								: seg2
-																						)
-																					);
-																				}}
-																			>
-																				-
-																			</button>
-																			<span className="text-sm">מדרגות: {(seg as any).steps}</span>
-																			<button
-																				className="px-2 py-1 rounded border"
-																				aria-label="יותר מדרגות"
-																				onClick={() => {
-																					setPathSegments(prev =>
-																						prev.map((seg2, i) =>
-																							i === idx && seg2.kind === 'straight'
-																								? { kind: 'straight', steps: Math.min(25, (seg2 as any).steps + 1) }
-																								: seg2
-																						)
-																					);
-																				}}
-																			>
-																				+
-																			</button>
-																		</div>
-																	)}
-																</div>
-																<div>
-																	<button
-																		className="text-xs text-red-600 hover:underline"
-																		onClick={() => {
-																			setPathSegments(prev => {
-																				const out = prev.filter((_: any, i: number) => i !== idx);
-																				return out.length ? out : [{ kind: 'straight', steps: 5 }];
-																			});
-																		}}
-																	>
-																		הסר
-																	</button>
-																</div>
-															</li>
-														))}
-													</ul>
-												</div>
-												{getNextCat('path') && (
-													<div className="mt-3">
-														<button type="button" onClick={() => setMobileOpenCat(getNextCat('path')!)} className="w-full py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
+												{getNextCat('nonWoodTexture') && (
+													<div className="mt-3 px-3 pb-2">
+														<button type="button" onClick={() => setMobileOpenCat(getNextCat('nonWoodTexture')!)} className="w-full py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
 															המשך
 														</button>
 													</div>
@@ -2570,22 +2012,50 @@ function LivePageInner() {
 									</div>
 								),
 							});
+							nodes.push({
+								key: 'panel',
+								el: (
+									<div>
+										{mobileOpenCat === 'panel' && (
+											<div className="p-3 bg-white border border-t-0 rounded-b-md space-y-3">
+												<div>
+													<p className="text-xs font-semibold text-[#1a1a2e] mb-1">עובי לוח (מ״מ)</p>
+													<div className="flex gap-2">
+														{([16, 25] as const).map((mm) => (
+															<button key={mm} type="button" onClick={() => setPanelThicknessMm(mm)} className={`px-3 py-1.5 rounded-lg text-sm border-2 ${panelThicknessMm === mm ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white border-gray-300'}`}>{mm} מ״מ</button>
+														))}
+													</div>
+												</div>
+												<div>
+													<p className="text-xs font-semibold text-[#1a1a2e] mb-1">מרווח ניתוק</p>
+													<div className="flex gap-2 flex-wrap">
+														{([3, 5, 10] as const).map((mm) => (
+															<button key={mm} type="button" onClick={() => setShadowGapMm(mm)} className={`px-3 py-1.5 rounded-lg text-sm border-2 ${shadowGapMm === mm ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white border-gray-300'}`}>{mm} מ״מ</button>
+														))}
+													</div>
+												</div>
+												<div className="flex items-center justify-between">
+													<span className="text-sm font-semibold">תאורה אחורית</span>
+													<button type="button" onClick={() => setBacklit((b) => !b)} className={`relative inline-flex h-6 w-11 rounded-full border-2 ${backlit ? 'bg-emerald-600 border-emerald-600' : 'bg-gray-200 border-gray-300'}`}>
+														<span className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${backlit ? 'translate-x-5' : 'translate-x-1'}`} />
+													</button>
+												</div>
+												<div className="flex items-center justify-between">
+													<span className="text-sm font-semibold">מבט מפוצץ</span>
+													<button type="button" onClick={() => setExplodedView((e) => !e)} className={`relative inline-flex h-6 w-11 rounded-full border-2 ${explodedView ? 'bg-emerald-600 border-emerald-600' : 'bg-gray-200 border-gray-300'}`}>
+														<span className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${explodedView ? 'translate-x-5' : 'translate-x-1'}`} />
+													</button>
+												</div>
+											</div>
+										)}
+									</div>
+								),
+							});
 
-							// Railing – האזור הישן הוסר; נשאר רק בטאב העליון.
-
-							// סדר קבוע: Box -> Material -> (WoodTexture, WoodColor | NonWoodTexture) -> Path -> Railing
-							const fixedOrder: Cat[] = activeMaterial === 'wood'
-								? ['path','box','material','woodTexture','railing']
-								: ['path','box','material','nonWoodTexture','railing'];
-							// Tabs bar
-							const tabOrder: Cat[] = activeMaterial === 'wood'
-								? ['box','material','woodTexture','path','railing']
-								: ['box','material','nonWoodTexture','path','railing'];
 							const mapNodes = new Map(nodes.map(n => [n.key, n.el]));
 							return (
 								<>
 									<div className="sticky top-0 z-20 bg-white/95 backdrop-blur border-b">
-										{/* ציר שלבים – מספור וקו חיבור */}
 										<div className="flex items-center overflow-x-auto px-2 py-3 w-full lg:justify-center gap-0" dir="rtl">
 											{tabOrder.map((tab, i) => (
 												<React.Fragment key={tab}>
@@ -2612,7 +2082,7 @@ function LivePageInner() {
 									</div>
 									<div className="mt-1 flex justify-center">
 										<div className="w-full max-w-5xl text-center">
-											{mapNodes.get((tabOrder.includes((mobileOpenCat || tabOrder[0]) as Cat) ? (mobileOpenCat || tabOrder[0]) : (mobileOpenCat === 'woodColor' ? 'woodTexture' : tabOrder[0])) as Cat) as React.ReactElement}
+											{mapNodes.get((mobileOpenCat || tabOrder[0]) as Cat) as React.ReactElement}
 										</div>
 									</div>
 								</>
@@ -2673,10 +2143,10 @@ function LivePageInner() {
 				<div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
 					<button
 						onClick={openBooking}
-						aria-label="פתח טופס תיאום פגישה"
+						aria-label="פתח טופס בקשת מפרט טכני"
 						className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-4 py-2 text-base font-semibold shadow-md hover:opacity-95 cursor-pointer"
 					>
-						<span>תיאום פגישה</span>
+						<span>בקשת מפרט טכני ומארז דוגמאות</span>
 					</button>
 					<div className="text-right text-[#1a1a2e]">
 						<div className="text-lg font-bold">

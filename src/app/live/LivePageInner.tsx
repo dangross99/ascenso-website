@@ -1543,7 +1543,7 @@ function LivePageInner() {
 					<div ref={canvasWrapRef} className="relative w-full aspect-[16/9] lg:aspect-auto lg:h-[60vh] bg-white border overflow-hidden rounded fixed inset-x-0 z-30 lg:relative" style={{ height: mobileCanvasH || undefined, top: (mobileHeaderH + mobileTabsH) || 0 }}>
 						<Canvas
 							shadows={false}
-							camera={{ position: [-2.494, 1.897, 3.259], fov: 45 }}
+							camera={{ position: [0, wallHeightM / 2, 4.5], fov: 45 }}
 							dpr={[1, isDesktopViewport ? 2 : 1.5]}
 							gl={{
 								toneMapping: ACESFilmicToneMapping,

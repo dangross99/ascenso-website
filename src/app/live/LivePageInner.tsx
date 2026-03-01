@@ -1569,7 +1569,6 @@ function LivePageInner() {
 										return (sel as any)?.solid || null;
 									})();
 									const materialKind = activeMaterial === 'metal' ? 'metal' : 'stone';
-									const uvScale: [number, number] = [1 / panelsAlongWidth, 1 / panelsAlongHeight];
 									const cells: React.ReactNode[] = [];
 									for (let i = 0; i < panelsAlongHeight; i++) {
 										for (let j = 0; j < panelsAlongWidth; j++) {
@@ -1577,6 +1576,10 @@ function LivePageInner() {
 											const cellH = i === panelsAlongHeight - 1 ? lastRowHeight : panelSizeH;
 											const px = -wallWidthM / 2 + (j < panelsAlongWidth - 1 ? j * (panelSizeW + g) + panelSizeW / 2 : (panelsAlongWidth - 1) * (panelSizeW + g) + lastColWidth / 2);
 											const py = i < panelsAlongHeight - 1 ? i * (panelSizeH + g) + panelSizeH / 2 : (panelsAlongHeight - 1) * (panelSizeH + g) + lastRowHeight / 2;
+											/* UV פרופורציוני לגודל הפיזי – פלטות חתוכות (השלמות) מקבלות חתך נכון מהטקסטורה בלי מתיחה */
+											const uvScaleX = (j === panelsAlongWidth - 1 ? lastColWidth / panelSizeW : 1) / panelsAlongWidth;
+											const uvScaleY = (i === panelsAlongHeight - 1 ? lastRowHeight / panelSizeH : 1) / panelsAlongHeight;
+											const uvScale: [number, number] = [uvScaleX, uvScaleY];
 											const uvOffset: [number, number] = [j / panelsAlongWidth, i / panelsAlongHeight];
 											/* סטיית עומק זעירה לכל פלטה – מונעת z-fighting ומרצדות לאורך המרווחים */
 											const zBias = (i * panelsAlongWidth + j) * 0.00008;

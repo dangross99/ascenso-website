@@ -1260,6 +1260,7 @@ function LivePageInner() {
 		{ label: 'עובי מערכת', value: `${panelThicknessMm} מ"מ` },
 		{ label: 'סוג ליבה', value: 'Aluminum Honeycomb' },
 		{ label: 'שטח פנים', value: `${panelSurfaceM2} מ"ר` },
+		{ label: 'גודל הקיר (אומדן)', value: `${panelSurfaceM2} מ"ר` },
 	];
 	const { breakdown, total } = calculatePrice();
 	const priceFormatted = React.useMemo(() => {

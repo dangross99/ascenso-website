@@ -1731,7 +1731,17 @@ function LivePageInner() {
 									{/* תיבת מידות והמלצות להזמנה (נסטינג) */}
 									<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-3 border border-[#e8e2dc] shadow-sm">
 										<span className="text-xs font-semibold text-[#1a1a2e]/70 block mb-2">הגדרות לוח · מידות והמלצות</span>
-										<div className="pt-2 border-t border-[#e8e2dc]">
+										<table className="w-full text-xs text-[#1a1a2e]" dir="rtl">
+											<tbody>
+												{panelSpecRows.map(row => (
+													<tr key={row.label} className="border-b border-[#e8e2dc]/60">
+														<td className="py-1 pr-1 text-gray-600">{row.label}</td>
+														<td className="py-1 font-medium text-left">{row.value}</td>
+													</tr>
+												))}
+											</tbody>
+										</table>
+										<div className="mt-2 pt-2 border-t border-[#e8e2dc]">
 											<p className="text-xs font-semibold text-[#1a1a2e] mb-1">המלצה להזמנה</p>
 											{isOptimalSize ? (
 												<p className="text-xs text-emerald-700">המידה הנבחרת אופטימלית לגודל הקיר – מינימום פלטות ומינימום מ"ר להזמנה.</p>
@@ -1894,7 +1904,17 @@ function LivePageInner() {
 											<div className="p-3 bg-white border border-t-0 rounded-b-md">
 												<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-3 border border-[#e8e2dc] shadow-sm">
 													<span className="text-xs font-semibold text-[#1a1a2e]/70 block mb-2">מידות והמלצות להזמנה</span>
-													<div className="pt-2 border-t border-[#e8e2dc]">
+													<table className="w-full text-xs text-[#1a1a2e]" dir="rtl">
+														<tbody>
+															{panelSpecRows.map(row => (
+																<tr key={row.label} className="border-b border-[#e8e2dc]/60">
+																	<td className="py-1 pr-1 text-gray-600">{row.label}</td>
+																	<td className="py-1 font-medium text-left">{row.value}</td>
+																</tr>
+															))}
+														</tbody>
+													</table>
+													<div className="mt-2 pt-2 border-t border-[#e8e2dc]">
 														<p className="text-xs font-semibold text-[#1a1a2e] mb-1">המלצה להזמנה</p>
 														{isOptimalSize ? (
 															<p className="text-xs text-emerald-700">המידה הנבחרת אופטימלית – מינימום פלטות ומ"ר להזמנה.</p>
@@ -1995,12 +2015,6 @@ function LivePageInner() {
 								</>
 							);
 						})()}
-
-						<div ref={priceRef} className={`mt-3 bg-white rounded-md p-3 ${pricePing ? 'ring-2 ring-[#1a1a2e]' : ''}`}>
-							<div className="text-[11px] text-gray-500 mt-1">
-								לוח {panelSizeLabel} מ"מ · {panelSurfaceM2} מ"ר. MIRZA – לוחות חיפוי הנדסיים.
-							</div>
-						</div>
 					</div>
 
 

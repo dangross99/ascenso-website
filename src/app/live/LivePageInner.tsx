@@ -21,7 +21,6 @@ function getWallCenter(
 
 import type { PathSegment } from './shared/path';
 import { encodePath, decodePath } from './shared/path';
-import { BookingModal } from './components/BookingModal';
 import { BrandWordmark } from './components/BrandWordmark';
 import { Schematic } from './components/Schematic';
 import type { MaterialKind } from './components/MaterialKindPicker';
@@ -518,29 +517,6 @@ function LivePageInner() {
 	const [desktopOpenCat, setDesktopOpenCat] = React.useState<
 		'material' | 'nonWoodTexture' | 'panel' | null
 	>(null);
-	// עזרת מובייל: באנר פתיחה והסבר קצר
-	const [mobileHelpDismissed, setMobileHelpDismissed] = React.useState(false);
-	const [mobileHelpOpen, setMobileHelpOpen] = React.useState(true);
-	React.useEffect(() => {
-		try {
-			const v = localStorage.getItem('ascenso:live:mobileHelpDismissed');
-			if (v === '1') setMobileHelpDismissed(true);
-		} catch {}
-	}, []);
-	const dismissMobileHelp = React.useCallback(() => {
-		try { localStorage.setItem('ascenso:live:mobileHelpDismissed', '1'); } catch {}
-		setMobileHelpDismissed(true);
-	}, []);
-	const getMobileHint = React.useCallback((
-		cat: 'material' | 'nonWoodTexture' | 'panel'
-	): string => {
-		switch (cat) {
-			case 'material': return 'בחרו חומר: אבן טבעית או מתכת.';
-			case 'nonWoodTexture': return 'בחרו דגם/טקסטורה ללוח החיפוי.';
-			case 'panel': return 'עובי לוח ומרווח ניתוק.';
-			default: return '';
-		}
-	}, []);
 	const getCatTitle = React.useCallback((
 		cat: 'material' | 'nonWoodTexture' | 'panel'
 	): string => {
@@ -1459,41 +1435,6 @@ function LivePageInner() {
 
 	// (הוסר) צילום תמונות – לפי בקשתך נשאר רק טקסט הודעה ל‑WhatsApp
 
-	// שליחת טופס מודאל: הודעת וואטסאפ – בקשת מפרט טכני ומארז דוגמאות (לוח חיפוי)
-	function handleBookingSubmit(e: React.FormEvent) {
-		e.preventDefault();
-		if (bookingStep !== 'time' || !preferredTime) return;
-		const materialLabel = activeMaterial === 'metal' ? 'מתכת' : 'אבן טבעית';
-		const textureName = nonWoodModels.find(r => r.id === activeTexId)?.name || 'טקסטורה';
-		const leadId = generateLeadId();
-		const timeLabel = preferredTime || '-';
-
-		const surfaceM2 = Math.round(panelSizeW * panelSizeH * 100) / 100;
-		const sizeLabel = PANEL_SIZE_OPTIONS.find(o => o.w === panelSizeW && o.h === panelSizeH)?.label || `${Math.round(panelSizeW * 1000)}×${Math.round(panelSizeH * 1000)}`;
-		const lines = [
-			'\u202B*ASCENSO – לוחות חיפוי*\u200F',
-			`מס׳ פנייה: ${formatLeadIdRTL(leadId)}`,
-			`מפרט לוח:`,
-			`- סוג אבן/חומר: ${textureName} (${materialLabel})`,
-			`- מידות: ${sizeLabel} מ"מ · שטח: ${surfaceM2} מ"ר`,
-			`- עובי מערכת: ${panelThicknessMm} מ"מ`,
-			`- ליבה: Aluminum Honeycomb`,
-			``,
-			`פרטי התקשרות:`,
-			`- שם מלא: ${fullName}`,
-			`- כתובת הפרויקט: ${projectAddress}`,
-			`- תאריך מועדף: ${preferredDate || '-'}`,
-			`- חלון זמן מועדף: ${timeLabel}`,
-			``,
-			`מעוניינ/ת לקבל מפרט טכני ומארז דוגמאות לפרויקט חיפוי קירות.`,
-			'\u202C',
-		].join('\n');
-
-		const phone = whatsappPhone.replace('+', '');
-		window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(lines)}`, '_blank');
-		setBookingSubmitted(true);
-	}
-
 	if (!mounted) {
 		// שלב SSR – אל תחיל הידרציה על תוכן דינמי כדי למנוע אזהרות
 		return null;
@@ -1764,11 +1705,11 @@ function LivePageInner() {
 									</div>
 								</div>
 								<button
-									onClick={() => setBookingOpen(true)}
+									onClick={handleWhatsappShare}
 									className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-md bg-[#1a1a2e] text-white px-5 py-3 text-base font-semibold shadow-sm hover:opacity-95 cursor-pointer"
-									aria-label="פתח טופס בקשת מפרט טכני"
+									aria-label="שלח מפרט ודוגמאות בוואטסאפ"
 								>
-									<span>בקשת מפרט טכני ומארז דוגמאות</span>
+									<span>שלח לי מפרט ודוגמאות בוואטסאפ</span>
 								</button>
 							</div>
 						</div>
@@ -1778,11 +1719,11 @@ function LivePageInner() {
 					<div className="mt-3 space-y-3 lg:hidden">
 						<div className="bg-white rounded-md p-3">
 						<button
-							onClick={() => setBookingOpen(true)}
+							onClick={handleWhatsappShare}
 							className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-md bg-[#1a1a2e] text-white px-5 py-3 text-base font-semibold shadow-sm hover:opacity-95 cursor-pointer"
-							aria-label="פתח טופס בקשת מפרט טכני"
+							aria-label="שלח מפרט ודוגמאות בוואטסאפ"
 						>
-							<span>בקשת מפרט טכני ומארז דוגמאות</span>
+							<span>שלח לי מפרט ודוגמאות בוואטסאפ</span>
 						</button>
 						</div>
 					</div>
@@ -1791,47 +1732,6 @@ function LivePageInner() {
 				<aside ref={assignAsideRef} className="lg:col-span-4">
 					{/* מובייל: אקורדיון קטגוריות בחירה */}
 					<div className="lg:hidden flex flex-col gap-3">
-
-						{/* באנר עזרה למובייל – נפתח/נסגר, ניתן לסגירה קבועה */}
-						{!mobileHelpDismissed && (
-							<div className="order-last bg-[#1a1a2e]/5 border border-[#1a1a2e]/15 rounded-md">
-								<div className="flex items-center justify-between px-3 py-2">
-									<button
-										type="button"
-										className="text-sm font-semibold text-[#1a1a2e]"
-										onClick={() => setMobileHelpOpen(prev => !prev)}
-										aria-expanded={mobileHelpOpen}
-									>
-										איך זה עובד?
-									</button>
-									<div className="flex items-center gap-2">
-										{mobileOpenCat && (
-											<span className="text-[11px] text-gray-700 bg-white border border-gray-200 rounded px-2 py-0.5">
-												שלב: {getCatTitle(mobileOpenCat)}
-											</span>
-										)}
-										<button
-											type="button"
-											className="text-gray-500 hover:text-gray-700 text-lg leading-none px-2"
-											aria-label="סגור עזרה"
-											onClick={dismissMobileHelp}
-										>
-											×
-										</button>
-									</div>
-								</div>
-								{mobileHelpOpen && (
-									<div className="px-3 pb-3 text-xs text-gray-700">
-										<div className="mb-1">
-											בחרו שלב‑שלב. כל בחירה פותחת את השלב הבא. ניתן לחזור לשלב קודם בכל רגע.
-										</div>
-										<div className="text-gray-800">
-											{mobileOpenCat ? getMobileHint(mobileOpenCat) : 'התחילו בבחירת קטגוריה מהרשימה מטה.'}
-										</div>
-									</div>
-								)}
-							</div>
-						)}
 
 						{(() => {
 							const nodes: Array<{ key: Cat; el: React.ReactElement }> = [];
@@ -2035,16 +1935,16 @@ function LivePageInner() {
 			<div className="hidden lg:block h-0" />
 		</main>
 
-		{/* מובייל: סיכום קבוע בתחתית — מוסתר בזמן תיאום/מקלדת כדי למנוע חפיפות */}
-		{!bookingOpen && !isKeyboardOpen && (
+		{/* מובייל: סיכום קבוע בתחתית — מוסתר בזמן מקלדת */}
+		{!isKeyboardOpen && (
 			<div className="lg:hidden fixed inset-x-0 bottom-0 z-40 border-t bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 shadow-lg">
 				<div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
 					<button
-						onClick={openBooking}
-						aria-label="פתח טופס בקשת מפרט טכני"
+						onClick={handleWhatsappShare}
+						aria-label="שלח מפרט ודוגמאות בוואטסאפ"
 						className="inline-flex items-center gap-2 rounded-md bg-[#1a1a2e] text-white px-4 py-2 text-base font-semibold shadow-md hover:opacity-95 cursor-pointer"
 					>
-						<span>בקשת מפרט טכני ומארז דוגמאות</span>
+						<span>שלח לי מפרט ודוגמאות בוואטסאפ</span>
 					</button>
 					<div className="text-right text-[#1a1a2e]">
 						<div className="text-sm font-semibold">לוח {panelSurfaceM2} מ״ר</div>
@@ -2061,31 +1961,6 @@ function LivePageInner() {
 			</div>
 		)}
 
-		<BookingModal
-			open={bookingOpen}
-			isKeyboardOpen={isKeyboardOpen}
-			bookingSubmitted={bookingSubmitted}
-			bookingStep={bookingStep}
-			stepIndex={stepIndex}
-			stepTotal={stepTotal}
-			stepPercent={stepPercent}
-			answerWidthPx={answerWidthPx}
-			twoWeeksDates={twoWeeksDates}
-			preferredDate={preferredDate}
-			preferredTime={preferredTime}
-			fullName={fullName}
-			city={city}
-			cityOptions={cityOptions}
-			setBookingOpen={setBookingOpen}
-			setBookingSubmitted={setBookingSubmitted}
-			setBookingStep={setBookingStep}
-			setFullName={setFullName}
-			setCity={setCity}
-			setPreferredDate={setPreferredDate}
-			setPreferredTime={setPreferredTime}
-			handleBookingSubmit={handleBookingSubmit}
-			refs={{ dialogRef, firstInputRef, cityInputRef, questionRef }}
-		/>
 			</div>
 			<Footer />
 		</>

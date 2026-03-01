@@ -82,9 +82,6 @@ export default function Panel3D(props: {
 					map={stoneMap}
 					emissive={stoneEmissive}
 					emissiveIntensity={stoneEmissiveIntensity}
-					polygonOffset
-					polygonOffsetFactor={0.5}
-					polygonOffsetUnits={1}
 				/>
 			</mesh>
 			{/* ליבת Honeycomb */}

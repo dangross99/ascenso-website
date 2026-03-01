@@ -1581,10 +1581,8 @@ function LivePageInner() {
 											const uvScaleY = (i === panelsAlongHeight - 1 ? lastRowHeight / panelSizeH : 1) / panelsAlongHeight;
 											const uvScale: [number, number] = [uvScaleX, uvScaleY];
 											const uvOffset: [number, number] = [j / panelsAlongWidth, i / panelsAlongHeight];
-											/* סטיית עומק זעירה לכל פלטה – מונעת z-fighting ומרצדות לאורך המרווחים */
-											const zBias = (i * panelsAlongWidth + j) * 0.00008;
 											cells.push(
-												<group key={`${i}-${j}`} position={[px, py, zBias]}>
+												<group key={`${i}-${j}`} position={[px, py, 0]}>
 													<Panel3D
 														thicknessMm={panelThicknessMm}
 														explodedView={false}

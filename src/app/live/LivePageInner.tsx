@@ -7,7 +7,7 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useProgress, Environment } from '@react-three/drei';
 import { ACESFilmicToneMapping, PCFSoftShadowMap, SRGBColorSpace } from 'three';
 import Footer from '@/components/Footer';
-import Panel3D, { PANEL_CENTER } from './stairs/Panel3D';
+import Panel3D, { getPanelCenter } from './stairs/Panel3D';
 import type { PathSegment } from './shared/path';
 import { encodePath, decodePath } from './shared/path';
 import { BookingModal } from './components/BookingModal';
@@ -463,6 +463,20 @@ function LivePageInner() {
 	const [shadowGapMm, setShadowGapMm] = React.useState<3 | 5 | 10>(5);
 	const [backlit, setBacklit] = React.useState(false);
 	const [explodedView, setExplodedView] = React.useState(false);
+	/** מידות לוח (מ'): 5 אפשרויות – ברירת מחדל 2900×1450 (2.9×1.45) */
+	const PANEL_SIZE_OPTIONS: Array<{ id: string; w: number; h: number; label: string }> = [
+		{ id: '2900x1450', w: 2.9, h: 1.45, label: '2900×1450' },
+		{ id: '2900x725', w: 2.9, h: 0.725, label: '2900×725' },
+		{ id: '1450x1450', w: 1.45, h: 1.45, label: '1450×1450' },
+		{ id: '1450x725', w: 1.45, h: 0.725, label: '1450×725' },
+		{ id: '725x725', w: 0.725, h: 0.725, label: '725×725' },
+	];
+	const [panelSizeW, setPanelSizeW] = React.useState(2.9);
+	const [panelSizeH, setPanelSizeH] = React.useState(1.45);
+	const setPanelSize = (w: number, h: number) => {
+		setPanelSizeW(w);
+		setPanelSizeH(h);
+	};
 	const [box, setBox] = React.useState<'thick' | 'thin' | 'rounded' | 'taper' | 'wedge' | 'ridge'>(qBox as any);
 	const [railing, setRailing] = React.useState<'none' | 'glass' | 'metal' | 'cable'>('none');
 	const [glassTone, setGlassTone] = React.useState<'extra' | 'smoked' | 'bronze'>('extra');
@@ -1238,14 +1252,16 @@ function LivePageInner() {
 		return { breakdown: items, total };
 	}
 
-	// מפרט לוח חיפוי (300×150 ס"מ = 4.5 מ"ר) – להצגה במקום תמחור מדרגות
-	const PANEL_SURFACE_M2 = 4.5;
+	// מפרט לוח חיפוי – שטח פנים מחושב לפי המידה הנבחרת
+	const panelSurfaceM2 = Math.round(panelSizeW * panelSizeH * 100) / 100;
 	const panelSpecStoneName = (nonWoodModels.find(m => m.id === activeTexId) || nonWoodModels[0])?.name || '—';
+	const panelSizeLabel = PANEL_SIZE_OPTIONS.find(o => o.w === panelSizeW && o.h === panelSizeH)?.label || `${panelSizeW * 1000}×${panelSizeH * 1000}`;
 	const panelSpecRows: Array<{ label: string; value: string }> = [
 		{ label: 'סוג אבן', value: panelSpecStoneName },
+		{ label: 'מידות (מ"מ)', value: panelSizeLabel },
 		{ label: 'עובי מערכת', value: `${panelThicknessMm} מ"מ` },
 		{ label: 'סוג ליבה', value: 'Aluminum Honeycomb' },
-		{ label: 'שטח פנים', value: `${PANEL_SURFACE_M2} מ"ר` },
+		{ label: 'שטח פנים', value: `${panelSurfaceM2} מ"ר` },
 	];
 	const { breakdown, total } = calculatePrice();
 	const priceFormatted = React.useMemo(() => {
@@ -1338,6 +1354,8 @@ function LivePageInner() {
 		// הכרחת כיוון LTR עבור ה‑URL באמצעות LRI/PDI (איסולציה) למניעת שבירה RTL
 		const ltrUrl = `\u2066${shareUrl}\u2069`;
 
+		const surfaceM2 = Math.round(panelSizeW * panelSizeH * 100) / 100;
+		const sizeLabel = PANEL_SIZE_OPTIONS.find(o => o.w === panelSizeW && o.h === panelSizeH)?.label || `${Math.round(panelSizeW * 1000)}×${Math.round(panelSizeH * 1000)}`;
 		const lines = [
 			`*ASCENSO – לוחות חיפוי*\u200F`,
 			`היי, צפיתי בהדמייה של לוח חיפוי באתר ומעוניינ/ת בפרטים.`,
@@ -1345,6 +1363,8 @@ function LivePageInner() {
 			`פרטי הבחירה:`,
 			`- חומר: ${materialLabel}`,
 			`- דגם/טקסטורה: ${textureName}`,
+			`- מידות לוח: ${sizeLabel} מ"מ`,
+			`- שטח פנים: ${surfaceM2} מ"ר`,
 			`- עובי לוח: ${panelThicknessMm} מ״מ`,
 			`- מרווח ניתוק: ${shadowGapMm} מ״מ`,
 			``,
@@ -1356,7 +1376,7 @@ function LivePageInner() {
 		}
 		const body = lines.join('\n');
 		return `\u202B${body}\u202C`;
-	}, [activeMaterial, nonWoodModels, activeTexId, panelThicknessMm, shadowGapMm]);
+	}, [activeMaterial, nonWoodModels, activeTexId, panelThicknessMm, shadowGapMm, panelSizeW, panelSizeH]);
 
 	// Handler: שיתוף לוואטסאפ
 	const handleWhatsappShare = React.useCallback(async () => {
@@ -1407,14 +1427,16 @@ function LivePageInner() {
 		const leadId = generateLeadId();
 		const timeLabel = preferredTime || '-';
 
+		const surfaceM2 = Math.round(panelSizeW * panelSizeH * 100) / 100;
+		const sizeLabel = PANEL_SIZE_OPTIONS.find(o => o.w === panelSizeW && o.h === panelSizeH)?.label || `${Math.round(panelSizeW * 1000)}×${Math.round(panelSizeH * 1000)}`;
 		const lines = [
 			'\u202B*ASCENSO – לוחות חיפוי*\u200F',
 			`מס׳ פנייה: ${formatLeadIdRTL(leadId)}`,
 			`מפרט לוח:`,
 			`- סוג אבן/חומר: ${textureName} (${materialLabel})`,
+			`- מידות: ${sizeLabel} מ"מ · שטח: ${surfaceM2} מ"ר`,
 			`- עובי מערכת: ${panelThicknessMm} מ"מ`,
 			`- ליבה: Aluminum Honeycomb`,
-			`- שטח פנים: 4.5 מ"ר`,
 			``,
 			`פרטי התקשרות:`,
 			`- שם מלא: ${fullName}`,
@@ -1493,6 +1515,21 @@ function LivePageInner() {
 								key: 'panel',
 								el: (
 									<div className="px-4 space-y-4">
+										<div>
+											<p className="text-sm font-semibold text-[#1a1a2e] mb-2">מידות לוח (מ"מ)</p>
+											<div className="flex flex-wrap gap-2 mb-1">
+												{PANEL_SIZE_OPTIONS.map(opt => (
+													<button
+														key={opt.id}
+														type="button"
+														onClick={() => setPanelSize(opt.w, opt.h)}
+														className={`px-3 py-2 rounded-lg text-sm font-medium border-2 ${panelSizeW === opt.w && panelSizeH === opt.h ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'}`}
+													>
+														{opt.label}
+													</button>
+												))}
+											</div>
+										</div>
 										<div>
 											<p className="text-sm font-semibold text-[#1a1a2e] mb-2">עובי לוח (מ״מ)</p>
 											<div className="flex gap-2">
@@ -1623,6 +1660,8 @@ function LivePageInner() {
 									thicknessMm={panelThicknessMm}
 									explodedView={explodedView}
 									backlit={backlit}
+									widthM={panelSizeW}
+									heightM={panelSizeH}
 									textureUrl={(() => {
 										// נתיבי images ב-materials.json חייבים להתחיל ב-/ (למשל /textures/stone1.jpg) ולהצביע לקבצים ב-public
 										const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0];
@@ -1639,7 +1678,7 @@ function LivePageInner() {
 									enableDamping
 									makeDefault
 									zoomToCursor
-									target={PANEL_CENTER}
+									target={getPanelCenter(panelSizeH)}
 								/>
 							</React.Suspense>
 						</Canvas>
@@ -1752,6 +1791,19 @@ function LivePageInner() {
 									{/* הגדרות לוח */}
 									<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-2 border border-[#e8e2dc] shadow-sm">
 										<span className="text-xs font-semibold text-[#1a1a2e]/70 block mb-1">הגדרות לוח</span>
+										<p className="text-sm font-medium text-[#1a1a2e] mb-1.5">מידות (מ"מ)</p>
+										<div className="flex flex-wrap gap-1.5 mb-1.5">
+											{PANEL_SIZE_OPTIONS.map(opt => (
+												<button
+													key={opt.id}
+													type="button"
+													onClick={() => setPanelSize(opt.w, opt.h)}
+													className={`px-2 py-1 rounded text-xs font-medium border ${panelSizeW === opt.w && panelSizeH === opt.h ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white border-gray-300 hover:border-gray-400'}`}
+												>
+													{opt.label}
+												</button>
+											))}
+										</div>
 										<p className="text-sm text-[#1a1a2e]">עובי {panelThicknessMm} מ״מ · ניתוק {shadowGapMm} מ״מ</p>
 										<p className="text-xs text-gray-600">{backlit ? 'תאורה אחורית: מופעלת' : 'תאורה אחורית: כבויה'} · {explodedView ? 'מבט מפוצץ' : 'תצוגה רגילה'}</p>
 									</div>
@@ -1796,7 +1848,7 @@ function LivePageInner() {
 									<span>בקשת מפרט טכני ומארז דוגמאות</span>
 								</button>
 								<div className="text-[11px] text-gray-500 mt-1">
-									לוח 300×150 ס״מ. מפרט טכני ומארז דוגמאות לפי בקשתכם.
+									לוח {panelSizeLabel} מ"מ · {panelSurfaceM2} מ"ר. מפרט טכני ומארז דוגמאות לפי בקשתכם.
 								</div>
 							</div>
 						</div>
@@ -1843,7 +1895,7 @@ function LivePageInner() {
 							<span>בקשת מפרט טכני ומארז דוגמאות</span>
 						</button>
 						<div className="text-[11px] text-gray-500 mt-1">
-							לוח 300×150 ס״מ · 4.5 מ״ר. מפרט טכני ומארז דוגמאות לפי בקשתכם.
+							לוח {panelSizeLabel} מ"מ · {panelSurfaceM2} מ"ר. מפרט טכני ומארז דוגמאות לפי בקשתכם.
 						</div>
 						</div>
 					</div>
@@ -1969,6 +2021,14 @@ function LivePageInner() {
 										{mobileOpenCat === 'panel' && (
 											<div className="p-3 bg-white border border-t-0 rounded-b-md space-y-3">
 												<div>
+													<p className="text-xs font-semibold text-[#1a1a2e] mb-1">מידות לוח (מ"מ)</p>
+													<div className="flex flex-wrap gap-1.5">
+														{PANEL_SIZE_OPTIONS.map(opt => (
+															<button key={opt.id} type="button" onClick={() => setPanelSize(opt.w, opt.h)} className={`px-2.5 py-1.5 rounded-lg text-xs border-2 ${panelSizeW === opt.w && panelSizeH === opt.h ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white border-gray-300'}`}>{opt.label}</button>
+														))}
+													</div>
+												</div>
+												<div>
 													<p className="text-xs font-semibold text-[#1a1a2e] mb-1">עובי לוח (מ״מ)</p>
 													<div className="flex gap-2">
 														{([16, 25] as const).map((mm) => (
@@ -2053,7 +2113,7 @@ function LivePageInner() {
 								</tbody>
 							</table>
 							<div className="text-[11px] text-gray-500 mt-1">
-								לוח 300×150 ס״מ · 4.5 מ״ר. MIRZA – לוחות חיפוי הנדסיים.
+								לוח {panelSizeLabel} מ"מ · {panelSurfaceM2} מ"ר. MIRZA – לוחות חיפוי הנדסיים.
 							</div>
 						</div>
 					</div>
@@ -2081,8 +2141,8 @@ function LivePageInner() {
 						<span>בקשת מפרט טכני ומארז דוגמאות</span>
 					</button>
 					<div className="text-right text-[#1a1a2e]">
-						<div className="text-sm font-semibold">לוח 4.5 מ״ר</div>
-						<div className="text-[11px] text-gray-500 leading-snug">300×150 ס״מ · Aluminum Honeycomb</div>
+						<div className="text-sm font-semibold">לוח {panelSurfaceM2} מ״ר</div>
+						<div className="text-[11px] text-gray-500 leading-snug">{panelSizeLabel} מ"מ · Aluminum Honeycomb</div>
 					</div>
 				</div>
 			</div>

@@ -4,9 +4,9 @@ import React from 'react';
 import { useLoader } from '@react-three/fiber';
 import { TextureLoader, SRGBColorSpace } from 'three';
 
-/** מידות לוח: 300×150 ס"מ. עובי 16 או 25 מ"מ (שכבת אבן + Honeycomb + אלומיניום). */
-const WIDTH_M = 3;
-const HEIGHT_M = 1.5;
+/** מידות לוח ברירת מחדל (מ') – ניתן לדריסה על ידי props widthM, heightM. */
+const DEFAULT_WIDTH_M = 2.9;
+const DEFAULT_HEIGHT_M = 1.45;
 
 const STONE_LAYER_MM = 4;
 const ALUMINUM_BACK_MM = 5;
@@ -32,8 +32,10 @@ export default function Panel3D(props: {
 	materialSolidColor?: string | null;
 	materialKind: 'metal' | 'stone';
 	backlit?: boolean;
+	widthM?: number;
+	heightM?: number;
 }) {
-	const { thicknessMm, explodedView, textureUrl, materialSolidColor, materialKind, backlit = false } = props;
+	const { thicknessMm, explodedView, textureUrl, materialSolidColor, materialKind, backlit = false, widthM = DEFAULT_WIDTH_M, heightM = DEFAULT_HEIGHT_M } = props;
 	const { totalM, stoneM, honeycombM, backM } = panelLayers(thicknessMm);
 
 	const texUrl = textureUrl && !materialSolidColor ? textureUrl : FALLBACK_TEX;
@@ -56,10 +58,10 @@ export default function Panel3D(props: {
 	const stoneEmissiveIntensity = backlit ? 1.2 : 0;
 
 	return (
-		<group position={[0, HEIGHT_M / 2, 0]}>
+		<group position={[0, heightM / 2, 0]}>
 			{/* שכבת אבן עליונה – טקסטורה Wild/גידים להמחשת Bookmatch; color לבן = גיבוי אם map חסר */}
 			<mesh position={[0, 0, stoneZ]} castShadow receiveShadow>
-				<boxGeometry args={[WIDTH_M, HEIGHT_M, stoneM]} />
+				<boxGeometry args={[widthM, heightM, stoneM]} />
 				<meshStandardMaterial
 					color={stoneColor}
 					roughness={0.5}
@@ -71,19 +73,19 @@ export default function Panel3D(props: {
 			</mesh>
 			{/* ליבת Honeycomb */}
 			<mesh position={[0, 0, honeycombZ]} castShadow receiveShadow>
-				<boxGeometry args={[WIDTH_M, HEIGHT_M, honeycombM]} />
+				<boxGeometry args={[widthM, heightM, honeycombM]} />
 				<meshStandardMaterial color="#ffffff" roughness={0.8} metalness={0.05} />
 			</mesh>
 			{/* גב אלומיניום */}
 			<mesh position={[0, 0, backZ]} castShadow receiveShadow>
-				<boxGeometry args={[WIDTH_M, HEIGHT_M, backM]} />
+				<boxGeometry args={[widthM, heightM, backM]} />
 				<meshStandardMaterial color="#ffffff" metalness={0.5} roughness={0.5} />
 			</mesh>
 		</group>
 	);
 }
 
-export const PANEL_WIDTH_M = WIDTH_M;
-export const PANEL_HEIGHT_M = HEIGHT_M;
-/** מרכז הלוח למטרת OrbitControls */
-export const PANEL_CENTER: [number, number, number] = [0, HEIGHT_M / 2, 0];
+/** מרכז הלוח למטרת OrbitControls – יש להעביר heightM כפרמטר (מרכז ב-Y = heightM/2) */
+export function getPanelCenter(heightM: number): [number, number, number] {
+	return [0, heightM / 2, 0];
+}

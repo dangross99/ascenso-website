@@ -63,7 +63,7 @@ export default function Panel3D(props: {
 				<meshStandardMaterial
 					color={stoneColor}
 					roughness={0.5}
-					metalness={materialKind === 'metal' ? 0.3 : 0.12}
+					metalness={materialKind === 'metal' ? 0.5 : 0.12}
 					map={useTexture ? tex : undefined}
 					emissive={stoneEmissive}
 					emissiveIntensity={stoneEmissiveIntensity}
@@ -77,7 +77,7 @@ export default function Panel3D(props: {
 			{/* גב אלומיניום */}
 			<mesh position={[0, 0, backZ]} castShadow receiveShadow>
 				<boxGeometry args={[WIDTH_M, HEIGHT_M, backM]} />
-				<meshStandardMaterial color="#ffffff" metalness={0.9} roughness={0.25} />
+				<meshStandardMaterial color="#ffffff" metalness={0.5} roughness={0.5} />
 			</mesh>
 		</group>
 	);

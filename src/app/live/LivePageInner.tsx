@@ -1616,6 +1616,8 @@ function LivePageInner() {
 							}}
 						>
 							<React.Suspense fallback={null}>
+								<ambientLight intensity={1.5} />
+								<pointLight position={[10, 10, 10]} intensity={1} />
 								<Environment preset="city" />
 								<Panel3D
 									thicknessMm={panelThicknessMm}

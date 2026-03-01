@@ -34,8 +34,12 @@ export default function Panel3D(props: {
 	backlit?: boolean;
 	widthM?: number;
 	heightM?: number;
+	/** כשמוצג קיר מפולג: כל תא מציג חלק מהטקסטורה (0–1). למשל [1/nx, 1/ny] */
+	uvScale?: [number, number];
+	/** א offset ב-UV לחיתוך החלק הרלוונטי. למשל [j/nx, i/ny] */
+	uvOffset?: [number, number];
 }) {
-	const { thicknessMm, explodedView, textureUrl, materialSolidColor, materialKind, backlit = false, widthM = DEFAULT_WIDTH_M, heightM = DEFAULT_HEIGHT_M } = props;
+	const { thicknessMm, explodedView, textureUrl, materialSolidColor, materialKind, backlit = false, widthM = DEFAULT_WIDTH_M, heightM = DEFAULT_HEIGHT_M, uvScale, uvOffset } = props;
 	const { totalM, stoneM, honeycombM, backM } = panelLayers(thicknessMm);
 
 	const texUrl = textureUrl && !materialSolidColor ? textureUrl : FALLBACK_TEX;
@@ -46,11 +50,20 @@ export default function Panel3D(props: {
 		}
 	}, [tex, texUrl]);
 
+	const useTexture = !materialSolidColor && textureUrl && texUrl !== FALLBACK_TEX;
+	/** כשמועברים uvScale/uvOffset – משתמשים בהעתק טקסטורה שמציג רק את החלק הרלוונטי (קיר אחד עם חלוקה) */
+	const displayTex = React.useMemo(() => {
+		if (!tex || !useTexture || !uvScale || !uvOffset) return tex;
+		const clone = tex.clone();
+		clone.repeat.set(uvScale[0], uvScale[1]);
+		clone.offset.set(uvOffset[0], uvOffset[1]);
+		return clone;
+	}, [tex, useTexture, uvScale, uvOffset]);
+	const stoneMap = useTexture ? (uvScale && uvOffset ? displayTex : tex) : undefined;
+
 	const stoneZ = explodedView ? stoneM / 2 + EXPLODED_OFFSET_M : totalM / 2 - stoneM / 2;
 	const honeycombZ = explodedView ? -honeycombM / 2 : 0;
 	const backZ = explodedView ? -totalM / 2 + backM / 2 - EXPLODED_OFFSET_M : -totalM / 2 + backM / 2;
-
-	const useTexture = !materialSolidColor && textureUrl && texUrl !== FALLBACK_TEX;
 
 	/** צבע בסיס – לבן/אפור בהיר כדי שאם הטקסטורה לא נטענת או הנתיב שגוי הלוח לא ייראה שחור */
 	const stoneColor = materialSolidColor || '#ffffff';
@@ -66,7 +79,7 @@ export default function Panel3D(props: {
 					color={stoneColor}
 					roughness={0.5}
 					metalness={materialKind === 'metal' ? 0.5 : 0.12}
-					map={useTexture ? tex : undefined}
+					map={stoneMap}
 					emissive={stoneEmissive}
 					emissiveIntensity={stoneEmissiveIntensity}
 				/>

@@ -1547,11 +1547,14 @@ function LivePageInner() {
 										return (sel as any)?.solid || null;
 									})();
 									const materialKind = activeMaterial === 'metal' ? 'metal' : 'stone';
+									// כל תא מציג חלק מהטקסטורה המלאה (קיר אחד עם חלוקה), לא פלטה שלמה חוזרת
+									const uvScale: [number, number] = [1 / panelsAlongWidth, 1 / panelsAlongHeight];
 									const cells: React.ReactNode[] = [];
 									for (let i = 0; i < panelsAlongHeight; i++) {
 										for (let j = 0; j < panelsAlongWidth; j++) {
 											const px = -totalWidth / 2 + panelSizeW / 2 + j * (panelSizeW + gapM);
 											const py = i * (panelSizeH + gapM);
+											const uvOffset: [number, number] = [j / panelsAlongWidth, i / panelsAlongHeight];
 											cells.push(
 												<group key={`${i}-${j}`} position={[px, py, 0]}>
 													<Panel3D
@@ -1562,6 +1565,8 @@ function LivePageInner() {
 														textureUrl={textureUrl}
 														materialSolidColor={materialSolidColor}
 														materialKind={materialKind}
+														uvScale={uvScale}
+														uvOffset={uvOffset}
 													/>
 												</group>
 											);

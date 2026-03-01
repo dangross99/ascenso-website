@@ -1296,13 +1296,13 @@ function LivePageInner() {
 	const optimalOrderM2 = bestPanelForWall.total * (bestPanelForWall.opt.w * bestPanelForWall.opt.h);
 	const savingsM2 = isOptimalSize ? 0 : Math.max(0, Math.round((currentOrderM2 - optimalOrderM2) * 100) / 100);
 	const panelSpecRows: Array<{ label: string; value: string }> = [
-		{ label: 'סוג אבן', value: panelSpecStoneName },
+		{ label: 'טקסטורה', value: `אבן טבעית · ${panelSpecStoneName}` },
 		{ label: 'מידות (מ"מ)', value: panelSizeLabel },
-		{ label: 'עובי מערכת', value: `${panelThicknessMm} מ"מ` },
-		{ label: 'סוג ליבה', value: 'Aluminum Honeycomb' },
-		{ label: 'שטח פנים', value: `${panelSurfaceM2} מ"ר` },
-		{ label: 'גודל הקיר (אומדן)', value: `${wallSurfaceM2} מ"ר` },
-		{ label: 'חלוקה לפלטות', value: `${panelsAlongWidth} × ${panelsAlongHeight} = ${panelsTotal} פלטות` },
+		{ label: 'מחיר למר חיפוי קיר חוץ (כולל אביזרי התקנה)', value: 'מחיר' },
+		{ label: 'מחיר למר חיפוי קיר פנים (הדבקה)', value: 'מחיר' },
+		{ label: 'מחיר התקנה למר חיפוי קיר חוץ', value: 'מחיר' },
+		{ label: 'עובי פאנל חוץ', value: '29 מ"מ' },
+		{ label: 'עובי פאנל פנים', value: '17 מ"מ' },
 	];
 	const { breakdown, total } = calculatePrice();
 	const priceFormatted = React.useMemo(() => {
@@ -1730,7 +1730,7 @@ function LivePageInner() {
 									</div>
 									{/* תיבת מידות והמלצות להזמנה (נסטינג) */}
 									<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-3 border border-[#e8e2dc] shadow-sm">
-										<span className="text-xs font-semibold text-[#1a1a2e]/70 block mb-2">הגדרות לוח · מידות והמלצות</span>
+										<span className="text-xs font-semibold text-[#1a1a2e]/70 block mb-2">מפרט לוח</span>
 										<table className="w-full text-xs text-[#1a1a2e]" dir="rtl">
 											<tbody>
 												{panelSpecRows.map(row => (
@@ -1903,7 +1903,7 @@ function LivePageInner() {
 										{mobileOpenCat === 'panel' && (
 											<div className="p-3 bg-white border border-t-0 rounded-b-md">
 												<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-3 border border-[#e8e2dc] shadow-sm">
-													<span className="text-xs font-semibold text-[#1a1a2e]/70 block mb-2">מידות והמלצות להזמנה</span>
+													<span className="text-xs font-semibold text-[#1a1a2e]/70 block mb-2">מפרט לוח</span>
 													<table className="w-full text-xs text-[#1a1a2e]" dir="rtl">
 														<tbody>
 															{panelSpecRows.map(row => (

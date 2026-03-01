@@ -1481,7 +1481,6 @@ function LivePageInner() {
 							</button>
 						</div>
 						<div className="pt-2">
-								<p className="text-sm font-semibold text-[#1a1a2e] mb-2 text-center">דגם / טקסטורה</p>
 								<NonWoodTexturePicker
 									nonWoodModels={nonWoodModels as any}
 									activeTexId={activeTexId}
@@ -1493,11 +1492,6 @@ function LivePageInner() {
 										})
 									}
 								/>
-								<div className="pt-4 mt-4 text-center">
-									<a href={`https://api.whatsapp.com/send?phone=${(whatsappPhone || '').replace(/\D/g, '')}&text=${encodeURIComponent(buildWhatsappText(generateLeadId(), '', false))}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-md bg-emerald-600 text-white px-5 py-2.5 text-sm font-semibold shadow-sm hover:bg-emerald-700 hover:opacity-95 cursor-pointer" aria-label="שלח הודעה בוואטסאפ">
-										בקשת מפרט טכני ומארז דוגמאות
-									</a>
-								</div>
 						</div>
 					</div>
 

@@ -1652,6 +1652,16 @@ function LivePageInner() {
 						<div className="hidden lg:block lg:col-span-1">
 							<div className="bg-white rounded-md p-3 h-full space-y-3">
 								<div className="space-y-2">
+									{/* גודל הקיר – חלון נפרד מעל */}
+									<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-2 border border-[#e8e2dc] shadow-sm">
+										<span className="text-xs font-semibold text-[#1a1a2e]/70 block mb-1.5">גודל הקיר (אומדן, מ')</span>
+										<div className="flex flex-wrap items-center gap-2">
+											<input type="number" min={0.1} max={50} step={0.1} value={wallWidthM} onChange={e => setWallWidthM(Math.max(0.1, Math.min(50, Number(e.target.value) || 0.1)))} className="w-16 px-2 py-1 text-sm border border-gray-300 rounded" aria-label="רוחב קיר במטרים" />
+											<span className="text-gray-500">×</span>
+											<input type="number" min={0.1} max={50} step={0.1} value={wallHeightM} onChange={e => setWallHeightM(Math.max(0.1, Math.min(50, Number(e.target.value) || 0.1)))} className="w-16 px-2 py-1 text-sm border border-gray-300 rounded" aria-label="גובה קיר במטרים" />
+											<span className="text-sm text-[#1a1a2e]">= {wallSurfaceM2} מ"ר</span>
+										</div>
+									</div>
 									{/* הגדרות לוח */}
 									<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-2 border border-[#e8e2dc] shadow-sm">
 										<span className="text-xs font-semibold text-[#1a1a2e]/70 block mb-1">הגדרות לוח</span>
@@ -1669,13 +1679,6 @@ function LivePageInner() {
 											))}
 										</div>
 										<p className="text-sm text-[#1a1a2e]">עובי {panelThicknessMm} מ״מ · ניתוק {shadowGapMm} מ״מ</p>
-										<p className="text-sm font-medium text-[#1a1a2e] mt-2 mb-1">גודל הקיר (אומדן, מ')</p>
-										<div className="flex flex-wrap items-center gap-2">
-											<input type="number" min={0.1} max={50} step={0.1} value={wallWidthM} onChange={e => setWallWidthM(Math.max(0.1, Math.min(50, Number(e.target.value) || 0.1)))} className="w-16 px-2 py-1 text-sm border border-gray-300 rounded" aria-label="רוחב קיר במטרים" />
-											<span className="text-gray-500">×</span>
-											<input type="number" min={0.1} max={50} step={0.1} value={wallHeightM} onChange={e => setWallHeightM(Math.max(0.1, Math.min(50, Number(e.target.value) || 0.1)))} className="w-16 px-2 py-1 text-sm border border-gray-300 rounded" aria-label="גובה קיר במטרים" />
-											<span className="text-sm text-[#1a1a2e]">= {wallSurfaceM2} מ"ר</span>
-										</div>
 									</div>
 									{/* הטקסטורה הנבחרת – תמונה + סוג חומר + שם */}
 									{(() => {
@@ -1903,15 +1906,6 @@ function LivePageInner() {
 														))}
 													</div>
 												</div>
-												<div>
-													<p className="text-xs font-semibold text-[#1a1a2e] mb-1">גודל הקיר (אומדן, מ')</p>
-													<div className="flex flex-wrap items-center gap-2">
-														<input type="number" min={0.1} max={50} step={0.1} value={wallWidthM} onChange={e => setWallWidthM(Math.max(0.1, Math.min(50, Number(e.target.value) || 0.1)))} className="w-14 px-2 py-1.5 text-sm border-2 border-gray-300 rounded-lg" aria-label="רוחב קיר במטרים" />
-														<span className="text-gray-500">×</span>
-														<input type="number" min={0.1} max={50} step={0.1} value={wallHeightM} onChange={e => setWallHeightM(Math.max(0.1, Math.min(50, Number(e.target.value) || 0.1)))} className="w-14 px-2 py-1.5 text-sm border-2 border-gray-300 rounded-lg" aria-label="גובה קיר במטרים" />
-														<span className="text-xs text-[#1a1a2e]">= {wallSurfaceM2} מ"ר</span>
-													</div>
-												</div>
 											</div>
 										)}
 									</div>
@@ -1933,6 +1927,16 @@ function LivePageInner() {
 												{m === 'metal' ? 'מתכת' : 'אבן טבעית'}
 											</button>
 										))}
+									</div>
+									{/* גודל הקיר – חלון נפרד מעל הטאבים */}
+									<div className="mx-2 mb-2 rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-2 border border-[#e8e2dc] shadow-sm">
+										<span className="text-xs font-semibold text-[#1a1a2e]/70 block mb-1.5">גודל הקיר (אומדן, מ')</span>
+										<div className="flex flex-wrap items-center gap-2">
+											<input type="number" min={0.1} max={50} step={0.1} value={wallWidthM} onChange={e => setWallWidthM(Math.max(0.1, Math.min(50, Number(e.target.value) || 0.1)))} className="w-14 px-2 py-1.5 text-sm border-2 border-gray-300 rounded-lg" aria-label="רוחב קיר במטרים" />
+											<span className="text-gray-500">×</span>
+											<input type="number" min={0.1} max={50} step={0.1} value={wallHeightM} onChange={e => setWallHeightM(Math.max(0.1, Math.min(50, Number(e.target.value) || 0.1)))} className="w-14 px-2 py-1.5 text-sm border-2 border-gray-300 rounded-lg" aria-label="גובה קיר במטרים" />
+											<span className="text-xs text-[#1a1a2e]">= {wallSurfaceM2} מ"ר</span>
+										</div>
 									</div>
 									<div className="sticky top-0 z-20 bg-white/95 backdrop-blur border-b">
 										<div className="flex items-center overflow-x-auto px-2 py-3 w-full lg:justify-center gap-0" dir="rtl">

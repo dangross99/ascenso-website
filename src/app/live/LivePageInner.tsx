@@ -1576,11 +1576,11 @@ function LivePageInner() {
 											const cellH = i === panelsAlongHeight - 1 ? lastRowHeight : panelSizeH;
 											const px = -wallWidthM / 2 + (j < panelsAlongWidth - 1 ? j * (panelSizeW + g) + panelSizeW / 2 : (panelsAlongWidth - 1) * (panelSizeW + g) + lastColWidth / 2);
 											const py = i < panelsAlongHeight - 1 ? i * (panelSizeH + g) + panelSizeH / 2 : (panelsAlongHeight - 1) * (panelSizeH + g) + lastRowHeight / 2;
-											/* UV לפי מיקום פיזי על הקיר – התמונה המלאה נמתחת על כל הקיר, והשלמות משלימות את החלק הנכון */
-											const leftWall = px + wallWidthM / 2 - cellW / 2;
-											const bottomWall = py - cellH / 2;
-											const uvScale: [number, number] = [cellW / wallWidthM, cellH / wallHeightM];
-											const uvOffset: [number, number] = [leftWall / wallWidthM, bottomWall / wallHeightM];
+											/* UV לפי גריד – תא (j,i) מקבל חתך מהטקסטורה; השלמה מקבלת יחס lastCol/lastRow מהתא */
+											const uvScaleX = (j === panelsAlongWidth - 1 ? lastColWidth / panelSizeW : 1) / panelsAlongWidth;
+											const uvScaleY = (i === panelsAlongHeight - 1 ? lastRowHeight / panelSizeH : 1) / panelsAlongHeight;
+											const uvScale: [number, number] = [uvScaleX, uvScaleY];
+											const uvOffset: [number, number] = [j / panelsAlongWidth, i / panelsAlongHeight];
 											/* סטיית עומק זעירה לכל פלטה (אחידה) – מונעת z-fighting בלי מדרגה בין השלמות לשאר */
 											const zBias = (i * panelsAlongWidth + j) * 0.00003;
 											cells.push(

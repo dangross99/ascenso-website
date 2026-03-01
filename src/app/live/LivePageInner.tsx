@@ -19,7 +19,7 @@ function getWallCenter(
 	return [0, totalHeight / 2, 0];
 }
 
-/** הדמיית בית לדוגמא – חזית קבועה עם לוחות חיפוי (המפרט/מחיר לפי מ"ר נשארים) */
+/** הדמיית בית לדוגמא – חזית אמיתית: נפחים מפוצלים, בסיס אפור, עץ, גג עם זיז (המפרט/מחיר לפי מ"ר) */
 function ExampleHouseScene(props: {
 	textureUrl: string | null;
 	materialSolidColor: string | null;
@@ -36,11 +36,9 @@ function ExampleHouseScene(props: {
 	const totalWidth = panelsAlongWidth * panelSizeW + (panelsAlongWidth - 1) * gapM;
 	const totalHeight = panelsAlongHeight * panelSizeH + (panelsAlongHeight - 1) * gapM;
 	const uvScale: [number, number] = [1 / panelsAlongWidth, 1 / panelsAlongHeight];
-	const buildingW = 10;
-	const buildingD = 5;
-	const buildingH = 6;
+	const frontZ = 2.6;
 	const cladCenterY = 0.5 + totalHeight / 2;
-	const cladZ = buildingD / 2 + 0.02;
+	const cladZ = frontZ + 0.02;
 	const cells: React.ReactNode[] = [];
 	for (let i = 0; i < panelsAlongHeight; i++) {
 		for (let j = 0; j < panelsAlongWidth; j++) {
@@ -66,43 +64,71 @@ function ExampleHouseScene(props: {
 	}
 	return (
 		<>
-			{/* גוף הבניין – לבן */}
-			<mesh position={[0, buildingH / 2, 0]} castShadow receiveShadow>
-				<boxGeometry args={[buildingW, buildingH, buildingD]} />
-				<meshStandardMaterial color="#f5f3ef" roughness={0.9} metalness={0.05} />
+			{/* גוף ראשי – טיח לבן */}
+			<mesh position={[0, 2.5, 0]} castShadow receiveShadow>
+				<boxGeometry args={[8, 5, 5]} />
+				<meshStandardMaterial color="#f8f6f2" roughness={0.92} metalness={0.02} />
 			</mesh>
-			{/* גג שטוח */}
-			<mesh position={[0, buildingH + 0.08, 0]} castShadow>
-				<boxGeometry args={[buildingW + 0.5, 0.15, buildingD + 0.3]} />
-				<meshStandardMaterial color="#e8e4dc" roughness={0.85} metalness={0.05} />
+			{/* אגף צדדי (נסיגה) – מוסיף עומק */}
+			<mesh position={[-4.8, 1.8, -0.3]} castShadow receiveShadow>
+				<boxGeometry args={[2.8, 3.6, 4.2]} />
+				<meshStandardMaterial color="#f2f0ec" roughness={0.9} metalness={0.03} />
+			</mesh>
+			{/* בסיס אפור (בטון/ציפוי) */}
+			<mesh position={[0, 0.4, frontZ + 0.05]} castShadow>
+				<boxGeometry args={[8.1, 0.8, 0.15]} />
+				<meshStandardMaterial color="#6b6b6b" roughness={0.85} metalness={0.08} />
+			</mesh>
+			{/* גג שטוח עם זיז */}
+			<mesh position={[0, 5.12, 0]} castShadow>
+				<boxGeometry args={[8.6, 0.18, 5.6]} />
+				<meshStandardMaterial color="#e5e2dc" roughness={0.88} metalness={0.04} />
+			</mesh>
+			{/* זיז גג (חזית) */}
+			<mesh position={[0, 5.1, frontZ + 0.35]} castShadow>
+				<boxGeometry args={[8.4, 0.12, 0.4]} />
+				<meshStandardMaterial color="#e0ddd6" roughness={0.9} metalness={0.03} />
 			</mesh>
 			{/* אזור חיפוי לוחות – גריד פלטות על החזית */}
 			<group position={[0, cladCenterY, cladZ]}>
 				{cells}
 			</group>
-			{/* דלת – מרכז חזית */}
-			<mesh position={[0, 1.1, buildingD / 2 + 0.03]} castShadow>
-				<boxGeometry args={[1, 2.2, 0.08]} />
-				<meshStandardMaterial color="#2c2c2c" roughness={0.6} metalness={0.2} />
+			{/* אקסנט עץ (פס אנכי ליד הכניסה) */}
+			<mesh position={[-2.6, 2.8, frontZ + 0.04]} castShadow>
+				<boxGeometry args={[0.9, 4.2, 0.08]} />
+				<meshStandardMaterial color="#5c4a3a" roughness={0.75} metalness={0.05} />
 			</mesh>
-			{/* חלונות – קומה עליונה */}
-			<mesh position={[-2.2, 4.2, buildingD / 2 + 0.03]} castShadow>
-				<boxGeometry args={[1.2, 1.2, 0.06]} />
-				<meshStandardMaterial color="#a8d4e6" roughness={0.2} metalness={0} />
+			{/* דלת כניסה */}
+			<mesh position={[0.6, 1.15, frontZ + 0.035]} castShadow>
+				<boxGeometry args={[1, 2.2, 0.06]} />
+				<meshStandardMaterial color="#1e1e1e" roughness={0.5} metalness={0.25} />
 			</mesh>
-			<mesh position={[2.2, 4.2, buildingD / 2 + 0.03]} castShadow>
-				<boxGeometry args={[1.2, 1.2, 0.06]} />
-				<meshStandardMaterial color="#a8d4e6" roughness={0.2} metalness={0} />
+			{/* חלונות – מסגרת כהה + זגוגית */}
+			<mesh position={[-3.5, 3.5, frontZ + 0.034]} castShadow>
+				<boxGeometry args={[1.1, 1.1, 0.05]} />
+				<meshStandardMaterial color="#2a2a2a" roughness={0.55} metalness={0.2} />
+			</mesh>
+			<mesh position={[2.4, 3.5, frontZ + 0.034]} castShadow>
+				<boxGeometry args={[1.1, 1.1, 0.05]} />
+				<meshStandardMaterial color="#2a2a2a" roughness={0.55} metalness={0.2} />
+			</mesh>
+			<mesh position={[-3.5, 4.6, frontZ + 0.034]} castShadow>
+				<boxGeometry args={[1.1, 0.9, 0.05]} />
+				<meshStandardMaterial color="#2a2a2a" roughness={0.55} metalness={0.2} />
+			</mesh>
+			<mesh position={[2.4, 4.6, frontZ + 0.034]} castShadow>
+				<boxGeometry args={[1.1, 0.9, 0.05]} />
+				<meshStandardMaterial color="#2a2a2a" roughness={0.55} metalness={0.2} />
 			</mesh>
 			{/* רצפה / אדמה */}
-			<mesh position={[0, -0.05, buildingD / 2 + 1]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-				<planeGeometry args={[buildingW + 4, 8]} />
-				<meshStandardMaterial color="#8b7355" roughness={0.95} metalness={0.05} />
+			<mesh position={[0, -0.06, frontZ + 1.2]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+				<planeGeometry args={[14, 10]} />
+				<meshStandardMaterial color="#7a6b5a" roughness={0.95} metalness={0.04} />
 			</mesh>
-			{/* צל רך */}
-			<mesh position={[0, -0.02, buildingD / 2 + 0.8]} rotation={[-Math.PI / 2, 0, 0]}>
-				<planeGeometry args={[buildingW * 0.9, 3]} />
-				<meshBasicMaterial color="#000000" transparent opacity={0.2} depthWrite={false} />
+			{/* צל רך מתחת לחזית */}
+			<mesh position={[0, -0.02, frontZ + 0.6]} rotation={[-Math.PI / 2, 0, 0]}>
+				<planeGeometry args={[7.5, 2.5]} />
+				<meshBasicMaterial color="#000000" transparent opacity={0.22} depthWrite={false} />
 			</mesh>
 		</>
 	);
@@ -610,8 +636,6 @@ function LivePageInner() {
 	// עזרת מובייל: באנר פתיחה והסבר קצר
 	const [mobileHelpDismissed, setMobileHelpDismissed] = React.useState(false);
 	const [mobileHelpOpen, setMobileHelpOpen] = React.useState(true);
-	// מצב תצוגה: קיר דינמי לפי מידות | הדמיית בית לדוגמא (קבוע, מפרט/מחיר לפי מ"ר)
-	const [showExampleHouse, setShowExampleHouse] = React.useState(false);
 	React.useEffect(() => {
 		try {
 			const v = localStorage.getItem('ascenso:live:mobileHelpDismissed');
@@ -1609,18 +1633,9 @@ function LivePageInner() {
 					<div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
 						<div className="lg:col-span-2">
 					<div ref={canvasWrapRef} className="relative w-full aspect-[16/9] lg:aspect-auto lg:h-[60vh] bg-white border overflow-hidden rounded fixed inset-x-0 z-30 lg:relative" style={{ height: mobileCanvasH || undefined, top: (mobileHeaderH + mobileTabsH) || 0 }}>
-						<button
-							type="button"
-							onClick={() => setShowExampleHouse(v => !v)}
-							className="absolute top-2 right-2 z-40 px-3 py-1.5 rounded-lg text-xs font-medium bg-white/95 border border-gray-200 shadow-sm hover:bg-gray-50 text-[#1a1a2e]"
-							aria-pressed={showExampleHouse}
-						>
-							{showExampleHouse ? 'קיר לפי מידות' : 'הדמיית בית לדוגמא'}
-						</button>
 						<Canvas
-							// תאורה קבועה ויציבה: בלי shadows ובלי post-processing
 							shadows={false}
-							camera={{ position: showExampleHouse ? [0, 3, 12] : [-2.494, 1.897, 3.259], fov: 45 }}
+							camera={{ position: [0, 3, 12], fov: 45 }}
 							dpr={[1, isDesktopViewport ? 2 : 1.5]}
 							gl={{
 								toneMapping: ACESFilmicToneMapping,
@@ -1635,94 +1650,22 @@ function LivePageInner() {
 								<ambientLight intensity={1.5} />
 								<pointLight position={[10, 10, 10]} intensity={1} />
 								<Environment preset="city" />
-								{showExampleHouse ? (
-									<ExampleHouseScene
-										textureUrl={(() => {
-											const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0];
-											return (sel as any)?.solid ? null : (sel?.images?.[0] || null);
-										})()}
-										materialSolidColor={(nonWoodModels.find(r => r.id === activeTexId) as any)?.solid ?? null}
-										materialKind={activeMaterial === 'metal' ? 'metal' : 'stone'}
-										panelThicknessMm={panelThicknessMm}
-										shadowGapMm={shadowGapMm}
-									/>
-								) : (() => {
-									const gapM = shadowGapMm / 1000;
-									const totalWidth = panelsAlongWidth * panelSizeW + (panelsAlongWidth - 1) * gapM;
-									const totalHeight = panelsAlongHeight * panelSizeH + (panelsAlongHeight - 1) * gapM;
-									const textureUrl = (() => {
+								<ExampleHouseScene
+									textureUrl={(() => {
 										const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0];
 										return (sel as any)?.solid ? null : (sel?.images?.[0] || null);
-									})();
-									const materialSolidColor = (() => {
-										const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0];
-										return (sel as any)?.solid || null;
-									})();
-									const materialKind = activeMaterial === 'metal' ? 'metal' : 'stone';
-									// כל תא מציג חלק מהטקסטורה המלאה (קיר אחד עם חלוקה), לא פלטה שלמה חוזרת
-									const uvScale: [number, number] = [1 / panelsAlongWidth, 1 / panelsAlongHeight];
-									const cells: React.ReactNode[] = [];
-									for (let i = 0; i < panelsAlongHeight; i++) {
-										for (let j = 0; j < panelsAlongWidth; j++) {
-											const px = -totalWidth / 2 + panelSizeW / 2 + j * (panelSizeW + gapM);
-											const py = i * (panelSizeH + gapM);
-											const uvOffset: [number, number] = [j / panelsAlongWidth, i / panelsAlongHeight];
-											cells.push(
-												<group key={`${i}-${j}`} position={[px, py, 0]}>
-													<Panel3D
-														thicknessMm={panelThicknessMm}
-														explodedView={false}
-														widthM={panelSizeW}
-														heightM={panelSizeH}
-														textureUrl={textureUrl}
-														materialSolidColor={materialSolidColor}
-														materialKind={materialKind}
-														uvScale={uvScale}
-														uvOffset={uvOffset}
-													/>
-												</group>
-											);
-										}
-									}
-									// 1) בסיס ורגליים לקרקע: רצפה + צל רך
-									const groundW = Math.max(totalWidth + 1.5, 4);
-									const groundD = 2.5;
-									const windowW = 1.2;
-									const windowH = 1.2;
-									const windowBottomY = 0.8;
-									return (
-										<>
-											{/* רצפה / אדמה */}
-											<mesh position={[0, -0.06, 0.3]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-												<planeGeometry args={[groundW, groundD]} />
-												<meshStandardMaterial color="#8b7355" roughness={0.95} metalness={0.05} />
-											</mesh>
-											{/* צל רך מתחת לקיר */}
-											<mesh position={[0, -0.02, 0.25]} rotation={[-Math.PI / 2, 0, 0]}>
-												<planeGeometry args={[totalWidth * 0.95, 0.6]} />
-												<meshBasicMaterial color="#000000" transparent opacity={0.25} depthWrite={false} />
-											</mesh>
-											{cells}
-											{/* 2) רמז לקנה מידה: חלון בגובה ריאליסטי (~1.2×1.2 מ', תחתית בגובה ~0.8 מ') */}
-											<group position={[0, windowBottomY + windowH / 2, 0.016]}>
-												<mesh castShadow>
-													<boxGeometry args={[windowW, windowH, 0.12]} />
-													<meshStandardMaterial color="#e8e4dc" roughness={0.7} metalness={0.1} />
-												</mesh>
-												<mesh position={[0, 0, 0.061]}>
-													<planeGeometry args={[windowW - 0.08, windowH - 0.08]} />
-													<meshStandardMaterial color="#a8d4e6" roughness={0.2} metalness={0} />
-												</mesh>
-											</group>
-										</>
-									);
-								})()}
+									})()}
+									materialSolidColor={(nonWoodModels.find(r => r.id === activeTexId) as any)?.solid ?? null}
+									materialKind={activeMaterial === 'metal' ? 'metal' : 'stone'}
+									panelThicknessMm={panelThicknessMm}
+									shadowGapMm={shadowGapMm}
+								/>
 								<OrbitControls
 									ref={orbitRef}
 									enableDamping
 									makeDefault
 									zoomToCursor
-									target={showExampleHouse ? [0, 3, 0] : getWallCenter(panelsAlongHeight, panelSizeH, shadowGapMm / 1000)}
+									target={[0, 3, 0]}
 								/>
 							</React.Suspense>
 						</Canvas>

@@ -1296,11 +1296,11 @@ function LivePageInner() {
 	const optimalOrderM2 = bestPanelForWall.total * (bestPanelForWall.opt.w * bestPanelForWall.opt.h);
 	const savingsM2 = isOptimalSize ? 0 : Math.max(0, Math.round((currentOrderM2 - optimalOrderM2) * 100) / 100);
 	const panelSpecRows: Array<{ label: string; value: string }> = [
-		{ label: 'טקסטורה', value: `אבן טבעית · ${panelSpecStoneName}` },
+		{ label: 'טקסטורה', value: `${activeMaterial === 'metal' ? 'מתכת' : 'אבן טבעית'} · ${panelSpecStoneName}` },
 		{ label: 'מידות (מ"מ)', value: panelSizeLabel },
-		{ label: 'מחיר למר חיפוי קיר חוץ (כולל אביזרי התקנה)', value: 'מחיר' },
-		{ label: 'מחיר למר חיפוי קיר פנים (הדבקה)', value: 'מחיר' },
-		{ label: 'מחיר התקנה למר חיפוי קיר חוץ', value: 'מחיר' },
+		{ label: 'מחיר למ"ר חיפוי קיר חוץ (כולל אביזרי התקנה)', value: 'מחיר' },
+		{ label: 'מחיר למ"ר חיפוי קיר פנים (הדבקה)', value: 'מחיר' },
+		{ label: 'מחיר התקנה למ"ר חיפוי קיר חוץ', value: 'מחיר' },
 		{ label: 'עובי פאנל חוץ', value: '29 מ"מ' },
 		{ label: 'עובי פאנל פנים', value: '17 מ"מ' },
 	];
@@ -1730,31 +1730,31 @@ function LivePageInner() {
 									</div>
 									{/* תיבת מידות והמלצות להזמנה (נסטינג) */}
 									<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-3 border border-[#e8e2dc] shadow-sm">
-										<span className="text-xs font-semibold text-[#1a1a2e]/70 block mb-2">מפרט לוח</span>
+										<h3 className="text-sm font-bold text-[#1a1a2e] mb-2.5">מפרט לוח</h3>
 										<table className="w-full text-xs text-[#1a1a2e]" dir="rtl">
 											<tbody>
 												{panelSpecRows.map(row => (
-													<tr key={row.label} className="border-b border-[#e8e2dc]/60">
-														<td className="py-1 pr-1 text-gray-600">{row.label}</td>
-														<td className="py-1 font-medium text-left">{row.value}</td>
+													<tr key={row.label} className="border-b border-[#e8e2dc]/70 last:border-0">
+														<td className="py-2 pr-2 text-[#1a1a2e]/75 align-top">{row.label}</td>
+														<td className="py-2 pl-2 font-medium text-left text-[#1a1a2e] align-top">{row.value}</td>
 													</tr>
 												))}
 											</tbody>
 										</table>
-										<div className="mt-2 pt-2 border-t border-[#e8e2dc]">
+										<div className="mt-3 pt-3 border-t border-[#e8e2dc]">
 											<p className="text-xs font-semibold text-[#1a1a2e] mb-1">המלצה להזמנה</p>
 											{isOptimalSize ? (
 												<p className="text-xs text-emerald-700">המידה הנבחרת אופטימלית לגודל הקיר – מינימום פלטות ומינימום מ"ר להזמנה.</p>
 											) : (
 												<>
-													<p className="text-xs text-gray-700 mb-1.5">לחיסכון : מידה {bestPanelForWall.opt.label} – {bestPanelForWall.total} פלטות (חלוקה {bestPanelForWall.nw}×{bestPanelForWall.nh}).{panelsSaved > 0 && ` חיסכון של ${panelsSaved} פלטות.`}{savingsM2 > 0 ? ` חיסכון של ${savingsM2} מ"ר בהזמנה.` : ''}</p>
+													<p className="text-xs text-gray-700 mb-1.5">לחיסכון: מידה {bestPanelForWall.opt.label} – {bestPanelForWall.total} פלטות (חלוקה {bestPanelForWall.nw}×{bestPanelForWall.nh}).{panelsSaved > 0 && ` חיסכון של ${panelsSaved} פלטות.`}{savingsM2 > 0 ? ` חיסכון של ${savingsM2} מ"ר בהזמנה.` : ''}</p>
 													<button type="button" onClick={() => setPanelSize(bestPanelForWall.opt.w, bestPanelForWall.opt.h)} className="text-xs font-medium text-[#1a1a2e] underline hover:no-underline">
 														החל מידה מומלצת
 													</button>
 												</>
 											)}
 										</div>
-										<div className="mt-2 pt-2 border-t border-[#e8e2dc]">
+										<div className="mt-3 pt-3 border-t border-[#e8e2dc]">
 											<div className="flex flex-wrap gap-1 mb-1">
 												{PANEL_SIZE_OPTIONS.map(opt => (
 													<button key={opt.id} type="button" onClick={() => setPanelSize(opt.w, opt.h)} className={`px-2 py-1 rounded text-xs font-medium border ${panelSizeW === opt.w && panelSizeH === opt.h ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white border-gray-300 hover:border-gray-400'}`}>{opt.label}</button>
@@ -1903,18 +1903,18 @@ function LivePageInner() {
 										{mobileOpenCat === 'panel' && (
 											<div className="p-3 bg-white border border-t-0 rounded-b-md">
 												<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-3 border border-[#e8e2dc] shadow-sm">
-													<span className="text-xs font-semibold text-[#1a1a2e]/70 block mb-2">מפרט לוח</span>
+													<h3 className="text-sm font-bold text-[#1a1a2e] mb-2.5">מפרט לוח</h3>
 													<table className="w-full text-xs text-[#1a1a2e]" dir="rtl">
 														<tbody>
 															{panelSpecRows.map(row => (
-																<tr key={row.label} className="border-b border-[#e8e2dc]/60">
-																	<td className="py-1 pr-1 text-gray-600">{row.label}</td>
-																	<td className="py-1 font-medium text-left">{row.value}</td>
+																<tr key={row.label} className="border-b border-[#e8e2dc]/70 last:border-0">
+																	<td className="py-2 pr-2 text-[#1a1a2e]/75 align-top">{row.label}</td>
+																	<td className="py-2 pl-2 font-medium text-left text-[#1a1a2e] align-top">{row.value}</td>
 																</tr>
 															))}
 														</tbody>
 													</table>
-													<div className="mt-2 pt-2 border-t border-[#e8e2dc]">
+													<div className="mt-3 pt-3 border-t border-[#e8e2dc]">
 														<p className="text-xs font-semibold text-[#1a1a2e] mb-1">המלצה להזמנה</p>
 														{isOptimalSize ? (
 															<p className="text-xs text-emerald-700">המידה הנבחרת אופטימלית – מינימום פלטות ומ"ר להזמנה.</p>
@@ -1927,7 +1927,7 @@ function LivePageInner() {
 															</>
 														)}
 													</div>
-													<div className="mt-2 pt-2 border-t border-[#e8e2dc] space-y-2">
+													<div className="mt-3 pt-3 border-t border-[#e8e2dc] space-y-2">
 														<div>
 															<p className="text-xs font-semibold text-[#1a1a2e] mb-1">מידות לוח</p>
 															<div className="flex flex-wrap gap-1.5">

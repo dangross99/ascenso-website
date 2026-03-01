@@ -19,7 +19,7 @@ function getWallCenter(
 	return [0, totalHeight / 2, 0];
 }
 
-/** הדמיית בית לדוגמא – חזית אמיתית: נפחים מפוצלים, בסיס אפור, עץ, גג עם זיז (המפרט/מחיר לפי מ"ר) */
+/** הדמיית בית מרשימה – החיפוי כוכב החזית, וילה פרימיום (המפרט/מחיר לפי מ"ר) */
 function ExampleHouseScene(props: {
 	textureUrl: string | null;
 	materialSolidColor: string | null;
@@ -31,13 +31,13 @@ function ExampleHouseScene(props: {
 	const gapM = shadowGapMm / 1000;
 	const panelSizeW = 2.9;
 	const panelSizeH = 1.45;
-	const panelsAlongWidth = 2;
-	const panelsAlongHeight = 3;
+	const panelsAlongWidth = 3;
+	const panelsAlongHeight = 4;
 	const totalWidth = panelsAlongWidth * panelSizeW + (panelsAlongWidth - 1) * gapM;
 	const totalHeight = panelsAlongHeight * panelSizeH + (panelsAlongHeight - 1) * gapM;
 	const uvScale: [number, number] = [1 / panelsAlongWidth, 1 / panelsAlongHeight];
-	const frontZ = 2.6;
-	const cladCenterY = 0.5 + totalHeight / 2;
+	const frontZ = 2.75;
+	const cladCenterY = 0.6 + totalHeight / 2;
 	const cladZ = frontZ + 0.02;
 	const cells: React.ReactNode[] = [];
 	for (let i = 0; i < panelsAlongHeight; i++) {
@@ -64,71 +64,66 @@ function ExampleHouseScene(props: {
 	}
 	return (
 		<>
-			{/* גוף ראשי – טיח לבן */}
-			<mesh position={[0, 2.5, 0]} castShadow receiveShadow>
-				<boxGeometry args={[8, 5, 5]} />
-				<meshStandardMaterial color="#f8f6f2" roughness={0.92} metalness={0.02} />
+			{/* גוף ראשי – וילה לבנה, נפח דומיננטי */}
+			<mesh position={[0, 3.2, 0]} castShadow receiveShadow>
+				<boxGeometry args={[11, 6.4, 5.5]} />
+				<meshStandardMaterial color="#faf9f6" roughness={0.88} metalness={0.02} />
 			</mesh>
-			{/* אגף צדדי (נסיגה) – מוסיף עומק */}
-			<mesh position={[-4.8, 1.8, -0.3]} castShadow receiveShadow>
-				<boxGeometry args={[2.8, 3.6, 4.2]} />
-				<meshStandardMaterial color="#f2f0ec" roughness={0.9} metalness={0.03} />
+			{/* אגף משני – נמוך יותר, אפור אנטרציט (ניגוד) */}
+			<mesh position={[5.8, 1.5, -0.4]} castShadow receiveShadow>
+				<boxGeometry args={[4, 3, 4.5]} />
+				<meshStandardMaterial color="#3d3d3d" roughness={0.82} metalness={0.12} />
 			</mesh>
-			{/* בסיס אפור (בטון/ציפוי) */}
-			<mesh position={[0, 0.4, frontZ + 0.05]} castShadow>
-				<boxGeometry args={[8.1, 0.8, 0.15]} />
-				<meshStandardMaterial color="#6b6b6b" roughness={0.85} metalness={0.08} />
+			{/* בסיס אבן/בטון – כהה, מרשים */}
+			<mesh position={[0, 0.35, frontZ + 0.06]} castShadow>
+				<boxGeometry args={[11.2, 0.7, 0.2]} />
+				<meshStandardMaterial color="#2d2d2d" roughness={0.8} metalness={0.1} />
 			</mesh>
-			{/* גג שטוח עם זיז */}
-			<mesh position={[0, 5.12, 0]} castShadow>
-				<boxGeometry args={[8.6, 0.18, 5.6]} />
-				<meshStandardMaterial color="#e5e2dc" roughness={0.88} metalness={0.04} />
+			{/* גג שטוח – זיז גדול, קו נקי */}
+			<mesh position={[0, 6.55, 0]} castShadow>
+				<boxGeometry args={[11.8, 0.2, 6.2]} />
+				<meshStandardMaterial color="#e8e6e0" roughness={0.85} metalness={0.04} />
 			</mesh>
-			{/* זיז גג (חזית) */}
-			<mesh position={[0, 5.1, frontZ + 0.35]} castShadow>
-				<boxGeometry args={[8.4, 0.12, 0.4]} />
-				<meshStandardMaterial color="#e0ddd6" roughness={0.9} metalness={0.03} />
+			<mesh position={[0, 6.5, frontZ + 0.55]} castShadow>
+				<boxGeometry args={[11.4, 0.15, 0.7]} />
+				<meshStandardMaterial color="#dddcd6" roughness={0.88} metalness={0.03} />
 			</mesh>
-			{/* אזור חיפוי לוחות – גריד פלטות על החזית */}
+			{/* חיפוי לוחות – כוכב החזית, גריד 3×4 דומיננטי */}
 			<group position={[0, cladCenterY, cladZ]}>
 				{cells}
 			</group>
-			{/* אקסנט עץ (פס אנכי ליד הכניסה) */}
-			<mesh position={[-2.6, 2.8, frontZ + 0.04]} castShadow>
-				<boxGeometry args={[0.9, 4.2, 0.08]} />
-				<meshStandardMaterial color="#5c4a3a" roughness={0.75} metalness={0.05} />
+			{/* פתח כניסה – זכוכית גדולה, מסגרת דקה */}
+			<mesh position={[-3.8, 2.2, frontZ + 0.038]} castShadow>
+				<boxGeometry args={[2.4, 2.8, 0.06]} />
+				<meshStandardMaterial color="#1a1a1a" roughness={0.45} metalness={0.3} />
 			</mesh>
-			{/* דלת כניסה */}
-			<mesh position={[0.6, 1.15, frontZ + 0.035]} castShadow>
-				<boxGeometry args={[1, 2.2, 0.06]} />
-				<meshStandardMaterial color="#1e1e1e" roughness={0.5} metalness={0.25} />
+			<mesh position={[-3.8, 2.2, frontZ + 0.07]}>
+				<planeGeometry args={[2.2, 2.6]} />
+				<meshStandardMaterial color="#88b4c8" roughness={0.15} metalness={0} />
 			</mesh>
-			{/* חלונות – מסגרת כהה + זגוגית */}
-			<mesh position={[-3.5, 3.5, frontZ + 0.034]} castShadow>
-				<boxGeometry args={[1.1, 1.1, 0.05]} />
-				<meshStandardMaterial color="#2a2a2a" roughness={0.55} metalness={0.2} />
+			{/* חלון אופקי – פס זכוכית */}
+			<mesh position={[3.2, 4.5, frontZ + 0.038]} castShadow>
+				<boxGeometry args={[3.2, 0.9, 0.05]} />
+				<meshStandardMaterial color="#1a1a1a" roughness={0.45} metalness={0.3} />
 			</mesh>
-			<mesh position={[2.4, 3.5, frontZ + 0.034]} castShadow>
-				<boxGeometry args={[1.1, 1.1, 0.05]} />
-				<meshStandardMaterial color="#2a2a2a" roughness={0.55} metalness={0.2} />
+			<mesh position={[3.2, 4.5, frontZ + 0.065]}>
+				<planeGeometry args={[3, 0.7]} />
+				<meshStandardMaterial color="#7aa8bc" roughness={0.2} metalness={0} />
 			</mesh>
-			<mesh position={[-3.5, 4.6, frontZ + 0.034]} castShadow>
-				<boxGeometry args={[1.1, 0.9, 0.05]} />
-				<meshStandardMaterial color="#2a2a2a" roughness={0.55} metalness={0.2} />
+			{/* טרסה / מדרגת כניסה */}
+			<mesh position={[0, -0.02, frontZ + 0.5]} castShadow>
+				<boxGeometry args={[6, 0.12, 1.8]} />
+				<meshStandardMaterial color="#4a4a4a" roughness={0.75} metalness={0.08} />
 			</mesh>
-			<mesh position={[2.4, 4.6, frontZ + 0.034]} castShadow>
-				<boxGeometry args={[1.1, 0.9, 0.05]} />
-				<meshStandardMaterial color="#2a2a2a" roughness={0.55} metalness={0.2} />
+			{/* רצפה – דשא/אבן */}
+			<mesh position={[0, -0.08, frontZ + 2.5]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+				<planeGeometry args={[18, 14]} />
+				<meshStandardMaterial color="#5a6b4a" roughness={0.98} metalness={0.02} />
 			</mesh>
-			{/* רצפה / אדמה */}
-			<mesh position={[0, -0.06, frontZ + 1.2]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-				<planeGeometry args={[14, 10]} />
-				<meshStandardMaterial color="#7a6b5a" roughness={0.95} metalness={0.04} />
-			</mesh>
-			{/* צל רך מתחת לחזית */}
-			<mesh position={[0, -0.02, frontZ + 0.6]} rotation={[-Math.PI / 2, 0, 0]}>
-				<planeGeometry args={[7.5, 2.5]} />
-				<meshBasicMaterial color="#000000" transparent opacity={0.22} depthWrite={false} />
+			{/* צל – עומק ויזואלי */}
+			<mesh position={[0, -0.02, frontZ + 1]} rotation={[-Math.PI / 2, 0, 0]}>
+				<planeGeometry args={[10, 4]} />
+				<meshBasicMaterial color="#000000" transparent opacity={0.18} depthWrite={false} />
 			</mesh>
 		</>
 	);

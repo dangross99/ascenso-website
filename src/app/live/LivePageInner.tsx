@@ -1755,7 +1755,6 @@ function LivePageInner() {
 											)}
 										</div>
 										<div className="mt-2 pt-2 border-t border-[#e8e2dc]">
-											<p className="text-xs text-gray-600 mb-1">מידות לוח · עובי · ניתוק</p>
 											<div className="flex flex-wrap gap-1 mb-1">
 												{PANEL_SIZE_OPTIONS.map(opt => (
 													<button key={opt.id} type="button" onClick={() => setPanelSize(opt.w, opt.h)} className={`px-2 py-1 rounded text-xs font-medium border ${panelSizeW === opt.w && panelSizeH === opt.h ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white border-gray-300 hover:border-gray-400'}`}>{opt.label}</button>

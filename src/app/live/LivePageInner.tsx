@@ -65,19 +65,21 @@ function ExampleHouseScene(props: {
 		}
 	}
 	return (
-		<group position={[0, cladCenterY, 0]}>
+		<>
 			{/* גוף הבניין – לבן */}
 			<mesh position={[0, buildingH / 2, 0]} castShadow receiveShadow>
 				<boxGeometry args={[buildingW, buildingH, buildingD]} />
 				<meshStandardMaterial color="#f5f3ef" roughness={0.9} metalness={0.05} />
 			</mesh>
-			{/* גג שטוח קדמי (סטריפ) */}
+			{/* גג שטוח */}
 			<mesh position={[0, buildingH + 0.08, 0]} castShadow>
 				<boxGeometry args={[buildingW + 0.5, 0.15, buildingD + 0.3]} />
 				<meshStandardMaterial color="#e8e4dc" roughness={0.85} metalness={0.05} />
 			</mesh>
-			{/* אזור חיפוי לוחות – גריד פלטות */}
-			{cells}
+			{/* אזור חיפוי לוחות – גריד פלטות על החזית */}
+			<group position={[0, cladCenterY, cladZ]}>
+				{cells}
+			</group>
 			{/* דלת – מרכז חזית */}
 			<mesh position={[0, 1.1, buildingD / 2 + 0.03]} castShadow>
 				<boxGeometry args={[1, 2.2, 0.08]} />
@@ -102,7 +104,7 @@ function ExampleHouseScene(props: {
 				<planeGeometry args={[buildingW * 0.9, 3]} />
 				<meshBasicMaterial color="#000000" transparent opacity={0.2} depthWrite={false} />
 			</mesh>
-		</group>
+		</>
 	);
 }
 
@@ -1606,11 +1608,19 @@ function LivePageInner() {
 
 					<div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
 						<div className="lg:col-span-2">
-					<div ref={canvasWrapRef} className="w-full aspect-[16/9] lg:aspect-auto lg:h-[60vh] bg-white border overflow-hidden rounded fixed inset-x-0 z-30 lg:relative" style={{ height: mobileCanvasH || undefined, top: (mobileHeaderH + mobileTabsH) || 0 }}>
+					<div ref={canvasWrapRef} className="relative w-full aspect-[16/9] lg:aspect-auto lg:h-[60vh] bg-white border overflow-hidden rounded fixed inset-x-0 z-30 lg:relative" style={{ height: mobileCanvasH || undefined, top: (mobileHeaderH + mobileTabsH) || 0 }}>
+						<button
+							type="button"
+							onClick={() => setShowExampleHouse(v => !v)}
+							className="absolute top-2 right-2 z-40 px-3 py-1.5 rounded-lg text-xs font-medium bg-white/95 border border-gray-200 shadow-sm hover:bg-gray-50 text-[#1a1a2e]"
+							aria-pressed={showExampleHouse}
+						>
+							{showExampleHouse ? 'קיר לפי מידות' : 'הדמיית בית לדוגמא'}
+						</button>
 						<Canvas
 							// תאורה קבועה ויציבה: בלי shadows ובלי post-processing
 							shadows={false}
-							camera={{ position: [-2.494, 1.897, 3.259], fov: 45 }}
+							camera={{ position: showExampleHouse ? [0, 3, 12] : [-2.494, 1.897, 3.259], fov: 45 }}
 							dpr={[1, isDesktopViewport ? 2 : 1.5]}
 							gl={{
 								toneMapping: ACESFilmicToneMapping,
@@ -1625,7 +1635,18 @@ function LivePageInner() {
 								<ambientLight intensity={1.5} />
 								<pointLight position={[10, 10, 10]} intensity={1} />
 								<Environment preset="city" />
-								{(() => {
+								{showExampleHouse ? (
+									<ExampleHouseScene
+										textureUrl={(() => {
+											const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0];
+											return (sel as any)?.solid ? null : (sel?.images?.[0] || null);
+										})()}
+										materialSolidColor={(nonWoodModels.find(r => r.id === activeTexId) as any)?.solid ?? null}
+										materialKind={activeMaterial === 'metal' ? 'metal' : 'stone'}
+										panelThicknessMm={panelThicknessMm}
+										shadowGapMm={shadowGapMm}
+									/>
+								) : (() => {
 									const gapM = shadowGapMm / 1000;
 									const totalWidth = panelsAlongWidth * panelSizeW + (panelsAlongWidth - 1) * gapM;
 									const totalHeight = panelsAlongHeight * panelSizeH + (panelsAlongHeight - 1) * gapM;
@@ -1701,7 +1722,7 @@ function LivePageInner() {
 									enableDamping
 									makeDefault
 									zoomToCursor
-									target={getWallCenter(panelsAlongHeight, panelSizeH, shadowGapMm / 1000)}
+									target={showExampleHouse ? [0, 3, 0] : getWallCenter(panelsAlongHeight, panelSizeH, shadowGapMm / 1000)}
 								/>
 							</React.Suspense>
 						</Canvas>

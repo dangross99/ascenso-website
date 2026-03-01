@@ -1770,9 +1770,6 @@ function LivePageInner() {
 								>
 									<span>בקשת מפרט טכני ומארז דוגמאות</span>
 								</button>
-								<div className="text-[11px] text-gray-500 mt-1">
-									לוח {panelSizeLabel} מ"מ · {panelSurfaceM2} מ"ר. מפרט טכני ומארז דוגמאות לפי בקשתכם.
-								</div>
 							</div>
 						</div>
 					</div>
@@ -1787,9 +1784,6 @@ function LivePageInner() {
 						>
 							<span>בקשת מפרט טכני ומארז דוגמאות</span>
 						</button>
-						<div className="text-[11px] text-gray-500 mt-1">
-							לוח {panelSizeLabel} מ"מ · {panelSurfaceM2} מ"ר. מפרט טכני ומארז דוגמאות לפי בקשתכם.
-						</div>
 						</div>
 					</div>
 				</section>

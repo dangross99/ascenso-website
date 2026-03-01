@@ -14,7 +14,7 @@ import { BookingModal } from './components/BookingModal';
 import { BrandWordmark } from './components/BrandWordmark';
 import { Schematic } from './components/Schematic';
 import { BoxPicker, BoxShapeIcon } from './components/BoxPicker';
-import { MaterialKindPicker } from './components/MaterialKindPicker';
+import { MaterialKindPicker, type MaterialKind } from './components/MaterialKindPicker';
 import { WoodTexturePicker } from './components/WoodTexturePicker';
 import { NonWoodTexturePicker } from './components/NonWoodTexturePicker';
 import { PathPicker } from './components/PathPicker';
@@ -441,7 +441,8 @@ function LivePageInner() {
 		};
 	}, []);
 
-	const qMaterial = (search.get('material') as 'wood' | 'metal' | 'stone') || 'wood';
+	const qMaterial = (search.get('material') as 'wood' | 'metal' | 'stone') || 'stone';
+	const qMaterialSafe = qMaterial === 'wood' ? 'stone' : qMaterial;
 	const qColor = search.get('color') || 'oak';
 	const qModel = search.get('model') || '';
 	const qShape = (search.get('shape') as 'straight' | 'L' | 'U') || 'straight';
@@ -454,7 +455,7 @@ function LivePageInner() {
 
 	const [records, setRecords] = React.useState<MaterialRecord[]>([]);
 	const [priceList, setPriceList] = React.useState<PriceListData | null>(null);
-	const [activeMaterial, setActiveMaterial] = React.useState<'wood' | 'metal' | 'stone'>(qMaterial);
+	const [activeMaterial, setActiveMaterial] = React.useState<MaterialKind>(qMaterialSafe);
 	const [activeColor, setActiveColor] = React.useState<string>(qColor);
 	const [activeModelId, setActiveModelId] = React.useState<string | null>(qModel || null);
 	const [activeTexId, setActiveTexId] = React.useState<string | null>(qTex || null); // למתכת/אבן (סנכרון תצוגה)

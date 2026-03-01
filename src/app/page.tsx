@@ -3,9 +3,8 @@ import { useState, useCallback } from "react";
 import React from "react";
 import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
-import { Canvas, useLoader } from "@react-three/fiber";
+import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { TextureLoader, SRGBColorSpace, ClampToEdgeWrapping, LinearFilter } from "three";
 // 3D demo imports הוסרו
 
 // HERO IMAGE PATH - change this path to update the hero image
@@ -24,121 +23,42 @@ type MaterialRecord = {
   variants?: Record<string, string[]>;
 };
 
-// קומפוננטה קלה לתצוגת מדרגות תלת‑ממד בלי קובץ (פרוצדורלי)
-function StairsPreview() {
-  // Preset: 10 steps → landing (right) → 5 steps, matching LIVE dimensions
-  const firstRunSteps = 10;
-  // לאחר בקשה: לבטל את המדרגה החמישית אחרי הפודסט (כלומר 4 מדרגות מוצגות)
-  const secondRunTotalSteps = 5; // לשמירת עיגון/offset של הקבוצה
-  const secondRunSteps = 4;      // כמות מדרגות בפועל אחרי הפודסט
-  // טקסטורת עץ WAVE – גוון "אלון" (Oak)
-  const woodTextureUrl = "/images/materials/wave_carved_oak-v1766948002057-600.webp";
-  const woodMap = useLoader(TextureLoader, woodTextureUrl);
-  React.useEffect(() => {
-    try {
-      if (woodMap) {
-        // @ts-ignore
-        woodMap.colorSpace = SRGBColorSpace;
-        woodMap.wrapS = woodMap.wrapT = ClampToEdgeWrapping;
-        woodMap.generateMipmaps = false;
-        woodMap.minFilter = LinearFilter;
-        woodMap.needsUpdate = true;
-      }
-    } catch {}
-  }, [woodMap]);
-  const treadWidth = 0.90;       // רוחב מדרגה (Z)
-  const treadThickness = 0.11;   // עובי תיבה "עבה"
-  const treadDepth = 0.30;       // עומק/שליבה אופקית (X או Z)
-  const rise = 0.16;             // רום
-  const run = treadDepth;        // נוחות קריאה
+// לוח חיפוי 300×150 ס"מ, עובי 25 מ"מ — תצוגה רגילה או חתך (שכבת אבן, Honeycomb, גב אלומיניום)
+function PanelPreview({ sectionView = false }: { sectionView?: boolean }) {
+  // מידות במטרים: 300×150 ס"מ = 3×1.5 מ', עובי 25 מ"מ = 0.025 מ'
+  const widthM = 3;
+  const heightM = 1.5;
+  const thicknessM = 0.025;
+  const stoneLayer = 0.004;      // שכבת אבן דקה ~4 מ"מ
+  const honeycombCore = 0.016;   // ליבת Honeycomb
+  const aluminumBack = 0.005;    // גב אלומיניום ~5 מ"מ
 
-  const totalX = firstRunSteps * run;
-  const totalZ = secondRunTotalSteps * run;
-  const eps = 0.002;            // הפרדה זעירה למניעת חפיפה חזותית
-  // פרמטרים לכבלי נירוסטה
-  const cableColor = "#c7ccd1";
-  const cableRadius = 0.005;
-  const cableSegments = 12;
-  const cableSideGap = 0.01; // מרחק מהקצה הצדדי (1 ס"מ)
-  const cableInlineOffset = 0.10; // מרווח בין כבלים על גבי כל מדרגה (10 ס"מ)
-  const cableTopY = (firstRunSteps + secondRunSteps) * rise + 1.0; // גובה סופי לאנכי הכבל
+  if (sectionView) {
+    return (
+      <group position={[0, 0.75, 0.5]} rotation={[0, Math.PI / 6, 0]}>
+        {/* חתך לוח: אבן (למעלה) | Honeycomb (אפור) | אלומיניום (מתכת) */}
+        <mesh position={[0, 0, (thicknessM / 2) - stoneLayer / 2]} castShadow receiveShadow>
+          <boxGeometry args={[widthM, heightM, stoneLayer]} />
+          <meshStandardMaterial color="#e8e4df" roughness={0.6} metalness={0.1} />
+        </mesh>
+        <mesh position={[0, 0, (thicknessM / 2) - stoneLayer - honeycombCore / 2]} castShadow receiveShadow>
+          <boxGeometry args={[widthM, heightM, honeycombCore]} />
+          <meshStandardMaterial color="#9ca3af" roughness={0.8} metalness={0.05} />
+        </mesh>
+        <mesh position={[0, 0, -(aluminumBack / 2)]} castShadow receiveShadow>
+          <boxGeometry args={[widthM, heightM, aluminumBack]} />
+          <meshStandardMaterial color="#94a3b8" metalness={0.9} roughness={0.25} />
+        </mesh>
+      </group>
+    );
+  }
 
   return (
-    <group position={[-totalX * 0.45, 0, totalZ * 0.25]}>
-      {/* First straight segment (along +X) */}
-      {Array.from({ length: firstRunSteps }).map((_, i) => (
-        <mesh key={`s1-${i}`} position={[i * run, i * rise, 0]} castShadow>
-          {/* X = run, Y = thickness, Z = width */}
-          <boxGeometry args={[treadDepth, treadThickness, treadWidth]} />
-          <meshStandardMaterial map={woodMap} color="#ffffff" metalness={0.05} roughness={0.85} />
+    <group position={[0, 0.75, 0.5]} rotation={[0, Math.PI / 6, 0]}>
+      <mesh castShadow receiveShadow>
+        <boxGeometry args={[widthM, heightM, thicknessM]} />
+        <meshStandardMaterial color="#e8e4df" roughness={0.5} metalness={0.15} />
       </mesh>
-      ))}
-      {/* כבלי נירוסטה למקטע הראשון (על ציר X) – 3 כבלים לכל מדרגה בצד החיצוני (+Z) */}
-      {Array.from({ length: firstRunSteps }).map((_, i) => {
-        const stepTop = i * rise + treadThickness / 2;
-        const spanH = Math.max(0.05, cableTopY - stepTop);
-        const yCenter = stepTop + spanH / 2;
-        const z = (treadWidth / 2) + cableSideGap;
-        const xCenter = i * run;
-        const offsets = [-cableInlineOffset, 0, cableInlineOffset];
-        return offsets.map((off, k) => (
-          <mesh key={`s1-cable-${i}-${k}`} position={[xCenter + off, yCenter, z]} castShadow receiveShadow>
-            <cylinderGeometry args={[cableRadius, cableRadius, spanH, cableSegments]} />
-            <meshStandardMaterial color={cableColor} metalness={1.0} roughness={0.35} envMapIntensity={0.6} />
-      </mesh>
-        ));
-      })}
-
-      {/* Landing (square 0.90 x 0.90) */}
-      <mesh
-        position={[
-          // הנחה: הפודסט מתחיל בדיוק אחרי קצה המדרגה האחרונה + רווח זעיר
-          firstRunSteps * run - run / 2 + treadWidth / 2 + eps,
-          firstRunSteps * rise,
-          0,
-        ]}
-        castShadow
-      >
-        {/* X = width, Y = thickness, Z = width */}
-        <boxGeometry args={[treadWidth, treadThickness, treadWidth]} />
-        <meshStandardMaterial map={woodMap} color="#ffffff" metalness={0.05} roughness={0.85} />
-      </mesh>
-
-      {/* Second straight segment, turned right (along -Z) */}
-      {Array.from({ length: secondRunSteps }).map((_, j) => (
-        <mesh
-          key={`s2-${j}`}
-          position={[
-            // אותו X של מרכז הפודסט
-            firstRunSteps * run - run / 2 + treadWidth / 2 + eps,
-            // מתחילים גובה אחד מעל הפודסט, ואז ממשיכים בעלייה
-            firstRunSteps * rise + (j + 1) * rise,
-            // פנייה לצד ההפוך: התחלה אחרי קצה הפודסט בציר Z החיובי + רווח זעיר
-            (treadWidth / 2 + run / 2 + eps) + j * run,
-          ]}
-          castShadow
-        >
-          {/* X = width, Y = thickness, Z = run */}
-          <boxGeometry args={[treadWidth, treadThickness, treadDepth]} />
-          <meshStandardMaterial map={woodMap} color="#ffffff" metalness={0.05} roughness={0.85} />
-      </mesh>
-      ))}
-      {/* כבלי נירוסטה למקטע השני (על ציר Z) – 3 כבלים לכל מדרגה בצד החיצוני (+X) */}
-      {Array.from({ length: secondRunSteps }).map((_, j) => {
-        const stepTop = (firstRunSteps * rise) + (j + 1) * rise + treadThickness / 2;
-        const spanH = Math.max(0.05, cableTopY - stepTop);
-        const yCenter = stepTop + spanH / 2;
-        // צד ההפוך: במקום +X, נעבור ל- X שלילי
-        const xBase = firstRunSteps * run - run / 2 + treadWidth / 2 + eps - (treadWidth / 2) - cableSideGap;
-        const zCenter = (treadWidth / 2 + run / 2 + eps) + j * run;
-        const offsets = [-cableInlineOffset, 0, cableInlineOffset];
-        return offsets.map((off, k) => (
-          <mesh key={`s2-cable-${j}-${k}`} position={[xBase, yCenter, zCenter + off]} castShadow receiveShadow>
-            <cylinderGeometry args={[cableRadius, cableRadius, spanH, cableSegments]} />
-            <meshStandardMaterial color={cableColor} metalness={1.0} roughness={0.35} envMapIntensity={0.6} />
-      </mesh>
-        ));
-      })}
     </group>
   );
 }
@@ -329,6 +249,7 @@ export default function Home() {
 
   // רמז אינטראקטיביות לתלת‑ממד – כפתור “סיבוב”
   const [show3DHint, setShow3DHint] = React.useState(true);
+  const [panelSectionView, setPanelSectionView] = React.useState(false);
 
   // Timeline visibility + count-up animation for durations
   const timelineRef = React.useRef<HTMLDivElement>(null);
@@ -640,11 +561,9 @@ export default function Home() {
           {/* Right side: Text (RTL) */}
           <div className="text-center md:text-right w-full md:w-[60%] max-w-none lg:whitespace-nowrap">
             <h1 className="text-4xl md:text-6xl lg:text-7xl text-white mb-2 md:mb-4 leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]">
-              <span className="block">מדרגות מרחפות</span>
-              <span className="font-heebo tracking-widest uppercase">
-                <span className="font-extrabold">ASCEN</span>
-                <span className="font-[200]">S</span>
-                <span className="font-[200]">O</span>
+              <span className="block font-heebo tracking-widest uppercase">MIRZA</span>
+              <span className="text-2xl md:text-3xl lg:text-4xl font-light text-white/95 tracking-wide">
+                Large Format Lightweight Stone & Metal Systems
               </span>
             </h1>
             {/* Mobile/Tablet: paragraph only */}
@@ -652,7 +571,7 @@ export default function Home() {
               className="lg:hidden text-gray-100 text-base md:text-2xl max-w-2xl"
               style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
             >
-              בחרו דגם מדרגות מרחפות, טקסטורה ומעקה – וראו הכל בהדמייה LIVE עם חישוב מחיר משוער
+              מערכות חיפוי קירות והנדסה יוקרתית — אבן פורמט גדול, ליבת Honeycomb וגב אלומיניום
             </p>
             {/* Desktop: paragraph + CTA on the same row */}
             <div className="hidden lg:flex items-center gap-12">
@@ -660,13 +579,13 @@ export default function Home() {
                 className="text-gray-100 text-3xl"
                 style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
               >
-                בחרו דגם מדרגות מרחפות, טקסטורה ומעקה – וראו הכל בהדמייה LIVE עם חישוב מחיר משוער
+                מערכות חיפוי קירות והנדסה יוקרתית — אבן פורמט גדול, ליבת Honeycomb וגב אלומיניום
               </p>
               <a
-                href="/live"
+                href="/materials"
                 className="inline-block px-14 py-3.5 bg-white/80 text-[#1a1a2e]/90 text-xl font-semibold shadow-sm hover:bg-white transition-all duration-300 active:scale-[0.98] rounded-md border border-white/60"
               >
-                עיצוב המדרגות שלך
+                Explore the Collection
               </a>
             </div>
           </div>
@@ -674,10 +593,10 @@ export default function Home() {
           {/* Left side: CTA */}
           <div className="flex flex-col w-full md:w-auto lg:hidden">
             <a
-              href="/live"
+              href="/materials"
               className="mx-auto px-14 py-3.5 bg-white/70 text-[#1a1a2e]/80 text-base md:text-xl font-semibold shadow-sm hover:bg-white/60 transition-all duration-300 active:scale-[0.98] rounded-md border border-white/60"
             >
-              עיצוב המדרגות שלך
+              Explore the Collection
             </a>
           </div>
         </div>
@@ -701,14 +620,14 @@ export default function Home() {
         `}</style>
       </section>
 
-      {/* JSON-LD: WebSite + Service (מדרגות מרחפות) */}
+      {/* JSON-LD: WebSite + Service (חיפוי קירות, מערכות תלייה) */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebSite",
-            name: "ASCENSO",
+            name: "MIRZA",
             url: "https://ascenso.co.il",
             inLanguage: "he-IL",
             potentialAction: {
@@ -725,11 +644,11 @@ export default function Home() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Service",
-            serviceType: "מדרגות מרחפות",
-            name: "מדרגות מרחפות",
+            serviceType: "Large Format Lightweight Stone & Metal Systems",
+            name: "חיפוי קירות הנדסי ומערכות תלייה יבשה",
             provider: {
               "@type": "Organization",
-              name: "ASCENSO",
+              name: "MIRZA",
               url: "https://ascenso.co.il",
             },
             areaServed: {
@@ -740,7 +659,7 @@ export default function Home() {
               "@type": "Offer",
               priceCurrency: "ILS",
               availability: "https://schema.org/InStock",
-              url: "https://ascenso.co.il/live",
+              url: "https://ascenso.co.il/materials",
             },
           }),
         }}
@@ -877,37 +796,25 @@ export default function Home() {
         </div>
           </div>
         </div>
-            {/* Wood */}
+            {/* נירוסטה אמנותית / אבנים אקזוטיות */}
             <div className="relative flex flex-col gap-1 lg:col-start-3">
-              <a href="/materials?cat=wood" className="block">
+              <a href="/materials?cat=metal" className="block">
                 <img
                   src={encodeURI("/images/ChatGPT Image Jan 10, 2026, 11_01_37 PM.png")}
-                  alt="עץ טבעי"
+                  alt="נירוסטה אמנותית"
                   className="block w-full h-[414px] md:h-[598px] object-contain bg-transparent translate-y-6 md:translate-y-0 md:scale-[1.4] md:origin-center lg:-translate-y-44"
                 />
               </a>
               <div className="absolute inset-x-0 bottom-72 md:bottom-auto md:top-32 lg:top-72 z-10 px-1 text-center">
-                <h3 className="text-lg md:text-2xl font-semibold text-[#1a1a2e] tracking-tight">עץ (WOOD)</h3>
-                <p className="text-base md:text-lg text-gray-700">המפגש שבין החמימות הגולמית של העץ לבין איכות בלתי מתפשרת. אנו משתמשים בטקסטורות עץ שנבחרו בקפידה ליצירת הרמוניה יומיומית, המשלבת בין המגע הטבעי לבין עיצוב על זמני.</p>
+                <h3 className="text-lg md:text-2xl font-semibold text-[#1a1a2e] tracking-tight">נירוסטה אמנותית (Artistic Stainless)</h3>
+                <p className="text-base md:text-lg text-gray-700">מתכות אצילות, גימורים ייחודיים ואבנים אקזוטיות — קטלוג B2B לאדריכלים ולקבלנים. מערכות תלייה יבשה ופרטי Z-Clips.</p>
                 <div className="mt-1 flex items-center justify-center gap-3 text-[#1a1a2e] text-sm md:text-base w-max mx-auto">
-                  <span className="inline-flex items-center gap-1">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                      <path d="M5 12c0-5 7-7 14-7-1 7-3 14-12 14-2 0-4-1.5-4-3 0-2 1-4 2-4Z" stroke="currentColor" strokeWidth="1.8"/>
-                      <path d="M7 17C10 14 13 11 19 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-                    </svg>
-                    טבע
-                    </span>
-                  <span className="inline-flex items-center gap-1">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                      <path d="M12 3l7 4v5c0 5-3.5 9-7 9s-7-4-7-9V7l7-4Z" stroke="currentColor" strokeWidth="1.8" />
-                      <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                    לכה בעמידות גבוהה
-                  </span>
-                  </div>
-                  </div>
+                  <span className="inline-flex items-center gap-1">אבנים אקזוטיות</span>
+                  <span className="inline-flex items-center gap-1">נירוסטה</span>
                 </div>
-            {/* Marble / Natural Stone */}
+              </div>
+            </div>
+            {/* Metal */}
             <div className="relative flex flex-col gap-1 lg:col-start-2 lg:-mt-[32rem] lg:z-10">
               <a href="/materials?cat=metal" className="block">
                 <img
@@ -1074,13 +981,10 @@ export default function Home() {
                     ))}
                 </div>
 
-            <div className="text-center mt-2">
-                  <a
-                href="/live"
-                className="inline-block px-14 py-3.5 bg-[#1a1a2e] text-white text-sm md:text-base font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90"
-                  >
-                עיצוב המדרגות שלך
-                  </a>
+            <div className="text-center mt-2 flex flex-wrap justify-center gap-3">
+              <a href="/materials" className="inline-block px-10 py-3 bg-[#1a1a2e] text-white text-sm font-bold rounded-md hover:opacity-90">Explore the Collection</a>
+              <a href="/materials#specs" className="inline-block px-10 py-3 border-2 border-[#1a1a2e] text-[#1a1a2e] text-sm font-bold rounded-md hover:bg-[#1a1a2e] hover:text-white">Technical Specifications</a>
+              <a href="/materials#samples" className="inline-block px-10 py-3 border-2 border-[#1a1a2e] text-[#1a1a2e] text-sm font-bold rounded-md hover:bg-[#1a1a2e] hover:text-white">Order Sample Box</a>
             </div>
           </div>
         </div>
@@ -1111,11 +1015,8 @@ export default function Home() {
               <div className="text-white/85 text-xs md:text-sm mt-1">
                 בתוקף עד סוף חודש פברואר
                       </div>
-              <a
-                href="/live"
-                className="mt-3 md:mt-5 inline-block px-14 py-3.5 rounded-md bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-widest transition-colors duration-300 hover:bg-white/95"
-              >
-                עיצוב המדרגות שלך
+              <a href="/materials" className="mt-3 md:mt-5 inline-block px-14 py-3.5 rounded-md bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-widest transition-colors duration-300 hover:bg-white/95">
+                Explore the Collection
               </a>
                     </div>
                   </div>
@@ -1129,20 +1030,27 @@ export default function Home() {
             {/* תלת‑ממד קליל (בלי קובץ) */}
             <div className="order-1 lg:order-2">
               <div className="relative h-[220px] md:h-[520px] bg-transparent overflow-hidden rounded" onPointerDown={() => setShow3DHint(false)}>
-                <Canvas camera={{ position: [3, 7, 1.7], fov: 23 }} dpr={[1, 2]} gl={{ alpha: true, toneMappingExposure: 1.2 }} style={{ background: 'transparent' }}>
+                <Canvas camera={{ position: [2.5, 1.2, 2.2], fov: 28 }} dpr={[1, 2]} gl={{ alpha: true, toneMappingExposure: 1.2 }} style={{ background: 'transparent' }}>
                   <hemisphereLight args={['#ffffff', '#d4d4d4', 0.95]} />
                   <ambientLight intensity={0.8} />
                   <directionalLight position={[6, 10, 4]} intensity={0.3} />
                   <directionalLight position={[-6, 8, -4]} intensity={0.22} />
-                  <StairsPreview />
+                  <PanelPreview sectionView={panelSectionView} />
                   <OrbitControls
                     ref={previewOrbitRef}
                     enablePan={false}
                     enableZoom={false}
                     rotateSpeed={0.6}
-                    target={[0, 1.1, 0.5]}
+                    target={[0, 0.75, 0.5]}
                 />
                 </Canvas>
+                <button
+                  type="button"
+                  onClick={() => setPanelSectionView((v) => !v)}
+                  className="absolute bottom-2 left-2 z-20 px-3 py-1.5 rounded bg-[#1a1a2e]/80 text-white text-xs font-medium hover:bg-[#1a1a2e]"
+                >
+                  {panelSectionView ? 'תצוגה רגילה' : 'מבט חתך'}
+                </button>
                 {show3DHint && (
                   <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
             <button
@@ -1162,20 +1070,22 @@ export default function Home() {
             {/* טקסט */}
             <div className="order-2 lg:order-1 text-center">
               <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-5">
-                <span className="hidden md:inline">תלת‑ממד LIVE — רואים לפני שמחליטים</span>
-                <span className="block md:hidden">תלת‑ממד LIVE —</span>
-                <span className="block md:hidden">רואים לפני שמחליטים</span>
+                לוח 300×150 ס"מ — אבן, Honeycomb, אלומיניום
               </h2>
               <p className="text-gray-700 leading-relaxed mb-5 text-base md:text-lg">
-                בהדמייה שלנו אתם בונים את המדרגות בזמן אמת: בוחרים צורה ,טקסטורות, חומרים, וסוג מעקה — זכוכית, מתכת או כבלי נירוסטה. תראו איך המדרגות זורמות בחלל, איך הפודסטים והפניות מתחברים ואיך המעקה משלים את הקו — והמחיר מתעדכן בכל שינוי. אפשר לשמור הדמיות ולשתף ב‑WhatsApp — הכל במקום אחד.
+                מערכות Stonesize: שכבת אבן דקה, ליבת Honeycomb קלת משקל וגב אלומיניום. צפו במבט חתך ובמפרט ההנדסי.
               </p>
-              
-                  <a
-                href="/live"
-                className="inline-block px-14 py-3.5 bg-[#1a1a2e] text-white text-sm md:text-base font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90 mx-auto"
-                  >
-                עיצוב המדרגות שלך
-                  </a>
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <a href="/materials" className="inline-block px-8 py-3 bg-[#1a1a2e] text-white text-sm font-bold tracking-widest rounded-md hover:opacity-90">
+                  Explore the Collection
+                </a>
+                <a href="/materials#specs" className="inline-block px-8 py-3 border-2 border-[#1a1a2e] text-[#1a1a2e] text-sm font-bold rounded-md hover:bg-[#1a1a2e] hover:text-white transition-colors">
+                  Technical Specifications
+                </a>
+                <a href="/materials#samples" className="inline-block px-8 py-3 border-2 border-[#1a1a2e] text-[#1a1a2e] text-sm font-bold rounded-md hover:bg-[#1a1a2e] hover:text-white transition-colors">
+                  Order Sample Box
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -1207,15 +1117,15 @@ export default function Home() {
           </div>
           <span className="sr-only">ליווי אישי</span>
           <p className="text-base md:text-2xl text-gray-200 max-w-3xl leading-relaxed">
-            ליווי אישי בבחירת דגמים, התאמת טקסטורות ודיוק המעקה — מענה מהיר ב‑WhatsApp.
+            ייעוץ לאדריכלים ולקבלנים — חיפוי קירות הנדסי, מערכות תלייה יבשה ומפרטים טכניים. מענה מהיר ב‑WhatsApp.
           </p>
           <a
             href={`https://api.whatsapp.com/send?phone=972539994995&text=${
               encodeURIComponent(
                 [
-                  '\u202B*ASCENSO*',
-                  'היי! ראיתי את האתר ואני מעוניינ/ת להתקדם.',
-                  'אשמח לשיחת ייעוץ קצרה ולקבל פרטים נוספים. תודה!',
+                  '\u202B*MIRZA*',
+                  'היי! מעוניינ/ת בייעוץ בנושא חיפוי קירות הנדסי ומערכות תלייה יבשה.',
+                  'אשמח לקבל מפרטים טכניים (Z-Clips וכו\') ולפרטים על מארז דוגמאות. תודה!',
                   '\u202C',
                 ].join('\n')
               )
@@ -1223,7 +1133,7 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center px-8 md:px-10 py-3 md:py-3.5 rounded-full bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-wider transition-colors duration-300 hover:bg-white/95 shadow-sm"
-            aria-label="צ'אט WhatsApp עם ASCENSO"
+            aria-label="צ'אט WhatsApp עם MIRZA"
           >
             התחילו שיחה ב‑WhatsApp
           </a>

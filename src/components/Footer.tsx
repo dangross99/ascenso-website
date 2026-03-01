@@ -14,9 +14,9 @@ const Footer: React.FC = () => {
   <footer className={`w-full ${wrapperClasses} pt-3 pb-1 px-4`} dir="rtl">
     <div className="max-w-7xl mx-auto text-center mb-1">
       <div className="font-serif font-prosto text-[18px] md:text-[22px] font-bold tracking-widest select-none">
-        ASCENSO
+        MIRZA
       </div>
-      <p className={`text-[10px] ${secondaryText} mt-1`}>© ASCENSO 2026</p>
+      <p className={`text-[10px] ${secondaryText} mt-1`}>© MIRZA 2026</p>
     </div>
     <div className="hidden max-w-7xl mx-auto grid grid-cols-1 gap-10 mb-8 text-center">
       {/* שירות לקוחות */}
@@ -72,7 +72,7 @@ const Footer: React.FC = () => {
           </div>
         </form>
         <p className="text-xs text-gray-500 mb-4">
-          בלחיצה על הרשמה אני מאשר/ת קבלת דיוור פרסומי מ‑ASCENSO. ניתן להסיר בכל עת.
+          בלחיצה על הרשמה אני מאשר/ת קבלת דיוור פרסומי מ‑MIRZA. ניתן להסיר בכל עת.
           <br />
           לצפייה ב{" "}
           <a href="#" className="underline">
@@ -115,7 +115,7 @@ const Footer: React.FC = () => {
     </div>
     {/* Bottom Bar */}
     <div className={`hidden w-full border-t pt-4 mt-8 flex items-center justify-center text-xs ${secondaryText} ${isHome ? 'border-gray-200' : 'border-white/10'}`}>
-      <span>&copy; {new Date().getFullYear()} ASCENSO</span>
+      <span>&copy; {new Date().getFullYear()} MIRZA</span>
     </div>
   </footer>
   );

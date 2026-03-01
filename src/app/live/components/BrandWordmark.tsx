@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 
 export function BrandWordmark({ size = 'md' as 'sm' | 'md' | 'lg', color = '#1a1a2e' }: { size?: 'sm' | 'md' | 'lg'; color?: string }) {
 	const sizeClass =
@@ -9,9 +9,7 @@ export function BrandWordmark({ size = 'md' as 'sm' | 'md' | 'lg', color = '#1a1
 			: 'text-[24px] md:text-[32px]';
 	return (
 		<span className={`${sizeClass} font-serif font-prosto font-semibold tracking-widest uppercase select-none`} style={{ color }}>
-			ASCEN
-			<span style={{ fontWeight: 170 }}>S</span>
-			<span style={{ fontWeight: 170 }}>O</span>
+			MIRZA
 		</span>
 	);
 }

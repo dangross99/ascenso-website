@@ -1502,11 +1502,11 @@ function LivePageInner() {
 	return (
 		<>
 			<div className="min-h-screen w-full bg-[#EFEFEF]">
-			<main className="max-w-7xl mx-auto px-4 lg:px-6 py-6" dir="rtl">
+			<main className="max-w-7xl mx-auto px-4 lg:px-6 pt-2 pb-6" dir="rtl">
 			<div className="grid grid-cols-1 gap-0">
 				<section>
 					{/* בחירת חומר – לחצני כותרת עדינים מחוץ לטאב, בלי תיבת בלון */}
-					<div id="live-top-tabs" ref={topTabsRef} className="mb-2" dir="rtl">
+					<div id="live-top-tabs" ref={topTabsRef} className="mb-1 mt-0" dir="rtl">
 						<div className="flex flex-wrap justify-center gap-1 py-2">
 							<button
 								type="button"
@@ -1952,8 +1952,8 @@ function LivePageInner() {
 							const mapNodes = new Map(nodes.map(n => [n.key, n.el]));
 							return (
 								<>
-									{/* לחצני כותרת עדינים – מתכת/אבן מחוץ לטאב, בלי תיבת בלון */}
-									<div className="flex justify-center gap-1 py-2">
+									{/* בחירת חומר – מתכת/אבן + תצוגה מקדימה וסוויצ'ים בראש, סמוך לכותרת */}
+									<div className="flex justify-center gap-1 py-1">
 										{(['metal', 'stone'] as const).map(m => (
 											<button
 												key={m}
@@ -1964,6 +1964,19 @@ function LivePageInner() {
 												{m === 'metal' ? 'מתכת' : 'אבן טבעית'}
 											</button>
 										))}
+									</div>
+									<div className="pt-1 pb-2">
+										<NonWoodTexturePicker
+											nonWoodModels={nonWoodModels as any}
+											activeTexId={activeTexId}
+											onPick={(id) =>
+												startTransition(() => {
+													setActiveTexId(id);
+													if (activeMaterial === 'metal') setActiveMetalTexId(id);
+													if (activeMaterial === 'stone') setActiveStoneTexId(id);
+												})
+											}
+										/>
 									</div>
 									{/* גודל הקיר – חלון נפרד מעל הטאבים */}
 									<div className="mx-2 mb-2 rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-2 border border-[#e8e2dc] shadow-sm">

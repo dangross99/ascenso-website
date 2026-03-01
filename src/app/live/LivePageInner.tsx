@@ -1538,6 +1538,7 @@ function LivePageInner() {
 								{(() => {
 									const gapM = shadowGapMm / 1000;
 									const totalWidth = panelsAlongWidth * panelSizeW + (panelsAlongWidth - 1) * gapM;
+									const totalHeight = panelsAlongHeight * panelSizeH + (panelsAlongHeight - 1) * gapM;
 									const textureUrl = (() => {
 										const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0];
 										return (sel as any)?.solid ? null : (sel?.images?.[0] || null);
@@ -1572,7 +1573,38 @@ function LivePageInner() {
 											);
 										}
 									}
-									return <>{cells}</>;
+									// 1) בסיס ורגליים לקרקע: רצפה + צל רך
+									const groundW = Math.max(totalWidth + 1.5, 4);
+									const groundD = 2.5;
+									const windowW = 1.2;
+									const windowH = 1.2;
+									const windowBottomY = 0.8;
+									return (
+										<>
+											{/* רצפה / אדמה */}
+											<mesh position={[0, -0.06, 0.3]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+												<planeGeometry args={[groundW, groundD]} />
+												<meshStandardMaterial color="#8b7355" roughness={0.95} metalness={0.05} />
+											</mesh>
+											{/* צל רך מתחת לקיר */}
+											<mesh position={[0, -0.02, 0.25]} rotation={[-Math.PI / 2, 0, 0]}>
+												<planeGeometry args={[totalWidth * 0.95, 0.6]} />
+												<meshBasicMaterial color="#000000" transparent opacity={0.25} depthWrite={false} />
+											</mesh>
+											{cells}
+											{/* 2) רמז לקנה מידה: חלון בגובה ריאליסטי (~1.2×1.2 מ', תחתית בגובה ~0.8 מ') */}
+											<group position={[0, windowBottomY + windowH / 2, 0.016]}>
+												<mesh castShadow>
+													<boxGeometry args={[windowW, windowH, 0.12]} />
+													<meshStandardMaterial color="#e8e4dc" roughness={0.7} metalness={0.1} />
+												</mesh>
+												<mesh position={[0, 0, 0.061]}>
+													<planeGeometry args={[windowW - 0.08, windowH - 0.08]} />
+													<meshStandardMaterial color="#a8d4e6" roughness={0.2} metalness={0} />
+												</mesh>
+											</group>
+										</>
+									);
 								})()}
 								<OrbitControls
 									ref={orbitRef}

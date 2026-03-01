@@ -1576,13 +1576,13 @@ function LivePageInner() {
 											const cellH = i === panelsAlongHeight - 1 ? lastRowHeight : panelSizeH;
 											const px = -wallWidthM / 2 + (j < panelsAlongWidth - 1 ? j * (panelSizeW + g) + panelSizeW / 2 : (panelsAlongWidth - 1) * (panelSizeW + g) + lastColWidth / 2);
 											const py = i < panelsAlongHeight - 1 ? i * (panelSizeH + g) + panelSizeH / 2 : (panelsAlongHeight - 1) * (panelSizeH + g) + lastRowHeight / 2;
-											const isCompletionPanel = i === panelsAlongHeight - 1 || j === panelsAlongWidth - 1;
-											/* פלטות רגילות: חיתוך מהטקסטורה לפי תא בגריד. השלמות: תמונה מלאה (טקסטורה אחת על כל הפלטה) – לא חתך לא קשור */
-											const uvScale: [number, number] = isCompletionPanel
-												? [1, 1]
-												: [1 / panelsAlongWidth, 1 / panelsAlongHeight];
-											const uvOffset: [number, number] = isCompletionPanel ? [0, 0] : [j / panelsAlongWidth, i / panelsAlongHeight];
-											const zBias = isCompletionPanel ? 0.0002 : 0;
+											/* UV אחיד לכל התאים – כל תא מקבל את החלק המתאים מהטקסטורה כך שהתמונה רציפה (כולל פלטות השלמה) */
+											const uvScaleX = (j === panelsAlongWidth - 1 ? lastColWidth / panelSizeW : 1) / panelsAlongWidth;
+											const uvScaleY = (i === panelsAlongHeight - 1 ? lastRowHeight / panelSizeH : 1) / panelsAlongHeight;
+											const uvScale: [number, number] = [uvScaleX, uvScaleY];
+											const uvOffset: [number, number] = [j / panelsAlongWidth, i / panelsAlongHeight];
+											/* סטיית עומק זעירה לכל פלטה (אחידה) – מונעת z-fighting בלי מדרגה בין השלמות לשאר */
+											const zBias = (i * panelsAlongWidth + j) * 0.00003;
 											cells.push(
 												<group key={`${i}-${j}`} position={[px, py, zBias]}>
 													<Panel3D

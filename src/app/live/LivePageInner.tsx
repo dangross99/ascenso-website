@@ -472,16 +472,16 @@ function LivePageInner() {
 	// לוחות חיפוי – בקרים הנדסיים
 	const [panelThicknessMm, setPanelThicknessMm] = React.useState<16 | 25>(25);
 	const [shadowGapMm, setShadowGapMm] = React.useState<3 | 5 | 10>(5);
-	/** מידות לוח (מ'): 5 אפשרויות – ברירת מחדל 2900×1450 (2.9×1.45) */
+	/** מידות לוח (מ'): רוחב×גובה – 2900×1450 = אנכי (גובה 2.9מ', רוחב 1.45מ') */
 	const PANEL_SIZE_OPTIONS: Array<{ id: string; w: number; h: number; label: string }> = [
-		{ id: '2900x1450', w: 2.9, h: 1.45, label: '2900×1450' },
-		{ id: '2900x725', w: 2.9, h: 0.725, label: '2900×725' },
+		{ id: '2900x1450', w: 1.45, h: 2.9, label: '2900×1450' },
+		{ id: '2900x725', w: 0.725, h: 2.9, label: '2900×725' },
 		{ id: '1450x1450', w: 1.45, h: 1.45, label: '1450×1450' },
-		{ id: '1450x725', w: 1.45, h: 0.725, label: '1450×725' },
+		{ id: '1450x725', w: 0.725, h: 1.45, label: '1450×725' },
 		{ id: '725x725', w: 0.725, h: 0.725, label: '725×725' },
 	];
-	const [panelSizeW, setPanelSizeW] = React.useState(2.9);
-	const [panelSizeH, setPanelSizeH] = React.useState(1.45);
+	const [panelSizeW, setPanelSizeW] = React.useState(1.45);
+	const [panelSizeH, setPanelSizeH] = React.useState(2.9);
 	const setPanelSize = (w: number, h: number) => {
 		setPanelSizeW(w);
 		setPanelSizeH(h);

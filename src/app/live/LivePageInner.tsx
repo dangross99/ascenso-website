@@ -1462,26 +1462,25 @@ function LivePageInner() {
 			<main className="max-w-7xl mx-auto px-4 lg:px-6 py-6" dir="rtl">
 			<div className="grid grid-cols-1 gap-0">
 				<section>
-					{/* בחירת חומר – שני כפתורים בלבד, בלי שלבים */}
-					<div id="live-top-tabs" ref={topTabsRef} className="bg-white/95 backdrop-blur border rounded-md mb-2" dir="rtl">
-						<div className="px-4 py-4">
-							<div className="flex flex-wrap justify-center gap-3 mb-4">
-								<button
-									type="button"
-									onClick={() => startTransition(() => setActiveMaterial('metal'))}
-									className={`px-6 py-3 rounded-xl text-base font-semibold border-2 transition-colors ${activeMaterial === 'metal' ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'}`}
-								>
-									מתכת
-								</button>
-								<button
-									type="button"
-									onClick={() => startTransition(() => setActiveMaterial('stone'))}
-									className={`px-6 py-3 rounded-xl text-base font-semibold border-2 transition-colors ${activeMaterial === 'stone' ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'}`}
-								>
-									אבן טבעית
-								</button>
-							</div>
-							<div className="border-t border-gray-200 pt-4">
+					{/* בחירת חומר – לחצני כותרת עדינים מחוץ לטאב, בלי תיבת בלון */}
+					<div id="live-top-tabs" ref={topTabsRef} className="mb-2" dir="rtl">
+						<div className="flex flex-wrap justify-center gap-1 py-2">
+							<button
+								type="button"
+								onClick={() => startTransition(() => setActiveMaterial('metal'))}
+								className={`text-sm font-medium px-3 py-1.5 rounded transition-colors ${activeMaterial === 'metal' ? 'text-[#1a1a2e] border-b-2 border-[#1a1a2e]' : 'text-gray-500 hover:text-gray-700'}`}
+							>
+								מתכת
+							</button>
+							<button
+								type="button"
+								onClick={() => startTransition(() => setActiveMaterial('stone'))}
+								className={`text-sm font-medium px-3 py-1.5 rounded transition-colors ${activeMaterial === 'stone' ? 'text-[#1a1a2e] border-b-2 border-[#1a1a2e]' : 'text-gray-500 hover:text-gray-700'}`}
+							>
+								אבן טבעית
+							</button>
+						</div>
+						<div className="pt-2">
 								<p className="text-sm font-semibold text-[#1a1a2e] mb-2 text-center">דגם / טקסטורה</p>
 								<NonWoodTexturePicker
 									nonWoodModels={nonWoodModels as any}
@@ -1499,7 +1498,6 @@ function LivePageInner() {
 										בקשת מפרט טכני ומארז דוגמאות
 									</a>
 								</div>
-							</div>
 						</div>
 					</div>
 
@@ -1822,20 +1820,9 @@ function LivePageInner() {
 								el: (
 									<div>
 										{mobileOpenCat === 'material' && (
-											<div className="p-3 bg-white border border-t-0 rounded-b-md">
-												<div className="flex flex-wrap gap-2">
-													{(['metal', 'stone'] as const).map(m => (
-														<button
-															key={m}
-															className={`px-3 py-1 text-sm rounded-full border cursor-pointer ${activeMaterial === m ? 'bg-[#1a1a2e] text-white' : 'bg-white hover:bg-gray-100'}`}
-															onClick={() => startTransition(() => setActiveMaterial(m))}
-														>
-															{m === 'metal' ? 'מתכת' : 'אבן טבעית'}
-														</button>
-													))}
-												</div>
+											<div className="pt-1">
 												{getNextCat('material') && (
-													<div className="mt-3 px-3 pb-2">
+													<div className="px-2 pb-2">
 														<button type="button" onClick={() => setMobileOpenCat(getNextCat('material')!)} className="w-full py-2.5 rounded-md bg-[#1a1a2e] text-white font-medium text-sm hover:opacity-90">
 															המשך
 														</button>
@@ -1919,6 +1906,19 @@ function LivePageInner() {
 							const mapNodes = new Map(nodes.map(n => [n.key, n.el]));
 							return (
 								<>
+									{/* לחצני כותרת עדינים – מתכת/אבן מחוץ לטאב, בלי תיבת בלון */}
+									<div className="flex justify-center gap-1 py-2">
+										{(['metal', 'stone'] as const).map(m => (
+											<button
+												key={m}
+												type="button"
+												className={`text-sm font-medium px-3 py-1.5 rounded transition-colors ${activeMaterial === m ? 'text-[#1a1a2e] border-b-2 border-[#1a1a2e]' : 'text-gray-500 hover:text-gray-700'}`}
+												onClick={() => startTransition(() => setActiveMaterial(m))}
+											>
+												{m === 'metal' ? 'מתכת' : 'אבן טבעית'}
+											</button>
+										))}
+									</div>
 									<div className="sticky top-0 z-20 bg-white/95 backdrop-blur border-b">
 										<div className="flex items-center overflow-x-auto px-2 py-3 w-full lg:justify-center gap-0" dir="rtl">
 											{tabOrder.map((tab, i) => (

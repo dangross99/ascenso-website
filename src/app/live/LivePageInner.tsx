@@ -1276,6 +1276,20 @@ function LivePageInner() {
 	const panelSpecStoneName = (nonWoodModels.find(m => m.id === activeTexId) || nonWoodModels[0])?.name || '—';
 	const panelSizeLabel = PANEL_SIZE_OPTIONS.find(o => o.w === panelSizeW && o.h === panelSizeH)?.label || `${panelSizeW * 1000}×${panelSizeH * 1000}`;
 	const hasCutPanels = lastColWidth < panelSizeW - 0.001 || lastRowHeight < panelSizeH - 0.001;
+	/** נסטינג אופטימלי: מידת לוח שנותנת מינימום פלטות לגודל הקיר */
+	const bestPanelForWall = React.useMemo(() => {
+		let best: { opt: typeof PANEL_SIZE_OPTIONS[0]; total: number; nw: number; nh: number } = { opt: PANEL_SIZE_OPTIONS[0], total: 1e9, nw: 0, nh: 0 };
+		const g = shadowGapMm / 1000;
+		for (const opt of PANEL_SIZE_OPTIONS) {
+			const nw = Math.max(1, Math.ceil(wallWidthM / opt.w));
+			const nh = Math.max(1, Math.ceil(wallHeightM / opt.h));
+			const total = nw * nh;
+			if (total < best.total) best = { opt, total, nw, nh };
+		}
+		return best;
+	}, [wallWidthM, wallHeightM, shadowGapMm]);
+	const isOptimalSize = panelSizeW === bestPanelForWall.opt.w && panelSizeH === bestPanelForWall.opt.h;
+	const panelsSaved = isOptimalSize ? 0 : panelsTotal - bestPanelForWall.total;
 	const panelSpecRows: Array<{ label: string; value: string }> = [
 		{ label: 'סוג אבן', value: panelSpecStoneName },
 		{ label: 'מידות (מ"מ)', value: panelSizeLabel },
@@ -1704,23 +1718,41 @@ function LivePageInner() {
 										</div>
 										<p className="text-xs text-[#1a1a2e]/80 mt-1.5">חלוקה לפלטות: {panelsAlongWidth} × {panelsAlongHeight} = {panelsTotal} פלטות{hasCutPanels ? ' (חתיכות חתוכות)' : ''}</p>
 									</div>
-									{/* הגדרות לוח */}
-									<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-2 border border-[#e8e2dc] shadow-sm">
-										<span className="text-xs font-semibold text-[#1a1a2e]/70 block mb-1">הגדרות לוח</span>
-										<p className="text-sm font-medium text-[#1a1a2e] mb-1.5">מידות (מ"מ)</p>
-										<div className="flex flex-wrap gap-1.5 mb-1.5">
-											{PANEL_SIZE_OPTIONS.map(opt => (
-												<button
-													key={opt.id}
-													type="button"
-													onClick={() => setPanelSize(opt.w, opt.h)}
-													className={`px-2 py-1 rounded text-xs font-medium border ${panelSizeW === opt.w && panelSizeH === opt.h ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white border-gray-300 hover:border-gray-400'}`}
-												>
-													{opt.label}
-												</button>
-											))}
+									{/* תיבת מידות והמלצות להזמנה (נסטינג) */}
+									<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-3 border border-[#e8e2dc] shadow-sm">
+										<span className="text-xs font-semibold text-[#1a1a2e]/70 block mb-2">הגדרות לוח · מידות והמלצות</span>
+										<table className="w-full text-xs text-[#1a1a2e]" dir="rtl">
+											<tbody>
+												{panelSpecRows.map(row => (
+													<tr key={row.label} className="border-b border-[#e8e2dc]/60">
+														<td className="py-1 pr-1 text-gray-600">{row.label}</td>
+														<td className="py-1 font-medium text-left">{row.value}</td>
+													</tr>
+												))}
+											</tbody>
+										</table>
+										<div className="mt-2 pt-2 border-t border-[#e8e2dc]">
+											<p className="text-xs font-semibold text-[#1a1a2e] mb-1">המלצה להזמנה</p>
+											{isOptimalSize ? (
+												<p className="text-xs text-emerald-700">המידה הנבחרת אופטימלית לגודל הקיר – מינימום פלטות.</p>
+											) : (
+												<>
+													<p className="text-xs text-gray-700 mb-1.5">לחיסכון בלוחות וכסף: מידה {bestPanelForWall.opt.label} – {bestPanelForWall.total} פלטות (חלוקה {bestPanelForWall.nw}×{bestPanelForWall.nh}). חיסכון של {panelsSaved} פלטות.</p>
+													<button type="button" onClick={() => setPanelSize(bestPanelForWall.opt.w, bestPanelForWall.opt.h)} className="text-xs font-medium text-[#1a1a2e] underline hover:no-underline">
+														החל מידה מומלצת
+													</button>
+												</>
+											)}
 										</div>
-										<p className="text-sm text-[#1a1a2e]">עובי {panelThicknessMm} מ״מ · ניתוק {shadowGapMm} מ״מ</p>
+										<div className="mt-2 pt-2 border-t border-[#e8e2dc]">
+											<p className="text-xs text-gray-600 mb-1">מידות לוח · עובי · ניתוק</p>
+											<div className="flex flex-wrap gap-1 mb-1">
+												{PANEL_SIZE_OPTIONS.map(opt => (
+													<button key={opt.id} type="button" onClick={() => setPanelSize(opt.w, opt.h)} className={`px-2 py-1 rounded text-xs font-medium border ${panelSizeW === opt.w && panelSizeH === opt.h ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white border-gray-300 hover:border-gray-400'}`}>{opt.label}</button>
+												))}
+											</div>
+											<p className="text-xs text-[#1a1a2e]">עובי {panelThicknessMm} מ״מ · ניתוק {shadowGapMm} מ״מ</p>
+										</div>
 									</div>
 									{/* הטקסטורה הנבחרת – תמונה + סוג חומר + שם */}
 									{(() => {
@@ -1923,29 +1955,52 @@ function LivePageInner() {
 								el: (
 									<div>
 										{mobileOpenCat === 'panel' && (
-											<div className="p-3 bg-white border border-t-0 rounded-b-md space-y-3">
-												<div>
-													<p className="text-xs font-semibold text-[#1a1a2e] mb-1">מידות לוח (מ"מ)</p>
-													<div className="flex flex-wrap gap-1.5">
-														{PANEL_SIZE_OPTIONS.map(opt => (
-															<button key={opt.id} type="button" onClick={() => setPanelSize(opt.w, opt.h)} className={`px-2.5 py-1.5 rounded-lg text-xs border-2 ${panelSizeW === opt.w && panelSizeH === opt.h ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white border-gray-300'}`}>{opt.label}</button>
-														))}
+											<div className="p-3 bg-white border border-t-0 rounded-b-md">
+												<div className="rounded-xl bg-gradient-to-b from-[#f8f6f4] to-[#f0ebe6] px-3 py-3 border border-[#e8e2dc] shadow-sm">
+													<span className="text-xs font-semibold text-[#1a1a2e]/70 block mb-2">מידות והמלצות להזמנה</span>
+													<table className="w-full text-xs text-[#1a1a2e]" dir="rtl">
+														<tbody>
+															{panelSpecRows.map(row => (
+																<tr key={row.label} className="border-b border-[#e8e2dc]/60">
+																	<td className="py-1 pr-1 text-gray-600">{row.label}</td>
+																	<td className="py-1 font-medium text-left">{row.value}</td>
+																</tr>
+															))}
+														</tbody>
+													</table>
+													<div className="mt-2 pt-2 border-t border-[#e8e2dc]">
+														<p className="text-xs font-semibold text-[#1a1a2e] mb-1">המלצה להזמנה</p>
+														{isOptimalSize ? (
+															<p className="text-xs text-emerald-700">המידה הנבחרת אופטימלית – מינימום פלטות.</p>
+														) : (
+															<>
+																<p className="text-xs text-gray-700 mb-1">מידה {bestPanelForWall.opt.label}: {bestPanelForWall.total} פלטות (חיסכון {panelsSaved}).</p>
+																<button type="button" onClick={() => setPanelSize(bestPanelForWall.opt.w, bestPanelForWall.opt.h)} className="text-xs font-medium text-[#1a1a2e] underline">
+																	החל מידה מומלצת
+																</button>
+															</>
+														)}
 													</div>
-												</div>
-												<div>
-													<p className="text-xs font-semibold text-[#1a1a2e] mb-1">עובי לוח (מ״מ)</p>
-													<div className="flex gap-2">
-														{([16, 25] as const).map((mm) => (
-															<button key={mm} type="button" onClick={() => setPanelThicknessMm(mm)} className={`px-3 py-1.5 rounded-lg text-sm border-2 ${panelThicknessMm === mm ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white border-gray-300'}`}>{mm} מ״מ</button>
-														))}
-													</div>
-												</div>
-												<div>
-													<p className="text-xs font-semibold text-[#1a1a2e] mb-1">מרווח ניתוק</p>
-													<div className="flex gap-2 flex-wrap">
-														{([3, 5, 10] as const).map((mm) => (
-															<button key={mm} type="button" onClick={() => setShadowGapMm(mm)} className={`px-3 py-1.5 rounded-lg text-sm border-2 ${shadowGapMm === mm ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white border-gray-300'}`}>{mm} מ״מ</button>
-														))}
+													<div className="mt-2 pt-2 border-t border-[#e8e2dc] space-y-2">
+														<div>
+															<p className="text-xs font-semibold text-[#1a1a2e] mb-1">מידות לוח</p>
+															<div className="flex flex-wrap gap-1.5">
+																{PANEL_SIZE_OPTIONS.map(opt => (
+																	<button key={opt.id} type="button" onClick={() => setPanelSize(opt.w, opt.h)} className={`px-2.5 py-1.5 rounded-lg text-xs border-2 ${panelSizeW === opt.w && panelSizeH === opt.h ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white border-gray-300'}`}>{opt.label}</button>
+																))}
+															</div>
+														</div>
+														<div>
+															<p className="text-xs font-semibold text-[#1a1a2e] mb-1">עובי · ניתוק</p>
+															<div className="flex gap-2 flex-wrap">
+																{([16, 25] as const).map((mm) => (
+																	<button key={mm} type="button" onClick={() => setPanelThicknessMm(mm)} className={`px-3 py-1.5 rounded-lg text-sm border-2 ${panelThicknessMm === mm ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white border-gray-300'}`}>{mm} מ״מ</button>
+																))}
+																{([3, 5, 10] as const).map((mm) => (
+																	<button key={`g${mm}`} type="button" onClick={() => setShadowGapMm(mm)} className={`px-3 py-1.5 rounded-lg text-sm border-2 ${shadowGapMm === mm ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white border-gray-300'}`}>ניתוק {mm}</button>
+																))}
+															</div>
+														</div>
 													</div>
 												</div>
 											</div>

@@ -18,6 +18,94 @@ function getWallCenter(
 	const totalHeight = panelsAlongHeight * panelSizeH + (panelsAlongHeight - 1) * gapM;
 	return [0, totalHeight / 2, 0];
 }
+
+/** הדמיית בית לדוגמא – חזית קבועה עם לוחות חיפוי (המפרט/מחיר לפי מ"ר נשארים) */
+function ExampleHouseScene(props: {
+	textureUrl: string | null;
+	materialSolidColor: string | null;
+	materialKind: 'metal' | 'stone';
+	panelThicknessMm: 16 | 25;
+	shadowGapMm: number;
+}) {
+	const { textureUrl, materialSolidColor, materialKind, panelThicknessMm, shadowGapMm } = props;
+	const gapM = shadowGapMm / 1000;
+	const panelSizeW = 2.9;
+	const panelSizeH = 1.45;
+	const panelsAlongWidth = 2;
+	const panelsAlongHeight = 3;
+	const totalWidth = panelsAlongWidth * panelSizeW + (panelsAlongWidth - 1) * gapM;
+	const totalHeight = panelsAlongHeight * panelSizeH + (panelsAlongHeight - 1) * gapM;
+	const uvScale: [number, number] = [1 / panelsAlongWidth, 1 / panelsAlongHeight];
+	const buildingW = 10;
+	const buildingD = 5;
+	const buildingH = 6;
+	const cladCenterY = 0.5 + totalHeight / 2;
+	const cladZ = buildingD / 2 + 0.02;
+	const cells: React.ReactNode[] = [];
+	for (let i = 0; i < panelsAlongHeight; i++) {
+		for (let j = 0; j < panelsAlongWidth; j++) {
+			const px = -totalWidth / 2 + panelSizeW / 2 + j * (panelSizeW + gapM);
+			const py = i * (panelSizeH + gapM);
+			const uvOffset: [number, number] = [j / panelsAlongWidth, i / panelsAlongHeight];
+			cells.push(
+				<group key={`${i}-${j}`} position={[px, py, 0]}>
+					<Panel3D
+						thicknessMm={panelThicknessMm}
+						explodedView={false}
+						widthM={panelSizeW}
+						heightM={panelSizeH}
+						textureUrl={textureUrl}
+						materialSolidColor={materialSolidColor}
+						materialKind={materialKind}
+						uvScale={uvScale}
+						uvOffset={uvOffset}
+					/>
+				</group>
+			);
+		}
+	}
+	return (
+		<group position={[0, cladCenterY, 0]}>
+			{/* גוף הבניין – לבן */}
+			<mesh position={[0, buildingH / 2, 0]} castShadow receiveShadow>
+				<boxGeometry args={[buildingW, buildingH, buildingD]} />
+				<meshStandardMaterial color="#f5f3ef" roughness={0.9} metalness={0.05} />
+			</mesh>
+			{/* גג שטוח קדמי (סטריפ) */}
+			<mesh position={[0, buildingH + 0.08, 0]} castShadow>
+				<boxGeometry args={[buildingW + 0.5, 0.15, buildingD + 0.3]} />
+				<meshStandardMaterial color="#e8e4dc" roughness={0.85} metalness={0.05} />
+			</mesh>
+			{/* אזור חיפוי לוחות – גריד פלטות */}
+			{cells}
+			{/* דלת – מרכז חזית */}
+			<mesh position={[0, 1.1, buildingD / 2 + 0.03]} castShadow>
+				<boxGeometry args={[1, 2.2, 0.08]} />
+				<meshStandardMaterial color="#2c2c2c" roughness={0.6} metalness={0.2} />
+			</mesh>
+			{/* חלונות – קומה עליונה */}
+			<mesh position={[-2.2, 4.2, buildingD / 2 + 0.03]} castShadow>
+				<boxGeometry args={[1.2, 1.2, 0.06]} />
+				<meshStandardMaterial color="#a8d4e6" roughness={0.2} metalness={0} />
+			</mesh>
+			<mesh position={[2.2, 4.2, buildingD / 2 + 0.03]} castShadow>
+				<boxGeometry args={[1.2, 1.2, 0.06]} />
+				<meshStandardMaterial color="#a8d4e6" roughness={0.2} metalness={0} />
+			</mesh>
+			{/* רצפה / אדמה */}
+			<mesh position={[0, -0.05, buildingD / 2 + 1]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+				<planeGeometry args={[buildingW + 4, 8]} />
+				<meshStandardMaterial color="#8b7355" roughness={0.95} metalness={0.05} />
+			</mesh>
+			{/* צל רך */}
+			<mesh position={[0, -0.02, buildingD / 2 + 0.8]} rotation={[-Math.PI / 2, 0, 0]}>
+				<planeGeometry args={[buildingW * 0.9, 3]} />
+				<meshBasicMaterial color="#000000" transparent opacity={0.2} depthWrite={false} />
+			</mesh>
+		</group>
+	);
+}
+
 import type { PathSegment } from './shared/path';
 import { encodePath, decodePath } from './shared/path';
 import { BookingModal } from './components/BookingModal';
@@ -520,6 +608,8 @@ function LivePageInner() {
 	// עזרת מובייל: באנר פתיחה והסבר קצר
 	const [mobileHelpDismissed, setMobileHelpDismissed] = React.useState(false);
 	const [mobileHelpOpen, setMobileHelpOpen] = React.useState(true);
+	// מצב תצוגה: קיר דינמי לפי מידות | הדמיית בית לדוגמא (קבוע, מפרט/מחיר לפי מ"ר)
+	const [showExampleHouse, setShowExampleHouse] = React.useState(false);
 	React.useEffect(() => {
 		try {
 			const v = localStorage.getItem('ascenso:live:mobileHelpDismissed');

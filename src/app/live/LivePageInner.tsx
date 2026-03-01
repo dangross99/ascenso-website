@@ -1364,15 +1364,12 @@ function LivePageInner() {
 		return '\u200F' + groups.join('\u2011') + '\u200F'; // \u2011 = non-breaking hyphen
 	}, []);
 
-	// בניית טקסט שיתוף לוואטסאפ – פרויקט חיפוי קירות (מפרט טכני ומארז דוגמאות)
+	// בניית טקסט שיתוף לוואטסאפ – פרויקט חיפוי קירות (ללא מפרט מפורט)
 	const buildWhatsappText = React.useCallback((leadId: string, shareUrl: string, includeUrl: boolean = true): string => {
 		const materialLabel = activeMaterial === 'metal' ? 'מתכת' : 'אבן טבעית';
 		const textureName = nonWoodModels.find(r => r.id === activeTexId)?.name || 'טקסטורה';
-		// הכרחת כיוון LTR עבור ה‑URL באמצעות LRI/PDI (איסולציה) למניעת שבירה RTL
 		const ltrUrl = `\u2066${shareUrl}\u2069`;
 
-		const surfaceM2 = Math.round(panelSizeW * panelSizeH * 100) / 100;
-		const sizeLabel = PANEL_SIZE_OPTIONS.find(o => o.w === panelSizeW && o.h === panelSizeH)?.label || `${Math.round(panelSizeW * 1000)}×${Math.round(panelSizeH * 1000)}`;
 		const lines = [
 			`*ASCENSO – לוחות חיפוי*\u200F`,
 			`היי, צפיתי בהדמייה של לוח חיפוי באתר ומעוניינ/ת בפרטים.`,
@@ -1380,12 +1377,6 @@ function LivePageInner() {
 			`פרטי הבחירה:`,
 			`- חומר: ${materialLabel}`,
 			`- דגם/טקסטורה: ${textureName}`,
-			`- מידות לוח: ${sizeLabel} מ"מ`,
-			`- שטח פנים: ${surfaceM2} מ"ר`,
-			`- עובי לוח: ${panelThicknessMm} מ״מ`,
-			`- מרווח ניתוק: ${shadowGapMm} מ״מ`,
-			``,
-			`מעוניינ/ת לקבל מפרט טכני ומארז דוגמאות לפרויקט חיפוי קירות.`,
 		];
 		if (includeUrl) {
 			lines.push(`פתיחת ההדמייה:`);
@@ -1393,7 +1384,7 @@ function LivePageInner() {
 		}
 		const body = lines.join('\n');
 		return `\u202B${body}\u202C`;
-	}, [activeMaterial, nonWoodModels, activeTexId, panelThicknessMm, shadowGapMm, panelSizeW, panelSizeH]);
+	}, [activeMaterial, nonWoodModels, activeTexId]);
 
 	// Handler: שיתוף לוואטסאפ
 	const handleWhatsappShare = React.useCallback(async () => {

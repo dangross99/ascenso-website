@@ -1747,7 +1747,7 @@ function LivePageInner() {
 												<p className="text-xs text-emerald-700">המידה הנבחרת אופטימלית לגודל הקיר – מינימום פלטות ומינימום מ"ר להזמנה.</p>
 											) : (
 												<>
-													<p className="text-xs text-gray-700 mb-1.5">לחיסכון : מידה {bestPanelForWall.opt.label} – {bestPanelForWall.total} פלטות (חלוקה {bestPanelForWall.nw}×{bestPanelForWall.nh}).{panelsSaved > 0 && ` חיסכון של ${panelsSaved} פלטות.`}{savingsM2 > 0 ? ` חיסכון של ${savingsM2} מ"ר בהזמנה (פחות פחת).` : ''}</p>
+													<p className="text-xs text-gray-700 mb-1.5">לחיסכון : מידה {bestPanelForWall.opt.label} – {bestPanelForWall.total} פלטות (חלוקה {bestPanelForWall.nw}×{bestPanelForWall.nh}).{panelsSaved > 0 && ` חיסכון של ${panelsSaved} פלטות.`}{savingsM2 > 0 ? ` חיסכון של ${savingsM2} מ"ר בהזמנה.` : ''}</p>
 													<button type="button" onClick={() => setPanelSize(bestPanelForWall.opt.w, bestPanelForWall.opt.h)} className="text-xs font-medium text-[#1a1a2e] underline hover:no-underline">
 														החל מידה מומלצת
 													</button>

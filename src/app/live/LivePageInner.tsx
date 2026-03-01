@@ -461,8 +461,6 @@ function LivePageInner() {
 	// לוחות חיפוי – בקרים הנדסיים
 	const [panelThicknessMm, setPanelThicknessMm] = React.useState<16 | 25>(25);
 	const [shadowGapMm, setShadowGapMm] = React.useState<3 | 5 | 10>(5);
-	const [backlit, setBacklit] = React.useState(false);
-	const [explodedView, setExplodedView] = React.useState(false);
 	/** מידות לוח (מ'): 5 אפשרויות – ברירת מחדל 2900×1450 (2.9×1.45) */
 	const PANEL_SIZE_OPTIONS: Array<{ id: string; w: number; h: number; label: string }> = [
 		{ id: '2900x1450', w: 2.9, h: 1.45, label: '2900×1450' },
@@ -525,7 +523,7 @@ function LivePageInner() {
 		switch (cat) {
 			case 'material': return 'בחרו חומר: אבן טבעית או מתכת.';
 			case 'nonWoodTexture': return 'בחרו דגם/טקסטורה ללוח החיפוי.';
-			case 'panel': return 'עובי לוח, מרווח ניתוק ותאורה אחורית.';
+			case 'panel': return 'עובי לוח ומרווח ניתוק.';
 			default: return '';
 		}
 	}, []);
@@ -539,8 +537,8 @@ function LivePageInner() {
 			default: return '';
 		}
 	}, []);
-	type Cat = 'material' | 'nonWoodTexture' | 'panel';
-	const stepOrderForSteps: Cat[] = ['material', 'nonWoodTexture', 'panel'];
+	type Cat = 'material' | 'nonWoodTexture';
+	const stepOrderForSteps: Cat[] = ['material', 'nonWoodTexture'];
 	const getNextCatForSteps = (cat: Cat): Cat | null => {
 		const i = stepOrderForSteps.indexOf(cat);
 		return i >= 0 && i < stepOrderForSteps.length - 1 ? stepOrderForSteps[i + 1] : null;
@@ -1496,52 +1494,7 @@ function LivePageInner() {
 										})
 									}
 								/>
-							</div>
-							<div className="border-t border-gray-200 pt-4 mt-4 space-y-4">
-								<div>
-									<p className="text-sm font-semibold text-[#1a1a2e] mb-2">מידות לוח (מ"מ)</p>
-									<div className="flex flex-wrap gap-2">
-										{PANEL_SIZE_OPTIONS.map(opt => (
-											<button
-												key={opt.id}
-												type="button"
-												onClick={() => setPanelSize(opt.w, opt.h)}
-												className={`px-3 py-2 rounded-lg text-sm font-medium border-2 ${panelSizeW === opt.w && panelSizeH === opt.h ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'}`}
-											>
-												{opt.label}
-											</button>
-										))}
-									</div>
-								</div>
-								<div>
-									<p className="text-sm font-semibold text-[#1a1a2e] mb-2">עובי לוח (מ״מ)</p>
-									<div className="flex gap-2">
-										{([16, 25] as const).map((mm) => (
-											<button key={mm} type="button" onClick={() => setPanelThicknessMm(mm)} className={`px-4 py-2 rounded-lg text-sm font-medium border-2 ${panelThicknessMm === mm ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'}`}>{mm} מ״מ</button>
-										))}
-									</div>
-								</div>
-								<div>
-									<p className="text-sm font-semibold text-[#1a1a2e] mb-2">מרווח ניתוק (מ״מ)</p>
-									<div className="flex gap-2 flex-wrap">
-										{([3, 5, 10] as const).map((mm) => (
-											<button key={mm} type="button" onClick={() => setShadowGapMm(mm)} className={`px-4 py-2 rounded-lg text-sm font-medium border-2 ${shadowGapMm === mm ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'}`}>{mm} מ״מ</button>
-										))}
-									</div>
-								</div>
-								<div className="flex items-center justify-between">
-									<span className="text-sm font-semibold text-[#1a1a2e]">תאורה אחורית</span>
-									<button type="button" onClick={() => setBacklit((b) => !b)} className={`relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 transition-colors ${backlit ? 'bg-emerald-600 border-emerald-600' : 'bg-gray-200 border-gray-300'}`} aria-label={backlit ? 'כבוי' : 'הפעלה'}>
-										<span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${backlit ? 'translate-x-5' : 'translate-x-1'}`} />
-									</button>
-								</div>
-								<div className="flex items-center justify-between">
-									<span className="text-sm font-semibold text-[#1a1a2e]">מבט מפוצץ</span>
-									<button type="button" onClick={() => setExplodedView((e) => !e)} className={`relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 transition-colors ${explodedView ? 'bg-emerald-600 border-emerald-600' : 'bg-gray-200 border-gray-300'}`} aria-label={explodedView ? 'סגור מבט מפוצץ' : 'הצג מבט מפוצץ'}>
-										<span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${explodedView ? 'translate-x-5' : 'translate-x-1'}`} />
-									</button>
-								</div>
-								<div className="pt-3 border-t border-gray-200 text-center">
+								<div className="pt-4 mt-4 text-center">
 									<a href={`https://api.whatsapp.com/send?phone=${(whatsappPhone || '').replace(/\D/g, '')}&text=${encodeURIComponent(buildWhatsappText(generateLeadId(), '', false))}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-md bg-emerald-600 text-white px-5 py-2.5 text-sm font-semibold shadow-sm hover:bg-emerald-700 hover:opacity-95 cursor-pointer" aria-label="שלח הודעה בוואטסאפ">
 										בקשת מפרט טכני ומארז דוגמאות
 									</a>
@@ -1573,8 +1526,7 @@ function LivePageInner() {
 								<Environment preset="city" />
 								<Panel3D
 									thicknessMm={panelThicknessMm}
-									explodedView={explodedView}
-									backlit={backlit}
+									explodedView={false}
 									widthM={panelSizeW}
 									heightM={panelSizeH}
 									textureUrl={(() => {
@@ -1720,7 +1672,6 @@ function LivePageInner() {
 											))}
 										</div>
 										<p className="text-sm text-[#1a1a2e]">עובי {panelThicknessMm} מ״מ · ניתוק {shadowGapMm} מ״מ</p>
-										<p className="text-xs text-gray-600">{backlit ? 'תאורה אחורית: מופעלת' : 'תאורה אחורית: כבויה'} · {explodedView ? 'מבט מפוצץ' : 'תצוגה רגילה'}</p>
 									</div>
 									{/* הטקסטורה הנבחרת – תמונה + סוג חומר + שם */}
 									{(() => {
@@ -1958,18 +1909,6 @@ function LivePageInner() {
 															<button key={mm} type="button" onClick={() => setShadowGapMm(mm)} className={`px-3 py-1.5 rounded-lg text-sm border-2 ${shadowGapMm === mm ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white border-gray-300'}`}>{mm} מ״מ</button>
 														))}
 													</div>
-												</div>
-												<div className="flex items-center justify-between">
-													<span className="text-sm font-semibold">תאורה אחורית</span>
-													<button type="button" onClick={() => setBacklit((b) => !b)} className={`relative inline-flex h-6 w-11 rounded-full border-2 ${backlit ? 'bg-emerald-600 border-emerald-600' : 'bg-gray-200 border-gray-300'}`}>
-														<span className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${backlit ? 'translate-x-5' : 'translate-x-1'}`} />
-													</button>
-												</div>
-												<div className="flex items-center justify-between">
-													<span className="text-sm font-semibold">מבט מפוצץ</span>
-													<button type="button" onClick={() => setExplodedView((e) => !e)} className={`relative inline-flex h-6 w-11 rounded-full border-2 ${explodedView ? 'bg-emerald-600 border-emerald-600' : 'bg-gray-200 border-gray-300'}`}>
-														<span className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${explodedView ? 'translate-x-5' : 'translate-x-1'}`} />
-													</button>
 												</div>
 											</div>
 										)}

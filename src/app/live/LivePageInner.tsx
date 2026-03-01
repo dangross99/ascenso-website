@@ -1744,7 +1744,7 @@ function LivePageInner() {
 										<div className="mt-3 pt-3 border-t border-[#e8e2dc]">
 											<p className="text-xs font-semibold text-[#1a1a2e] mb-1">המלצה להזמנה</p>
 											{isOptimalSize ? (
-												<p className="text-xs text-emerald-700">המידה הנבחרת אופטימלית לגודל הקיר – מינימום פלטות ומינימום מ"ר להזמנה.</p>
+												<p className="text-xs text-emerald-700">המידה הנבחרת אופטימלית לגודל הקיר – מינימום פחת.</p>
 											) : (
 												<>
 													<p className="text-xs text-gray-700 mb-1.5">לחיסכון: מידה {bestPanelForWall.opt.label} – {bestPanelForWall.total} פלטות (חלוקה {bestPanelForWall.nw}×{bestPanelForWall.nh}).{panelsSaved > 0 && ` חיסכון של ${panelsSaved} פלטות.`}{savingsM2 > 0 ? ` חיסכון של ${savingsM2} מ"ר בהזמנה.` : ''}</p>
@@ -1911,7 +1911,7 @@ function LivePageInner() {
 													<div className="mt-3 pt-3 border-t border-[#e8e2dc]">
 														<p className="text-xs font-semibold text-[#1a1a2e] mb-1">המלצה להזמנה</p>
 														{isOptimalSize ? (
-															<p className="text-xs text-emerald-700">המידה הנבחרת אופטימלית – מינימום פלטות ומ"ר להזמנה.</p>
+															<p className="text-xs text-emerald-700">המידה הנבחרת אופטימלית לגודל הקיר – מינימום פחת.</p>
 														) : (
 															<>
 																<p className="text-xs text-gray-700 mb-1">מידה {bestPanelForWall.opt.label}: {bestPanelForWall.total} פלטות.{panelsSaved > 0 ? ` חיסכון ${panelsSaved} פלטות.` : ''}{savingsM2 > 0 ? ` חיסכון ${savingsM2} מ"ר בהזמנה.` : ''}</p>

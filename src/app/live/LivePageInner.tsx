@@ -1736,7 +1736,7 @@ function LivePageInner() {
 												{panelSpecRows.map(row => (
 													<tr key={row.label} className="border-b border-[#e8e2dc]/70 last:border-0">
 														<td className="py-2 pr-2 text-[#1a1a2e]/75 align-top">{row.label}</td>
-														<td className="py-2 pl-2 font-medium text-left text-[#1a1a2e] align-top">{row.value}</td>
+														<td className="py-2 pl-2 font-medium text-left text-[#1a1a2e] align-top whitespace-nowrap">{row.value}</td>
 													</tr>
 												))}
 											</tbody>
@@ -1903,7 +1903,7 @@ function LivePageInner() {
 															{panelSpecRows.map(row => (
 																<tr key={row.label} className="border-b border-[#e8e2dc]/70 last:border-0">
 																	<td className="py-2 pr-2 text-[#1a1a2e]/75 align-top">{row.label}</td>
-																	<td className="py-2 pl-2 font-medium text-left text-[#1a1a2e] align-top">{row.value}</td>
+																	<td className="py-2 pl-2 font-medium text-left text-[#1a1a2e] align-top whitespace-nowrap">{row.value}</td>
 																</tr>
 															))}
 														</tbody>

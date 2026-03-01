@@ -1276,20 +1276,25 @@ function LivePageInner() {
 	const panelSpecStoneName = (nonWoodModels.find(m => m.id === activeTexId) || nonWoodModels[0])?.name || '—';
 	const panelSizeLabel = PANEL_SIZE_OPTIONS.find(o => o.w === panelSizeW && o.h === panelSizeH)?.label || `${panelSizeW * 1000}×${panelSizeH * 1000}`;
 	const hasCutPanels = lastColWidth < panelSizeW - 0.001 || lastRowHeight < panelSizeH - 0.001;
-	/** נסטינג אופטימלי: מידת לוח שנותנת מינימום פלטות לגודל הקיר */
+	/** נסטינג אופטימלי: מידת לוח שנותנת מינימום מ"ר להזמנה (המחיר לפי מ"ר) – ממיזער פחת */
 	const bestPanelForWall = React.useMemo(() => {
-		let best: { opt: typeof PANEL_SIZE_OPTIONS[0]; total: number; nw: number; nh: number } = { opt: PANEL_SIZE_OPTIONS[0], total: 1e9, nw: 0, nh: 0 };
+		let best: { opt: typeof PANEL_SIZE_OPTIONS[0]; total: number; nw: number; nh: number; orderM2: number } = { opt: PANEL_SIZE_OPTIONS[0], total: 1e9, nw: 0, nh: 0, orderM2: 1e9 };
 		const g = shadowGapMm / 1000;
 		for (const opt of PANEL_SIZE_OPTIONS) {
 			const nw = Math.max(1, Math.ceil(wallWidthM / opt.w));
 			const nh = Math.max(1, Math.ceil(wallHeightM / opt.h));
 			const total = nw * nh;
-			if (total < best.total) best = { opt, total, nw, nh };
+			const orderM2 = total * (opt.w * opt.h);
+			if (orderM2 < best.orderM2) best = { opt, total, nw, nh, orderM2 };
 		}
 		return best;
 	}, [wallWidthM, wallHeightM, shadowGapMm]);
 	const isOptimalSize = panelSizeW === bestPanelForWall.opt.w && panelSizeH === bestPanelForWall.opt.h;
 	const panelsSaved = isOptimalSize ? 0 : panelsTotal - bestPanelForWall.total;
+	/** שטח הזמנה (מ"ר) = מספר פלטות × שטח לוח – המחיר לפי מ"ר, אז חיסכון אמיתי = פחות מ"ר להזמנה */
+	const currentOrderM2 = panelsTotal * (panelSizeW * panelSizeH);
+	const optimalOrderM2 = bestPanelForWall.total * (bestPanelForWall.opt.w * bestPanelForWall.opt.h);
+	const savingsM2 = isOptimalSize ? 0 : Math.max(0, Math.round((currentOrderM2 - optimalOrderM2) * 100) / 100);
 	const panelSpecRows: Array<{ label: string; value: string }> = [
 		{ label: 'סוג אבן', value: panelSpecStoneName },
 		{ label: 'מידות (מ"מ)', value: panelSizeLabel },
@@ -1736,10 +1741,10 @@ function LivePageInner() {
 										<div className="mt-2 pt-2 border-t border-[#e8e2dc]">
 											<p className="text-xs font-semibold text-[#1a1a2e] mb-1">המלצה להזמנה</p>
 											{isOptimalSize ? (
-												<p className="text-xs text-emerald-700">המידה הנבחרת אופטימלית לגודל הקיר – מינימום פלטות.</p>
+												<p className="text-xs text-emerald-700">המידה הנבחרת אופטימלית לגודל הקיר – מינימום פלטות ומינימום מ"ר להזמנה.</p>
 											) : (
 												<>
-													<p className="text-xs text-gray-700 mb-1.5">לחיסכון בלוחות וכסף: מידה {bestPanelForWall.opt.label} – {bestPanelForWall.total} פלטות (חלוקה {bestPanelForWall.nw}×{bestPanelForWall.nh}). חיסכון של {panelsSaved} פלטות.</p>
+													<p className="text-xs text-gray-700 mb-1.5">לחיסכון בלוחות וכסף: מידה {bestPanelForWall.opt.label} – {bestPanelForWall.total} פלטות (חלוקה {bestPanelForWall.nw}×{bestPanelForWall.nh}).{panelsSaved > 0 && ` חיסכון של ${panelsSaved} פלטות.`}{savingsM2 > 0 ? ` חיסכון של ${savingsM2} מ"ר בהזמנה (פחות פחת – המחיר לפי מ"ר).` : ''}</p>
 													<button type="button" onClick={() => setPanelSize(bestPanelForWall.opt.w, bestPanelForWall.opt.h)} className="text-xs font-medium text-[#1a1a2e] underline hover:no-underline">
 														החל מידה מומלצת
 													</button>
@@ -1973,10 +1978,10 @@ function LivePageInner() {
 													<div className="mt-2 pt-2 border-t border-[#e8e2dc]">
 														<p className="text-xs font-semibold text-[#1a1a2e] mb-1">המלצה להזמנה</p>
 														{isOptimalSize ? (
-															<p className="text-xs text-emerald-700">המידה הנבחרת אופטימלית – מינימום פלטות.</p>
+															<p className="text-xs text-emerald-700">המידה הנבחרת אופטימלית – מינימום פלטות ומ"ר להזמנה.</p>
 														) : (
 															<>
-																<p className="text-xs text-gray-700 mb-1">מידה {bestPanelForWall.opt.label}: {bestPanelForWall.total} פלטות (חיסכון {panelsSaved}).</p>
+																<p className="text-xs text-gray-700 mb-1">מידה {bestPanelForWall.opt.label}: {bestPanelForWall.total} פלטות.{panelsSaved > 0 ? ` חיסכון ${panelsSaved} פלטות.` : ''}{savingsM2 > 0 ? ` חיסכון ${savingsM2} מ"ר בהזמנה.` : ''}</p>
 																<button type="button" onClick={() => setPanelSize(bestPanelForWall.opt.w, bestPanelForWall.opt.h)} className="text-xs font-medium text-[#1a1a2e] underline">
 																	החל מידה מומלצת
 																</button>

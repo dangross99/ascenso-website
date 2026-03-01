@@ -1755,9 +1755,9 @@ function LivePageInner() {
 											)}
 										</div>
 										<div className="mt-2 pt-2 border-t border-[#e8e2dc]">
-											<div className="flex flex-nowrap gap-1 mb-1">
+											<div className="flex flex-wrap gap-1 mb-1">
 												{PANEL_SIZE_OPTIONS.map(opt => (
-													<button key={opt.id} type="button" onClick={() => setPanelSize(opt.w, opt.h)} className={`flex-1 min-w-[4.75rem] px-2.5 py-1.5 rounded text-xs font-medium border text-center overflow-hidden text-ellipsis whitespace-nowrap ${panelSizeW === opt.w && panelSizeH === opt.h ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white border-gray-300 hover:border-gray-400'}`}>{opt.label}</button>
+													<button key={opt.id} type="button" onClick={() => setPanelSize(opt.w, opt.h)} className={`px-2 py-1 rounded text-xs font-medium border ${panelSizeW === opt.w && panelSizeH === opt.h ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white border-gray-300 hover:border-gray-400'}`}>{opt.label}</button>
 												))}
 											</div>
 										</div>
@@ -1952,9 +1952,9 @@ function LivePageInner() {
 													<div className="mt-2 pt-2 border-t border-[#e8e2dc] space-y-2">
 														<div>
 															<p className="text-xs font-semibold text-[#1a1a2e] mb-1">מידות לוח</p>
-															<div className="flex flex-nowrap gap-1">
+															<div className="flex flex-wrap gap-1.5">
 																{PANEL_SIZE_OPTIONS.map(opt => (
-																	<button key={opt.id} type="button" onClick={() => setPanelSize(opt.w, opt.h)} className={`flex-1 min-w-[5rem] px-3 py-2 rounded-lg text-sm border-2 text-center overflow-hidden text-ellipsis whitespace-nowrap ${panelSizeW === opt.w && panelSizeH === opt.h ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white border-gray-300'}`}>{opt.label}</button>
+																	<button key={opt.id} type="button" onClick={() => setPanelSize(opt.w, opt.h)} className={`px-2.5 py-1.5 rounded-lg text-xs border-2 ${panelSizeW === opt.w && panelSizeH === opt.h ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white border-gray-300'}`}>{opt.label}</button>
 																))}
 															</div>
 														</div>

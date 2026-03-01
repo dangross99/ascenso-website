@@ -537,8 +537,8 @@ function LivePageInner() {
 			default: return '';
 		}
 	}, []);
-	type Cat = 'material' | 'nonWoodTexture';
-	const stepOrderForSteps: Cat[] = ['material', 'nonWoodTexture'];
+	type Cat = 'material' | 'nonWoodTexture' | 'panel';
+	const stepOrderForSteps: Cat[] = ['material', 'nonWoodTexture', 'panel'];
 	const getNextCatForSteps = (cat: Cat): Cat | null => {
 		const i = stepOrderForSteps.indexOf(cat);
 		return i >= 0 && i < stepOrderForSteps.length - 1 ? stepOrderForSteps[i + 1] : null;

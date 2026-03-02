@@ -564,18 +564,23 @@ export default function Home() {
             </a>
           </div>
 
-          {/* צד ימין (ב-RTL): תמונת HERO12 + עובי הפאנל */}
-          <div className="flex-1 w-full max-w-md lg:max-w-lg xl:max-w-xl flex justify-center lg:justify-start order-1 lg:order-2">
-            <div className="relative w-full max-w-md">
+          {/* צד ימין (ב-RTL): תמונת HERO12 (מוגדלת) + הנפשת 4 שכבות + עובי הפאנל */}
+          <div className="flex-1 w-full max-w-2xl lg:max-w-3xl xl:max-w-4xl flex justify-center lg:justify-start order-1 lg:order-2">
+            <div className="relative w-full max-w-2xl lg:max-w-3xl xl:max-w-4xl">
               <div className="hero-hero12-wrap relative aspect-[4/3] md:aspect-[3/2] overflow-hidden bg-transparent" style={{ background: "transparent" }}>
                 <Image
                   src={HERO_IMAGE}
                   alt="לוחות חיפוי אבן טבעית ומתכת – MIRZA"
                   fill
                   className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 480px"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 600px, (max-width: 1280px) 720px, 900px"
                   priority
                 />
+                {/* 4 פסי גילוי – הנפשה לכל שכבה */}
+                <div className="hero12-reveal hero12-reveal-1" aria-hidden />
+                <div className="hero12-reveal hero12-reveal-2" aria-hidden />
+                <div className="hero12-reveal hero12-reveal-3" aria-hidden />
+                <div className="hero12-reveal hero12-reveal-4" aria-hidden />
               </div>
               {/* עובי הפאנל – שכבות (ללא רקע) */}
               <div className="mt-4 px-3 py-3">
@@ -597,6 +602,24 @@ export default function Home() {
           .hero-hero12-wrap img {
             background: transparent !important;
           }
+          /* הנפשת 4 שכבות – גילוי מדורג */
+          @keyframes hero12-reveal {
+            from { transform: translateX(0); }
+            to { transform: translateX(-100%); }
+          }
+          .hero12-reveal {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 25%;
+            background: linear-gradient(135deg, #2c2520 0%, #1e2a35 50%, #1a2332 100%);
+            animation: hero12-reveal 0.7s ease-out forwards;
+            pointer-events: none;
+          }
+          .hero12-reveal-1 { left: 0; animation-delay: 0s; }
+          .hero12-reveal-2 { left: 25%; animation-delay: 0.15s; }
+          .hero12-reveal-3 { left: 50%; animation-delay: 0.3s; }
+          .hero12-reveal-4 { left: 75%; animation-delay: 0.45s; }
           /* Hide horizontal scrollbar across browsers for the steps viewport */
           #steps-viewport {
             -ms-overflow-style: none; /* IE/Edge */

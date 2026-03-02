@@ -578,8 +578,8 @@ export default function Home() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
               </div>
-              {/* עובי הפאנל – שכבות */}
-              <div className="mt-4 px-3 py-3 rounded-xl bg-black/25 border border-white/10">
+              {/* עובי הפאנל – שכבות (ללא רקע) */}
+              <div className="mt-4 px-3 py-3">
                 <p className="text-white/90 text-sm font-semibold mb-2">עובי הפאנל</p>
                 <ul className="space-y-1.5 text-white/80 text-xs md:text-sm">
                   <li className="flex justify-between gap-3"><span>אבן טבעית</span><span className="tabular-nums text-white/90">7 מ"מ</span></li>

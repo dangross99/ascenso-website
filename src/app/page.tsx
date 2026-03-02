@@ -582,16 +582,6 @@ export default function Home() {
                 <div className="hero12-reveal hero12-reveal-3" aria-hidden />
                 <div className="hero12-reveal hero12-reveal-4" aria-hidden />
               </div>
-              {/* עובי הפאנל – שכבות (ללא רקע) */}
-              <div className="mt-4 px-3 py-3">
-                <p className="text-white/90 text-sm font-semibold mb-2">עובי הפאנל</p>
-                <ul className="space-y-1.5 text-white/80 text-xs md:text-sm">
-                  <li className="flex justify-between gap-3"><span>אבן טבעית</span><span className="tabular-nums text-white/90">7 מ"מ</span></li>
-                  <li className="flex justify-between gap-3"><span>פיברגלס</span><span className="tabular-nums text-white/90">1 מ"מ</span></li>
-                  <li className="flex justify-between gap-3"><span>חלת דבש אלומיניום</span><span className="tabular-nums text-white/90">20/10 מ"מ</span></li>
-                  <li className="flex justify-between gap-3"><span>אלומיניום</span><span className="tabular-nums text-white/90">1 מ"מ</span></li>
-                </ul>
-              </div>
             </div>
           </div>
         </div>

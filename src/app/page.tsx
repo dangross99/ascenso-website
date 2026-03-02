@@ -533,7 +533,7 @@ export default function Home() {
     <div className="w-full bg-white overflow-x-hidden">
       {/* 1. Hero Section – בהשראת STONESIZE: גרדיאנט כהה, טקסט יוקרתי, מחסנית לוחות */}
       <section
-        className="relative w-screen min-h-[304px] md:min-h-[336px] lg:min-h-[416px] flex items-center overflow-hidden"
+        className="relative w-screen min-h-[244px] md:min-h-[270px] lg:min-h-[333px] flex items-center overflow-hidden"
         style={{
           marginLeft: "calc(50% - 50vw)",
           width: "100vw",
@@ -541,7 +541,7 @@ export default function Home() {
         }}
         dir="rtl"
       >
-        <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-10 py-8 lg:py-10 pr-4 pl-0 md:pr-8 md:pl-0 lg:pr-12 lg:pl-0">
+        <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-4 lg:gap-8 py-6 lg:py-8 pr-4 pl-0 md:pr-8 md:pl-0 lg:pr-12 lg:pl-0">
           {/* צד שמאל (ב-RTL): טקסט + CTA – שוליים רק מצד הטקסט */}
           <div className="flex-1 min-w-0 text-center lg:text-right order-2 lg:order-1">
             <p className="text-white/70 text-sm md:text-base tracking-[0.2em] uppercase font-light mb-1">
@@ -565,9 +565,9 @@ export default function Home() {
           </div>
 
           {/* צד ימין (ב-RTL): תמונת HERO12 – גדול מאוד, צמוד לקצה ההירו (0 שוליים) */}
-          <div className="flex-1 min-w-0 w-full lg:flex-[1.8] lg:min-w-[58%] flex flex-col justify-center lg:justify-end order-1 lg:order-2 lg:-ms-16 xl:-ms-24 2xl:-ms-32 items-center">
+          <div className="flex-1 min-w-0 w-full lg:flex-[1.8] lg:min-w-[58%] flex justify-center lg:justify-end order-1 lg:order-2 lg:-ms-16 xl:-ms-24 2xl:-ms-32 items-center">
             <div className="relative w-full max-w-[90vw] sm:max-w-[85vw] lg:max-w-none lg:w-[55vw] xl:w-[58vw] 2xl:w-[60vw]">
-              <div className="hero-hero12-wrap relative aspect-[4/3] md:aspect-[3/2] overflow-hidden bg-transparent" style={{ background: "transparent" }}>
+              <div className="hero-hero12-wrap relative aspect-[4/3] md:aspect-[3/2] overflow-visible bg-transparent" style={{ background: "transparent" }}>
                 <Image
                   src={HERO_IMAGE}
                   alt="לוחות חיפוי אבן טבעית ומתכת – MIRZA"
@@ -576,12 +576,27 @@ export default function Home() {
                   sizes="(max-width: 768px) 95vw, (max-width: 1024px) 75vw, 60vw"
                   priority
                 />
+                {/* כיתוב מצד שמאל לתמונה + חץ לכל פאנל (נכנס לתוך התמונה, ב-RTL צד ימין של התמונה = שמאל ויזואלי) */}
+                <div className="absolute inset-y-0 right-0 w-[max(130px,22%)] sm:w-[max(160px,26%)] flex flex-col justify-between py-3 sm:py-4 px-2 pointer-events-none">
+                  <div className="flex items-center gap-1.5 justify-end text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                    <span className="text-xs sm:text-sm font-medium whitespace-nowrap">אבן טבעית / מתכת</span>
+                    <span className="hero-arrow flex-shrink-0" aria-hidden>←</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 justify-end text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                    <span className="text-xs sm:text-sm font-medium whitespace-nowrap">רשת פיברגלס</span>
+                    <span className="hero-arrow flex-shrink-0" aria-hidden>←</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 justify-end text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                    <span className="text-xs sm:text-sm font-medium whitespace-nowrap">חלת דבש אלומיניום</span>
+                    <span className="hero-arrow flex-shrink-0" aria-hidden>←</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 justify-end text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                    <span className="text-xs sm:text-sm font-medium whitespace-nowrap">אלומיניום</span>
+                    <span className="hero-arrow flex-shrink-0" aria-hidden>←</span>
+                  </div>
+                </div>
               </div>
             </div>
-            {/* כיתוב מתחת לתמונה – בהשראת התמונה (בלוק טקסט נקי, ממורכז) */}
-            <p className="mt-4 lg:mt-5 w-full max-w-xl mx-auto text-center text-white/90 text-sm md:text-base leading-relaxed font-normal px-4">
-              תכן הפאנל: שכבת אבן טבעית או מתכת, רשת פיברגלס, ליבת חלת דבש אלומיניום וגב אלומיניום — מבנה קל, חזק ועמיד.
-            </p>
           </div>
         </div>
         <style jsx global>{`
@@ -590,6 +605,10 @@ export default function Home() {
           .hero-hero12-wrap span,
           .hero-hero12-wrap img {
             background: transparent !important;
+          }
+          .hero-arrow {
+            font-size: 0.9em;
+            opacity: 0.95;
           }
           /* Hide horizontal scrollbar across browsers for the steps viewport */
           #steps-viewport {

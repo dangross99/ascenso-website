@@ -567,7 +567,7 @@ export default function Home() {
           {/* צד ימין (ב-RTL): תמונת HERO12 + עובי הפאנל */}
           <div className="flex-1 w-full max-w-md lg:max-w-lg xl:max-w-xl flex justify-center lg:justify-start order-1 lg:order-2">
             <div className="relative w-full max-w-md">
-              <div className="relative aspect-[4/3] md:aspect-[3/2] rounded-xl overflow-hidden border border-white/15 shadow-2xl">
+              <div className="relative aspect-[4/3] md:aspect-[3/2] overflow-hidden">
                 <Image
                   src={HERO_IMAGE}
                   alt="לוחות חיפוי אבן טבעית ומתכת – MIRZA"
@@ -576,7 +576,6 @@ export default function Home() {
                   sizes="(max-width: 768px) 100vw, 480px"
                   priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
               </div>
               {/* עובי הפאנל – שכבות (ללא רקע) */}
               <div className="mt-4 px-3 py-3">

@@ -533,7 +533,7 @@ export default function Home() {
     <div className="w-full bg-white overflow-x-hidden">
       {/* 1. Hero Section – בהשראת STONESIZE: גרדיאנט כהה, טקסט יוקרתי, מחסנית לוחות */}
       <section
-        className="relative w-screen min-h-[380px] md:min-h-[420px] lg:min-h-[520px] flex items-center overflow-hidden"
+        className="relative w-screen min-h-[304px] md:min-h-[336px] lg:min-h-[416px] flex items-center overflow-hidden"
         style={{
           marginLeft: "calc(50% - 50vw)",
           width: "100vw",
@@ -541,7 +541,7 @@ export default function Home() {
         }}
         dir="rtl"
       >
-        <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12 py-12 lg:py-16 pr-4 pl-0 md:pr-8 md:pl-0 lg:pr-12 lg:pl-0">
+        <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-10 py-8 lg:py-10 pr-4 pl-0 md:pr-8 md:pl-0 lg:pr-12 lg:pl-0">
           {/* צד שמאל (ב-RTL): טקסט + CTA – שוליים רק מצד הטקסט */}
           <div className="flex-1 min-w-0 text-center lg:text-right order-2 lg:order-1">
             <p className="text-white/70 text-sm md:text-base tracking-[0.2em] uppercase font-light mb-1">
@@ -565,7 +565,7 @@ export default function Home() {
           </div>
 
           {/* צד ימין (ב-RTL): תמונת HERO12 – גדול מאוד, צמוד לקצה ההירו (0 שוליים) */}
-          <div className="flex-1 min-w-0 w-full lg:flex-[1.8] lg:min-w-[58%] flex justify-center lg:justify-end order-1 lg:order-2 lg:-ms-16 xl:-ms-24 2xl:-ms-32">
+          <div className="flex-1 min-w-0 w-full lg:flex-[1.8] lg:min-w-[58%] flex flex-col justify-center lg:justify-end order-1 lg:order-2 lg:-ms-16 xl:-ms-24 2xl:-ms-32 items-center">
             <div className="relative w-full max-w-[90vw] sm:max-w-[85vw] lg:max-w-none lg:w-[55vw] xl:w-[58vw] 2xl:w-[60vw]">
               <div className="hero-hero12-wrap relative aspect-[4/3] md:aspect-[3/2] overflow-hidden bg-transparent" style={{ background: "transparent" }}>
                 <Image
@@ -576,20 +576,12 @@ export default function Home() {
                   sizes="(max-width: 768px) 95vw, (max-width: 1024px) 75vw, 60vw"
                   priority
                 />
-                {/* גרפיטי – הסבר שכבות הפאנל (מעל התמונה, בלי להגדיל הירו) */}
-                <div className="absolute bottom-2 left-2 right-2 sm:left-auto sm:right-2 sm:w-auto w-[min(100%,220px)] hero-graffiti">
-                  <div className="px-2.5 py-2 sm:px-3 sm:py-2.5 rounded-sm border-2 border-white/30 bg-black/55 backdrop-blur-sm shadow-lg">
-                    <p className="text-[10px] sm:text-xs text-white/60 uppercase tracking-widest mb-1 font-bold">תכן הפאנל</p>
-                    <ul className="text-white font-bold text-[11px] sm:text-sm leading-tight space-y-0.5 [font-family:inherit]">
-                      <li>אבן טבעית / מתכת</li>
-                      <li>רשת פיברגלס</li>
-                      <li>חלת דבש אלומיניום</li>
-                      <li>אלומיניום</li>
-                    </ul>
-                  </div>
-                </div>
               </div>
             </div>
+            {/* כיתוב מתחת לתמונה – בהשראת התמונה (בלוק טקסט נקי, ממורכז) */}
+            <p className="mt-4 lg:mt-5 w-full max-w-xl mx-auto text-center text-white/90 text-sm md:text-base leading-relaxed font-normal px-4">
+              תכן הפאנל: שכבת אבן טבעית או מתכת, רשת פיברגלס, ליבת חלת דבש אלומיניום וגב אלומיניום — מבנה קל, חזק ועמיד.
+            </p>
           </div>
         </div>
         <style jsx global>{`
@@ -598,14 +590,6 @@ export default function Home() {
           .hero-hero12-wrap span,
           .hero-hero12-wrap img {
             background: transparent !important;
-          }
-          /* גרפיטי – מראה תווית/טאג */
-          .hero-graffiti {
-            transform: rotate(-1.5deg);
-            text-shadow: 0 0 1px rgba(0,0,0,0.8), 0 1px 2px rgba(0,0,0,0.5);
-          }
-          .hero-graffiti li {
-            letter-spacing: 0.02em;
           }
           /* Hide horizontal scrollbar across browsers for the steps viewport */
           #steps-viewport {

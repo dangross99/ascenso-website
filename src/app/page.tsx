@@ -545,59 +545,92 @@ export default function Home() {
 
   return (
     <div className="w-full bg-white overflow-x-hidden">
-      {/* 1. Hero Section */}
+      {/* 1. Hero Section – בהשראת STONESIZE: גרדיאנט כהה, טקסט יוקרתי, מחסנית לוחות */}
       <section
-        className="relative w-screen min-h-[320px] md:min-h-[400px] lg:min-h-[500px] flex items-end bg-gray-50 overflow-hidden"
-        style={{ marginLeft: "calc(50% - 50vw)", width: "100vw" }}
+        className="relative w-screen min-h-[380px] md:min-h-[420px] lg:min-h-[520px] flex items-center overflow-hidden"
+        style={{
+          marginLeft: "calc(50% - 50vw)",
+          width: "100vw",
+          background: "linear-gradient(135deg, #2c2520 0%, #1e2a35 50%, #1a2332 100%)",
+        }}
+        dir="rtl"
       >
-        {/* To change the hero image, update the HERO_IMAGE variable above */}
-        <div
-          className="absolute inset-0 w-full h-full bg-cover bg-center opacity-100 transition-all duration-300"
-          style={{ backgroundImage: `url(${HERO_IMAGE})` }}
-        ></div>
-        {/* Overlay gradient for better text readability */}
-        <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-black/70 via-black/25 to-transparent"></div>
-        <div className="relative z-10 w-full flex flex-col gap-3 justify-center items-center px-4 md:px-14 lg:px-20 pb-8 md:pb-14 lg:pb-16 md:flex-row md:items-end md:justify-between" dir="rtl">
-          {/* Right side: Text (RTL) */}
-          <div className="text-center md:text-right w-full md:w-[60%] max-w-none lg:whitespace-nowrap">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl text-white mb-2 md:mb-4 leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]">
-              <span className="block font-heebo tracking-widest uppercase">MIRZA</span>
-              <span className="text-2xl md:text-3xl lg:text-4xl font-light text-white/95 tracking-wide">
-                Large Format Lightweight Stone & Metal Systems
-              </span>
-            </h1>
-            {/* Mobile/Tablet: paragraph only */}
-            <p
-              className="lg:hidden text-gray-100 text-base md:text-2xl max-w-2xl"
-              style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
-            >
-              מערכות חיפוי קירות והנדסה יוקרתית — אבן פורמט גדול, ליבת Honeycomb וגב אלומיניום
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 lg:px-12 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12 py-12 lg:py-16">
+          {/* צד שמאל (ב-RTL): טקסט + CTA */}
+          <div className="flex-1 text-center lg:text-right order-2 lg:order-1">
+            <p className="text-white/70 text-sm md:text-base tracking-[0.2em] uppercase font-light mb-1">
+              MIRZA
             </p>
-            {/* Desktop: paragraph + CTA on the same row */}
-            <div className="hidden lg:flex items-center gap-12">
-              <p
-                className="text-gray-100 text-3xl"
-                style={{ fontFamily: "Heebo, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}
-              >
-                מערכות חיפוי קירות והנדסה יוקרתית — אבן פורמט גדול, ליבת Honeycomb וגב אלומיניום
-              </p>
-              <a
-                href="/materials"
-                className="inline-block px-14 py-3.5 bg-white/80 text-[#1a1a2e]/90 text-xl font-semibold shadow-sm hover:bg-white transition-all duration-300 active:scale-[0.98] rounded-md border border-white/60"
-              >
-                Explore the Collection
-              </a>
-            </div>
-          </div>
-
-          {/* Left side: CTA */}
-          <div className="flex flex-col w-full md:w-auto lg:hidden">
+            <h1 className="text-white text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight mb-2">
+              אבן טבעית ומתכת
+            </h1>
+            <p className="text-white/80 text-lg md:text-xl font-light tracking-wide mb-2">
+              לוחות חיפוי פורמט גדול
+            </p>
+            <p className="text-white/60 text-sm md:text-base max-w-md mx-auto lg:mx-0 mb-6">
+              Ultra Performance — ליבת Honeycomb, שכבת אבן דקה וגב אלומיניום. מערכות תלייה יבשה.
+            </p>
             <a
               href="/materials"
-              className="mx-auto px-14 py-3.5 bg-white/70 text-[#1a1a2e]/80 text-base md:text-xl font-semibold shadow-sm hover:bg-white/60 transition-all duration-300 active:scale-[0.98] rounded-md border border-white/60"
+              className="inline-block px-8 md:px-10 py-3 md:py-3.5 bg-white text-[#1a2332] text-sm md:text-base font-bold rounded-md hover:bg-white/95 transition-all duration-300 shadow-lg"
             >
-              Explore the Collection
+              לצפייה במוצרים
             </a>
+          </div>
+
+          {/* צד ימין (ב-RTL): מחסנית לוחות – 4 לוחות מונחים עם צל */}
+          <div className="flex-1 w-full max-w-md lg:max-w-lg xl:max-w-xl flex justify-center lg:justify-start order-1 lg:order-2">
+            <div className="relative w-full aspect-[3/4] max-h-[320px] md:max-h-[400px] lg:max-h-[480px] flex items-center justify-center">
+              {topMaterials.slice(0, 4).map((mat, idx) => (
+                <div
+                  key={mat.id ?? idx}
+                  className="absolute rounded-lg shadow-2xl overflow-hidden border border-white/10"
+                  style={{
+                    width: "42%",
+                    aspectRatio: "1/2.1",
+                    maxHeight: "95%",
+                    transform: `translateX(${(idx - 1.5) * 28}%) rotate(${(idx - 1.5) * 4}deg)`,
+                    zIndex: idx,
+                    boxShadow: "0 20px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06)",
+                  }}
+                >
+                  <div className="relative w-full h-full">
+                    {mat.images?.[0] ? (
+                      <Image
+                        src={mat.images[0]}
+                        alt={mat.name}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 180px, 220px"
+                      />
+                    ) : (
+                      <div
+                        className="absolute inset-0 bg-gradient-to-b from-[#3d3d3d] to-[#2a2a2a]"
+                        style={{ backgroundColor: (mat as any).solid || "#4a4a4a" }}
+                      />
+                    )}
+                    <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-black/50 to-transparent" />
+                    <div className="absolute bottom-2 right-2 left-2 text-white/90 text-[10px] md:text-xs font-medium truncate">
+                      {mat.name}
+                    </div>
+                    <div className="absolute top-2 right-2 text-white/80 text-[9px] md:text-[10px] tracking-wider">
+                      2900×1450 מ"מ
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {topMaterials.length === 0 && (
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div
+                      key={i}
+                      className="w-[22%] aspect-[1/2.1] rounded-lg bg-white/10 shadow-xl"
+                      style={{ transform: `translateX(${(i - 2.5) * 26}%) rotate(${(i - 2.5) * 3}deg)` }}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
         <style jsx global>{`

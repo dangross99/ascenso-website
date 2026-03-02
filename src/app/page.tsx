@@ -137,6 +137,8 @@ function MagnifyImage(props: { src: string; alt: string; className?: string }) {
 export default function Home() {
   // טקסטורות אמיתיות מתוך materials.json לשימוש ב"פס מוצרים" בדף הבית
   const [topMaterials, setTopMaterials] = useState<MaterialRecord[]>([]);
+  // 4 פלטות שונות להירו – תמיד מוצגות באותו סדר (אבן, מתכת, עץ, אבן)
+  const [heroPanels, setHeroPanels] = useState<MaterialRecord[]>([]);
   // מניעת Hydration mismatch במרכיבים רגישים לדפדפן/תוספים
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
@@ -147,28 +149,17 @@ export default function Home() {
         const res = await fetch(`/data/materials.json?ts=${Date.now()}`, { cache: "no-store" });
         const json: MaterialRecord[] = await res.json();
         if (!cancelled) {
-          // סדר קבוע לפי דרישת הלקוח לדף הבית (10 פריטים):
-          // 1) stone_amazonas_brazil
-          // 2) wood_wrapped — walnut image
-          // 3) golden_rust
-          // 4) stone_green_alpi
-          // 5) wood_carved
-          // 6) rose_gold
-          // 7) stone_travertine_silver
-          // 8) wood_chocolate
-          // 9) silver
-          // 10) stone_land_stone
           const all = Array.isArray(json) ? json : [];
           const byId = new Map(all.map((m) => [m.id, m]));
           const pick = (id: string, variant?: string): MaterialRecord | null => {
             const base = byId.get(id);
             if (!base) return null;
             if (variant && (base as any).variants && (base as any).variants[variant]?.[0]) {
-              // החזר עותק עם תמונת ה-variant במקום התמונה הראשית
               return { ...base, images: [(base as any).variants[variant][0]] };
             }
             return base;
           };
+          // סדר קבוע לפי דרישת הלקוח לדף הבית (10 פריטים)
           const selected: MaterialRecord[] = [
             pick("stone_amazonas_brazil"),
             pick("wood_wrapped", "walnut"),
@@ -182,6 +173,28 @@ export default function Home() {
             pick("stone_land_stone"),
           ].filter(Boolean) as MaterialRecord[];
           setTopMaterials(selected);
+          // 4 פלטות שונות להירו: אבן, מתכת, עץ, אבן (מגוון ויזואלי)
+          const heroIds: { id: string; variant?: string }[] = [
+            { id: "stone_amazonas_brazil" },
+            { id: "golden_rust" },
+            { id: "wood_wrapped", variant: "walnut" },
+            { id: "stone_travertine_silver" },
+          ];
+          let hero = heroIds
+            .map(({ id, variant }) => pick(id, variant))
+            .filter(Boolean) as MaterialRecord[];
+          // אם חסר חומר – משלימים מ־selected עד 4 פלטות שונות
+          const heroIdsSet = new Set(hero.map((m) => m.id));
+          if (hero.length < 4) {
+            for (const m of selected) {
+              if (hero.length >= 4) break;
+              if (!heroIdsSet.has(m.id)) {
+                heroIdsSet.add(m.id);
+                hero = [...hero, m];
+              }
+            }
+          }
+          setHeroPanels(hero.slice(0, 4));
         }
       } catch {
         // נשתמש בדמו (images) אם נכשל
@@ -578,10 +591,10 @@ export default function Home() {
             </a>
           </div>
 
-          {/* צד ימין (ב-RTL): מחסנית לוחות – 4 לוחות מונחים עם צל */}
+          {/* צד ימין (ב-RTL): מחסנית לוחות – 4 פלטות שונות */}
           <div className="flex-1 w-full max-w-md lg:max-w-lg xl:max-w-xl flex justify-center lg:justify-start order-1 lg:order-2">
             <div className="relative w-full aspect-[3/4] max-h-[320px] md:max-h-[400px] lg:max-h-[480px] flex items-center justify-center">
-              {topMaterials.slice(0, 4).map((mat, idx) => (
+              {heroPanels.map((mat, idx) => (
                 <div
                   key={mat.id ?? idx}
                   className="absolute rounded-lg shadow-2xl overflow-hidden border border-white/10"
@@ -619,7 +632,7 @@ export default function Home() {
                   </div>
                 </div>
               ))}
-              {topMaterials.length === 0 && (
+              {heroPanels.length === 0 && (
                 <div className="flex gap-2">
                   {[1, 2, 3, 4].map((i) => (
                     <div

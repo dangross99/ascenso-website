@@ -541,7 +541,7 @@ export default function Home() {
         }}
         dir="rtl"
       >
-        <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-3 lg:gap-6 py-4 lg:py-6 pr-4 pl-0 md:pr-8 md:pl-0 lg:pr-12 lg:pl-0">
+        <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-3 lg:gap-6 py-4 lg:py-6 px-4 md:px-6 lg:px-8">
           {/* צד שמאל (ב-RTL): טקסט + CTA – שוליים רק מצד הטקסט */}
           <div className="flex-1 min-w-0 text-center lg:text-right order-2 lg:order-1">
             <p className="text-white/70 text-sm md:text-base tracking-[0.2em] uppercase font-light mb-1">
@@ -564,9 +564,9 @@ export default function Home() {
             </a>
           </div>
 
-          {/* צד ימין (ב-RTL): תמונת HERO12 – גדול מאוד, צמוד לקצה ההירו (0 שוליים) */}
-          <div className="flex-1 min-w-0 w-full lg:flex-[1.8] lg:min-w-[58%] flex justify-center lg:justify-end order-1 lg:order-2 lg:-ms-16 xl:-ms-24 2xl:-ms-32 items-center">
-            <div className="relative w-full max-w-[90vw] sm:max-w-[85vw] lg:max-w-none lg:w-[55vw] xl:w-[58vw] 2xl:w-[60vw]">
+          {/* צד ימין (ב-RTL): תמונת HERO12 – קרוב לשוליים, בלי הגזמה */}
+          <div className="flex-1 min-w-0 w-full lg:flex-[1.6] lg:min-w-[52%] flex justify-center lg:justify-end order-1 lg:order-2 items-center">
+            <div className="relative w-full max-w-[88vw] sm:max-w-[80vw] lg:max-w-[54vw] xl:max-w-[56vw]">
               <div className="hero-hero12-wrap relative aspect-[4/3] md:aspect-[3/2] overflow-visible bg-transparent" style={{ background: "transparent" }}>
                 <Image
                   src={HERO_IMAGE}

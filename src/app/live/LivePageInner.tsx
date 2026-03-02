@@ -7,7 +7,7 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useProgress, Environment } from '@react-three/drei';
 import { ACESFilmicToneMapping, PCFSoftShadowMap, SRGBColorSpace } from 'three';
 import Footer from '@/components/Footer';
-import Panel3D, { getPanelCenter } from './stairs/Panel3D';
+import Panel3D, { getPanelCenter } from './Panel3D';
 
 /** מרכז הקיר (גריד פלטות + מרווחים) למטרת OrbitControls */
 function getWallCenter(
@@ -19,10 +19,7 @@ function getWallCenter(
 	return [0, totalHeight / 2, 0];
 }
 
-import type { PathSegment } from './shared/path';
-import { encodePath, decodePath } from './shared/path';
 import { BrandWordmark } from './components/BrandWordmark';
-import { Schematic } from './components/Schematic';
 import type { MaterialKind } from './components/MaterialKindPicker';
 import { NonWoodTexturePicker } from './components/NonWoodTexturePicker';
 
@@ -451,13 +448,7 @@ function LivePageInner() {
 	const qMaterialSafe = qMaterial;
 	const qColor = search.get('color') || 'oak';
 	const qModel = search.get('model') || '';
-	const qShape = (search.get('shape') as 'straight' | 'L' | 'U') || 'straight';
-	const qSteps = parseInt(search.get('steps') || '', 10);
 	const qTex = search.get('tex') || '';
-	let qBox = (search.get('box') as 'thick' | 'thin' | 'rounded' | 'taper' | 'wedge' | 'ridge' | 'hitech' | 'accordion' | 'plates' | 'sawtooth' | 'chamfer') || 'thick';
-	// תאימות לאחור: אם יש קישור ישן ל-plates / sawtooth / accordion / hitech – ניפול ל-"thick"
-	if (qBox === 'plates' || qBox === 'sawtooth' || qBox === 'accordion' || qBox === 'hitech' || qBox === 'chamfer') { qBox = 'thick'; }
-	const qPath = search.get('path') || '';
 
 	const [records, setRecords] = React.useState<MaterialRecord[]>([]);
 	const [priceList, setPriceList] = React.useState<PriceListData | null>(null);
@@ -488,26 +479,9 @@ function LivePageInner() {
 	/** גודל הקיר אומדן (מ') – הלקוח מזין רוחב×גובה קיר */
 	const [wallWidthM, setWallWidthM] = React.useState(6);
 	const [wallHeightM, setWallHeightM] = React.useState(3.5);
-	const [box, setBox] = React.useState<'thick' | 'thin' | 'rounded' | 'taper' | 'wedge' | 'ridge'>(qBox as any);
-	const [railing, setRailing] = React.useState<'none' | 'glass' | 'metal' | 'cable'>('none');
-	const [glassTone, setGlassTone] = React.useState<'extra' | 'smoked' | 'bronze'>('extra');
-	const [stepRailing, setStepRailing] = React.useState<boolean[]>([]);
-	const [landingRailing, setLandingRailing] = React.useState<boolean[]>([]);
-	const [stepRailingSide, setStepRailingSide] = React.useState<Array<'right' | 'left'>>([]);
-	const [landingRailingSide, setLandingRailingSide] = React.useState<Array<'right' | 'left'>>([]);
-	const [railingMetalId, setRailingMetalId] = React.useState<string | null>(null);
-	const [railingMetalSolid, setRailingMetalSolid] = React.useState<string | null>(null); // hex לצבע אחיד (ללא טקסטורה)
-	const [cableOptions, setCableOptions] = React.useState<Array<{ id: string; name: string; image: string; color?: string }>>([]);
-	const [cableId, setCableId] = React.useState<string | null>(null);
-	const [cableColor, setCableColor] = React.useState<string | null>(null);
-	const [cableSpanMode, setCableSpanMode] = React.useState<'floor' | 'tread'>('tread');
-	const [stepCableSpanMode, setStepCableSpanMode] = React.useState<Array<'floor' | 'tread'>>([]);
-	const [landingCableSpanMode, setLandingCableSpanMode] = React.useState<Array<'floor' | 'tread'>>([]);
 	// זיכרון בחירה אחרונה לכל קטגוריה כדי לשחזר בעת חזרה
 	const lastTexRef = React.useRef<{ metal: string | null; stone: string | null }>({ metal: null, stone: null });
 	// מאסטר: מצבים מחזוריים להפעלה/ביטול ולצד
-	const [masterApply, setMasterApply] = React.useState<'none' | 'add' | 'remove'>('none');
-	const [masterSide, setMasterSide] = React.useState<'none' | 'right' | 'left'>('none');
 	// מובייל: אקורדיון קטגוריות בפאנל (לוחות חיפוי: חומר, טקסטורה, הגדרות לוח)
 	const [mobileOpenCat, setMobileOpenCat] = React.useState<
 		'material' | 'nonWoodTexture' | 'panel' | null
@@ -533,226 +507,6 @@ function LivePageInner() {
 		return i >= 0 && i < stepOrderForSteps.length - 1 ? stepOrderForSteps[i + 1] : null;
 	};
 
-	// ערכים מהקוד – מציינים מעבר/שינוי עובי (מה שהופך לגובה אחר)
-	const boxDisplayInfo: Record<string, { name: string; specs: string }> = {
-		thick: { name: 'קלאסי', specs: 'עובי אחיד 11 ס״מ' },
-		thin: { name: 'להב', specs: 'עובי אחיד 7 ס״מ' },
-		rounded: { name: 'קפסולה', specs: 'עובי 8 ס״מ · פינות רדיוס 4 ס״מ' },
-		taper: { name: 'דלתא', specs: 'קצה 5 ס״מ הופך ל־12 ס״מ' },
-		wedge: { name: 'טריז', specs: 'חזית 11 ס״מ הופך לעובי 3.5 ס״מ' },
-		ridge: { name: 'מרום', specs: 'בסיס 2 ס״מ · רכס עולה ל־11 ס״מ' },
-	};
-
-	// קונפיגורטור מדרגות
-	const [shape, setShape] = React.useState<'straight' | 'L' | 'U'>(qShape);
-	const [steps, setSteps] = React.useState<number>(Number.isFinite(qSteps) ? Math.min(25, Math.max(5, qSteps)) : 15);
-
-	// (שחזור מצב מובייל יתווסף אחרי יצירת pathSegments)
-	const [pathSegments, setPathSegments] = React.useState<PathSegment[]>(() => {
-		const fromUrl = decodePath(qPath);
-		if (fromUrl) return fromUrl;
-		// ברירת מחדל: ישר עם מספר מדרגות מהשדה הישן
-		return [{ kind: 'straight', steps }];
-	});
-	const [pathFlipped180, setPathFlipped180] = React.useState(false);
-	// כשמהפכים מסלול ל־180° – מסובבים את המצלמה באותו כיוון (180° סביב Y)
-	React.useEffect(() => {
-		const id = requestAnimationFrame(() => {
-			const ctrl = orbitRef.current;
-			if (!ctrl) return;
-			const a = typeof ctrl.getAzimuthalAngle === 'function' ? ctrl.getAzimuthalAngle() : (ctrl as any).azimuthalAngle ?? 0;
-			const next = a + Math.PI;
-			if (typeof (ctrl as any).setAzimuthalAngle === 'function') (ctrl as any).setAzimuthalAngle(next);
-			else (ctrl as any).azimuthalAngle = next;
-			if (typeof ctrl.update === 'function') ctrl.update();
-		});
-		return () => cancelAnimationFrame(id);
-	}, [pathFlipped180]);
-	// הוסר: מנגנון "שחזור מצב" למובייל כולל סטייט, שמירה, ושחזורים
-
-	// עדכון ברירת מחדל של מצב מעקה לכל מדרגה לפי המסלול והבחירה הגלובלית
-	const stepsTotalForPath = React.useMemo(() => {
-		if (pathSegments && pathSegments.length) {
-			return pathSegments.reduce((s, seg) => s + (seg.kind === 'straight' ? seg.steps : 0), 0);
-		}
-		return steps;
-	}, [pathSegments, steps]);
-
-	// חישוב צד "פנימי" כברירת מחדל לכל מדרגה ולכל פודסט ישר, בהתאם לכיוון הפניות במסלול
-	const computeInnerDefaultSides = React.useCallback(() => {
-		const stepSides: Array<'right' | 'left'> = [];
-		const landingSides: Array<'right' | 'left'> = [];
-		if (!pathSegments || !pathSegments.length) return { stepSides, landingSides };
-
-		const flip = (s: 'right' | 'left'): 'right' | 'left' => (s === 'right' ? 'left' : 'right');
-
-		// 'inner' מציין את הצד הפנימי הרציף לכל מקטעי הישר עד לפנייה הבאה
-		let initialized = false;
-		let inner: 'right' | 'left' = 'right';
-
-		for (let i = 0; i < pathSegments.length; i++) {
-			const seg = pathSegments[i];
-
-			// אתחול חד-פעמי: קבע את הצד הפנימי ההתחלתי לפי הפנייה הקרובה הראשונה (אם קיימת)
-			if (!initialized) {
-				for (let j = i; j < pathSegments.length; j++) {
-					const nxt = pathSegments[j];
-					if (nxt.kind === 'landing' && typeof nxt.turn !== 'undefined') {
-						inner = nxt.turn === 'right' ? 'right' : 'left';
-						break;
-					}
-				}
-				initialized = true;
-			}
-
-			if (seg.kind === 'straight') {
-				for (let s = 0; s < seg.steps; s++) stepSides.push(inner);
-			} else {
-				// פודסט ללא פנייה: שמור את הצד הנוכחי; עם פנייה: הצד של הפודסט הוא הפנייה
-				landingSides.push(typeof seg.turn === 'undefined' ? inner : (seg.turn === 'right' ? 'right' : 'left'));
-				// לאחר פודסט עם פנייה – הפוך צד פנימי לגרם הבא
-				if (typeof seg.turn !== 'undefined') {
-					inner = flip(inner);
-				}
-			}
-		}
-		return { stepSides, landingSides };
-	}, [pathSegments]);
-
-	// צד מעקה מתוקן לגרמים 1 ו-3 בלבד – המודל 3D מפרש right/left בהפוך שם, אז מעבירים הפוך רק למעקה (לא לקירות)
-	const stepRailingSideForRailing = React.useMemo(() => {
-		const out = stepRailingSide.slice(0, stepsTotalForPath);
-		if (!pathSegments?.length) return out;
-		let stepIdx = 0;
-		let flightIdx = 0;
-		const flip = (s: 'right' | 'left'): 'right' | 'left' => (s === 'right' ? 'left' : 'right');
-		for (let i = 0; i < pathSegments.length; i++) {
-			const seg = pathSegments[i];
-			if (seg.kind === 'straight') {
-				const n = Math.max(0, (seg as any).steps ?? 0);
-				for (let s = 0; s < n; s++) {
-					if (stepIdx < out.length && (flightIdx === 0 || flightIdx === 2)) {
-						out[stepIdx] = flip(out[stepIdx] ?? 'right');
-					}
-					stepIdx++;
-				}
-				flightIdx++;
-			}
-		}
-		return out;
-	}, [stepRailingSide, stepsTotalForPath, pathSegments]);
-
-	// צד נוכחי גלובלי (רוב) למעקה – מציג מה הצד הדומיננטי כדי לאפשר החלפה מהירה במובייל
-	const globalRailingSide = React.useMemo<'right' | 'left'>(() => {
-		let right = 0, left = 0;
-		for (let i = 0; i < stepRailingSide.length; i++) {
-			const has = (stepRailing[i] ?? (railing !== 'none')) === true;
-			if (!has) continue;
-			if (stepRailingSide[i] === 'left') left++; else right++;
-		}
-		return right >= left ? 'right' : 'left';
-	}, [stepRailingSide, stepRailing, railing]);
-
-	// מטא עבור פודסטים (פנייה/ללא)
-	const landingMeta = React.useMemo(() => {
-		const turns: Array<'left' | 'right' | undefined> = [];
-		if (pathSegments && pathSegments.length) {
-			pathSegments.forEach(seg => {
-				if (seg.kind === 'landing') turns.push(seg.turn);
-			});
-		}
-		return turns;
-	}, [pathSegments]);
-	React.useEffect(() => {
-		// התאמת מערכי המעקה לאורך המסלול החדש ושמירת מידע קיים.
-		// מדרגות חדשות יקבלו צד ברירת מחדל "פנימי" לפי המסלול.
-		const nextLen = stepsTotalForPath;
-		const { stepSides } = computeInnerDefaultSides();
-
-		setStepRailing(prev => {
-			if (railing === 'none') {
-				return new Array<boolean>(nextLen).fill(false);
-			}
-			const out = new Array<boolean>(nextLen);
-			for (let i = 0; i < nextLen; i++) out[i] = prev[i] ?? true;
-			return out;
-		});
-
-		// צד המעקה תמיד בצד הפנימי של המדרגות
-		setStepRailingSide(() => {
-			const out = new Array<'right' | 'left'>(nextLen);
-			for (let i = 0; i < nextLen; i++) out[i] = stepSides[i] ?? 'right';
-			return out;
-		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [stepsTotalForPath, railing, computeInnerDefaultSides]);
-	React.useEffect(() => {
-		// לכל פודסט: עם פנייה = בלי מעקה; בלי פנייה = לפי ברירת המחדל הגלובלית
-		const out = landingMeta.map(turn => (turn ? false : railing !== 'none'));
-		setLandingRailing(out);
-		const { landingSides } = computeInnerDefaultSides();
-		// צד המעקה בפודסטים: תמיד פנימי
-		setLandingRailingSide(() => {
-			const outSides = new Array<'right' | 'left'>(landingMeta.length);
-			for (let i = 0; i < outSides.length; i++) outSides[i] = landingSides[i] ?? 'right';
-			return outSides;
-		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [landingMeta, railing, computeInnerDefaultSides]);
-
-	// זכוכית/מתכת/כבלים: מעקה תמיד "עם" – אין אופציה "ללא", רק בכבלים יש בחירה תקרה‑רצפה / תקרה‑מדרגה
-	React.useEffect(() => {
-		if (railing === 'none') return;
-		setStepRailing(prev => {
-			const out = prev.slice(0, stepsTotalForPath);
-			for (let i = 0; i < stepsTotalForPath; i++) out[i] = true;
-			return out;
-		});
-		setLandingRailing(landingMeta.map(turn => (turn ? false : true)));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [railing, stepsTotalForPath, landingMeta]);
-	// סנכרון מערכי מצב כבל פר‑מדרגה/פודסט לפי אורך המסלול
-	React.useEffect(() => {
-		setStepCableSpanMode(prev => {
-			const out = new Array<'floor' | 'tread'>(stepsTotalForPath);
-			for (let i = 0; i < out.length; i++) out[i] = prev[i] ?? cableSpanMode;
-			return out;
-		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [stepsTotalForPath]);
-	React.useEffect(() => {
-		setLandingCableSpanMode(prev => {
-			const out = new Array<'floor' | 'tread'>(landingMeta.length);
-			for (let i = 0; i < out.length; i++) out[i] = prev[i] ?? cableSpanMode;
-			return out;
-		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [landingMeta.length]);
-	// מאסטר כבל: שינוי גלובלי מחליף את כולם
-	React.useEffect(() => {
-		setStepCableSpanMode(new Array<'floor' | 'tread'>(stepsTotalForPath).fill(cableSpanMode));
-		setLandingCableSpanMode(new Array<'floor' | 'tread'>(landingMeta.length).fill(cableSpanMode));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [cableSpanMode]);
-	// החלת מצבי מאסטר בעת שינוי
-	React.useEffect(() => {
-		if (masterApply === 'none') return;
-		if (masterApply === 'add') {
-			setStepRailing(new Array<boolean>(stepsTotalForPath).fill(true));
-			setLandingRailing(landingMeta.map(turn => (turn ? false : true)));
-		} else if (masterApply === 'remove') {
-			setStepRailing(new Array<boolean>(stepsTotalForPath).fill(false));
-			setLandingRailing(landingMeta.map(() => false));
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [masterApply, stepsTotalForPath, landingMeta]);
-	React.useEffect(() => {
-		if (masterSide === 'none') return;
-		setStepRailingSide(new Array<'right' | 'left'>(stepsTotalForPath).fill(masterSide));
-		setLandingRailingSide(new Array<'right' | 'left'>(landingMeta.length).fill(masterSide));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [masterSide, stepsTotalForPath, landingMeta]);
-
 	// -------------------- שמירת/טעינת הדמייה מקומית --------------------
 	type SavedSimulation = {
 		id: string;
@@ -763,27 +517,16 @@ function LivePageInner() {
 
 	function buildSimulationState() {
 		return {
-			box,
 			activeMaterial,
 			activeModelId,
 			activeTexId,
 			activeColor,
-			shape,
-			steps,
-			pathSegments,
-			railing,
-			glassTone,
-			stepRailing,
-			landingRailing,
-			stepRailingSide,
-			landingRailingSide,
-			railingMetalId,
-			railingMetalSolid,
-			cableId,
-			cableColor,
-			cableSpanMode,
-			stepCableSpanMode,
-			landingCableSpanMode,
+			panelThicknessMm,
+			shadowGapMm,
+			panelSizeW,
+			panelSizeH,
+			wallWidthM,
+			wallHeightM,
 		};
 	}
 
@@ -797,30 +540,16 @@ function LivePageInner() {
 			const found = arr.find(s => s.id === simId);
 			if (!found) return;
 			const s = found.state || {};
-			if (s.box) setBox(s.box);
 			if (s.activeMaterial) setActiveMaterial(s.activeMaterial);
 			if (s.activeModelId) setActiveModelId(s.activeModelId);
 			if (s.activeTexId) setActiveTexId(s.activeTexId);
 			if (s.activeColor) setActiveColor(s.activeColor);
-			if (s.shape) setShape(s.shape);
-			if (Array.isArray(s.pathSegments)) {
-				setPathSegments(s.pathSegments);
-				setPathFlipped180(false);
-			}
-			if (typeof s.steps === 'number') setSteps(s.steps);
-			if (s.railing) setRailing(s.railing);
-			if (s.glassTone) setGlassTone(s.glassTone);
-			if (Array.isArray(s.stepRailing)) setStepRailing(s.stepRailing);
-			if (Array.isArray(s.landingRailing)) setLandingRailing(s.landingRailing);
-			if (Array.isArray(s.stepRailingSide)) setStepRailingSide(s.stepRailingSide);
-			if (Array.isArray(s.landingRailingSide)) setLandingRailingSide(s.landingRailingSide);
-			if (s.railingMetalId) setRailingMetalId(s.railingMetalId);
-			if (s.railingMetalSolid) setRailingMetalSolid(s.railingMetalSolid);
-			if (s.cableId) setCableId(s.cableId);
-			if (s.cableColor) setCableColor(s.cableColor);
-			if (s.cableSpanMode) setCableSpanMode(s.cableSpanMode);
-			if (Array.isArray(s.stepCableSpanMode)) setStepCableSpanMode(s.stepCableSpanMode);
-			if (Array.isArray(s.landingCableSpanMode)) setLandingCableSpanMode(s.landingCableSpanMode);
+			if (typeof s.panelThicknessMm === 'number') setPanelThicknessMm(s.panelThicknessMm);
+			if (typeof s.shadowGapMm === 'number') setShadowGapMm(s.shadowGapMm);
+			if (typeof s.panelSizeW === 'number') setPanelSizeW(s.panelSizeW);
+			if (typeof s.panelSizeH === 'number') setPanelSizeH(s.panelSizeH);
+			if (typeof s.wallWidthM === 'number') setWallWidthM(s.wallWidthM);
+			if (typeof s.wallHeightM === 'number') setWallHeightM(s.wallHeightM);
 		} catch {}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -833,15 +562,6 @@ function LivePageInner() {
 				const json: MaterialRecord[] = await res.json();
 				if (!cancelled) setRecords(json);
 
-				// טען גם אפשרויות כבלי נירוסטה (תמונות לסוויצ'ים)
-				try {
-					const cRes = await fetch(`/data/cables.json?ts=${Date.now()}`, { cache: 'no-store' });
-					const cJson: Array<{ id: string; name: string; image: string; color?: string }> = await cRes.json();
-					if (!cancelled) setCableOptions(Array.isArray(cJson) ? cJson : []);
-				} catch {
-					if (!cancelled) setCableOptions([]);
-				}
-
 				// טען מחירון – מקור יחיד למחירים (ללא עדכון קוד)
 				try {
 					const pRes = await fetch(`/data/price-list.json?ts=${Date.now()}`, { cache: 'no-store' });
@@ -852,7 +572,6 @@ function LivePageInner() {
 				}
 			} catch {
 				if (!cancelled) setRecords([]);
-				if (!cancelled) setCableOptions([]);
 			}
 		})();
 		return () => {
@@ -875,24 +594,6 @@ function LivePageInner() {
 			return true; // אבן
 		});
 	}, [records, activeMaterial]);
-	const pricePerStepByTexId = React.useMemo(() => {
-		const map = new Map<string, number>();
-		priceList?.stairs?.textures?.forEach(t => {
-			if (t.id != null && typeof t.pricePerStep === 'number' && t.pricePerStep > 0) {
-				map.set(t.id, t.pricePerStep);
-			}
-		});
-		return map;
-	}, [priceList]);
-	const modelMultiplierByBox = React.useMemo(() => {
-		const map = new Map<string, number>();
-		priceList?.stairs?.models?.forEach(m => {
-			if (m.id != null && typeof m.priceMultiplier === 'number' && m.priceMultiplier > 0) {
-				map.set(m.id, m.priceMultiplier);
-			}
-		});
-		return map;
-	}, [priceList]);
 	// אם הטקסטורה הפעילה לא קיימת לאחר הסינון, בחר את הראשונה הזמינה
 	React.useEffect(() => {
 		if (!nonWoodModels.length) return;
@@ -901,24 +602,6 @@ function LivePageInner() {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [activeMaterial, nonWoodModels]);
-	const metalRailingOptions = React.useMemo(() => {
-		const isWB = (rec: any) => {
-			const name = (rec?.name || rec?.id || '').toString().toLowerCase();
-			const byIdOrName = /\b(white|black)\b/.test(name);
-			const bySolid =
-				typeof rec?.solid === 'string' &&
-				['#ffffff', '#fff', '#f5f5f5', '#111111', '#000', '#000000'].includes(rec.solid.toLowerCase());
-			return byIdOrName || bySolid;
-		};
-		return records.filter(
-			(r) =>
-				r.category === 'metal' &&
-				!(r as any).hidden &&
-				!isWB(r) &&
-				Array.isArray((r as any).images) &&
-				(r as any).images.length > 0
-		);
-	}, [records]);
 	// Preload טקסטורות רלוונטיות להפחתת הבהובים בעת מעבר בחירה
 	React.useEffect(() => {
 		try {
@@ -927,12 +610,6 @@ function LivePageInner() {
 			if (sel?.images?.[0]) urls.add(sel.images[0]);
 			if (sel?.pbr?.bump?.[0]) urls.add(sel.pbr.bump[0]);
 			if (sel?.pbr?.roughness?.[0]) urls.add(sel.pbr.roughness[0]);
-			if (railing === 'metal' && railingMetalId) {
-				const rec = metalRailingOptions.find(r => r.id === railingMetalId);
-				if (rec?.images?.[0]) urls.add(rec.images[0]);
-				if (rec?.pbr?.bump?.[0]) urls.add(rec.pbr.bump[0]);
-				if (rec?.pbr?.roughness?.[0]) urls.add(rec.pbr.roughness[0]);
-			}
 			(urls.size ? Array.from(urls) : []).forEach(u => {
 				try {
 					// @ts-ignore - preload is static on useTexture
@@ -940,29 +617,7 @@ function LivePageInner() {
 				} catch {}
 			});
 		} catch {}
-	}, [nonWoodModels, activeTexId, railing, metalRailingOptions, railingMetalId]);
-	React.useEffect(() => {
-		// ברירת מחדל: אם בחרו "מעקה מתכת" ואין בחירה, נקבע שחור אחיד
-		if (railing === 'metal' && !railingMetalId && !railingMetalSolid) {
-			setRailingMetalSolid('#111111');
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [railing]);
-	// הבטחת בחירה חד-חד-ערכית: אם נבחר צבע אחיד, נבטל טקסטורה ולהפך
-	React.useEffect(() => {
-		if (railing !== 'metal') return;
-		if (railingMetalSolid && railingMetalId) {
-			setRailingMetalId(null);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [railingMetalSolid]);
-	React.useEffect(() => {
-		if (railing !== 'metal') return;
-		if (railingMetalId && railingMetalSolid) {
-			setRailingMetalSolid(null);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [railingMetalId]);
+	}, [nonWoodModels, activeTexId]);
 
 	// שמירת הבחירה האחרונה עבור מתכת/אבן
 	React.useEffect(() => {
@@ -991,74 +646,6 @@ function LivePageInner() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [activeMaterial, nonWoodModels]);
 
-	// ברירת מחדל לבחירת כבל כשנכנסים למצב "כבלי נירוסטה"
-	React.useEffect(() => {
-		if (railing !== 'cable') return;
-		if (cableId && cableOptions.find(c => c.id === cableId)) return;
-		if (cableOptions.length) setCableId(cableOptions[0].id);
-	}, [railing, cableOptions, cableId]);
-
-	// חילוץ צבע דומיננטי מהתמונה שנבחרה (או שימוש בשדה color אם קיים בקובץ)
-	React.useEffect(() => {
-		if (railing !== 'cable') return;
-		const selected = cableOptions.find(c => c.id === cableId);
-		if (!selected) return;
-		// אם בקובץ מוגדר color – נעדיף אותו
-		if ((selected as any).color) {
-			setCableColor((selected as any).color as string);
-			return;
-		}
-		let cancelled = false;
-		const url = selected.image ? encodeURI(selected.image) : '';
-		if (!url) return;
-		(async () => {
-			try {
-				const color = await (async function extractAverageColor(imgUrl: string): Promise<string> {
-					return new Promise((resolve, reject) => {
-						const img = new window.Image();
-						img.onload = () => {
-							try {
-								const canvas = document.createElement('canvas');
-								const ctx = canvas.getContext('2d');
-								if (!ctx) return resolve('#c7ccd1');
-								// קנבס קטן לחישוב ממוצע מהיר
-								const w = 16, h = 16;
-								canvas.width = w;
-								canvas.height = h;
-								ctx.drawImage(img, 0, 0, w, h);
-								const data = ctx.getImageData(0, 0, w, h).data;
-								let r = 0, g = 0, b = 0, count = 0;
-								for (let i = 0; i < data.length; i += 4) {
-									const alpha = data[i + 3];
-									if (alpha < 200) continue; // התעלמות מפיקסלים שקופים/לבנים מדי
-									r += data[i];
-									g += data[i + 1];
-									b += data[i + 2];
-									count++;
-								}
-								if (count === 0) return resolve('#c7ccd1');
-								r = Math.round(r / count);
-								g = Math.round(g / count);
-								b = Math.round(b / count);
-								// המרה להקס
-								const hex = '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
-								resolve(hex);
-							} catch {
-								resolve('#c7ccd1');
-							}
-						};
-						img.onerror = () => resolve('#c7ccd1');
-						img.src = url;
-					});
-				})(url);
-				if (!cancelled) setCableColor(color);
-			} catch {
-				if (!cancelled) setCableColor('#c7ccd1');
-			}
-		})();
-		return () => { cancelled = true; };
-	}, [railing, cableId, cableOptions]);
-
 	// סנכרון URL לשיתוף
 	React.useEffect(() => {
 		let t: any;
@@ -1066,10 +653,6 @@ function LivePageInner() {
 			const params = new URLSearchParams();
 			params.set('material', activeMaterial);
 			if (activeTexId) params.set('tex', activeTexId);
-			params.set('shape', shape);
-			params.set('steps', String(steps));
-			params.set('path', encodePath(pathSegments));
-			params.set('box', box);
 			// עדכון ה‑URL ללא ניווט/ריענון (מונע קפיצת מסך)
 			if (typeof window !== 'undefined') {
 				const newUrl = `/live?${params.toString()}`;
@@ -1083,96 +666,7 @@ function LivePageInner() {
 		t = setTimeout(run, 120);
 		return () => clearTimeout(t);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [activeMaterial, activeTexId, shape, steps, box, pathSegments]);
-
-	// מחשבון מחיר – כל המחירים נטענים מ־/data/price-list.json (מקור יחיד)
-	function calculatePrice(): {
-		breakdown: Array<{
-			label: string;
-			value: number;
-			qty?: number;
-			unitPrice?: number;
-			unitLabel?: string;
-		}>;
-		total: number;
-	} {
-		const baseSetup: number = Number(priceList?.stairs?.pricing?.baseSetup) || 1500;
-		const landingMultiplier: number = Number(priceList?.stairs?.pricing?.landingMultiplier) || 2.5;
-		const texId = activeTexId;
-		const basePerStep: number = (texId ? pricePerStepByTexId.get(texId) : undefined) ?? 600;
-		const boxMultiplier: number = modelMultiplierByBox.get(box) ?? 1;
-		const perStep: number = Math.round(basePerStep * boxMultiplier);
-		const landingPrice = perStep * landingMultiplier;
-		// חישוב מתוך המסלול
-		const stepsTotal = pathSegments.reduce((s, seg) => s + (seg.kind === 'straight' ? seg.steps : 0), 0);
-		const landingCount = pathSegments.reduce((s, seg) => s + (seg.kind === 'landing' ? 1 : 0), 0);
-		const shapeMultiplier = landingCount === 0 ? 1.0 : landingCount === 1 ? 1.1 : 1.15;
-
-		const items: Array<{
-			label: string;
-			value: number;
-			qty?: number;
-			unitPrice?: number;
-			unitLabel?: string;
-		}> = [
-			{ label: 'פתיחת פרויקט', value: baseSetup },
-			{ label: 'מדרגות', value: stepsTotal * perStep, qty: stepsTotal, unitPrice: perStep, unitLabel: 'יח׳' },
-			{ label: 'פודסטים', value: landingCount * landingPrice, qty: landingCount, unitPrice: landingPrice, unitLabel: 'יח׳' },
-		];
-
-		// תמחור מעקה
-		// אומדני אורך/שטח: עומק מדרגה 0.30 מ׳; פודסט 0.90 מ׳; גובה זכוכית משוער ~1.1–1.2 מ׳
-		const STEP_RUN_M = 0.30;
-		const LANDING_RUN_M = 0.90;
-		const GLASS_H_STEP_M = 1.18;
-		const GLASS_H_LAND_M = 1.09;
-
-		const stepsEnabledCount = (stepRailing?.length ? stepRailing.filter(Boolean).length : 0);
-		const landingsEnabledCount = (landingRailing?.length ? landingRailing.filter(Boolean).length : 0);
-
-		if (railing === 'glass') {
-			const areaM2 =
-				stepsEnabledCount * (STEP_RUN_M * GLASS_H_STEP_M) +
-				landingsEnabledCount * (LANDING_RUN_M * GLASS_H_LAND_M);
-			let glassRate: number = Number(priceList?.railings?.glass?.unitPrice) || 1530;
-			const toneMult = priceList?.railings?.glass?.toneMultiplier;
-			const toneIds = priceList?.railings?.glass?.toneMultiplierIds;
-			if (toneMult != null && toneIds?.length && (glassTone === 'smoked' || glassTone === 'bronze')) {
-				glassRate = Math.round(glassRate * toneMult);
-			}
-			const cost = Math.round(areaM2 * glassRate);
-			if (cost > 0) items.push({ label: 'מעקה זכוכית', value: cost, qty: areaM2, unitPrice: glassRate, unitLabel: 'מ״ר' });
-		} else if (railing === 'metal') {
-			// תמחור לפי מטר רץ; מחיר למטר = מחיר המדרגה הנוכחי
-			const totalMeters =
-				stepsEnabledCount * STEP_RUN_M +
-				landingsEnabledCount * LANDING_RUN_M;
-			const ratePerMeter = perStep; // לפי דרישתך
-			const cost = Math.round(totalMeters * ratePerMeter);
-			if (cost > 0) items.push({ label: 'מעקה מתכת', value: cost, qty: totalMeters, unitPrice: ratePerMeter, unitLabel: 'מ׳' });
-		} else if (railing === 'cable') {
-			// כבלים: נירוסטה טבעי (cable_01) = unitPrice; ציפוי = unitPriceCoated
-			const baseCable: number = Number(priceList?.railings?.cables?.unitPrice) || 825;
-			const coatedCable: number = Number(priceList?.railings?.cables?.unitPriceCoated) || 1175;
-			const naturalId: string = priceList?.railings?.cables?.naturalCableId ?? 'cable_01';
-			const cableUnitPrice: number = (cableId && cableId !== naturalId) ? coatedCable : baseCable;
-			const cablesCount = stepsEnabledCount * 3 + landingsEnabledCount * 9;
-			const cost = cablesCount * cableUnitPrice;
-			if (cost > 0) items.push({ label: 'מערכת כבלי נירוסטה', value: cost, qty: cablesCount, unitPrice: cableUnitPrice, unitLabel: 'כבל' });
-		}
-
-		const subtotal = items.reduce((s, i) => s + i.value, 0);
-		// החלת מקדם צורה (פודסטים/מורכבות)
-		const preVatTotal = Math.round(subtotal * shapeMultiplier);
-		// מע״מ בישראל 18% (המחירים המוצגים הם לפני מע״מ)
-		const VAT_RATE = 0.18;
-		const vat = Math.round(preVatTotal * VAT_RATE);
-		if (vat > 0) {
-			items.push({ label: `מע״מ (18%)`, value: vat });
-		}
-		const total = preVatTotal + vat;
-		return { breakdown: items, total };
-	}
+	}, [activeMaterial, activeTexId]);
 
 	// מפרט לוח חיפוי – שטח פנים, גודל קיר, חלוקה לפלטות (שורה/עמודה אחרונה חתוכה להתאמה לקיר)
 	const gapM = shadowGapMm / 1000;
@@ -1214,15 +708,6 @@ function LivePageInner() {
 		{ label: 'עובי פאנל חוץ', value: '29 מ"מ' },
 		{ label: 'עובי פאנל פנים', value: '17 מ"מ' },
 	];
-	const { breakdown, total } = calculatePrice();
-	const priceFormatted = React.useMemo(() => {
-		try {
-			return new Intl.NumberFormat('he-IL').format(total);
-		} catch {
-			return String(total);
-		}
-	}, [total]);
-
 	// עזר: יצירת מזהה ליד קצר
 	const generateLeadId = React.useCallback((): string => {
 		// מזהה ספרתי בלבד כדי למנוע הפרעות כיווניות ב-RTL
@@ -1252,41 +737,6 @@ function LivePageInner() {
 			try { window.dispatchEvent(new StorageEvent('storage', { key } as any)); } catch {}
 		} catch {}
 	}
-
-	// עזר: תיאור מסלול קריא
-	const formatPathForShare = React.useCallback((segments: PathSegment[]): string => {
-		const parts: string[] = [];
-		segments.forEach(seg => {
-			if (seg.kind === 'straight') {
-				parts.push(`ישר ${seg.steps}`);
-			} else {
-				parts.push(seg.turn ? `פודסט + ${seg.turn === 'right' ? 'ימינה' : 'שמאלה'}` : 'פודסט');
-			}
-		});
-		return parts.join(', ');
-	}, []);
-
-	// עזר: שם מעקה ותוספים לכבלים/מתכת/זכוכית
-	const formatRailing = React.useCallback((): string => {
-		if (railing === 'none') return 'ללא';
-		if (railing === 'glass') {
-			const tone = glassTone === 'smoked' ? 'מושחר' : glassTone === 'bronze' ? 'ברונזה' : 'שקוף אקסטרה קליר';
-			return `זכוכית (${tone})`;
-		}
-		if (railing === 'metal') {
-			const name =
-				railingMetalSolid === '#111111' ? 'שחור' :
-				railingMetalSolid === '#F5F5F5' ? 'לבן' :
-				(metalRailingOptions.find(r => r.id === railingMetalId)?.name || 'מתכת');
-			return `מתכת (${name})`;
-		}
-		if (railing === 'cable') {
-			const cableName = (cableOptions.find(c => c.id === cableId)?.name) || 'כבל';
-			const spanName = cableSpanMode === 'floor' ? 'תקרה‑רצפה' : 'תקרה‑מדרגה';
-			return `מערכת כבלים 8 מ״מ (${cableName}, ${spanName})`;
-		}
-		return '';
-	}, [railing, glassTone, railingMetalSolid, railingMetalId, metalRailingOptions, cableOptions, cableId, cableSpanMode]);
 
 	// פורמט מזהה להודעות RTL: מפצל בקבוצות ומוסיף סימן כיווניות למניעת LTR/קישור טלפון
 	const formatLeadIdRTL = React.useCallback((id: string): string => {

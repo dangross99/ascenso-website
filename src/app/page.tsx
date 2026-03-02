@@ -541,9 +541,9 @@ export default function Home() {
         }}
         dir="rtl"
       >
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 lg:px-12 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12 py-12 lg:py-16">
-          {/* צד שמאל (ב-RTL): טקסט + CTA */}
-          <div className="flex-1 text-center lg:text-right order-2 lg:order-1">
+        <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12 py-12 lg:py-16 pr-4 pl-0 md:pr-8 md:pl-0 lg:pr-12 lg:pl-0">
+          {/* צד שמאל (ב-RTL): טקסט + CTA – שוליים רק מצד הטקסט */}
+          <div className="flex-1 min-w-0 text-center lg:text-right order-2 lg:order-1">
             <p className="text-white/70 text-sm md:text-base tracking-[0.2em] uppercase font-light mb-1">
               MIRZA
             </p>
@@ -564,16 +564,16 @@ export default function Home() {
             </a>
           </div>
 
-          {/* צד ימין (ב-RTL): תמונת HERO12 (מוגדלת) + הנפשת 4 שכבות + עובי הפאנל */}
-          <div className="flex-1 w-full max-w-3xl lg:max-w-4xl xl:max-w-5xl 2xl:max-w-6xl flex justify-center lg:justify-start order-1 lg:order-2">
-            <div className="relative w-full max-w-3xl lg:max-w-4xl xl:max-w-5xl 2xl:max-w-6xl">
+          {/* צד ימין (ב-RTL): תמונת HERO12 – גדול מאוד, צמוד לקצה ההירו (0 שוליים) */}
+          <div className="flex-1 min-w-0 w-full lg:flex-[1.8] lg:min-w-[58%] flex justify-center lg:justify-end order-1 lg:order-2 lg:-ms-16 xl:-ms-24 2xl:-ms-32">
+            <div className="relative w-full max-w-[90vw] sm:max-w-[85vw] lg:max-w-none lg:w-[55vw] xl:w-[58vw] 2xl:w-[60vw]">
               <div className="hero-hero12-wrap relative aspect-[4/3] md:aspect-[3/2] overflow-hidden bg-transparent" style={{ background: "transparent" }}>
                 <Image
                   src={HERO_IMAGE}
                   alt="לוחות חיפוי אבן טבעית ומתכת – MIRZA"
                   fill
                   className="object-cover transition-transform duration-300 ease-out hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 640px, (max-width: 1280px) 800px, (max-width: 1536px) 1024px, 1152px"
+                  sizes="(max-width: 768px) 95vw, (max-width: 1024px) 75vw, 60vw"
                   priority
                 />
               </div>

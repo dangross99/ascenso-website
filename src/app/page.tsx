@@ -572,10 +572,9 @@ export default function Home() {
                   src={HERO_IMAGE}
                   alt="לוחות חיפוי אבן טבעית ומתכת – MIRZA"
                   fill
-                  className="object-cover [background:transparent]"
+                  className="object-cover"
                   sizes="(max-width: 768px) 100vw, 480px"
                   priority
-                  style={{ mixBlendMode: "multiply" }}
                 />
               </div>
               {/* עובי הפאנל – שכבות (ללא רקע) */}

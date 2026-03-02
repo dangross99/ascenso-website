@@ -47,30 +47,14 @@ export function buildRectTreads(params: {
 						receiveShadow={materialKind !== 'metal'}
 					>
 						<boxGeometry args={[t.run, 0.004, treadWidth]} />
-						{false && materialKind === 'wood' ? (
-							(() => {
-								const axisTop = axisFromYaw(t.rotation[1] as number);
-								// Top: טקסטורה יציבה לפי ציר בלבד (ללא flip), כדי לא "להתהפך" בין גרמים
+						{(() => {
+								const axisTop = axisFromYaw(t.rotation[1] as number); /* טקסטורה יציבה לפי ציר בלבד (ללא flip), כדי לא "להתהפך" בין גרמים
 								const ft = buildFaceTextures(t.run, treadWidth, axisTop === 'z');
 								return (
 									<meshStandardMaterial
 										color={'#ffffff'}
 										map={ft.color}
 										roughnessMap={ft.rough as any}
-										bumpMap={ft.bump as any}
-										bumpScale={0.008}
-										metalness={0}
-										roughness={0.82}
-										envMapIntensity={0.2}
-										emissive="#ffffff"
-										emissiveMap={ft.color}
-										emissiveIntensity={0.1}
-										side={2}
-									/>
-								);
-							})()
-						) : (
-							(() => {
 								const metalness = materialKind === 'metal' ? 1 : 0;
 								const roughness = materialKind === 'metal' ? 0.35 : 0.68;
 								const envMapIntensity = useSolidMat ? (materialKind === 'metal' ? 2.0 : 1.5) : 0.2;

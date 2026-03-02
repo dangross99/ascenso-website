@@ -567,12 +567,12 @@ export default function Home() {
           {/* צד ימין (ב-RTL): תמונת HERO12 + עובי הפאנל */}
           <div className="flex-1 w-full max-w-md lg:max-w-lg xl:max-w-xl flex justify-center lg:justify-start order-1 lg:order-2">
             <div className="relative w-full max-w-md">
-              <div className="relative aspect-[4/3] md:aspect-[3/2] overflow-hidden">
+              <div className="hero-hero12-wrap relative aspect-[4/3] md:aspect-[3/2] overflow-hidden bg-transparent" style={{ background: "transparent" }}>
                 <Image
                   src={HERO_IMAGE}
                   alt="לוחות חיפוי אבן טבעית ומתכת – MIRZA"
                   fill
-                  className="object-cover"
+                  className="object-cover [background:transparent]"
                   sizes="(max-width: 768px) 100vw, 480px"
                   priority
                 />
@@ -591,6 +591,12 @@ export default function Home() {
           </div>
         </div>
         <style jsx global>{`
+          /* תמונת HERO12 – ללא רקע (מיכל ו־Next/Image) */
+          .hero-hero12-wrap,
+          .hero-hero12-wrap span,
+          .hero-hero12-wrap img {
+            background: transparent !important;
+          }
           /* Hide horizontal scrollbar across browsers for the steps viewport */
           #steps-viewport {
             -ms-overflow-style: none; /* IE/Edge */

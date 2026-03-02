@@ -575,6 +575,7 @@ export default function Home() {
                   className="object-cover [background:transparent]"
                   sizes="(max-width: 768px) 100vw, 480px"
                   priority
+                  style={{ mixBlendMode: "multiply" }}
                 />
               </div>
               {/* עובי הפאנל – שכבות (ללא רקע) */}

@@ -137,6 +137,8 @@ function MagnifyImage(props: { src: string; alt: string; className?: string }) {
 export default function Home() {
   // טקסטורות אמיתיות מתוך materials.json לשימוש ב"פס מוצרים" בדף הבית
   const [topMaterials, setTopMaterials] = useState<MaterialRecord[]>([]);
+  // 4 פלטות שונות להירו – אבן ומתכת בלבד
+  const [heroPanels, setHeroPanels] = useState<MaterialRecord[]>([]);
   // מניעת Hydration mismatch במרכיבים רגישים לדפדפן/תוספים
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
@@ -168,6 +170,28 @@ export default function Home() {
             pick("stone_land_stone"),
           ].filter(Boolean) as MaterialRecord[];
           setTopMaterials(selected);
+          // 4 פלטות שונות להירו: אבן, מתכת, אבן, מתכת
+          const heroIds: { id: string; variant?: string }[] = [
+            { id: "stone_amazonas_brazil" },
+            { id: "golden_rust" },
+            { id: "stone_travertine_silver" },
+            { id: "rose_gold" },
+          ];
+          let hero = heroIds
+            .map(({ id, variant }) => pick(id, variant))
+            .filter(Boolean) as MaterialRecord[];
+          // אם חסר חומר – משלימים מ־selected עד 4 פלטות שונות
+          const heroIdsSet = new Set(hero.map((m) => m.id));
+          if (hero.length < 4) {
+            for (const m of selected) {
+              if (hero.length >= 4) break;
+              if (!heroIdsSet.has(m.id)) {
+                heroIdsSet.add(m.id);
+                hero = [...hero, m];
+              }
+            }
+          }
+          setHeroPanels(hero.slice(0, 4));
         }
       } catch {
         // נשתמש בדמו (images) אם נכשל
@@ -564,45 +588,58 @@ export default function Home() {
             </a>
           </div>
 
-          {/* צד ימין (ב-RTL): עובי ותכן החיפוי – שכבות הלוח */}
+          {/* צד ימין (ב-RTL): מחסנית לוחות – 4 פלטות שונות */}
           <div className="flex-1 w-full max-w-md lg:max-w-lg xl:max-w-xl flex justify-center lg:justify-start order-1 lg:order-2">
-            <div className="w-full max-w-sm flex flex-col md:flex-row items-center gap-6 md:gap-8">
-              {/* רשימת שכבות + עובי (מ"מ) */}
-              <div className="flex flex-col gap-2 w-full md:w-auto">
-                {[
-                  { num: 1, label: "אבן טבעית", sub: "Natural Stone", mm: 7 },
-                  { num: 2, label: "פייבר גלס", sub: "Fiberglass Stress Skin", mm: 1 },
-                  { num: 3, label: "חלת דבש אלומיניום", sub: "Aluminium Honeycomb Core", mm: 20 },
-                  { num: 4, label: "אלומיניום", sub: "Aluminium Stress Skin", mm: 1 },
-                ].map(({ num, label, sub, mm }) => (
-                  <div
-                    key={num}
-                    className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-black/25 border border-white/10 text-right"
-                  >
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-[#1a2332] text-sm font-bold">
-                      {num}
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <span className="text-white font-medium block">{label}</span>
-                      <span className="text-white/60 text-xs block truncate">{sub}</span>
+            <div className="relative w-full aspect-[3/4] max-h-[320px] md:max-h-[400px] lg:max-h-[480px] flex items-center justify-center">
+              {heroPanels.map((mat, idx) => (
+                <div
+                  key={mat.id ?? idx}
+                  className="absolute rounded-lg shadow-2xl overflow-hidden border border-white/10"
+                  style={{
+                    width: "42%",
+                    aspectRatio: "1/2.1",
+                    maxHeight: "95%",
+                    transform: `translateX(${(idx - 1.5) * 28}%) rotate(${(idx - 1.5) * 4}deg)`,
+                    zIndex: idx,
+                    boxShadow: "0 20px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06)",
+                  }}
+                >
+                  <div className="relative w-full h-full">
+                    {mat.images?.[0] ? (
+                      <Image
+                        src={mat.images[0]}
+                        alt={mat.name}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 180px, 220px"
+                      />
+                    ) : (
+                      <div
+                        className="absolute inset-0 bg-gradient-to-b from-[#3d3d3d] to-[#2a2a2a]"
+                        style={{ backgroundColor: (mat as any).solid || "#4a4a4a" }}
+                      />
+                    )}
+                    <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-black/50 to-transparent" />
+                    <div className="absolute bottom-2 right-2 left-2 text-white/90 text-[10px] md:text-xs font-medium truncate">
+                      {mat.name}
                     </div>
-                    <span className="text-white/90 text-sm font-semibold shrink-0 tabular-nums">{mm} מ"מ</span>
-                  </div>
-                ))}
-              </div>
-              {/* חתך ויזואלי – פרופורציה 7:1:20:1 מ"מ (סה"כ 29 מ"מ) */}
-              <div className="w-full md:w-32 lg:w-40 h-44 md:h-52 flex flex-col rounded-xl overflow-hidden border border-white/15 shadow-2xl">
-                <div className="flex-[7] bg-gradient-to-b from-[#c4b5a0] to-[#a89882]" title="אבן טבעית 7mm" />
-                <div className="flex-[1] min-h-[4px] bg-[#e8e6e3]" title="פייבר גלס 1mm" />
-                <div className="flex-[20] min-h-[20px] bg-[#5b6370] flex items-center justify-center" title="חלת דבש 20mm">
-                  <div className="opacity-50 grid grid-cols-3 gap-0.5" style={{ gridTemplateRows: "repeat(4, 3px)" }}>
-                    {Array.from({ length: 12 }).map((_, i) => (
-                      <div key={i} className="w-1.5 h-1.5 rounded-sm bg-white/50" />
-                    ))}
+                    <div className="absolute top-2 right-2 text-white/80 text-[9px] md:text-[10px] tracking-wider">
+                      2900×1450 מ"מ
+                    </div>
                   </div>
                 </div>
-                <div className="flex-[1] min-h-[4px] bg-[#94a3b8]" title="אלומיניום 1mm" />
-              </div>
+              ))}
+              {heroPanels.length === 0 && (
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div
+                      key={i}
+                      className="w-[22%] aspect-[1/2.1] rounded-lg bg-white/10 shadow-xl"
+                      style={{ transform: `translateX(${(i - 2.5) * 26}%) rotate(${(i - 2.5) * 3}deg)` }}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -8,7 +8,7 @@ import { OrbitControls } from "@react-three/drei";
 // 3D demo imports הוסרו
 
 // HERO IMAGE PATH - change this path to update the hero image
-const HERO_IMAGE = "/images/hero1.png?v=1"; // Local optimized hero image
+const HERO_IMAGE = "/images/hero12.png"; // Hero visual – לוחות חיפוי
 
 // הוסרו נתוני דמו – נטען רק חומרים אמיתיים מ-materials.json
 
@@ -137,8 +137,6 @@ function MagnifyImage(props: { src: string; alt: string; className?: string }) {
 export default function Home() {
   // טקסטורות אמיתיות מתוך materials.json לשימוש ב"פס מוצרים" בדף הבית
   const [topMaterials, setTopMaterials] = useState<MaterialRecord[]>([]);
-  // 4 פלטות שונות להירו – אבן ומתכת בלבד
-  const [heroPanels, setHeroPanels] = useState<MaterialRecord[]>([]);
   // מניעת Hydration mismatch במרכיבים רגישים לדפדפן/תוספים
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
@@ -170,28 +168,6 @@ export default function Home() {
             pick("stone_land_stone"),
           ].filter(Boolean) as MaterialRecord[];
           setTopMaterials(selected);
-          // 4 פלטות שונות להירו: אבן, מתכת, אבן, מתכת
-          const heroIds: { id: string; variant?: string }[] = [
-            { id: "stone_amazonas_brazil" },
-            { id: "golden_rust" },
-            { id: "stone_travertine_silver" },
-            { id: "rose_gold" },
-          ];
-          let hero = heroIds
-            .map(({ id, variant }) => pick(id, variant))
-            .filter(Boolean) as MaterialRecord[];
-          // אם חסר חומר – משלימים מ־selected עד 4 פלטות שונות
-          const heroIdsSet = new Set(hero.map((m) => m.id));
-          if (hero.length < 4) {
-            for (const m of selected) {
-              if (hero.length >= 4) break;
-              if (!heroIdsSet.has(m.id)) {
-                heroIdsSet.add(m.id);
-                hero = [...hero, m];
-              }
-            }
-          }
-          setHeroPanels(hero.slice(0, 4));
         }
       } catch {
         // נשתמש בדמו (images) אם נכשל
@@ -588,58 +564,31 @@ export default function Home() {
             </a>
           </div>
 
-          {/* צד ימין (ב-RTL): מחסנית לוחות – 4 פלטות שונות */}
+          {/* צד ימין (ב-RTL): תמונת HERO12 + מידות פאנלים */}
           <div className="flex-1 w-full max-w-md lg:max-w-lg xl:max-w-xl flex justify-center lg:justify-start order-1 lg:order-2">
-            <div className="relative w-full aspect-[3/4] max-h-[320px] md:max-h-[400px] lg:max-h-[480px] flex items-center justify-center">
-              {heroPanels.map((mat, idx) => (
-                <div
-                  key={mat.id ?? idx}
-                  className="absolute rounded-lg shadow-2xl overflow-hidden border border-white/10"
-                  style={{
-                    width: "42%",
-                    aspectRatio: "1/2.1",
-                    maxHeight: "95%",
-                    transform: `translateX(${(idx - 1.5) * 28}%) rotate(${(idx - 1.5) * 4}deg)`,
-                    zIndex: idx,
-                    boxShadow: "0 20px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06)",
-                  }}
-                >
-                  <div className="relative w-full h-full">
-                    {mat.images?.[0] ? (
-                      <Image
-                        src={mat.images[0]}
-                        alt={mat.name}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 180px, 220px"
-                      />
-                    ) : (
-                      <div
-                        className="absolute inset-0 bg-gradient-to-b from-[#3d3d3d] to-[#2a2a2a]"
-                        style={{ backgroundColor: (mat as any).solid || "#4a4a4a" }}
-                      />
-                    )}
-                    <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-black/50 to-transparent" />
-                    <div className="absolute bottom-2 right-2 left-2 text-white/90 text-[10px] md:text-xs font-medium truncate">
-                      {mat.name}
-                    </div>
-                    <div className="absolute top-2 right-2 text-white/80 text-[9px] md:text-[10px] tracking-wider">
-                      2900×1450 מ"מ
-                    </div>
-                  </div>
-                </div>
-              ))}
-              {heroPanels.length === 0 && (
-                <div className="flex gap-2">
-                  {[1, 2, 3, 4].map((i) => (
-                    <div
-                      key={i}
-                      className="w-[22%] aspect-[1/2.1] rounded-lg bg-white/10 shadow-xl"
-                      style={{ transform: `translateX(${(i - 2.5) * 26}%) rotate(${(i - 2.5) * 3}deg)` }}
-                    />
-                  ))}
-                </div>
-              )}
+            <div className="relative w-full max-w-md">
+              <div className="relative aspect-[4/3] md:aspect-[3/2] rounded-xl overflow-hidden border border-white/15 shadow-2xl">
+                <Image
+                  src={HERO_IMAGE}
+                  alt="לוחות חיפוי אבן טבעית ומתכת – MIRZA"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 480px"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
+              </div>
+              {/* מידות פאנלים */}
+              <div className="mt-4 px-3 py-3 rounded-xl bg-black/25 border border-white/10">
+                <p className="text-white/90 text-sm font-semibold mb-2">מידות פאנלים (מ"מ)</p>
+                <ul className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1.5 text-white/80 text-xs md:text-sm tabular-nums">
+                  <li>2900 × 1450</li>
+                  <li>2900 × 725</li>
+                  <li>1450 × 1450</li>
+                  <li>1450 × 725</li>
+                  <li>725 × 725</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>

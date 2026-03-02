@@ -564,7 +564,7 @@ export default function Home() {
             </a>
           </div>
 
-          {/* צד ימין (ב-RTL): תמונת HERO12 + מידות פאנלים */}
+          {/* צד ימין (ב-RTL): תמונת HERO12 + עובי הפאנל */}
           <div className="flex-1 w-full max-w-md lg:max-w-lg xl:max-w-xl flex justify-center lg:justify-start order-1 lg:order-2">
             <div className="relative w-full max-w-md">
               <div className="relative aspect-[4/3] md:aspect-[3/2] rounded-xl overflow-hidden border border-white/15 shadow-2xl">
@@ -578,15 +578,14 @@ export default function Home() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
               </div>
-              {/* מידות פאנלים */}
+              {/* עובי הפאנל – שכבות */}
               <div className="mt-4 px-3 py-3 rounded-xl bg-black/25 border border-white/10">
-                <p className="text-white/90 text-sm font-semibold mb-2">מידות פאנלים (מ"מ)</p>
-                <ul className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1.5 text-white/80 text-xs md:text-sm tabular-nums">
-                  <li>2900 × 1450</li>
-                  <li>2900 × 725</li>
-                  <li>1450 × 1450</li>
-                  <li>1450 × 725</li>
-                  <li>725 × 725</li>
+                <p className="text-white/90 text-sm font-semibold mb-2">עובי הפאנל</p>
+                <ul className="space-y-1.5 text-white/80 text-xs md:text-sm">
+                  <li className="flex justify-between gap-3"><span>אבן טבעית</span><span className="tabular-nums text-white/90">7 מ"מ</span></li>
+                  <li className="flex justify-between gap-3"><span>פיברגלס</span><span className="tabular-nums text-white/90">1 מ"מ</span></li>
+                  <li className="flex justify-between gap-3"><span>חלת דבש אלומיניום</span><span className="tabular-nums text-white/90">20/10 מ"מ</span></li>
+                  <li className="flex justify-between gap-3"><span>אלומיניום</span><span className="tabular-nums text-white/90">1 מ"מ</span></li>
                 </ul>
               </div>
             </div>

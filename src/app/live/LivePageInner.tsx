@@ -471,6 +471,7 @@ function LivePageInner() {
 	// לוחות חיפוי – בקרים הנדסיים
 	const [panelThicknessMm, setPanelThicknessMm] = React.useState<16 | 25>(25);
 	const [shadowGapMm, setShadowGapMm] = React.useState<3 | 5 | 10>(5);
+	const [wallExplodedView, setWallExplodedView] = React.useState(false);
 	/** מידות לוח (מ'): רוחב×גובה – 2900×1450 = אנכי (גובה 2.9מ', רוחב 1.45מ') */
 	const PANEL_SIZE_OPTIONS: Array<{ id: string; w: number; h: number; label: string }> = [
 		{ id: '2900x1450', w: 1.45, h: 2.9, label: '2900×1450' },
@@ -1487,19 +1488,16 @@ function LivePageInner() {
 							}}
 						>
 							<React.Suspense fallback={null}>
-								<ambientLight intensity={1.5} />
-								<pointLight position={[10, 10, 10]} intensity={1} />
-								<Environment preset="city" />
+								<ambientLight intensity={1.2} />
+								<pointLight position={[5, 5, 5]} intensity={0.8} />
+								<Environment preset="apartment" blur={0.3} environmentIntensity={1.2} />
 								{(() => {
 									const g = shadowGapMm / 1000;
-									const textureUrl = (() => {
-										const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0];
-										return (sel as any)?.solid ? null : (sel?.images?.[0] || null);
-									})();
-									const materialSolidColor = (() => {
-										const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0];
-										return (sel as any)?.solid || null;
-									})();
+									const sel = nonWoodModels.find(r => r.id === activeTexId) || nonWoodModels[0];
+									const textureUrl = (sel as any)?.solid ? null : (sel?.images?.[0] || null);
+									const materialSolidColor = (sel as any)?.solid || null;
+									const normalMapUrl = (sel as MaterialRecord)?.pbr?.bump?.[0] ?? null;
+									const roughnessMapUrl = (sel as MaterialRecord)?.pbr?.roughness?.[0] ?? null;
 									const materialKind = activeMaterial === 'metal' ? 'metal' : 'stone';
 									const cells: React.ReactNode[] = [];
 									for (let i = 0; i < panelsAlongHeight; i++) {
@@ -1508,21 +1506,28 @@ function LivePageInner() {
 											const cellH = i === panelsAlongHeight - 1 ? lastRowHeight : panelSizeH;
 											const px = -wallWidthM / 2 + (j < panelsAlongWidth - 1 ? j * (panelSizeW + g) + panelSizeW / 2 : (panelsAlongWidth - 1) * (panelSizeW + g) + lastColWidth / 2);
 											const py = i < panelsAlongHeight - 1 ? i * (panelSizeH + g) + panelSizeH / 2 : (panelsAlongHeight - 1) * (panelSizeH + g) + lastRowHeight / 2;
-											/* UV לפי גריד – תא (j,i) מקבל חתך מהטקסטורה; השלמה מקבלת יחס lastCol/lastRow מהתא */
 											const uvScaleX = (j === panelsAlongWidth - 1 ? lastColWidth / panelSizeW : 1) / panelsAlongWidth;
 											const uvScaleY = (i === panelsAlongHeight - 1 ? lastRowHeight / panelSizeH : 1) / panelsAlongHeight;
 											const uvScale: [number, number] = [uvScaleX, uvScaleY];
-											const uvOffset: [number, number] = [j / panelsAlongWidth, i / panelsAlongHeight];
-											/* סטיית עומק זעירה לכל פלטה (אחידה) – מונעת z-fighting בלי מדרגה בין השלמות לשאר */
+											/* רנדומליות UV יציבה לכל לוח – מונעת מראה "טפט", כל לוח ייחודי */
+											const seed = i * 31 + j;
+											const uvRandomU = ((seed % 47) / 47) * 0.012;
+											const uvRandomV = (((seed * 7) % 43) / 43) * 0.012;
+											const uvOffset: [number, number] = [
+												Math.min(j / panelsAlongWidth + uvRandomU, 1 - uvScaleX),
+												Math.min(i / panelsAlongHeight + uvRandomV, 1 - uvScaleY),
+											];
 											const zBias = (i * panelsAlongWidth + j) * 0.00003;
 											cells.push(
 												<group key={`${i}-${j}`} position={[px, py, zBias]}>
 													<Panel3D
 														thicknessMm={panelThicknessMm}
-														explodedView={false}
+														explodedView={wallExplodedView}
 														widthM={cellW}
 														heightM={cellH}
 														textureUrl={textureUrl}
+														normalMapUrl={normalMapUrl}
+														roughnessMapUrl={roughnessMapUrl}
 														materialSolidColor={materialSolidColor}
 														materialKind={materialKind}
 														uvScale={uvScale}
@@ -1545,9 +1550,20 @@ function LivePageInner() {
 						</Canvas>
 						<CanvasLoadingOverlay />
 						
-						{/* אייקון מועדפים מעל הקנבס במקום בלון המחיר (דסקטופ בלבד) */}
+						{/* כפתורי שליטה מעל הקנבס – דסקטופ */}
 						<div className="hidden lg:block pointer-events-none absolute top-3 left-3 z-20">
 							<div className="flex gap-2">
+								<button
+									type="button"
+									onClick={() => setWallExplodedView(prev => !prev)}
+									aria-label={wallExplodedView ? 'תצוגה רגילה' : 'תצוגה מפוצצת – שכבות הלוח'}
+									title={wallExplodedView ? 'תצוגה רגילה' : 'תצוגה מפוצצת – הטכנולוגיה שמאחורי הלוח'}
+									className={`pointer-events-auto p-2 rounded-full border cursor-pointer shadow ${wallExplodedView ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'text-[#1a1a2e] bg-white/90 hover:bg-white border-gray-300'}`}
+								>
+									<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+										<path d="M12 3v18M3 12h18M12 8l4-4M12 16l4 4M12 8l-4-4M12 16l-4 4M8 12l-4 4M16 12l4 4M8 12l-4-4M16 12l4-4" />
+									</svg>
+								</button>
 								<button
 									type="button"
 									onClick={saveCurrentSimulation}
@@ -1590,9 +1606,19 @@ function LivePageInner() {
 								</div>
 							</div>
 						)}
-						{/* אייקון מועדפים מעל הקנבס – מובייל */}
+						{/* כפתורי שליטה – מובייל */}
 						<div className="lg:hidden pointer-events-none absolute top-2 left-2 z-20">
 							<div className="flex gap-2">
+								<button
+									type="button"
+									onClick={() => setWallExplodedView(prev => !prev)}
+									aria-label={wallExplodedView ? 'תצוגה רגילה' : 'תצוגה מפוצצת'}
+									className={`pointer-events-auto p-2 rounded-full border cursor-pointer shadow ${wallExplodedView ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'text-[#1a1a2e] bg-white/90 hover:bg-white border-gray-300'}`}
+								>
+									<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+										<path d="M12 3v18M3 12h18M12 8l4-4M12 16l4 4M12 8l-4-4M12 16l-4 4" />
+									</svg>
+								</button>
 								<button
 									type="button"
 									onClick={saveCurrentSimulation}

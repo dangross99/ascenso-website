@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useLoader } from '@react-three/fiber';
-import { TextureLoader, SRGBColorSpace } from 'three';
+import { TextureLoader, SRGBColorSpace, LinearSRGBColorSpace } from 'three';
 
 /** מידות לוח ברירת מחדל (מ') – ניתן לדריסה על ידי props widthM, heightM. */
 const DEFAULT_WIDTH_M = 2.9;
@@ -34,29 +34,35 @@ export default function Panel3D(props: {
 	thicknessMm: 16 | 25;
 	explodedView: boolean;
 	textureUrl?: string | null;
+	/** מפת נורמל / bump ל-PBR – השתקפויות אור על גידים */
+	normalMapUrl?: string | null;
+	/** מפת ח roughness ל-PBR */
+	roughnessMapUrl?: string | null;
 	materialSolidColor?: string | null;
 	materialKind: 'metal' | 'stone';
 	backlit?: boolean;
 	widthM?: number;
 	heightM?: number;
-	/** כשמוצג קיר מפולג: כל תא מציג חלק מהטקסטורה (0–1). למשל [1/nx, 1/ny] */
 	uvScale?: [number, number];
-	/** א offset ב-UV לחיתוך החלק הרלוונטי. למשל [j/nx, i/ny] */
 	uvOffset?: [number, number];
 }) {
-	const { thicknessMm, explodedView, textureUrl, materialSolidColor, materialKind, backlit = false, widthM = DEFAULT_WIDTH_M, heightM = DEFAULT_HEIGHT_M, uvScale, uvOffset } = props;
+	const { thicknessMm, explodedView, textureUrl, normalMapUrl, roughnessMapUrl, materialSolidColor, materialKind, backlit = false, widthM = DEFAULT_WIDTH_M, heightM = DEFAULT_HEIGHT_M, uvScale, uvOffset } = props;
 	const { totalM, stoneM, fiberM, honeycombM, backM } = panelLayers(thicknessMm);
 
 	const texUrl = textureUrl && !materialSolidColor ? textureUrl : FALLBACK_TEX;
-	const tex = useLoader(TextureLoader, texUrl);
+	const normUrl = normalMapUrl && !materialSolidColor ? normalMapUrl : FALLBACK_TEX;
+	const roughUrl = roughnessMapUrl && !materialSolidColor ? roughnessMapUrl : FALLBACK_TEX;
+	const [tex, normalMap, roughnessMap] = useLoader(TextureLoader, [texUrl, normUrl, roughUrl]);
 	React.useEffect(() => {
-		if (tex && texUrl !== FALLBACK_TEX) {
-			tex.colorSpace = SRGBColorSpace;
-		}
-	}, [tex, texUrl]);
+		if (tex && texUrl !== FALLBACK_TEX) tex.colorSpace = SRGBColorSpace;
+		if (normalMap && normUrl !== FALLBACK_TEX) normalMap.colorSpace = LinearSRGBColorSpace;
+		if (roughnessMap && roughUrl !== FALLBACK_TEX) roughnessMap.colorSpace = LinearSRGBColorSpace;
+	}, [tex, texUrl, normalMap, normUrl, roughnessMap, roughUrl]);
 
 	const useTexture = !materialSolidColor && textureUrl && texUrl !== FALLBACK_TEX;
-	/** כשמועברים uvScale/uvOffset – משתמשים בהעתק טקסטורה שמציג רק את החלק הרלוונטי (קיר אחד עם חלוקה) */
+	const useNormal = normalMap && normUrl !== FALLBACK_TEX;
+	const useRoughnessMap = roughnessMap && roughUrl !== FALLBACK_TEX;
+
 	const displayTex = React.useMemo(() => {
 		if (!tex || !useTexture || !uvScale || !uvOffset) return tex;
 		const clone = tex.clone();
@@ -65,6 +71,21 @@ export default function Panel3D(props: {
 		return clone;
 	}, [tex, useTexture, uvScale, uvOffset]);
 	const stoneMap = useTexture ? (uvScale && uvOffset ? displayTex : tex) : undefined;
+	/** מפות PBR עם אותו repeat/offset כמו הצבע */
+	const displayNormal = React.useMemo(() => {
+		if (!normalMap || !useNormal || !uvScale || !uvOffset) return normalMap;
+		const clone = normalMap.clone();
+		clone.repeat.set(uvScale[0], uvScale[1]);
+		clone.offset.set(uvOffset[0], uvOffset[1]);
+		return clone;
+	}, [normalMap, useNormal, uvScale, uvOffset]);
+	const displayRoughness = React.useMemo(() => {
+		if (!roughnessMap || !useRoughnessMap || !uvScale || !uvOffset) return roughnessMap;
+		const clone = roughnessMap.clone();
+		clone.repeat.set(uvScale[0], uvScale[1]);
+		clone.offset.set(uvOffset[0], uvOffset[1]);
+		return clone;
+	}, [roughnessMap, useRoughnessMap, uvScale, uvOffset]);
 
 	const stoneZ = explodedView ? stoneM / 2 + EXPLODED_OFFSET_M : totalM / 2 - stoneM / 2;
 	const fiberZ = explodedView ? -fiberM / 2 : totalM / 2 - stoneM - fiberM / 2;
@@ -83,11 +104,14 @@ export default function Panel3D(props: {
 				<boxGeometry args={[widthM, heightM, stoneM]} />
 				<meshStandardMaterial
 					color={stoneColor}
-					roughness={0.5}
+					roughness={useRoughnessMap ? 1 : 0.5}
+					roughnessMap={useRoughnessMap ? displayRoughness : undefined}
 					metalness={materialKind === 'metal' ? 0.5 : 0.12}
 					map={stoneMap}
+					normalMap={useNormal ? displayNormal : undefined}
 					emissive={stoneEmissive}
 					emissiveIntensity={stoneEmissiveIntensity}
+					envMapIntensity={materialKind === 'metal' ? 1.4 : 1.0}
 				/>
 			</mesh>
 			{/* שכבת פייבר גלס */}

@@ -576,23 +576,23 @@ export default function Home() {
                   sizes="(max-width: 768px) 95vw, (max-width: 1024px) 75vw, 60vw"
                   priority
                 />
-                {/* כיתוב מצד שמאל לתמונה + חץ לכל פאנל (נכנס לתוך התמונה, ב-RTL צד ימין של התמונה = שמאל ויזואלי) */}
-                <div className="absolute inset-y-0 right-0 w-[max(130px,22%)] sm:w-[max(160px,26%)] flex flex-col justify-between py-3 sm:py-4 px-2 pointer-events-none">
-                  <div className="flex items-center gap-1.5 justify-end text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                {/* כיתוב מהצד השני של התמונה (ב-RTL: צד שמאל ויזואלי = left-0) + חץ לכל פאנל */}
+                <div className="absolute inset-y-0 left-0 w-[max(130px,22%)] sm:w-[max(160px,26%)] flex flex-col justify-between py-3 sm:py-4 px-2 pointer-events-none">
+                  <div className="flex items-center gap-1.5 justify-start text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                    <span className="hero-arrow flex-shrink-0" aria-hidden>→</span>
                     <span className="text-xs sm:text-sm font-medium whitespace-nowrap">אבן טבעית / מתכת</span>
-                    <span className="hero-arrow flex-shrink-0" aria-hidden>←</span>
                   </div>
-                  <div className="flex items-center gap-1.5 justify-end text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                  <div className="flex items-center gap-1.5 justify-start text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                    <span className="hero-arrow flex-shrink-0" aria-hidden>→</span>
                     <span className="text-xs sm:text-sm font-medium whitespace-nowrap">רשת פיברגלס</span>
-                    <span className="hero-arrow flex-shrink-0" aria-hidden>←</span>
                   </div>
-                  <div className="flex items-center gap-1.5 justify-end text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                  <div className="flex items-center gap-1.5 justify-start text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                    <span className="hero-arrow flex-shrink-0" aria-hidden>→</span>
                     <span className="text-xs sm:text-sm font-medium whitespace-nowrap">חלת דבש אלומיניום</span>
-                    <span className="hero-arrow flex-shrink-0" aria-hidden>←</span>
                   </div>
-                  <div className="flex items-center gap-1.5 justify-end text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                  <div className="flex items-center gap-1.5 justify-start text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                    <span className="hero-arrow flex-shrink-0" aria-hidden>→</span>
                     <span className="text-xs sm:text-sm font-medium whitespace-nowrap">אלומיניום</span>
-                    <span className="hero-arrow flex-shrink-0" aria-hidden>←</span>
                   </div>
                 </div>
               </div>

@@ -23,7 +23,7 @@ const SHAPES: Shape[] = [
     image: '/images/products/nero-marquina.jpg',
     specs: [
       { label: 'גובה', value: '11 ס״מ' },
-      { label: 'חומרים אפשריים', value: 'עץ, מתכת, אבן טבעית' },
+      { label: 'חומרים אפשריים', value: 'מתכת, אבן טבעית' },
       { label: 'תאימות מערכת כבלים', value: '✓' },
       { label: 'תאימות מעקה זכוכית', value: '✓' },
       { label: 'תאימות מעקה ברזל', value: '✓' },
@@ -38,7 +38,7 @@ const SHAPES: Shape[] = [
     image: '/images/products/white-onyx.jpg',
     specs: [
       { label: 'גובה', value: '7 ס״מ' },
-      { label: 'חומרים אפשריים', value: 'עץ, מתכת, אבן טבעית' },
+      { label: 'חומרים אפשריים', value: 'מתכת, אבן טבעית' },
       { label: 'תאימות מערכת כבלים', value: '✓' },
       { label: 'תאימות מעקה זכוכית', value: '✓' },
       { label: 'תאימות מעקה ברזל', value: '✓' },

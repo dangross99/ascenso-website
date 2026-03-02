@@ -20,14 +20,6 @@
       "landingNote": "פודסט = 2.5 × מחיר יחידת מדרגה"
     },
     "textures": [
-      { "id": "wood_adama", "category": "עץ", "name": "אדמה", "pricePerStep": 3218 },
-      { "id": "wood_carved", "category": "עץ", "name": "חריטה", "pricePerStep": 2970 },
-      { "id": "wood_chocolate", "category": "עץ", "name": "שוקולד", "pricePerStep": 3053 },
-      { "id": "wood_painted", "category": "עץ", "name": "ציור", "pricePerStep": 3218 },
-      { "id": "wood_domino", "category": "עץ", "name": "דומינו", "pricePerStep": 3135 },
-      { "id": "wood_hammered", "category": "עץ", "name": "פטיש", "pricePerStep": 3135 },
-      { "id": "wood_wrapped", "category": "עץ", "name": "עטיפה", "pricePerStep": 3465 },
-      { "id": "wood_plain", "category": "עץ", "name": "נקי", "pricePerStep": 2310 },
       { "id": "stone_amazonas_brazil", "category": "אבן טבעית", "name": "אמזונס ברזיל", "pricePerStep": 4785 },
       { "id": "stone_green_alpi", "category": "אבן טבעית", "name": "האלפיים הירוקים", "pricePerStep": 4538 },
       { "id": "stone_travertine_silver", "category": "אבן טבעית", "name": "טרוורטין כסף", "pricePerStep": 3795 },

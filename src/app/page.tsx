@@ -16,7 +16,7 @@ const HERO_IMAGE = "/images/hero1.png?v=1"; // Local optimized hero image
 type MaterialRecord = {
   id: string;
   name: string;
-  category: "wood" | "metal" | "stone";
+  category: "metal" | "stone";
   colors?: string[];
   price?: number;
   images?: string[];
@@ -137,7 +137,7 @@ function MagnifyImage(props: { src: string; alt: string; className?: string }) {
 export default function Home() {
   // טקסטורות אמיתיות מתוך materials.json לשימוש ב"פס מוצרים" בדף הבית
   const [topMaterials, setTopMaterials] = useState<MaterialRecord[]>([]);
-  // 4 פלטות שונות להירו – תמיד מוצגות באותו סדר (אבן, מתכת, עץ, אבן)
+  // 4 פלטות שונות להירו – אבן ומתכת בלבד
   const [heroPanels, setHeroPanels] = useState<MaterialRecord[]>([]);
   // מניעת Hydration mismatch במרכיבים רגישים לדפדפן/תוספים
   const [mounted, setMounted] = React.useState(false);
@@ -159,26 +159,23 @@ export default function Home() {
             }
             return base;
           };
-          // סדר קבוע לפי דרישת הלקוח לדף הבית (10 פריטים)
+          // סדר קבוע לדף הבית – מתכת ואבן טבעית בלבד (10 פריטים)
           const selected: MaterialRecord[] = [
             pick("stone_amazonas_brazil"),
-            pick("wood_wrapped", "walnut"),
             pick("golden_rust"),
             pick("stone_green_alpi"),
-            pick("wood_carved"),
             pick("rose_gold"),
             pick("stone_travertine_silver"),
-            pick("wood_chocolate"),
             pick("silver"),
             pick("stone_land_stone"),
           ].filter(Boolean) as MaterialRecord[];
           setTopMaterials(selected);
-          // 4 פלטות שונות להירו: אבן, מתכת, עץ, אבן (מגוון ויזואלי)
+          // 4 פלטות שונות להירו: אבן, מתכת, אבן, מתכת
           const heroIds: { id: string; variant?: string }[] = [
             { id: "stone_amazonas_brazil" },
             { id: "golden_rust" },
-            { id: "wood_wrapped", variant: "walnut" },
             { id: "stone_travertine_silver" },
+            { id: "rose_gold" },
           ];
           let hero = heroIds
             .map(({ id, variant }) => pick(id, variant))

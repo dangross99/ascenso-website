@@ -5,7 +5,7 @@ import { axisFromYaw, computeLocalFrame, getInnerIsRight, HitechVertexLabels } f
 
 export function buildRectTreads(params: {
 	treads: Tread[];
-	materialKind: 'wood' | 'metal' | 'stone';
+	materialKind: 'metal' | 'stone';
 	useSolidMat: boolean;
 	solidTopColor: string;
 	solidSideColor: string;
@@ -47,7 +47,7 @@ export function buildRectTreads(params: {
 						receiveShadow={materialKind !== 'metal'}
 					>
 						<boxGeometry args={[t.run, 0.004, treadWidth]} />
-						{materialKind === 'wood' ? (
+						{false && materialKind === 'wood' ? (
 							(() => {
 								const axisTop = axisFromYaw(t.rotation[1] as number);
 								// Top: טקסטורה יציבה לפי ציר בלבד (ללא flip), כדי לא "להתהפך" בין גרמים
@@ -72,7 +72,7 @@ export function buildRectTreads(params: {
 						) : (
 							(() => {
 								const metalness = materialKind === 'metal' ? 1 : 0;
-								const roughness = materialKind === 'metal' ? 0.35 : materialKind === 'stone' ? 0.68 : 0.82;
+								const roughness = materialKind === 'metal' ? 0.35 : 0.68;
 								const envMapIntensity = useSolidMat ? (materialKind === 'metal' ? 2.0 : 1.5) : 0.2;
 								if (useSolidMat) return (<meshStandardMaterial color={solidTopColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} />);
 								const axisTop = axisFromYaw(t.rotation[1] as number);
@@ -93,8 +93,7 @@ export function buildRectTreads(params: {
 										side={2}
 									/>
 								);
-							})()
-						)}
+							})()}
 					</mesh>
 
 					{/* BOTTOM face */}
@@ -104,7 +103,7 @@ export function buildRectTreads(params: {
 							const axisBottom = axisFromYaw(t.rotation[1] as number);
 							const ft = buildFaceTextures(t.run, treadWidth, axisBottom === 'z');
 							const metalness = materialKind === 'metal' ? 1 : 0;
-							const roughness = materialKind === 'metal' ? 0.35 : materialKind === 'stone' ? 0.68 : 0.82;
+							const roughness = materialKind === 'metal' ? 0.35 : 0.68;
 							const envMapIntensity = useSolidMat ? (materialKind === 'metal' ? 2.0 : 1.5) : 0.2;
 							if (useSolidMat) return (<meshStandardMaterial color={solidSideColor} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} />);
 							return (
@@ -144,7 +143,7 @@ export function buildRectTreads(params: {
 						const matFrontBack = (flipU: boolean = false) => {
 							const ft = buildFaceTextures(treadWidth, treadThickness, rotateFrontBack, flipU);
 							const metalness = materialKind === 'metal' ? 1 : 0;
-							const roughness = materialKind === 'metal' ? 0.35 : materialKind === 'stone' ? 0.68 : 0.82;
+							const roughness = materialKind === 'metal' ? 0.35 : 0.68;
 							const envMapIntensity = useSolidMat ? (materialKind === 'metal' ? 2.0 : 1.5) : 0.2;
 							if (useSolidMat) return (<meshStandardMaterial color={solidSideColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 							return (
@@ -170,7 +169,7 @@ export function buildRectTreads(params: {
 						const matSides = (flipU: boolean = false) => {
 							const ft = buildFaceTextures(t.run, treadThickness, rotateSides, flipU);
 							const metalness = materialKind === 'metal' ? 1 : 0;
-							const roughness = materialKind === 'metal' ? 0.35 : materialKind === 'stone' ? 0.68 : 0.82;
+							const roughness = materialKind === 'metal' ? 0.35 : 0.68;
 							const envMapIntensity = useSolidMat ? (materialKind === 'metal' ? 2.0 : 1.5) : 0.2;
 							if (useSolidMat) return (<meshStandardMaterial color={solidSideColor} side={2} metalness={metalness} roughness={roughness} envMapIntensity={envMapIntensity} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />);
 							return (

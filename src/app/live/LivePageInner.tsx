@@ -43,7 +43,7 @@ function CanvasLoadingOverlay() {
 type MaterialRecord = {
 	id: string;
 	name: string;
-	category: 'wood' | 'metal' | 'stone';
+	category: 'metal' | 'stone';
 	colors?: string[];
 	price?: number;
 	images: string[];
@@ -447,8 +447,8 @@ function LivePageInner() {
 		};
 	}, []);
 
-	const qMaterial = (search.get('material') as 'wood' | 'metal' | 'stone') || 'stone';
-	const qMaterialSafe = qMaterial === 'wood' ? 'stone' : qMaterial;
+	const qMaterial = (search.get('material') as 'metal' | 'stone') || 'stone';
+	const qMaterialSafe = qMaterial;
 	const qColor = search.get('color') || 'oak';
 	const qModel = search.get('model') || '';
 	const qShape = (search.get('shape') as 'straight' | 'L' | 'U') || 'straight';
@@ -504,7 +504,6 @@ function LivePageInner() {
 	const [stepCableSpanMode, setStepCableSpanMode] = React.useState<Array<'floor' | 'tread'>>([]);
 	const [landingCableSpanMode, setLandingCableSpanMode] = React.useState<Array<'floor' | 'tread'>>([]);
 	// זיכרון בחירה אחרונה לכל קטגוריה כדי לשחזר בעת חזרה
-	const lastWoodRef = React.useRef<{ modelId: string | null; color: string | null }>({ modelId: null, color: null });
 	const lastTexRef = React.useRef<{ metal: string | null; stone: string | null }>({ metal: null, stone: null });
 	// מאסטר: מצבים מחזוריים להפעלה/ביטול ולצד
 	const [masterApply, setMasterApply] = React.useState<'none' | 'add' | 'remove'>('none');
@@ -865,24 +864,11 @@ function LivePageInner() {
 
 	// (הוסר) יצירת PDF/תמונות – לפי בקשתך נשאר רק טקסט הודעה ל‑WhatsApp
 
-	// בחר רשומת דגם פעילה לפי model או לפי קטגוריה (ברירת מחדל: הראשון)
-	const woodModels = React.useMemo(
-		() =>
-			records.filter(r => {
-				if (r.category !== 'wood') return false;
-				const img = typeof r.images?.[0] === 'string' ? r.images[0] : '';
-				// תמיכה גם בנתיבים החדשים תחת public וגם בנתיב הקודם
-				return img.startsWith('/images/materials/wood') || img.startsWith('/assets/materials_src/wood');
-			}),
-		[records]
-	);
+	// חומרים לפי קטגוריה פעילה – מתכת ואבן בלבד
 	const nonWoodModels = React.useMemo(() => {
 		return records.filter((r) => {
-			// מאותה קטגוריה ולא עץ
-			if (r.category !== activeMaterial || activeMaterial === 'wood') return false;
-			// הסתר פריטים מסומנים כנסתרים
+			if (r.category !== activeMaterial) return false;
 			if ((r as any).hidden) return false;
-			// למתכת – דרוש שתהיה תמונה (כולל White/Black עם קבצים)
 			if (activeMaterial === 'metal') {
 				return Array.isArray((r as any).images) && (r as any).images.length > 0;
 			}
@@ -907,9 +893,8 @@ function LivePageInner() {
 		});
 		return map;
 	}, [priceList]);
-	// אם הטקסטורה הפעילה לא קיימת לאחר הסינון (למשל metal_solid_white/black), בחר את הראשונה הזמינה
+	// אם הטקסטורה הפעילה לא קיימת לאחר הסינון, בחר את הראשונה הזמינה
 	React.useEffect(() => {
-		if (activeMaterial === 'wood') return;
 		if (!nonWoodModels.length) return;
 		if (!nonWoodModels.some(m => m.id === activeTexId)) {
 			setActiveTexId(nonWoodModels[0].id);
@@ -938,29 +923,16 @@ function LivePageInner() {
 	React.useEffect(() => {
 		try {
 			const urls = new Set<string>();
-			// חומר עיקרי
-			if (activeMaterial === 'wood') {
-				const selWood = woodModels.find(m => m.id === activeModelId) || woodModels[0];
-				const img = selWood?.variants?.[activeColor]?.[0] || selWood?.images?.[0];
-				if (img) urls.add(img);
-				const b = selWood?.pbrVariants?.[activeColor]?.bump?.[0];
-				const r = selWood?.pbrVariants?.[activeColor]?.roughness?.[0];
-				if (b) urls.add(b);
-				if (r) urls.add(r);
-			} else {
-				const sel = nonWoodModels.find(m => m.id === activeTexId) || nonWoodModels[0];
-				if (sel?.images?.[0]) urls.add(sel.images[0]);
-				if (sel?.pbr?.bump?.[0]) urls.add(sel.pbr.bump[0]);
-				if (sel?.pbr?.roughness?.[0]) urls.add(sel.pbr.roughness[0]);
-			}
-			// מעקה מתכת – נטען משאבים רק אם נבחרה טקסטורה (לא צבע אחיד)
+			const sel = nonWoodModels.find(m => m.id === activeTexId) || nonWoodModels[0];
+			if (sel?.images?.[0]) urls.add(sel.images[0]);
+			if (sel?.pbr?.bump?.[0]) urls.add(sel.pbr.bump[0]);
+			if (sel?.pbr?.roughness?.[0]) urls.add(sel.pbr.roughness[0]);
 			if (railing === 'metal' && railingMetalId) {
 				const rec = metalRailingOptions.find(r => r.id === railingMetalId);
 				if (rec?.images?.[0]) urls.add(rec.images[0]);
 				if (rec?.pbr?.bump?.[0]) urls.add(rec.pbr.bump[0]);
 				if (rec?.pbr?.roughness?.[0]) urls.add(rec.pbr.roughness[0]);
 			}
-			// הפעלה
 			(urls.size ? Array.from(urls) : []).forEach(u => {
 				try {
 					// @ts-ignore - preload is static on useTexture
@@ -968,7 +940,7 @@ function LivePageInner() {
 				} catch {}
 			});
 		} catch {}
-	}, [activeMaterial, activeModelId, woodModels, activeColor, nonWoodModels, activeTexId, railing, metalRailingOptions, railingMetalId]);
+	}, [nonWoodModels, activeTexId, railing, metalRailingOptions, railingMetalId]);
 	React.useEffect(() => {
 		// ברירת מחדל: אם בחרו "מעקה מתכת" ואין בחירה, נקבע שחור אחיד
 		if (railing === 'metal' && !railingMetalId && !railingMetalSolid) {
@@ -992,41 +964,11 @@ function LivePageInner() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [railingMetalId]);
 
-	// שמירת הבחירה האחרונה עבור עץ/צבע
-	React.useEffect(() => {
-		if (activeMaterial === 'wood') {
-			if (activeModelId) lastWoodRef.current.modelId = activeModelId;
-			if (activeColor) lastWoodRef.current.color = activeColor;
-		}
-	}, [activeMaterial, activeModelId, activeColor]);
 	// שמירת הבחירה האחרונה עבור מתכת/אבן
 	React.useEffect(() => {
 		if (activeMaterial === 'metal') lastTexRef.current.metal = activeTexId ?? lastTexRef.current.metal;
 		if (activeMaterial === 'stone') lastTexRef.current.stone = activeTexId ?? lastTexRef.current.stone;
 	}, [activeMaterial, activeTexId]);
-
-	// שחזור בחירת עץ בעת מעבר חזרה לעץ (שומר את הבחירה הקודמת אם קיימת)
-	React.useEffect(() => {
-		if (activeMaterial !== 'wood') return;
-		const desiredModel = (lastWoodRef.current.modelId && woodModels.find(m => m.id === lastWoodRef.current.modelId))
-			? lastWoodRef.current.modelId
-			: (activeModelId && woodModels.find(m => m.id === activeModelId) ? activeModelId : (woodModels[0]?.id ?? null));
-		if (!desiredModel) return;
-		if (activeModelId !== desiredModel) setActiveModelId(desiredModel);
-		// ודא שהצבע תקף לדגם, אחרת בחר צבע ראשון זמין
-		const modelObj = woodModels.find(m => m.id === desiredModel);
-		if (modelObj) {
-			const colorValid = !!modelObj.variants?.[activeColor];
-			let nextColor = activeColor;
-			if (!colorValid) {
-				const saved = lastWoodRef.current.color;
-				if (saved && modelObj.variants?.[saved]) nextColor = saved;
-				else nextColor = Object.keys(modelObj.variants ?? {})[0] ?? activeColor;
-			}
-			if (nextColor && nextColor !== activeColor) setActiveColor(nextColor);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [activeMaterial, woodModels]);
 
 	// ברירת מחדל ובחירה דביקה למתכת/אבן – מזהה לכל קטגוריה ושיקוף ל-activeTexId לתצוגה
 	React.useEffect(() => {
@@ -1117,21 +1059,13 @@ function LivePageInner() {
 		return () => { cancelled = true; };
 	}, [railing, cableId, cableOptions]);
 
-	const activeModel =
-		activeMaterial === 'wood' ? woodModels.find(m => m.id === activeModelId) || woodModels[0] : undefined;
-
 	// סנכרון URL לשיתוף
 	React.useEffect(() => {
 		let t: any;
 		const run = () => {
 			const params = new URLSearchParams();
 			params.set('material', activeMaterial);
-			if (activeMaterial === 'wood') {
-				if (activeModel?.id) params.set('model', activeModel.id);
-				if (activeColor) params.set('color', activeColor);
-			} else {
-				if (activeTexId) params.set('tex', activeTexId);
-			}
+			if (activeTexId) params.set('tex', activeTexId);
 			params.set('shape', shape);
 			params.set('steps', String(steps));
 			params.set('path', encodePath(pathSegments));
@@ -1149,7 +1083,7 @@ function LivePageInner() {
 		t = setTimeout(run, 120);
 		return () => clearTimeout(t);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [activeMaterial, activeColor, activeModel?.id, activeTexId, shape, steps, box, pathSegments]);
+	}, [activeMaterial, activeTexId, shape, steps, box, pathSegments]);
 
 	// מחשבון מחיר – כל המחירים נטענים מ־/data/price-list.json (מקור יחיד)
 	function calculatePrice(): {
@@ -1164,7 +1098,7 @@ function LivePageInner() {
 	} {
 		const baseSetup: number = Number(priceList?.stairs?.pricing?.baseSetup) || 1500;
 		const landingMultiplier: number = Number(priceList?.stairs?.pricing?.landingMultiplier) || 2.5;
-		const texId = activeMaterial === 'wood' ? (activeModel?.id ?? null) : activeTexId;
+		const texId = activeTexId;
 		const basePerStep: number = (texId ? pricePerStepByTexId.get(texId) : undefined) ?? 600;
 		const boxMultiplier: number = modelMultiplierByBox.get(box) ?? 1;
 		const perStep: number = Math.round(basePerStep * boxMultiplier);

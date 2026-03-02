@@ -66,7 +66,7 @@ function applyProjectedUVsForBoxLike(geo: ExtrudeGeometry, dims: { run: number; 
 
 export function buildRoundedTreads(params: {
 	treads: Tread[];
-	materialKind: 'wood' | 'metal' | 'stone';
+	materialKind: 'metal' | 'stone';
 	useSolidMat: boolean;
 	solidTopColor: string;
 	solidSideColor: string;

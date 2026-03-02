@@ -100,7 +100,7 @@ function Staircase3D({
 	shape: 'straight' | 'L' | 'U';
 	steps: number;
 	color: string;
-	materialKind: 'wood' | 'metal' | 'stone';
+	materialKind: 'metal' | 'stone';
 	materialSolidColor?: string | null;
 	textureUrl?: string | null;
 	bumpUrl?: string | null;

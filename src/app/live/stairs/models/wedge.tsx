@@ -7,7 +7,7 @@ import { axisFromYaw, computeLocalFrame, getInnerIsRight, HitechVertexLabels } f
 
 export function buildWedgeTreads(params: {
 	treads: Tread[];
-	materialKind: 'wood' | 'metal' | 'stone';
+	materialKind: 'metal' | 'stone';
 	useSolidMat: boolean;
 	solidTopColor: string;
 	solidSideColor: string;
@@ -204,20 +204,12 @@ export function buildWedgeTreads(params: {
 						receiveShadow={materialKind !== 'metal'}
 					>
 						<boxGeometry args={[t.run, 0.004, treadWidth]} />
-						{materialKind === 'wood' ? (
-							(() => {
-								const axisTop = axisFromYaw(t.rotation[1] as number);
-								const ft = buildFaceTextures(t.run, treadWidth, axisTop === 'z');
-								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={2} />);
-							})()
-						) : (
-							(() => {
-								if (useSolidMat) return (<meshBasicMaterial color={solidTopColor} side={2} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={2} />);
-								const axisTop = axisFromYaw(t.rotation[1] as number);
-								const ft = buildFaceTextures(t.run, treadWidth, axisTop === 'z');
-								return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={2} />);
-							})()
-						)}
+						{(() => {
+							if (useSolidMat) return (<meshBasicMaterial color={solidTopColor} side={2} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={2} />);
+							const axisTop = axisFromYaw(t.rotation[1] as number);
+							const ft = buildFaceTextures(t.run, treadWidth, axisTop === 'z');
+							return (<meshBasicMaterial color={'#ffffff'} map={ft.color} side={2} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={2} />);
+						})()}
 					</mesh>
 
 					{hitech ? <HitechVertexLabels t={t} treadThickness={treadThickness} treadWidth={treadWidth} /> : null}

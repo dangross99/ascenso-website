@@ -6,33 +6,22 @@ import React from 'react';
 type MaterialRecord = {
 	id: string;
 	name: string;
-	category: 'wood' | 'metal' | 'stone';
+	category: 'metal' | 'stone';
 	colors: string[];
 	price: number;
 	images: string[];
-	variants?: Record<string, string[]>; // colorId -> responsive srcs (webp/avif). First is primary.
+	variants?: Record<string, string[]>;
 };
 
 type MaterialItem = {
 	id: string;
-	materialId: string; // 'wood' | 'metal' | 'stone'
+	materialId: 'metal' | 'stone';
 	name: string;
 	image: string;
-	color: string; // one of COLOR_SWATCHES ids
-	price: number; // מחיר מדומה להצגה/סינון
-	variantImages?: Record<string, string[]>; // אופציונלי: וריאנטים אמיתיים (למשל לעץ)
+	color: string;
+	price: number;
+	variantImages?: Record<string, string[]>;
 };
-
-// בוטל: סינון צבעים הוסר מהעמוד
-
-// גווני עץ לדוגמה בכל כרטיס – בחירה תשפיע ויזואלית על התמונה (Overlay)
-// צבעי עץ מוצגים בלבד: טבעי, אגוז, שחור, לבן
-const WOOD_SWATCHES: { id: string; label: string; hex: string }[] = [
-	{ id: 'oak', label: 'טבעי', hex: '#C8A165' },
-	{ id: 'walnut', label: 'אגוז', hex: '#7B5A39' },
-	{ id: 'black', label: 'שחור', hex: '#111827' },
-	{ id: 'white', label: 'לבן', hex: '#F3F4F6' },
-];
 
 // הוסרו נתוני דמה – הטעינה כולה מגיעה מ-materials.json
 
@@ -69,8 +58,6 @@ export default function MaterialsPage() {
 	const [priceFilter, setPriceFilter] = React.useState<number | null>(7000); // max price (slider)
 	const [allItems, setAllItems] = React.useState<MaterialItem[]>([]);
 	const [visibleCount, setVisibleCount] = React.useState<number>(9);
-	// צבע נבחר לכל פריט עץ (מפה לפי id)
-	const [woodColorById, setWoodColorById] = React.useState<Record<string, string>>({});
 
 
 	// מעקב אחרי תמונות שלא נטענו (fallback)
@@ -94,16 +81,9 @@ export default function MaterialsPage() {
 			try {
 				const res = await fetch(`/data/materials.json?ts=${Date.now()}`, { cache: 'no-store' });
 				const json: MaterialRecord[] = await res.json();
-				// הסתר פריטים שמסומנים כ-hidden, ועבור עץ – תמיכה גם בנתיבים החדשים תחת public וגם בנתיב הקודם
+				// מתכת ואבן בלבד – הסתר פריטים מסומנים כ-hidden
 				const visibleJson = Array.isArray(json)
-					? json.filter((r: any) => {
-							if (r?.hidden) return false;
-							if (r?.category === 'wood') {
-								const img = typeof r?.images?.[0] === 'string' ? r.images[0] : '';
-								return img.startsWith('/images/materials/wood') || img.startsWith('/assets/materials_src/wood');
-							}
-							return true;
-					  })
+					? json.filter((r: any) => !r?.hidden && (r?.category === 'metal' || r?.category === 'stone'))
 					: [];
 				if (cancelled) return;
 				const items: MaterialItem[] = visibleJson.map((rec, idx) => ({
@@ -164,12 +144,6 @@ export default function MaterialsPage() {
 									הכל
 								</button>
 								<button
-									className={`w-full py-2 text-base rounded-full border cursor-pointer transition-colors ${materialFilter === 'wood' ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-[#1a1a2e] border-gray-300 hover:border-gray-400'}`}
-									onClick={() => setMaterialFilter('wood')}
-								>
-									עץ
-								</button>
-								<button
 									className={`w-full py-2 text-base rounded-full border cursor-pointer transition-colors ${materialFilter === 'metal' ? 'bg-[#1a1a2e] text-white border-[#1a1a2e]' : 'bg-white text-[#1a1a2e] border-gray-300 hover:border-gray-400'}`}
 									onClick={() => setMaterialFilter('metal')}
 								>
@@ -228,17 +202,7 @@ export default function MaterialsPage() {
 					</div>
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 						{filteredItems.slice(0, visibleCount).map((it, i) => {
-							// צבע נבחר: מה-UI, אחרת צבע ראשון זמין מתוך השישה, אחרת 'oak'
-							const availableWoodColors = WOOD_SWATCHES.map(s => s.id).filter(id => !it.variantImages || it.variantImages[id]);
-							const selectedColorId =
-								it.materialId === 'wood'
-									? (woodColorById[it.id] ?? (availableWoodColors[0] ?? 'oak'))
-									: it.color;
-							const selectedVariantSrc =
-								it.materialId === 'wood' && it.variantImages
-									? it.variantImages[selectedColorId]?.[0] || it.image
-									: it.image;
-							const displaySrc = selectedVariantSrc || FALLBACK_SRC;
+							const displaySrc = it.image || FALLBACK_SRC;
 							const safeSrc = brokenGridById[it.id] ? FALLBACK_SRC : (displaySrc || FALLBACK_SRC);
 							return (
 								<article key={i} className="bg-white group">
@@ -257,7 +221,7 @@ export default function MaterialsPage() {
 												className="pointer-events-auto inline-block px-14 py-3.5 rounded-md bg-[#1a1a2e] text-white text-sm md:text-base font-bold tracking-widest shadow-sm hover:opacity-90 cursor-pointer"
 												onClick={(e) => {
 													e.preventDefault();
-													const href = `/live?material=${encodeURIComponent(it.materialId)}&color=${encodeURIComponent(selectedColorId)}&price=${it.price}`;
+													const href = `/live?material=${encodeURIComponent(it.materialId)}&price=${it.price}`;
 													setLightbox({ src: safeSrc, href });
 												}}
 											>
@@ -269,28 +233,9 @@ export default function MaterialsPage() {
 										<div className="flex items-center justify-center">
 											<h3 className="font-semibold text-gray-900">{it.name}</h3>
 										</div>
-										{/* בוחר גוונים – מוצג רק לפריטי עץ */}
-										{it.materialId === 'wood' && (
-											<div className="mt-3 flex items-center justify-center gap-2">
-												{WOOD_SWATCHES.filter(sw => !it.variantImages || it.variantImages[sw.id]).map(sw => {
-													const active = selectedColorId === sw.id;
-													return (
-														<button
-															key={sw.id}
-															type="button"
-															title={sw.label}
-															aria-label={sw.label}
-															className={`w-6 h-6 rounded-full border-2 transition-transform ${active ? 'border-[#1a1a2e] scale-110' : 'border-gray-300 hover:border-gray-400 hover:scale-105'}`}
-															style={{ backgroundColor: sw.hex }}
-															onClick={() => setWoodColorById(prev => ({ ...prev, [it.id]: sw.id }))}
-														/>
-													);
-												})}
-											</div>
-										)}
 										<div className="mt-3 flex justify-center">
 											<a
-												href={`/live?material=${encodeURIComponent(it.materialId)}&color=${encodeURIComponent(selectedColorId)}&price=${it.price}`}
+												href={`/live?material=${encodeURIComponent(it.materialId)}&price=${it.price}`}
 												className="inline-block px-14 py-3.5 bg-transparent text-[#1a1a2e] text-sm md:text-base font-bold tracking-widest rounded-md transition-colors duration-300 hover:bg-gray-300 group-hover:bg-gray-300 cursor-pointer border border-gray-300 hover:border-gray-300 group-hover:border-gray-300"
 											>
 												צפייה בטקסטורה LIVE

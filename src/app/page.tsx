@@ -576,6 +576,18 @@ export default function Home() {
                   sizes="(max-width: 768px) 95vw, (max-width: 1024px) 75vw, 60vw"
                   priority
                 />
+                {/* גרפיטי – הסבר שכבות הפאנל (מעל התמונה, בלי להגדיל הירו) */}
+                <div className="absolute bottom-2 left-2 right-2 sm:left-auto sm:right-2 sm:w-auto w-[min(100%,220px)] hero-graffiti">
+                  <div className="px-2.5 py-2 sm:px-3 sm:py-2.5 rounded-sm border-2 border-white/30 bg-black/55 backdrop-blur-sm shadow-lg">
+                    <p className="text-[10px] sm:text-xs text-white/60 uppercase tracking-widest mb-1 font-bold">תכן הפאנל</p>
+                    <ul className="text-white font-bold text-[11px] sm:text-sm leading-tight space-y-0.5 [font-family:inherit]">
+                      <li>אבן טבעית / מתכת</li>
+                      <li>רשת פיברגלס</li>
+                      <li>חלת דבש אלומיניום</li>
+                      <li>אלומיניום</li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -586,6 +598,14 @@ export default function Home() {
           .hero-hero12-wrap span,
           .hero-hero12-wrap img {
             background: transparent !important;
+          }
+          /* גרפיטי – מראה תווית/טאג */
+          .hero-graffiti {
+            transform: rotate(-1.5deg);
+            text-shadow: 0 0 1px rgba(0,0,0,0.8), 0 1px 2px rgba(0,0,0,0.5);
+          }
+          .hero-graffiti li {
+            letter-spacing: 0.02em;
           }
           /* Hide horizontal scrollbar across browsers for the steps viewport */
           #steps-viewport {

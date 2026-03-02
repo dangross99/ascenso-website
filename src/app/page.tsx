@@ -533,7 +533,7 @@ export default function Home() {
     <div className="w-full bg-white overflow-x-hidden">
       {/* 1. Hero Section – בהשראת STONESIZE: גרדיאנט כהה, טקסט יוקרתי, מחסנית לוחות */}
       <section
-        className="relative w-screen min-h-[244px] md:min-h-[270px] lg:min-h-[333px] flex items-center overflow-hidden"
+        className="relative w-screen min-h-[195px] md:min-h-[216px] lg:min-h-[266px] flex items-center overflow-hidden"
         style={{
           marginLeft: "calc(50% - 50vw)",
           width: "100vw",
@@ -541,7 +541,7 @@ export default function Home() {
         }}
         dir="rtl"
       >
-        <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-4 lg:gap-8 py-6 lg:py-8 pr-4 pl-0 md:pr-8 md:pl-0 lg:pr-12 lg:pl-0">
+        <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-3 lg:gap-6 py-4 lg:py-6 pr-4 pl-0 md:pr-8 md:pl-0 lg:pr-12 lg:pl-0">
           {/* צד שמאל (ב-RTL): טקסט + CTA – שוליים רק מצד הטקסט */}
           <div className="flex-1 min-w-0 text-center lg:text-right order-2 lg:order-1">
             <p className="text-white/70 text-sm md:text-base tracking-[0.2em] uppercase font-light mb-1">

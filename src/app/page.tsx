@@ -579,24 +579,24 @@ export default function Home() {
                 {/* כיתוב לכיוון סוף הדף – 4 שורות, 3 מרווחים אנכיים שווים (gap-y) */}
                 <div className="absolute inset-y-0 right-full -mr-8 sm:-mr-12 md:-mr-16 w-[max(130px,22%)] sm:w-[max(160px,26%)] flex flex-col justify-center gap-y-[4.74rem] sm:gap-y-[5.69rem] pointer-events-none items-start">
                   <div className="flex items-center gap-1.5 justify-start text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
-                    <span className="hero-panel-line hero-panel-line--before" aria-hidden />
-                    <span className="hero-arrow flex-shrink-0" aria-hidden>→</span>
                     <span className="text-xs sm:text-sm font-medium whitespace-nowrap">אבן טבעית / מתכת</span>
+                    <span className="hero-arrow flex-shrink-0" aria-hidden>→</span>
+                    <span className="hero-panel-line" aria-hidden />
                   </div>
                   <div className="flex items-center gap-1.5 justify-start text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
-                    <span className="hero-panel-line hero-panel-line--before" aria-hidden />
-                    <span className="hero-arrow flex-shrink-0" aria-hidden>→</span>
                     <span className="text-xs sm:text-sm font-medium whitespace-nowrap">רשת פיברגלס</span>
+                    <span className="hero-arrow flex-shrink-0" aria-hidden>→</span>
+                    <span className="hero-panel-line" aria-hidden />
                   </div>
                   <div className="flex items-center gap-1.5 justify-start text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
-                    <span className="hero-panel-line hero-panel-line--before" aria-hidden />
-                    <span className="hero-arrow flex-shrink-0" aria-hidden>→</span>
                     <span className="text-xs sm:text-sm font-medium whitespace-nowrap">חלת דבש אלומיניום</span>
+                    <span className="hero-arrow flex-shrink-0" aria-hidden>→</span>
+                    <span className="hero-panel-line" aria-hidden />
                   </div>
                   <div className="flex items-center gap-1.5 justify-start text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
-                    <span className="hero-panel-line hero-panel-line--before" aria-hidden />
-                    <span className="hero-arrow flex-shrink-0" aria-hidden>→</span>
                     <span className="text-xs sm:text-sm font-medium whitespace-nowrap">אלומיניום</span>
+                    <span className="hero-arrow flex-shrink-0" aria-hidden>→</span>
+                    <span className="hero-panel-line" aria-hidden />
                   </div>
                 </div>
               </div>
@@ -620,10 +620,6 @@ export default function Home() {
             height: 1px;
             background: rgba(255,255,255,0.85);
             margin-inline-start: 0.125rem;
-          }
-          .hero-panel-line--before {
-            margin-inline-start: 0;
-            margin-inline-end: 0.125rem;
           }
           @media (min-width: 640px) {
             .hero-panel-line { width: 2.25rem; }

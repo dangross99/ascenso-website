@@ -547,7 +547,7 @@ export default function Home() {
             <p className="text-white/80 text-xs md:text-sm tracking-[0.25em] uppercase font-medium mb-3 md:mb-4">
               ASCENSO
             </p>
-            <h1 className="text-white text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-semibold leading-tight mb-3 tracking-tight">
+            <h1 className="text-white text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-semibold leading-tight mb-3 tracking-tight whitespace-nowrap">
               חיפוי מבנים וקירות
             </h1>
             <p className="text-white/90 text-lg md:text-xl font-normal mb-4">

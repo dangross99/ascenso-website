@@ -545,16 +545,16 @@ export default function Home() {
           {/* צד שמאל (ב-RTL): טקסט + CTA – מראה בינלאומי, פשוט וברור */}
           <div className="flex-1 min-w-0 text-center lg:text-right order-2 lg:order-1 max-w-xl lg:max-w-lg">
             <p className="text-white/80 text-xs md:text-sm tracking-[0.25em] uppercase font-medium mb-3 md:mb-4">
-              MIRZA
+              ASCENSO
             </p>
             <h1 className="text-white text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-semibold leading-tight mb-3 tracking-tight">
-              אבן טבעית ומתכת
+              חיפוי מבנים וקירות
             </h1>
             <p className="text-white/90 text-lg md:text-xl font-normal mb-4">
-              לוחות חיפוי פורמט גדול
+              אבן טבעית ומתכת — לוחות פורמט גדול
             </p>
             <p className="text-white/70 text-sm md:text-base max-w-md mx-auto lg:mx-0 mb-8 leading-relaxed">
-              Thin stone layer, aluminum honeycomb core. Dry-hang systems.
+              Thin stone layer, aluminum honeycomb core. Dry-hang systems for facades and walls.
             </p>
             <a
               href="/materials"
@@ -570,7 +570,7 @@ export default function Home() {
               <div className="hero-hero12-wrap relative aspect-[4/3] md:aspect-[3/2] overflow-visible bg-transparent" style={{ background: "transparent" }}>
                 <Image
                   src={HERO_IMAGE}
-                  alt="לוחות חיפוי אבן טבעית ומתכת – MIRZA"
+                  alt="חיפוי מבנים וקירות באבן טבעית ומתכת – ASCENSO"
                   fill
                   className="object-cover transition-transform duration-300 ease-out hover:scale-105"
                   sizes="(max-width: 768px) 95vw, (max-width: 1024px) 75vw, 60vw"
@@ -636,7 +636,7 @@ export default function Home() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebSite",
-            name: "MIRZA",
+            name: "ASCENSO",
             url: "https://ascenso.co.il",
             inLanguage: "he-IL",
             potentialAction: {
@@ -654,10 +654,10 @@ export default function Home() {
             "@context": "https://schema.org",
             "@type": "Service",
             serviceType: "Large Format Lightweight Stone & Metal Systems",
-            name: "חיפוי קירות הנדסי ומערכות תלייה יבשה",
+            name: "חיפוי מבנים וקירות — מערכות תלייה יבשה",
             provider: {
               "@type": "Organization",
-              name: "MIRZA",
+              name: "ASCENSO",
               url: "https://ascenso.co.il",
             },
             areaServed: {
@@ -1126,14 +1126,14 @@ export default function Home() {
           </div>
           <span className="sr-only">ליווי אישי</span>
           <p className="text-base md:text-2xl text-gray-200 max-w-3xl leading-relaxed">
-            ייעוץ לאדריכלים ולקבלנים — חיפוי קירות הנדסי, מערכות תלייה יבשה ומפרטים טכניים. מענה מהיר ב‑WhatsApp.
+            ייעוץ לאדריכלים ולקבלנים — חיפוי מבנים וקירות, מערכות תלייה יבשה ומפרטים טכניים. מענה מהיר ב‑WhatsApp.
           </p>
           <a
             href={`https://api.whatsapp.com/send?phone=972539994995&text=${
               encodeURIComponent(
                 [
-                  '\u202B*MIRZA*',
-                  'היי! מעוניינ/ת בייעוץ בנושא חיפוי קירות הנדסי ומערכות תלייה יבשה.',
+                  '\u202B*ASCENSO*',
+                  'היי! מעוניינ/ת בייעוץ בנושא חיפוי מבנים וקירות ומערכות תלייה יבשה.',
                   'אשמח לקבל מפרטים טכניים (Z-Clips וכו\') ולפרטים על מארז דוגמאות. תודה!',
                   '\u202C',
                 ].join('\n')
@@ -1142,7 +1142,7 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center px-8 md:px-10 py-3 md:py-3.5 rounded-full bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-wider transition-colors duration-300 hover:bg-white/95 shadow-sm"
-            aria-label="צ'אט WhatsApp עם MIRZA"
+            aria-label="צ'אט WhatsApp עם ASCENSO"
           >
             התחילו שיחה ב‑WhatsApp
           </a>

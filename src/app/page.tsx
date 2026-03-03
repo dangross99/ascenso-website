@@ -577,20 +577,20 @@ export default function Home() {
                   priority
                 />
                 {/* כיתוב לכיוון סוף הדף – יישור: כל השורות מתחילות באותו קו */}
-                <div className="absolute inset-y-0 right-full -mr-8 sm:-mr-12 md:-mr-16 w-[max(130px,22%)] sm:w-[max(160px,26%)] flex flex-col justify-between py-3 sm:py-4 pointer-events-none items-end">
-                  <div className="flex items-center gap-1.5 justify-end text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                <div className="absolute inset-y-0 right-full -mr-8 sm:-mr-12 md:-mr-16 w-[max(130px,22%)] sm:w-[max(160px,26%)] flex flex-col justify-between py-3 sm:py-4 pointer-events-none items-start">
+                  <div className="flex items-center gap-1.5 justify-start text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
                     <span className="hero-arrow flex-shrink-0" aria-hidden>→</span>
                     <span className="text-xs sm:text-sm font-medium whitespace-nowrap">אבן טבעית / מתכת</span>
                   </div>
-                  <div className="flex items-center gap-1.5 justify-end text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                  <div className="flex items-center gap-1.5 justify-start text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
                     <span className="hero-arrow flex-shrink-0" aria-hidden>→</span>
                     <span className="text-xs sm:text-sm font-medium whitespace-nowrap">רשת פיברגלס</span>
                   </div>
-                  <div className="flex items-center gap-1.5 justify-end text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                  <div className="flex items-center gap-1.5 justify-start text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
                     <span className="hero-arrow flex-shrink-0" aria-hidden>→</span>
                     <span className="text-xs sm:text-sm font-medium whitespace-nowrap">חלת דבש אלומיניום</span>
                   </div>
-                  <div className="flex items-center gap-1.5 justify-end text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                  <div className="flex items-center gap-1.5 justify-start text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
                     <span className="hero-arrow flex-shrink-0" aria-hidden>→</span>
                     <span className="text-xs sm:text-sm font-medium whitespace-nowrap">אלומיניום</span>
                   </div>

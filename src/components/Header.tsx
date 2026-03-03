@@ -1154,9 +1154,9 @@ const Header: React.FC = () => {
 
       {/* Removed Virtual Appointment for simple site */}
 
-      {/* Main Header */}
-      <header className="w-full bg-white shadow flex flex-col items-center" suppressHydrationWarning>
-        <div className="w-full relative grid grid-cols-3 items-center px-0 md:px-8 pt-8 pb-7 md:py-3">
+      {/* Main Header – בדף הבית הרקע רק בשורת הלוגו, כדי שההירו ייראה מאחורי סרגל הניווט */}
+      <header className={`w-full flex flex-col items-center ${pathname === '/' ? 'bg-transparent' : 'bg-white shadow'}`} suppressHydrationWarning>
+        <div className={`w-full relative grid grid-cols-3 items-center px-0 md:px-8 pt-8 pb-7 md:py-3 ${pathname === '/' ? 'bg-white' : ''}`}>
           {/* left - phone and links */}
           <div className="hidden md:flex items-center space-x-4 md:space-x-6 text-gray-700 text-sm min-w-0 justify-start md:col-start-1 md:justify-self-start">
               <a

@@ -482,12 +482,13 @@ const Header: React.FC = () => {
     } catch {}
   };
 
+  const isHome = pathname === '/';
   return (
     <>
       {/* Wrapper דביק/מקובע: במובייל בדף ההדמייה נהפוך ל-fixed, אחרת sticky */}
-      <div className={`ascenso-sticky-header ${usePathname() === '/live' ? 'fixed top-0 left-0 right-0 z-40 md:sticky md:top-0' : 'sticky top-0 z-40'}`}>
-      {/* Top Bar */}
-      <div className="w-full bg-[#1a1a2e] text-white text-xs">
+      <div className={`ascenso-sticky-header ${pathname === '/live' ? 'fixed top-0 left-0 right-0 z-40 md:sticky md:top-0' : 'sticky top-0 z-40'}`}>
+      {/* Top Bar – בדף הבית רקע שקוף כדי שההירו ייכנס */}
+      <div className={`w-full text-white text-xs ${isHome ? 'bg-transparent' : 'bg-[#1a1a2e]'}`}>
         <div className="w-full px-0 md:pr-6 md:pl-0 py-2 md:py-1 flex items-center gap-3 flex-wrap justify-center md:justify-start" dir="rtl">
           <span className="flex items-center gap-2">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -1154,11 +1155,11 @@ const Header: React.FC = () => {
 
       {/* Removed Virtual Appointment for simple site */}
 
-      {/* Main Header */}
-      <header className="w-full bg-white shadow flex flex-col items-center" suppressHydrationWarning>
+      {/* Main Header – בדף הבית רקע שקוף כדי שההירו ייכנס */}
+      <header className={`w-full flex flex-col items-center ${isHome ? 'bg-transparent shadow-none' : 'bg-white shadow'}`} suppressHydrationWarning>
         <div className="w-full relative grid grid-cols-3 items-center px-0 md:px-8 pt-8 pb-7 md:py-3">
           {/* left - phone and links */}
-          <div className="hidden md:flex items-center space-x-4 md:space-x-6 text-gray-700 text-sm min-w-0 justify-start md:col-start-1 md:justify-self-start">
+          <div className={`hidden md:flex items-center space-x-4 md:space-x-6 text-sm min-w-0 justify-start md:col-start-1 md:justify-self-start ${isHome ? 'text-white/90' : 'text-gray-700'}`}>
               <a
               href={`https://api.whatsapp.com/send?phone=972539994995&text=${whatsappMessage}`}
               target="_blank"
@@ -1185,7 +1186,7 @@ const Header: React.FC = () => {
           {/* center - centered logo (אבסולוטי בדסקטופ לשמירה על מרכז אמיתי) */}
           <div className="absolute left-[6px] top-1/2 -translate-y-1/2 md:left-1/2 md:-translate-x-1/2 select-none z-10">
             <Link href="/" aria-label="דף הבית" className="select-none" onClick={() => vibrate(30)}>
-              <span className="text-[34px] md:text-[44px] font-serif font-prosto font-semibold tracking-widest text-[#1a1a2e] uppercase">
+              <span className={`text-[34px] md:text-[44px] font-serif font-prosto font-semibold tracking-widest uppercase ${isHome ? 'text-white' : 'text-[#1a1a2e]'}`}>
                 ASCEN
                 <span style={{ fontWeight: 170 }}>S</span>
                 <span style={{ fontWeight: 170 }}>O</span>
@@ -1193,7 +1194,7 @@ const Header: React.FC = () => {
             </Link>
           </div>
           {/* right - icons */}
-          <div className="flex justify-end items-center space-x-4 md:space-x-6 text-gray-700 justify-self-end z-10 md:z-0 md:col-start-3 md:justify-self-end absolute right-[6px] top-1/2 -translate-y-1/2 md:static md:transform-none md:translate-y-0">
+          <div className={`flex justify-end items-center space-x-4 md:space-x-6 justify-self-end z-10 md:z-0 md:col-start-3 md:justify-self-end absolute right-[6px] top-1/2 -translate-y-1/2 md:static md:transform-none md:translate-y-0 ${isHome ? 'text-white' : 'text-gray-700'}`}>
             {/* Mobile-only icons group (WhatsApp black + Call) */}
             <div className="flex items-center gap-3 md:hidden">
               <a
@@ -1202,7 +1203,7 @@ const Header: React.FC = () => {
                 rel="noopener noreferrer"
                 aria-label="פנייה ב‑WhatsApp"
                 title="פנייה ב‑WhatsApp"
-                className="cursor-pointer text-[#1a1a2e] transition-transform duration-150 active:scale-90 active:opacity-80 select-none touch-manipulation"
+                className={`cursor-pointer transition-transform duration-150 active:scale-90 active:opacity-80 select-none touch-manipulation ${isHome ? 'text-white' : 'text-[#1a1a2e]'}`}
                 onClick={() => vibrate(30)}
               >
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
@@ -1213,7 +1214,7 @@ const Header: React.FC = () => {
                 href="tel:+972539994995"
                 aria-label="התקשר עכשיו"
                 title="התקשר עכשיו"
-                className="cursor-pointer text-[#1a1a2e] transition-transform duration-150 active:scale-90 active:opacity-80 select-none touch-manipulation"
+                className={`cursor-pointer transition-transform duration-150 active:scale-90 active:opacity-80 select-none touch-manipulation ${isHome ? 'text-white' : 'text-[#1a1a2e]'}`}
                 onClick={() => vibrate(30)}
             >
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -1227,7 +1228,7 @@ const Header: React.FC = () => {
                 type="text"
                 placeholder="חפש באתר…"
                 dir="rtl"
-                className="w-full border-b border-gray-700 focus:border-gray-900 outline-none py-1 px-8 bg-transparent text-xs transition-colors text-center placeholder:text-center"
+                className={`w-full border-b outline-none py-1 px-8 bg-transparent text-xs transition-colors text-center placeholder:text-center ${isHome ? 'border-white/50 focus:border-white text-white placeholder:text-white/60' : 'border-gray-700 focus:border-gray-900'}`}
                 value={search}
                 onChange={e => {
                   setSearch(e.target.value);
@@ -1340,7 +1341,7 @@ const Header: React.FC = () => {
             </div>
             {/* Wishlist */}
             <button
-              className="hover:text-gray-900 relative cursor-pointer transition-transform duration-150 active:scale-90 active:opacity-80 md:active:scale-100 md:active:opacity-100 select-none touch-manipulation"
+              className={`relative cursor-pointer transition-transform duration-150 active:scale-90 active:opacity-80 md:active:scale-100 md:active:opacity-100 select-none touch-manipulation ${isHome ? 'hover:text-white/90 text-white' : 'hover:text-gray-900 text-gray-700'}`}
               aria-label="מועדפים"
               onClick={() => {
                 vibrate(30);
@@ -1351,8 +1352,8 @@ const Header: React.FC = () => {
               <svg
                 width="22"
                 height="22"
-                fill={savedSims.length > 0 ? '#1a1a2e' : 'none'}
-                stroke="#1a1a2e"
+                fill={savedSims.length > 0 ? 'currentColor' : 'none'}
+                stroke="currentColor"
                 strokeWidth="2"
                 viewBox="0 0 24 24"
               >
@@ -1367,14 +1368,14 @@ const Header: React.FC = () => {
             {/* Share wishlist via WhatsApp - removed from header, available inside wishlist drawer */}
           </div>
         </div>
-        {/* Category navigation */}
-        <nav className="w-full flex justify-between md:justify-center gap-1 md:gap-8 py-0.5 md:py-1 bg-[#1a1a2e] overflow-x-hidden px-1" dir="rtl">
+        {/* Category navigation – בדף הבית רקע שקוף, ההירו נכנס מתחת */}
+        <nav className={`w-full flex justify-between md:justify-center gap-1 md:gap-8 py-0.5 md:py-1 overflow-x-hidden px-1 ${isHome ? 'bg-transparent' : 'bg-[#1a1a2e]'}`} dir="rtl">
           {categories.map(cat => (
             <a
               key={cat.label}
               href={cat.href}
               className={`whitespace-nowrap text-[13px] md:text-sm font-semibold tracking-tight md:tracking-wide relative group rounded-md px-1 md:px-3 py-1 transition-all duration-150 active:scale-95 select-none touch-manipulation font-prosto ${
-                isActive(cat.href) ? 'text-white bg-white/10' : 'text-white hover:bg-white/10'
+                isActive(cat.href) ? 'text-white bg-white/10 border-b-2 border-white' : 'text-white hover:bg-white/10'
               }`}
               onClick={() => vibrate(20)}
             >

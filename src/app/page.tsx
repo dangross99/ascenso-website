@@ -577,7 +577,7 @@ export default function Home() {
                   priority
                 />
                 {/* כיתוב לכיוון סוף הדף – 4 שורות, 3 מרווחים אנכיים שווים (gap-y) */}
-                <div className="absolute inset-y-0 right-full -mr-8 sm:-mr-12 md:-mr-16 w-[max(130px,22%)] sm:w-[max(160px,26%)] flex flex-col justify-center gap-y-[4.125rem] sm:gap-y-[4.95rem] pointer-events-none items-start">
+                <div className="absolute inset-y-0 right-full -mr-8 sm:-mr-12 md:-mr-16 w-[max(130px,22%)] sm:w-[max(160px,26%)] flex flex-col justify-center gap-y-[4.74rem] sm:gap-y-[5.69rem] pointer-events-none items-start">
                   <div className="flex items-center gap-1.5 justify-start text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
                     <span className="hero-arrow flex-shrink-0" aria-hidden>→</span>
                     <span className="text-xs sm:text-sm font-medium whitespace-nowrap">אבן טבעית / מתכת</span>

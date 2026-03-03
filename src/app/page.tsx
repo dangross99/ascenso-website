@@ -537,12 +537,12 @@ export default function Home() {
         style={{
           marginLeft: "calc(50% - 50vw)",
           width: "100vw",
-          background: "linear-gradient(135deg, #2c2520 0%, #1e2a35 50%, #1a2332 100%)",
+          background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
         }}
         dir="rtl"
       >
         <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-3 lg:gap-6 py-4 lg:py-6 px-4 md:px-6 lg:px-8">
-          {/* צד שמאל (ב-RTL): טקסט + CTA – מראה בינלאומי, פשוט וברור */}
+          {/* צד שמאל (ב-RTL): טקסט + CTA — יישור לימין בדסקטופ, מרכז במובייל */}
           <div className="flex-1 min-w-0 text-center lg:text-right order-2 lg:order-1 max-w-xl lg:max-w-lg">
             <p className="text-white/80 text-xs md:text-sm tracking-[0.25em] uppercase font-medium mb-3 md:mb-4">
               ASCENSO
@@ -551,14 +551,14 @@ export default function Home() {
               חיפוי מבנים וקירות
             </h1>
             <p className="text-white/90 text-lg md:text-xl font-normal mb-4">
-              אבן טבעית ומתכת — לוחות פורמט גדול
+              אבן טבעית — עוצמה של סלע, קלות של טכנולוגיה
             </p>
             <p className="text-white/70 text-sm md:text-base max-w-md mx-auto lg:mx-0 mb-8 leading-relaxed">
-              Thin stone layer, aluminum honeycomb core. Dry-hang systems for facades and walls.
+              ליבת Honeycomb קלת משקל בשילוב שכבת אבן טבעית דקה, למקסימום נוכחות מינימום עומס מבני. מותאם למערכות תלייה יבשה.
             </p>
             <a
               href="/materials"
-              className="inline-block px-8 py-3 border-2 border-white text-white text-sm font-medium rounded-sm hover:bg-white hover:text-[#1a2332] transition-all duration-200"
+              className="inline-block px-8 py-3 border-2 border-white bg-transparent text-white text-sm font-medium rounded-sm hover:bg-white hover:text-[#1a1a2e] transition-all duration-200"
             >
               לצפייה במוצרים
             </a>

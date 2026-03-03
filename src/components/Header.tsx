@@ -1367,8 +1367,8 @@ const Header: React.FC = () => {
             {/* Share wishlist via WhatsApp - removed from header, available inside wishlist drawer */}
           </div>
         </div>
-        {/* Category navigation */}
-        <nav className="w-full flex justify-between md:justify-center gap-1 md:gap-8 py-0.5 md:py-1 bg-[#1a1a2e] overflow-x-hidden px-1" dir="rtl">
+        {/* Category navigation – בדף הבית בלבד: רקע שקוף כדי שההירו ייכנס מתחת */}
+        <nav className={`w-full flex justify-between md:justify-center gap-1 md:gap-8 py-0.5 md:py-1 overflow-x-hidden px-1 ${pathname === '/' ? 'bg-transparent' : 'bg-[#1a1a2e]'}`} dir="rtl">
           {categories.map(cat => (
             <a
               key={cat.label}

@@ -542,23 +542,23 @@ export default function Home() {
         dir="rtl"
       >
         <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-3 lg:gap-6 py-4 lg:py-6 px-4 md:px-6 lg:px-8">
-          {/* צד שמאל (ב-RTL): טקסט + CTA – שוליים רק מצד הטקסט */}
-          <div className="flex-1 min-w-0 text-center lg:text-right order-2 lg:order-1">
-            <p className="text-white/70 text-sm md:text-base tracking-[0.2em] uppercase font-light mb-1">
+          {/* צד שמאל (ב-RTL): טקסט + CTA – מראה בינלאומי, פשוט וברור */}
+          <div className="flex-1 min-w-0 text-center lg:text-right order-2 lg:order-1 max-w-xl lg:max-w-lg">
+            <p className="text-white/80 text-xs md:text-sm tracking-[0.25em] uppercase font-medium mb-3 md:mb-4">
               MIRZA
             </p>
-            <h1 className="text-white text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight mb-2">
+            <h1 className="text-white text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-semibold leading-tight mb-3 tracking-tight">
               אבן טבעית ומתכת
             </h1>
-            <p className="text-white/80 text-lg md:text-xl font-light tracking-wide mb-2">
+            <p className="text-white/90 text-lg md:text-xl font-normal mb-4">
               לוחות חיפוי פורמט גדול
             </p>
-            <p className="text-white/60 text-sm md:text-base max-w-md mx-auto lg:mx-0 mb-6">
-              Ultra Performance — ליבת Honeycomb, שכבת אבן דקה וגב אלומיניום. מערכות תלייה יבשה.
+            <p className="text-white/70 text-sm md:text-base max-w-md mx-auto lg:mx-0 mb-8 leading-relaxed">
+              Thin stone layer, aluminum honeycomb core. Dry-hang systems.
             </p>
             <a
               href="/materials"
-              className="inline-block px-8 md:px-10 py-3 md:py-3.5 bg-white text-[#1a2332] text-sm md:text-base font-bold rounded-md hover:bg-white/95 transition-all duration-300 shadow-lg"
+              className="inline-block px-8 py-3 border-2 border-white text-white text-sm font-medium rounded-sm hover:bg-white hover:text-[#1a2332] transition-all duration-200"
             >
               לצפייה במוצרים
             </a>

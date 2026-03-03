@@ -577,7 +577,7 @@ export default function Home() {
                   priority
                 />
                 {/* כיתוב לכיוון סוף הדף – קרוב לתמונה, חצים מהתמונה אל הכיתוב */}
-                <div className="absolute inset-y-0 right-full mr-0.5 sm:mr-1 flex flex-col justify-between py-3 sm:py-4 pointer-events-none">
+                <div className="absolute inset-y-0 right-full -mr-1 sm:mr-0 flex flex-col justify-between py-3 sm:py-4 pointer-events-none">
                   <div className="flex items-center gap-1.5 justify-end text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
                     <span className="hero-arrow flex-shrink-0" aria-hidden>→</span>
                     <span className="text-xs sm:text-sm font-medium whitespace-nowrap">אבן טבעית / מתכת</span>

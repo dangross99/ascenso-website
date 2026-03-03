@@ -537,7 +537,6 @@ export default function Home() {
         style={{
           marginLeft: "calc(50% - 50vw)",
           width: "100vw",
-          marginTop: "-2.75rem",
           background: "linear-gradient(135deg, #2c2520 0%, #1e2a35 50%, #1a2332 100%)",
         }}
         dir="rtl"

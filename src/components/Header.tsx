@@ -1154,9 +1154,9 @@ const Header: React.FC = () => {
 
       {/* Removed Virtual Appointment for simple site */}
 
-      {/* Main Header – בדף הבית הרקע רק בשורת הלוגו, כדי שההירו ייראה מאחורי סרגל הניווט */}
-      <header className={`w-full flex flex-col items-center ${pathname === '/' ? 'bg-transparent' : 'bg-white shadow'}`} suppressHydrationWarning>
-        <div className={`w-full relative grid grid-cols-3 items-center px-0 md:px-8 pt-8 pb-7 md:py-3 ${pathname === '/' ? 'bg-white' : ''}`}>
+      {/* Main Header */}
+      <header className="w-full bg-white shadow flex flex-col items-center" suppressHydrationWarning>
+        <div className="w-full relative grid grid-cols-3 items-center px-0 md:px-8 pt-8 pb-7 md:py-3">
           {/* left - phone and links */}
           <div className="hidden md:flex items-center space-x-4 md:space-x-6 text-gray-700 text-sm min-w-0 justify-start md:col-start-1 md:justify-self-start">
               <a
@@ -1367,8 +1367,8 @@ const Header: React.FC = () => {
             {/* Share wishlist via WhatsApp - removed from header, available inside wishlist drawer */}
           </div>
         </div>
-        {/* Category navigation – בדף הבית בלבד: רקע שקוף כדי שההירו ייכנס מתחת */}
-        <nav className={`w-full flex justify-between md:justify-center gap-1 md:gap-8 py-0.5 md:py-1 overflow-x-hidden px-1 ${pathname === '/' ? 'bg-transparent' : 'bg-[#1a1a2e]'}`} dir="rtl">
+        {/* Category navigation */}
+        <nav className="w-full flex justify-between md:justify-center gap-1 md:gap-8 py-0.5 md:py-1 bg-[#1a1a2e] overflow-x-hidden px-1" dir="rtl">
           {categories.map(cat => (
             <a
               key={cat.label}

@@ -99,7 +99,7 @@ function ProjectsInternationalSection() {
         <div
           className="absolute inset-0"
           style={{
-            background: "linear-gradient(to left, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.15) 100%)",
+            background: "linear-gradient(to left, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.05) 100%)",
           }}
         />
       </div>

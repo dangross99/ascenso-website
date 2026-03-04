@@ -684,7 +684,7 @@ export default function Home() {
               ASCENSO
             </p>
             <h1 className="text-white text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-semibold leading-tight mb-3 tracking-tight whitespace-nowrap">
-              חיפוי מבנים וקירות
+              דגמים — טכנולוגיית Honeycomb
             </h1>
             <p className="text-white/90 text-lg md:text-xl font-normal mb-4">
               אבן טבעית — עוצמה של סלע, קלות של טכנולוגיה
@@ -765,10 +765,12 @@ export default function Home() {
         `}</style>
       </section>
 
-      {/* טקסטורות מובילות – גולל מעל המפה כרקע */}
+      {/* טקסטורות – קולקציות אבן */}
       <section className="bg-white mt-4 md:mt-6 py-4 md:py-6 relative z-10">
         <div className="container mx-auto px-1">
-          
+          <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] text-center mb-6 md:mb-8" dir="rtl">
+            טקסטורות — קולקציות אבן
+          </h2>
           <div className="relative">
             <div className="overflow-hidden py-2 md:py-4" ref={emblaRef}>
               <div className="flex -ml-4 md:-ml-8">

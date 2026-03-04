@@ -724,7 +724,7 @@ export default function Home() {
       </section>
 
       {/* סקשן מפת העולם – מקורות אבן טבעית (ברקע בגלילה, מתחת לסקשן 1) */}
-      <section className="w-full bg-white -mt-12 md:-mt-20 pt-10 md:pt-14 pb-8 md:pb-12 z-0 relative" dir="rtl">
+      <section className="w-full bg-white -mt-12 md:-mt-20 pt-14 md:pt-20 pb-8 md:pb-12 z-0 relative" dir="rtl">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="relative z-10">
             <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] text-center mb-2">
@@ -734,7 +734,7 @@ export default function Home() {
               איטליה, ברזיל, הודו, בלגיה, לוקסמבורג ועוד — מקורות מהשורה הראשונה.
             </p>
           </div>
-          <div className="relative z-0 w-full rounded-xl overflow-hidden bg-gray-100 aspect-[16/9] min-h-[400px] md:min-h-[500px] lg:min-h-[600px] -mt-6 md:-mt-8">
+          <div className="relative z-0 w-full rounded-xl overflow-hidden bg-gray-100 aspect-[16/9] min-h-[400px] md:min-h-[500px] lg:min-h-[600px] -mt-10 md:-mt-14">
             <ComposableMap
               projectionConfig={{ scale: 200 }}
               style={{ width: "100%", height: "100%" }}

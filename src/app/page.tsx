@@ -1080,20 +1080,17 @@ export default function Home() {
             {/* טקסט */}
             <div className="order-2 lg:order-1 text-center">
               <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-5">
-                לוח 2900×1450 מ"מ — אבן, Honeycomb, אלומיניום
+                הדמייה תלת־ממדית, מחשבון ואומדן מחיר
               </h2>
-              <p className="text-gray-700 leading-relaxed mb-5 text-base md:text-lg">
-                מערכות Stonesize: שכבת אבן דקה, ליבת Honeycomb קלת משקל וגב אלומיניום. צפו במבט חתך ובמפרט ההנדסי.
+              <p className="text-gray-700 leading-relaxed mb-5 text-base md:text-lg max-w-xl mx-auto">
+                כאן תוכלו לראות את הלוח בתלת־ממד — במבט רגיל או במבט חתך — ולהבין את המבנה: שכבת אבן, ליבת Honeycomb וגב אלומיניום. בהדמייה החיה (LIVE) מחשבים עבורכם אומדן שטח במטראז׳, מספר הלוחות הנדרש והשערת מחיר לפי מידות הקיר, סוג הלוח והעובי. הזינו רוחב וגובה קיר וקבלו תשובה מיידית.
               </p>
               <div className="flex flex-wrap items-center justify-center gap-3">
-                <a href="/materials" className="inline-block px-8 py-3 bg-[#1a1a2e] text-white text-sm font-bold tracking-widest rounded-md hover:opacity-90">
-                  Explore the Collection
+                <a href="/live" className="inline-block px-8 py-3 bg-[#1a1a2e] text-white text-sm font-bold tracking-widest rounded-md hover:opacity-90">
+                  להדמייה ולמחשבון
                 </a>
-                <a href="/materials#specs" className="inline-block px-8 py-3 border-2 border-[#1a1a2e] text-[#1a1a2e] text-sm font-bold rounded-md hover:bg-[#1a1a2e] hover:text-white transition-colors">
-                  Technical Specifications
-                </a>
-                <a href="/materials#samples" className="inline-block px-8 py-3 border-2 border-[#1a1a2e] text-[#1a1a2e] text-sm font-bold rounded-md hover:bg-[#1a1a2e] hover:text-white transition-colors">
-                  Order Sample Box
+                <a href="/materials" className="inline-block px-8 py-3 border-2 border-[#1a1a2e] text-[#1a1a2e] text-sm font-bold rounded-md hover:bg-[#1a1a2e] hover:text-white transition-colors">
+                  לקטלוג החומרים
                 </a>
               </div>
             </div>

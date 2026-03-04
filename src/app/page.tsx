@@ -24,19 +24,18 @@ type MaterialRecord = {
   variants?: Record<string, string[]>;
 };
 
-// לוח חיפוי 300×150 ס"מ, עובי 25 מ"מ — תצוגה רגילה או חתך (שכבת אבן, Honeycomb, גב אלומיניום)
+// לוח חיפוי — מידות כמו בהדמייה (live): 2900×1450 מ"מ = 2.9×1.45 מ', עובי 25 מ"מ
 function PanelPreview({ sectionView = false }: { sectionView?: boolean }) {
-  // מידות במטרים: 300×150 ס"מ = 3×1.5 מ', עובי 25 מ"מ = 0.025 מ'
-  const widthM = 3;
-  const heightM = 1.5;
-  const thicknessM = 0.025;
-  const stoneLayer = 0.004;      // שכבת אבן דקה ~4 מ"מ
-  const honeycombCore = 0.016;   // ליבת Honeycomb
-  const aluminumBack = 0.005;    // גב אלומיניום ~5 מ"מ
+  const widthM = 1.45;   // רוחב 1.45 מ' (1450 מ"מ)
+  const heightM = 2.9;   // גובה 2.9 מ' (2900 מ"מ)
+  const thicknessM = 0.025;       // עובי 25 מ"מ
+  const stoneLayer = 0.006;      // שכבת אבן ~6 מ"מ (תואם Panel3D ל־25 מ"מ)
+  const honeycombCore = 0.017;   // ליבת Honeycomb ~17 מ"מ
+  const aluminumBack = 0.001;    // גב אלומיניום ~1 מ"מ
 
   if (sectionView) {
     return (
-      <group position={[0, 0.75, 0.5]} rotation={[0, Math.PI / 6, 0]}>
+      <group position={[0, heightM / 2, 0.5]} rotation={[0, Math.PI / 6, 0]}>
         {/* חתך לוח: אבן (למעלה) | Honeycomb (אפור) | אלומיניום (מתכת) */}
         <mesh position={[0, 0, (thicknessM / 2) - stoneLayer / 2]} castShadow receiveShadow>
           <boxGeometry args={[widthM, heightM, stoneLayer]} />
@@ -55,7 +54,7 @@ function PanelPreview({ sectionView = false }: { sectionView?: boolean }) {
   }
 
   return (
-    <group position={[0, 0.75, 0.5]} rotation={[0, Math.PI / 6, 0]}>
+    <group position={[0, heightM / 2, 0.5]} rotation={[0, Math.PI / 6, 0]}>
       <mesh castShadow receiveShadow>
         <boxGeometry args={[widthM, heightM, thicknessM]} />
         <meshStandardMaterial color="#e8e4df" roughness={0.5} metalness={0.15} />
@@ -64,32 +63,32 @@ function PanelPreview({ sectionView = false }: { sectionView?: boolean }) {
   );
 }
 
-// סקשן פרויקטים בינלאומי: תמונה רוחב מלא + 3 נקודות אנכיות שמחליפות תוכן
-const INTERNATIONAL_POINTS = [
+// סקשן פרויקטים: תמונה רוחב מלא + 3 נקודות אנכיות — הסבר טכני על לוחות ועיצוב
+const PROJECT_POINTS = [
   {
-    label: "אירופה",
-    title: "פרויקטים באירופה",
-    text: "חיפויי אבן ומתכת במבני יוקרה, משרדים ומגורים — שותפויות עם אדריכלים ויזמים מובילים.",
+    label: "מידות הלוחות",
+    title: "גודל הלוחות",
+    text: "כמו בהדמייה: מידות במ\"מ — 2900×1450, 2900×725, 1450×1450, 1450×725, 725×725. עובי 16 או 25 מ\"מ (פאנל חוץ עד 29 מ\"מ, פנים 17 מ\"מ). מתאים לחיפוי קירות חוץ ופנים במבני יוקרה.",
   },
   {
-    label: "מזרח תיכון",
-    title: "פרויקטים במזרח התיכון",
-    text: "מתקנים מסחריים ומגורים, לוחות גדולי ממד ופתרונות תלייה מותאמים לאקלים.",
+    label: "מבנה הלוח",
+    title: "מבנה הלוח והשכבות",
+    text: "לוח מורכב: שכבת אבן טבעית או דקת אבן (פנים), ליבת Honeycomb לקלילות וחוזק, וגב אלומיניום. המבנה מאפשר תלייה יבשה, בידוד ועמידות.",
   },
   {
-    label: "אמריקה",
-    title: "פרויקטים באמריקה",
-    text: "פרויקטים גלובליים עם סטנדרטים בינלאומיים — ייבוא, ייעוץ והתקנה.",
+    label: "עיצוב וחומרים",
+    title: "עיצוב ולוחות",
+    text: "מגוון חומרים — אבן טבעית, מתכת, מרקמים וצבעים. התאמת הלוחות לעיצוב האדריכלי, למפרט הפרויקט ולדרישות התקן הבינלאומי.",
   },
 ];
 
 function ProjectsInternationalSection() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const point = INTERNATIONAL_POINTS[activeIndex];
+  const point = PROJECT_POINTS[activeIndex];
 
   useEffect(() => {
     const t = setInterval(() => {
-      setActiveIndex((i) => (i + 1) % INTERNATIONAL_POINTS.length);
+      setActiveIndex((i) => (i + 1) % PROJECT_POINTS.length);
     }, 4000);
     return () => clearInterval(t);
   }, []);
@@ -144,7 +143,7 @@ function ProjectsInternationalSection() {
 
         {/* 3 נקודות אנכית — לחיצה מחליפה את התוכן */}
         <div className="flex flex-col gap-4 md:gap-6">
-          {INTERNATIONAL_POINTS.map((item, i) => (
+          {PROJECT_POINTS.map((item, i) => (
             <button
               key={item.label}
               type="button"
@@ -1181,7 +1180,7 @@ export default function Home() {
             {/* טקסט */}
             <div className="order-2 lg:order-1 text-center">
               <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-5">
-                לוח 300×150 ס"מ — אבן, Honeycomb, אלומיניום
+                לוח 2900×1450 מ"מ — אבן, Honeycomb, אלומיניום
               </h2>
               <p className="text-gray-700 leading-relaxed mb-5 text-base md:text-lg">
                 מערכות Stonesize: שכבת אבן דקה, ליבת Honeycomb קלת משקל וגב אלומיניום. צפו במבט חתך ובמפרט ההנדסי.

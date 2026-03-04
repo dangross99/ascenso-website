@@ -458,6 +458,18 @@ export default function Home() {
   const geoUrl =
     "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
 
+  const stoneCountries: { id: string; name: string }[] = [
+    { id: "380", name: "איטליה" }, { id: "076", name: "ברזיל" }, { id: "356", name: "הודו" },
+    { id: "724", name: "ספרד" }, { id: "620", name: "פורטוגל" }, { id: "300", name: "יוון" },
+    { id: "792", name: "טורקיה" }, { id: "818", name: "מצרים" }, { id: "156", name: "סין" },
+    { id: "704", name: "וייטנאם" }, { id: "056", name: "בלגיה" }, { id: "442", name: "לוקסמבורג" },
+    { id: "840", name: "ארצות הברית" }, { id: "484", name: "מקסיקו" }, { id: "032", name: "ארגנטינה" },
+    { id: "364", name: "איראן" }, { id: "586", name: "פקיסטן" }, { id: "504", name: "מרוקו" },
+    { id: "788", name: "תוניסיה" }, { id: "710", name: "דרום אפריקה" }, { id: "360", name: "אינדונזיה" },
+    { id: "170", name: "קולומביה" }, { id: "578", name: "נורווגיה" }, { id: "036", name: "אוסטרליה" },
+  ];
+  const [hoveredCountryId, setHoveredCountryId] = useState<string | null>(null);
+
   // הגדרת ה-features
   const features = [
     {
@@ -734,19 +746,23 @@ export default function Home() {
             </p>
           </div>
           <div className="relative z-0 flex flex-row-reverse gap-4 md:gap-6 items-start -mt-32 md:-mt-40">
-            {/* רשימת מדינות – צד שמאל */}
-            <div className="relative z-10 flex-shrink-0 w-44 md:w-52 pt-2">
-              <p className="text-xs font-semibold text-[#1a1a2e] uppercase tracking-wider mb-3 text-right">
+            {/* רשימת מדינות – צד שמאל, 2 טורים */}
+            <div className="relative z-10 flex-shrink-0 w-52 md:w-64 pt-2">
+              <p className="text-xs font-bold text-[#1a1a2e] uppercase tracking-widest mb-4 text-right border-b border-slate-200 pb-2">
                 מדינות מובילות באבן טבעית
               </p>
-              <ul className="text-sm text-gray-700 space-y-1.5 text-right" dir="rtl">
-                {[
-                  "איטליה", "ברזיל", "הודו", "ספרד", "פורטוגל", "יוון", "טורקיה", "מצרים",
-                  "סין", "וייטנאם", "בלגיה", "לוקסמבורג", "ארצות הברית", "מקסיקו", "ארגנטינה",
-                  "איראן", "פקיסטן", "מרוקו", "תוניסיה", "דרום אפריקה", "אינדונזיה", "קולומביה",
-                  "נורווגיה", "אוסטרליה",
-                ].map((country) => (
-                  <li key={country} className="hover:text-[#1a1a2e] transition-colors">{country}</li>
+              <ul className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-gray-600 text-right" dir="rtl">
+                {stoneCountries.map((c) => (
+                  <li
+                    key={c.id}
+                    onMouseEnter={() => setHoveredCountryId(c.id)}
+                    onMouseLeave={() => setHoveredCountryId(null)}
+                    className={`py-1.5 px-2 rounded-md transition-all cursor-default ${
+                      hoveredCountryId === c.id ? "bg-[#1a1a2e] text-white font-medium" : "hover:bg-slate-100 hover:text-[#1a1a2e]"
+                    }`}
+                  >
+                    {c.name}
+                  </li>
                 ))}
               </ul>
             </div>
@@ -770,12 +786,12 @@ export default function Home() {
                         <Geography
                           key={geo.rsmKey}
                           geography={geo}
-                          fill="#e2e8f0"
+                          fill={geo.id === hoveredCountryId ? "#1a1a2e" : "#e2e8f0"}
                           stroke="#cbd5e1"
                           strokeWidth={0.4}
                           style={{
                             default: { outline: "none" },
-                            hover: { fill: isHighlight ? "#1a1a2e" : "#cbd5e1", outline: "none", cursor: isHighlight ? "pointer" : "default" },
+                            hover: { fill: geo.id === hoveredCountryId || isHighlight ? "#1a1a2e" : "#cbd5e1", outline: "none", cursor: "default" },
                             pressed: { outline: "none" },
                           }}
                         />

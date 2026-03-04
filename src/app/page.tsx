@@ -5,7 +5,12 @@ import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps";
+import dynamic from "next/dynamic";
+
+const GlobeSection = dynamic(
+  () => import("@/components/GlobeSection").then((m) => m.default),
+  { ssr: false }
+);
 // 3D demo imports הוסרו
 
 // HERO IMAGE PATH - change this path to update the hero image
@@ -455,8 +460,6 @@ export default function Home() {
     },
   };
 
-  const geoUrl =
-    "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
   const [tooltip, setTooltip] = useState("");
 
   // הגדרת ה-features
@@ -640,37 +643,10 @@ export default function Home() {
             אנו סוחרים באבנים נבחרות ממדינות מובילות — איטליה, ברזיל, הודו, בלגיה ועוד.
           </p>
           <div className="relative w-full rounded-xl overflow-hidden bg-gray-100 aspect-[16/9] min-h-[320px] md:min-h-[400px] lg:min-h-[480px]">
-            <ComposableMap
-              projectionConfig={{ scale: 320 }}
-              style={{ width: "100%", height: "100%" }}
-            >
-              <ZoomableGroup center={[20, 20]} zoom={1.15}>
-                <Geographies geography={geoUrl}>
-                  {({ geographies }) =>
-                    geographies.map((geo) => {
-                      const info = countriesInfo[geo.id as keyof typeof countriesInfo];
-                      const isHighlight = !!info;
-                      return (
-                        <Geography
-                          key={geo.rsmKey}
-                          geography={geo}
-                          fill={isHighlight ? "#1a1a2e" : "#e2e8f0"}
-                          stroke="#94a3b8"
-                          strokeWidth={0.5}
-                          onMouseEnter={() => info && setTooltip(`${info.flag} ${info.name} — ${info.title}`)}
-                          onMouseLeave={() => setTooltip("")}
-                          style={{
-                            default: { outline: "none" },
-                            hover: { fill: isHighlight ? "#16213e" : "#cbd5e1", cursor: "pointer" },
-                            pressed: { outline: "none" },
-                          }}
-                        />
-                      );
-                    })
-                  }
-                </Geographies>
-              </ZoomableGroup>
-            </ComposableMap>
+            <GlobeSection
+              countriesInfo={countriesInfo}
+              onPointHover={setTooltip}
+            />
             {tooltip && (
               <div className="absolute bottom-4 right-4 left-4 bg-[#1a1a2e] text-white text-sm font-medium py-2 px-3 rounded-lg shadow-lg text-center">
                 {tooltip}

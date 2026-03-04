@@ -724,7 +724,7 @@ export default function Home() {
       </section>
 
       {/* סקשן מפת העולם – מקורות אבן טבעית */}
-      <section className="w-full bg-white -mt-4 md:-mt-6 pt-0 pb-8 md:pb-12" dir="rtl">
+      <section className="w-full bg-white -mt-10 md:-mt-16 pt-0 pb-8 md:pb-12" dir="rtl">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] text-center mt-4 md:mt-6 mb-2">
             +400 דגמי אבן טבעית נבחרים מכל העולם

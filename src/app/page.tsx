@@ -741,7 +741,7 @@ export default function Home() {
             >
               <ZoomableGroup
                 center={[-20, 32]}
-                zoom={0.8}
+                zoom={0.9}
                 disablePanning
                 filterZoomEvent={() => false}
               >

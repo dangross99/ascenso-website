@@ -44,7 +44,7 @@ const WALL_H = 1.45;
 const PANEL_W = 1.45;
 const PANEL_H = 0.725;
 const PANEL_GAP = 0.005;
-const STONE_TEX = "/images/materials/amazonas-brazil.png";
+const STONE_TEX = "/images/materials/travertine-silver.png";
 
 function HomeWall3D() {
   const panelsX = 2;

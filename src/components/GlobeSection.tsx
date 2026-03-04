@@ -3,8 +3,17 @@
 import { useRef, useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import type { GlobeMethods } from "react-globe.gl";
+import { MeshPhongMaterial } from "three";
 
 const Globe = dynamic(() => import("react-globe.gl"), { ssr: false });
+
+// מראה מינימלי: כדור אפור־סטייל עם הבהרות עדינות
+const globeMaterial = new MeshPhongMaterial({
+  color: 0x475569,
+  emissive: 0x1e293b,
+  specular: 0x64748b,
+  shininess: 12,
+});
 
 // קואורדינטות מרכז (lat, lng) למדינות לפי קוד
 const countryCoords: Record<string, [number, number]> = {
@@ -56,11 +65,11 @@ export default function GlobeSection({
         ref={globeRef}
         width={size.width}
         height={size.height}
-        globeImageUrl="https://unpkg.com/three-globe/example/img/earth-day.jpg"
+        globeMaterial={globeMaterial}
         backgroundColor="rgba(241,245,249,0.01)"
         showAtmosphere
-        atmosphereColor="#e2e8f0"
-        atmosphereAltitude={0.15}
+        atmosphereColor="#94a3b8"
+        atmosphereAltitude={0.12}
         onGlobeReady={() => {
           const ctrl = globeRef.current?.controls?.();
           if (ctrl) {
@@ -72,7 +81,7 @@ export default function GlobeSection({
         pointLat="lat"
         pointLng="lng"
         pointLabel="label"
-        pointColor={() => "#1a1a2e"}
+        pointColor={() => "#334155"}
         pointAltitude={0.02}
         pointRadius={0.4}
         onPointHover={(p: { label?: string } | null) => {

@@ -457,7 +457,6 @@ export default function Home() {
 
   const geoUrl =
     "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
-  const [tooltip, setTooltip] = useState("");
 
   // הגדרת ה-features
   const features = [
@@ -757,8 +756,6 @@ export default function Home() {
                           fill="#e2e8f0"
                           stroke="#cbd5e1"
                           strokeWidth={0.4}
-                          onMouseEnter={() => info && setTooltip(`${info.flag} ${info.name} — ${info.title}`)}
-                          onMouseLeave={() => setTooltip("")}
                           style={{
                             default: { outline: "none" },
                             hover: { fill: isHighlight ? "#1a1a2e" : "#cbd5e1", outline: "none", cursor: isHighlight ? "pointer" : "default" },
@@ -771,11 +768,6 @@ export default function Home() {
                 </Geographies>
               </ZoomableGroup>
             </ComposableMap>
-            {tooltip && (
-              <div className="absolute bottom-4 right-4 left-4 bg-slate-600/95 text-white text-sm font-medium py-2 px-3 rounded-lg shadow-lg text-center backdrop-blur-sm">
-                {tooltip}
-              </div>
-            )}
           </div>
         </div>
       </section>

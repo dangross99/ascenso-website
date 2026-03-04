@@ -630,6 +630,99 @@ export default function Home() {
         `}</style>
       </section>
 
+      {/* טקסטורות מובילות */}
+      <section className="bg-white mt-4 md:mt-6 py-4 md:py-6">
+        <div className="container mx-auto px-1">
+          
+          <div className="relative">
+            <div className="overflow-hidden py-2 md:py-4" ref={emblaRef}>
+              <div className="flex -ml-4 md:-ml-8">
+                {topMaterials.map((mat, index) => (
+                <div className="flex-[0_0_45%] sm:flex-[0_0_28%] md:flex-[0_0_22%] lg:flex-[0_0_18%] pl-4 md:pl-8" key={mat.id ?? index}>
+                    <a href="/materials" className="block group">
+                    <div className="relative overflow-hidden aspect-[3/4] rounded-t-[9999px] rounded-b-none mb-3 md:mb-5 shadow-sm transition-transform duration-300 group-hover:scale-[1.03]">
+                        {mat.images?.[0] ? (
+                        <Image
+                            src={mat.images[0]}
+                            alt={mat.name}
+                          fill
+                            className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
+                        />
+                        ) : (
+                          <div className="w-full h-full bg-[#dcdcdc] animate-pulse" />
+                        )}
+                      </div>
+                      
+                    </a>
+                  </div>
+                ))}
+                {!topMaterials.length &&
+                  Array.from({ length: 6 }).map((_, index) => (
+                  <div className="flex-[0_0_45%] sm:flex-[0_0_28%] md:flex-[0_0_22%] lg:flex-[0_0_18%] pl-4 md:pl-8" key={`skeleton-${index}`}>
+                      <div className="relative overflow-hidden aspect-[3/4] rounded-t-[9999px] rounded-b-none mb-3 md:mb-5 shadow-sm">
+                        <div className="w-full h-full bg-[#dcdcdc] animate-pulse" />
+                        </div>
+                      </div>
+                  ))
+                }
+                    </div>
+                  </div>
+            {mounted && (
+              <>
+            <button
+              onClick={scrollPrev}
+              className="absolute top-[40%] -translate-y-1/2 -left-16 z-10 flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-md hover:bg-gray-100 transition-all"
+              aria-label="Previous slide"
+                  suppressHydrationWarning
+            >
+              <svg
+                className="w-6 h-6 text-gray-800"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+            <button
+              onClick={scrollNext}
+              className="absolute top-[40%] -translate-y-1/2 -right-16 z-10 flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-md hover:bg-gray-100 transition-all"
+              aria-label="Next slide"
+                  suppressHydrationWarning
+            >
+              <svg
+                className="w-6 h-6 text-gray-800"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+              </>
+            )}
+          </div>
+          <div className="text-center mt-6 md:mt-6" dir="rtl">
+            <a
+              href="/materials"
+              className="inline-block px-14 py-3.5 bg-[#1a1a2e] text-white text-sm md:text-base font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90"
+            >
+              לכל הטקסטורות
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* סקשן מפת העולם – מקורות אבן טבעית */}
       <section className="w-full bg-white py-12 md:py-16" dir="rtl">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -724,103 +817,6 @@ export default function Home() {
           }),
         }}
       />
-
-
-      {/* High-end Materials Section */}
-      {/* moved below to the former “הבטחת ASCENSO” position */}
-
-      {/* טקסטורות מובילות */}
-      <section className="bg-white mt-4 md:mt-6 py-4 md:py-6">
-        <div className="container mx-auto px-1">
-          
-          <div className="relative">
-            <div className="overflow-hidden py-2 md:py-4" ref={emblaRef}>
-              <div className="flex -ml-4 md:-ml-8">
-                {topMaterials.map((mat, index) => (
-                <div className="flex-[0_0_45%] sm:flex-[0_0_28%] md:flex-[0_0_22%] lg:flex-[0_0_18%] pl-4 md:pl-8" key={mat.id ?? index}>
-                    <a href="/materials" className="block group">
-                    <div className="relative overflow-hidden aspect-[3/4] rounded-t-[9999px] rounded-b-none mb-3 md:mb-5 shadow-sm transition-transform duration-300 group-hover:scale-[1.03]">
-                        {mat.images?.[0] ? (
-                        <Image
-                            src={mat.images[0]}
-                            alt={mat.name}
-                          fill
-                            className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
-                        />
-                        ) : (
-                          <div className="w-full h-full bg-[#dcdcdc] animate-pulse" />
-                        )}
-                      </div>
-                      
-                    </a>
-                  </div>
-                ))}
-                {!topMaterials.length &&
-                  Array.from({ length: 6 }).map((_, index) => (
-                  <div className="flex-[0_0_45%] sm:flex-[0_0_28%] md:flex-[0_0_22%] lg:flex-[0_0_18%] pl-4 md:pl-8" key={`skeleton-${index}`}>
-                      <div className="relative overflow-hidden aspect-[3/4] rounded-t-[9999px] rounded-b-none mb-3 md:mb-5 shadow-sm">
-                        <div className="w-full h-full bg-[#dcdcdc] animate-pulse" />
-                        </div>
-                      </div>
-                  ))
-                }
-                    </div>
-                  </div>
-            {mounted && (
-              <>
-            <button
-              onClick={scrollPrev}
-              className="absolute top-[40%] -translate-y-1/2 -left-16 z-10 flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-md hover:bg-gray-100 transition-all"
-              aria-label="Previous slide"
-                  suppressHydrationWarning
-            >
-              <svg
-                className="w-6 h-6 text-gray-800"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
-            <button
-              onClick={scrollNext}
-              className="absolute top-[40%] -translate-y-1/2 -right-16 z-10 flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-md hover:bg-gray-100 transition-all"
-              aria-label="Next slide"
-                  suppressHydrationWarning
-            >
-              <svg
-                className="w-6 h-6 text-gray-800"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </button>
-              </>
-            )}
-          </div>
-          <div className="text-center mt-6 md:mt-6" dir="rtl">
-            <a
-              href="/materials"
-              className="inline-block px-14 py-3.5 bg-[#1a1a2e] text-white text-sm md:text-base font-bold tracking-widest rounded-md transition-colors duration-300 hover:opacity-90"
-            >
-              לכל הטקסטורות
-            </a>
-          </div>
-        </div>
-      </section>
 
       {/* High-end Materials Section – “swatch” cards with overlay text */}
       <section className="w-full mt-8 md:mt-0 pt-4 pb-0 md:py-8" dir="rtl">

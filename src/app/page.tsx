@@ -750,7 +750,7 @@ export default function Home() {
                 ))}
               </ul>
             </div>
-            <div className="relative z-0 flex-1 min-w-0 rounded-xl overflow-hidden bg-gray-100 aspect-[16/9] min-h-[400px] md:min-h-[500px] lg:min-h-[600px] ml-56 md:ml-72">
+            <div className="relative z-0 flex-1 min-w-0 rounded-xl overflow-hidden bg-gray-100 aspect-[16/9] min-h-[400px] md:min-h-[500px] lg:min-h-[600px]">
               <ComposableMap
               projectionConfig={{ scale: 200 }}
               style={{ width: "100%", height: "100%" }}

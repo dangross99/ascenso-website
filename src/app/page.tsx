@@ -723,8 +723,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* סקשן מפת העולם – מקורות אבן טבעית */}
-      <section className="w-full bg-white -mt-4 md:-mt-6 pt-0 pb-8 md:pb-12" dir="rtl">
+      {/* סקשן מפת העולם – מקורות אבן טבעית (ברקע בגלילה) */}
+      <section className="w-full bg-white -mt-4 md:-mt-6 pt-0 pb-8 md:pb-12 z-0 relative" dir="rtl">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] text-center mt-4 md:mt-6 mb-2">
             +400 דגמי אבן טבעית נבחרים מכל העולם
@@ -732,9 +732,8 @@ export default function Home() {
           <p className="text-gray-600 text-center max-w-2xl mx-auto mb-3">
             איטליה, ברזיל, הודו, בלגיה, לוקסמבורג ועוד — מקורות מהשורה הראשונה.
           </p>
-          <div className="relative w-full -mt-3 md:-mt-5">
-            <div className="rounded-xl overflow-hidden bg-gray-100/50 aspect-[16/9] min-h-[400px] md:min-h-[500px] lg:min-h-[600px] opacity-50">
-              <ComposableMap
+          <div className="relative w-full rounded-xl overflow-hidden bg-gray-100 aspect-[16/9] min-h-[400px] md:min-h-[500px] lg:min-h-[600px] -mt-3 md:-mt-5">
+            <ComposableMap
               projectionConfig={{ scale: 200 }}
               style={{ width: "100%", height: "100%" }}
             >
@@ -753,9 +752,9 @@ export default function Home() {
                         <Geography
                           key={geo.rsmKey}
                           geography={geo}
-                          fill={isHighlight ? "#334155" : "#e2e8f0"}
+                          fill={isHighlight ? "#1a1a2e" : "#e2e8f0"}
                           stroke="#cbd5e1"
-                          strokeWidth={0.25}
+                          strokeWidth={0.4}
                           onMouseEnter={() => info && setTooltip(`${info.flag} ${info.name} — ${info.title}`)}
                           onMouseLeave={() => setTooltip("")}
                           style={{
@@ -770,9 +769,8 @@ export default function Home() {
                 </Geographies>
               </ZoomableGroup>
             </ComposableMap>
-            </div>
             {tooltip && (
-              <div className="absolute bottom-4 right-4 left-4 bg-[#1a1a2e] text-white text-sm font-medium py-2 px-3 rounded-lg shadow-lg text-center z-10">
+              <div className="absolute bottom-4 right-4 left-4 bg-[#1a1a2e] text-white text-sm font-medium py-2 px-3 rounded-lg shadow-lg text-center">
                 {tooltip}
               </div>
             )}

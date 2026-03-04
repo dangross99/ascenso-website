@@ -732,7 +732,7 @@ export default function Home() {
           <p className="text-gray-600 text-center max-w-2xl mx-auto mb-3">
             איטליה, ברזיל, הודו, בלגיה, לוקסמבורג ועוד — מקורות מהשורה הראשונה.
           </p>
-          <div className="relative w-full rounded-xl overflow-hidden bg-gray-100 aspect-[16/9] min-h-[400px] md:min-h-[500px] lg:min-h-[600px]">
+          <div className="relative w-full rounded-xl overflow-hidden bg-gray-100 aspect-[16/9] min-h-[400px] md:min-h-[500px] lg:min-h-[600px] -mt-3 md:-mt-5">
             <ComposableMap
               projectionConfig={{ scale: 200 }}
               style={{ width: "100%", height: "100%" }}

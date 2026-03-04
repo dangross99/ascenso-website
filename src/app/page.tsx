@@ -639,62 +639,43 @@ export default function Home() {
           <p className="text-gray-600 text-center max-w-2xl mx-auto mb-8">
             אנו סוחרים באבנים נבחרות ממדינות מובילות — איטליה, ברזיל, הודו, בלגיה ועוד.
           </p>
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
-            <div className="relative rounded-xl overflow-hidden bg-gray-100 aspect-[4/3] max-h-[360px]">
-              <ComposableMap
-                projectionConfig={{ scale: 147 }}
-                style={{ width: "100%", height: "100%" }}
-              >
-                <ZoomableGroup center={[20, 25]} zoom={0.5}>
-                  <Geographies geography={geoUrl}>
-                    {({ geographies }) =>
-                      geographies.map((geo) => {
-                        const info = countriesInfo[geo.id as keyof typeof countriesInfo];
-                        const isHighlight = !!info;
-                        return (
-                          <Geography
-                            key={geo.rsmKey}
-                            geography={geo}
-                            fill={isHighlight ? "#1a1a2e" : "#e2e8f0"}
-                            stroke="#94a3b8"
-                            strokeWidth={0.5}
-                            onMouseEnter={() => info && setTooltip(`${info.flag} ${info.name} — ${info.title}`)}
-                            onMouseLeave={() => setTooltip("")}
-                            style={{
-                              default: { outline: "none" },
-                              hover: { fill: isHighlight ? "#16213e" : "#cbd5e1", cursor: "pointer" },
-                              pressed: { outline: "none" },
-                            }}
-                          />
-                        );
-                      })
-                    }
-                  </Geographies>
-                </ZoomableGroup>
-              </ComposableMap>
-              {tooltip && (
-                <div className="absolute bottom-4 right-4 left-4 bg-[#1a1a2e] text-white text-sm font-medium py-2 px-3 rounded-lg shadow-lg text-center">
-                  {tooltip}
-                </div>
-              )}
-            </div>
-            <div className="space-y-4">
-              {Object.entries(countriesInfo).map(([code, info]) => (
-                <div
-                  key={code}
-                  className="border border-gray-200 rounded-lg p-4 hover:border-[#1a1a2e] hover:shadow-md transition-all"
-                >
-                  <p className="font-bold text-[#1a1a2e] flex items-center gap-2">
-                    <span>{info.flag}</span>
-                    {info.name} — {info.title}
-                  </p>
-                  <p className="text-gray-600 text-sm mt-1">{info.description}</p>
-                  <p className="text-xs text-gray-500 mt-2">
-                    {info.specialties.join(" · ")}
-                  </p>
-                </div>
-              ))}
-            </div>
+          <div className="relative rounded-xl overflow-hidden bg-gray-100 aspect-[4/3] max-h-[420px] max-w-4xl mx-auto">
+            <ComposableMap
+              projectionConfig={{ scale: 147 }}
+              style={{ width: "100%", height: "100%" }}
+            >
+              <ZoomableGroup center={[20, 25]} zoom={0.5}>
+                <Geographies geography={geoUrl}>
+                  {({ geographies }) =>
+                    geographies.map((geo) => {
+                      const info = countriesInfo[geo.id as keyof typeof countriesInfo];
+                      const isHighlight = !!info;
+                      return (
+                        <Geography
+                          key={geo.rsmKey}
+                          geography={geo}
+                          fill={isHighlight ? "#1a1a2e" : "#e2e8f0"}
+                          stroke="#94a3b8"
+                          strokeWidth={0.5}
+                          onMouseEnter={() => info && setTooltip(`${info.flag} ${info.name} — ${info.title}`)}
+                          onMouseLeave={() => setTooltip("")}
+                          style={{
+                            default: { outline: "none" },
+                            hover: { fill: isHighlight ? "#16213e" : "#cbd5e1", cursor: "pointer" },
+                            pressed: { outline: "none" },
+                          }}
+                        />
+                      );
+                    })
+                  }
+                </Geographies>
+              </ZoomableGroup>
+            </ComposableMap>
+            {tooltip && (
+              <div className="absolute bottom-4 right-4 left-4 bg-[#1a1a2e] text-white text-sm font-medium py-2 px-3 rounded-lg shadow-lg text-center">
+                {tooltip}
+              </div>
+            )}
           </div>
         </div>
       </section>

@@ -21,6 +21,7 @@ declare module "react-simple-maps" {
   export const ZoomableGroup: FC<{
     center?: [number, number];
     zoom?: number;
+    disablePanning?: boolean;
     children?: React.ReactNode;
   }>;
 }

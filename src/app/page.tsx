@@ -644,7 +644,7 @@ export default function Home() {
               projectionConfig={{ scale: 120 }}
               style={{ width: "100%", height: "100%" }}
             >
-              <ZoomableGroup center={[20, 25]} zoom={0.6}>
+              <ZoomableGroup center={[20, 25]} zoom={0.6} disablePanning>
                 <Geographies geography={geoUrl}>
                   {({ geographies }) =>
                     geographies.map((geo) => {

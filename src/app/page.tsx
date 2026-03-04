@@ -1080,14 +1080,14 @@ export default function Home() {
             {/* טקסט */}
             <div className="order-2 lg:order-1 text-center">
               <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-5">
-                הדמייה תלת־ממדית, מחשבון ואומדן מחיר
+                הדמייה 3D
               </h2>
               <p className="text-gray-700 leading-relaxed mb-5 text-base md:text-lg max-w-xl mx-auto">
-                כאן תוכלו לראות את הלוח בתלת־ממד — במבט רגיל או במבט חתך — ולהבין את המבנה: שכבת אבן, ליבת Honeycomb וגב אלומיניום. בהדמייה החיה (LIVE) מחשבים עבורכם אומדן שטח במטראז׳, מספר הלוחות הנדרש והשערת מחיר לפי מידות הקיר, סוג הלוח והעובי. הזינו רוחב וגובה קיר וקבלו תשובה מיידית.
+                כאן תוכלו לראות את הלוח בתלת־ממד — במבט רגיל או במבט חתך — ולהבין את המבנה: שכבת אבן, ליבת Honeycomb וגב אלומיניום. בהדמייה החיה (LIVE) תבחרו חומר, מידות לוח ומידות קיר — ותראו שטח במטראז׳, מספר לוחות ומחיר לפי הבחירות. הזינו רוחב וגובה קיר וקבלו תשובה מיידית.
               </p>
               <div className="flex flex-wrap items-center justify-center gap-3">
                 <a href="/live" className="inline-block px-8 py-3 bg-[#1a1a2e] text-white text-sm font-bold tracking-widest rounded-md hover:opacity-90">
-                  להדמייה ולמחשבון
+                  להדמייה החיה
                 </a>
                 <a href="/materials" className="inline-block px-8 py-3 border-2 border-[#1a1a2e] text-[#1a1a2e] text-sm font-bold rounded-md hover:bg-[#1a1a2e] hover:text-white transition-colors">
                   לקטלוג החומרים

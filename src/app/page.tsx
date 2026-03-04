@@ -726,7 +726,7 @@ export default function Home() {
       {/* סקשן מפת העולם – מקורות אבן טבעית */}
       <section className="w-full bg-white -mt-4 md:-mt-6 pt-0 pb-8 md:pb-12" dir="rtl">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] text-center mb-2">
+          <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] text-center mt-4 md:mt-6 mb-2">
             +400 דגמי אבן טבעית נבחרים מכל העולם
           </h2>
           <p className="text-gray-600 text-center max-w-2xl mx-auto mb-6">

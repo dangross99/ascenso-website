@@ -63,46 +63,28 @@ function PanelPreview({ sectionView = false }: { sectionView?: boolean }) {
   );
 }
 
-// סקשן פרויקטים: תמונה רוחב מלא + 3 נקודות אנכיות — הסבר טכני על לוחות ועיצוב
-const PROJECT_POINTS = [
-  {
-    label: "מידות הלוחות",
-    title: "גודל הלוחות",
-    text: "כמו בהדמייה: מידות במ\"מ — 2900×1450, 2900×725, 1450×1450, 1450×725, 725×725. עובי 16 או 25 מ\"מ (פאנל חוץ עד 29 מ\"מ, פנים 17 מ\"מ). מתאים לחיפוי קירות חוץ ופנים במבני יוקרה.",
-  },
-  {
-    label: "מבנה הלוח",
-    title: "מבנה הלוח והשכבות",
-    text: "לוח מורכב: שכבת אבן טבעית או דקת אבן (פנים), ליבת Honeycomb לקלילות וחוזק, וגב אלומיניום. המבנה מאפשר תלייה יבשה, בידוד ועמידות.",
-  },
-  {
-    label: "עיצוב וחומרים",
-    title: "עיצוב ולוחות",
-    text: "מגוון חומרים — אבן טבעית, מתכת, מרקמים וצבעים. התאמת הלוחות לעיצוב האדריכלי, למפרט הפרויקט ולדרישות התקן הבינלאומי.",
-  },
-];
+// סקשן פרויקטים: תמונה רוחב מלא + 3 נקודות אנכיות (ללא מלל)
+const PROJECT_DOTS_COUNT = 3;
 
 function ProjectsInternationalSection() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const point = PROJECT_POINTS[activeIndex];
 
   useEffect(() => {
     const t = setInterval(() => {
-      setActiveIndex((i) => (i + 1) % PROJECT_POINTS.length);
+      setActiveIndex((i) => (i + 1) % PROJECT_DOTS_COUNT);
     }, 4000);
     return () => clearInterval(t);
   }, []);
 
   return (
     <section
-      className="w-full relative overflow-hidden min-h-[420px] md:min-h-[520px] flex items-center"
+      className="w-full relative overflow-hidden min-h-[420px] md:min-h-[520px] flex items-center justify-end"
       dir="rtl"
     >
-      {/* תמונה על רוחב מלא */}
       <div className="absolute inset-0">
         <Image
           src={HERO_IMAGE}
-          alt="פרויקטים ועבודות ברמה בינלאומית"
+          alt=""
           fill
           className="object-cover"
           sizes="100vw"
@@ -116,41 +98,16 @@ function ProjectsInternationalSection() {
         />
       </div>
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 py-12 md:py-16 flex flex-col md:flex-row gap-8 md:gap-12 items-start">
-        {/* טקסט ראשי */}
-        <div className="flex-1 text-white">
-          <p className="text-white/80 text-xs font-semibold uppercase tracking-[0.2em] mb-2">
-            תיק עבודות
-          </p>
-          <h2 className="text-3xl md:text-4xl font-bold mb-2">
-            פרויקטים ועבודות
-          </h2>
-          <p className="text-white/90 text-lg mb-6">
-            ברמה בינלאומית
-          </p>
-          {/* התוכן שמחליף לפי הנקודה הנבחרת */}
-          <div className="min-h-[120px] transition-opacity duration-300">
-            <h3 className="text-xl md:text-2xl font-semibold text-white mb-2">{point.title}</h3>
-            <p className="text-white/90 text-base leading-relaxed max-w-lg">{point.text}</p>
-          </div>
-          <a
-            href="/projects"
-            className="inline-block mt-6 px-6 py-3 bg-white text-[#1a1a2e] font-bold text-sm tracking-widest rounded-md hover:bg-white/90 transition-colors"
-          >
-            לכל הפרויקטים
-          </a>
-        </div>
-
-        {/* 3 נקודות אנכית — לחיצה מחליפה את התוכן */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 py-12 md:py-16 flex justify-end">
         <div className="flex flex-col gap-4 md:gap-6">
-          {PROJECT_POINTS.map((item, i) => (
+          {Array.from({ length: PROJECT_DOTS_COUNT }, (_, i) => (
             <button
-              key={item.label}
+              key={i}
               type="button"
               onClick={() => setActiveIndex(i)}
-              className="flex items-center gap-3 text-right group"
+              className="flex items-center justify-end gap-3 group"
               aria-pressed={activeIndex === i}
-              aria-label={`${item.label} — ${item.title}`}
+              aria-label={`נקודה ${i + 1}`}
             >
               <span
                 className={`flex-shrink-0 w-3 h-3 rounded-full border-2 transition-all duration-300 ${
@@ -159,13 +116,6 @@ function ProjectsInternationalSection() {
                     : "bg-transparent border-white/60 group-hover:border-white"
                 }`}
               />
-              <span
-                className={`text-sm font-medium transition-colors ${
-                  activeIndex === i ? "text-white" : "text-white/70 group-hover:text-white"
-                }`}
-              >
-                {item.label}
-              </span>
             </button>
           ))}
         </div>

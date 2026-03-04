@@ -1041,7 +1041,7 @@ export default function Home() {
             {/* תלת‑ממד קליל (בלי קובץ) */}
             <div className="order-1 lg:order-2">
               <div className="relative h-[220px] md:h-[520px] bg-transparent overflow-hidden rounded" onPointerDown={() => setShow3DHint(false)}>
-                <Canvas camera={{ position: [2.5, 1.2, 2.2], fov: 28 }} dpr={[1, 2]} gl={{ alpha: true, toneMappingExposure: 1.2 }} style={{ background: 'transparent' }}>
+                <Canvas camera={{ position: [3.4, 1.55, 3], fov: 28 }} dpr={[1, 2]} gl={{ alpha: true, toneMappingExposure: 1.2 }} style={{ background: 'transparent' }}>
                   <hemisphereLight args={['#ffffff', '#d4d4d4', 0.95]} />
                   <ambientLight intensity={0.8} />
                   <directionalLight position={[6, 10, 4]} intensity={0.3} />
@@ -1054,7 +1054,7 @@ export default function Home() {
                     enablePan={false}
                     enableZoom={false}
                     rotateSpeed={0.6}
-                    target={[0, 0.725, 0]}
+                    target={[0, 0.9, 0]}
                 />
                 </Canvas>
                 {show3DHint && (

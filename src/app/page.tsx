@@ -851,7 +851,7 @@ export default function Home() {
       />
 
       {/* High-end Materials Section – “swatch” cards with overlay text */}
-      <section className="w-full mt-8 md:mt-0 pt-4 pb-0 md:py-8 relative z-10 bg-white -mt-24 md:-mt-32" dir="rtl">
+      <section className="w-full mt-8 md:mt-0 pt-4 pb-0 md:py-8 relative z-10 bg-white -mt-24 md:-mt-32 me-52 md:me-64" dir="rtl">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-2 md:gap-x-20 md:gap-y-12 lg:gap-x-24 lg:gap-y-16 xl:gap-x-28 xl:gap-y-20 overflow-visible">
             {/* Stone */}

@@ -5,6 +5,7 @@ import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
+import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps";
 // 3D demo imports הוסרו
 
 // HERO IMAGE PATH - change this path to update the hero image
@@ -627,6 +628,75 @@ export default function Home() {
             background: transparent;
           }
         `}</style>
+      </section>
+
+      {/* סקשן מפת העולם – מקורות אבן טבעית */}
+      <section className="w-full bg-white py-12 md:py-16" dir="rtl">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] text-center mb-2">
+            מקורות אבן טבעית מהעולם
+          </h2>
+          <p className="text-gray-600 text-center max-w-2xl mx-auto mb-8">
+            אנו סוחרים באבנים נבחרות ממדינות מובילות — איטליה, ברזיל, הודו, בלגיה ועוד.
+          </p>
+          <div className="grid lg:grid-cols-2 gap-8 items-center">
+            <div className="relative rounded-xl overflow-hidden bg-gray-100 aspect-[4/3] max-h-[360px]">
+              <ComposableMap
+                projectionConfig={{ scale: 147 }}
+                style={{ width: "100%", height: "100%" }}
+              >
+                <ZoomableGroup center={[20, 25]} zoom={0.5}>
+                  <Geographies geography={geoUrl}>
+                    {({ geographies }) =>
+                      geographies.map((geo) => {
+                        const info = countriesInfo[geo.id as keyof typeof countriesInfo];
+                        const isHighlight = !!info;
+                        return (
+                          <Geography
+                            key={geo.rsmKey}
+                            geography={geo}
+                            fill={isHighlight ? "#1a1a2e" : "#e2e8f0"}
+                            stroke="#94a3b8"
+                            strokeWidth={0.5}
+                            onMouseEnter={() => info && setTooltip(`${info.flag} ${info.name} — ${info.title}`)}
+                            onMouseLeave={() => setTooltip("")}
+                            style={{
+                              default: { outline: "none" },
+                              hover: { fill: isHighlight ? "#16213e" : "#cbd5e1", cursor: "pointer" },
+                              pressed: { outline: "none" },
+                            }}
+                          />
+                        );
+                      })
+                    }
+                  </Geographies>
+                </ZoomableGroup>
+              </ComposableMap>
+              {tooltip && (
+                <div className="absolute bottom-4 right-4 left-4 bg-[#1a1a2e] text-white text-sm font-medium py-2 px-3 rounded-lg shadow-lg text-center">
+                  {tooltip}
+                </div>
+              )}
+            </div>
+            <div className="space-y-4">
+              {Object.entries(countriesInfo).map(([code, info]) => (
+                <div
+                  key={code}
+                  className="border border-gray-200 rounded-lg p-4 hover:border-[#1a1a2e] hover:shadow-md transition-all"
+                >
+                  <p className="font-bold text-[#1a1a2e] flex items-center gap-2">
+                    <span>{info.flag}</span>
+                    {info.name} — {info.title}
+                  </p>
+                  <p className="text-gray-600 text-sm mt-1">{info.description}</p>
+                  <p className="text-xs text-gray-500 mt-2">
+                    {info.specialties.join(" · ")}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* JSON-LD: WebSite + Service (חיפוי קירות, מערכות תלייה) */}

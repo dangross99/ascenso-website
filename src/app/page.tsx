@@ -733,8 +733,25 @@ export default function Home() {
               איטליה, ברזיל, הודו, בלגיה, לוקסמבורג ועוד — מקורות מהשורה הראשונה.
             </p>
           </div>
-          <div className="relative z-0 w-full rounded-xl overflow-hidden bg-gray-100 aspect-[16/9] min-h-[400px] md:min-h-[500px] lg:min-h-[600px] -mt-32 md:-mt-40 ml-56 md:ml-72">
-            <ComposableMap
+          <div className="relative z-0 flex flex-row-reverse gap-4 md:gap-6 items-start -mt-32 md:-mt-40">
+            {/* רשימת מדינות – צד שמאל */}
+            <div className="relative z-10 flex-shrink-0 w-44 md:w-52 pt-2">
+              <p className="text-xs font-semibold text-[#1a1a2e] uppercase tracking-wider mb-3 text-right">
+                מדינות מובילות באבן טבעית
+              </p>
+              <ul className="text-sm text-gray-700 space-y-1.5 text-right" dir="rtl">
+                {[
+                  "איטליה", "ברזיל", "הודו", "ספרד", "פורטוגל", "יוון", "טורקיה", "מצרים",
+                  "סין", "וייטנאם", "בלגיה", "לוקסמבורג", "ארצות הברית", "מקסיקו", "ארגנטינה",
+                  "איראן", "פקיסטן", "מרוקו", "תוניסיה", "דרום אפריקה", "אינדונזיה", "קולומביה",
+                  "נורווגיה", "אוסטרליה",
+                ].map((country) => (
+                  <li key={country} className="hover:text-[#1a1a2e] transition-colors">{country}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="relative z-0 flex-1 min-w-0 rounded-xl overflow-hidden bg-gray-100 aspect-[16/9] min-h-[400px] md:min-h-[500px] lg:min-h-[600px] ml-56 md:ml-72">
+              <ComposableMap
               projectionConfig={{ scale: 200 }}
               style={{ width: "100%", height: "100%" }}
             >
@@ -768,6 +785,7 @@ export default function Home() {
                 </Geographies>
               </ZoomableGroup>
             </ComposableMap>
+            </div>
           </div>
         </div>
       </section>

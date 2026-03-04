@@ -38,6 +38,44 @@ const WORK_STEPS = [
   { title: "התקנה יבשה, נקייה ומהירה", text: "יישום הלוחות בשטח באמצעות מערכות Z-Clips או תלייה יבשה אחרת. התהליך מהיר בעשרות אחוזים מחיפוי רגיל." },
 ];
 
+// קיר תלת‑ממד לדף ראשי: לוחות 1450×745 מ"מ, קיר 2900×1450 מ"מ (2×2 לוחות)
+const WALL_W = 2.9;
+const WALL_H = 1.45;
+const PANEL_W = 1.45;
+const PANEL_H = 0.725;
+const PANEL_GAP = 0.005;
+const STONE_TEX = "/images/materials/amazonas-brazil.png";
+
+function HomeWall3D() {
+  const panelsX = 2;
+  const panelsY = 2;
+  const cells: React.ReactNode[] = [];
+  for (let i = 0; i < panelsY; i++) {
+    for (let j = 0; j < panelsX; j++) {
+      const px = -WALL_W / 2 + j * (PANEL_W + PANEL_GAP) + PANEL_W / 2;
+      const py = i * (PANEL_H + PANEL_GAP) + PANEL_H / 2;
+      const uvScale: [number, number] = [1 / panelsX, 1 / panelsY];
+      const uvOffset: [number, number] = [j / panelsX, i / panelsY];
+      const zBias = (i * panelsX + j) * 0.00003;
+      cells.push(
+        <group key={`${i}-${j}`} position={[px, py, zBias]}>
+          <Panel3D
+            thicknessMm={25}
+            explodedView={false}
+            textureUrl={STONE_TEX}
+            materialKind="stone"
+            widthM={PANEL_W}
+            heightM={PANEL_H}
+            uvScale={uvScale}
+            uvOffset={uvOffset}
+          />
+        </group>
+      );
+    }
+  }
+  return <>{cells}</>;
+}
+
 // אייקונים מותאמים לשלבי תהליך העבודה (SVG)
 function WorkStepIcon({ index }: { index: number }) {
   const c = "#1a1a2e";
@@ -1009,21 +1047,14 @@ export default function Home() {
                   <directionalLight position={[6, 10, 4]} intensity={0.3} />
                   <directionalLight position={[-6, 8, -4]} intensity={0.22} />
                   <React.Suspense fallback={null}>
-                  <Panel3D
-                    thicknessMm={25}
-                    explodedView={false}
-                    textureUrl="/images/materials/amazonas-brazil.png"
-                    materialKind="stone"
-                    widthM={1.45}
-                    heightM={2.9}
-                  />
+                  <HomeWall3D />
                 </React.Suspense>
                   <OrbitControls
                     ref={previewOrbitRef}
                     enablePan={false}
                     enableZoom={false}
                     rotateSpeed={0.6}
-                    target={[0, 1.45, 0]}
+                    target={[0, 0.725, 0]}
                 />
                 </Canvas>
                 {show3DHint && (

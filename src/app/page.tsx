@@ -747,7 +747,7 @@ export default function Home() {
           </div>
           <div className="relative z-0 flex flex-row-reverse gap-4 md:gap-6 items-start -mt-32 md:-mt-40">
             {/* רשימת מדינות – צד שמאל, 2 טורים */}
-            <div className="relative z-10 flex-shrink-0 w-52 md:w-64 pt-2">
+            <div className="relative z-10 flex-shrink-0 w-52 md:w-64 pt-16 md:pt-24">
               <p className="text-xs font-bold text-[#1a1a2e] uppercase tracking-widest mb-4 text-right border-b border-slate-200 pb-2">
                 מדינות מובילות באבן טבעית
               </p>

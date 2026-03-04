@@ -639,7 +639,7 @@ export default function Home() {
           <p className="text-gray-600 text-center max-w-2xl mx-auto mb-8">
             אנו סוחרים באבנים נבחרות ממדינות מובילות — איטליה, ברזיל, הודו, בלגיה ועוד.
           </p>
-          <div className="relative rounded-xl overflow-hidden bg-gray-100 aspect-[4/3] max-h-[420px] max-w-4xl mx-auto">
+          <div className="relative w-full rounded-xl overflow-hidden bg-gray-100 aspect-[16/9] min-h-[320px] md:min-h-[400px] lg:min-h-[480px]">
             <ComposableMap
               projectionConfig={{ scale: 147 }}
               style={{ width: "100%", height: "100%" }}

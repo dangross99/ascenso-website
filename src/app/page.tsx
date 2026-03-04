@@ -65,6 +65,15 @@ function PanelPreview({ sectionView = false }: { sectionView?: boolean }) {
 
 // סקשן פרויקטים: 3 תמונות אבן טבעית מתחלפות + 3 נקודות (ללא מלל)
 const PROJECT_DOTS_COUNT = 3;
+// תהליך העבודה — 5 שלבים (ממחצבות העילית ועד לקיר המבנה)
+const WORK_STEPS = [
+  { title: "בחירת אבן ומפרט טכני", text: "נכנסים לקטלוג, בוחרים את סוג האבן הטבעית (שיש, גרניט או טרוורטין) ומגדירים את עובי הלוח וסוג הליבה הנדרש לפרויקט." },
+  { title: "תכנון הנדסי ופריסה (Shop Drawings)", text: "הצוות ההנדסי שלנו מכין תכנית פריסה מדויקת המותאמת למידות המבנה, תוך אופטימיזציה של הלוחות ומיקום מערכות התלייה." },
+  { title: "ייצור טכנולוגי בסטנדרט תעופתי", text: "חיתוך האבן לפרוסות דקות וייצור הלוח בשילוב ליבת ה-Honeycomb וגב האלומיניום, ליצירת מוצר חזק במיוחד וקל משקל." },
+  { title: "בקרת איכות וסימון לוחות", text: "כל לוח עובר בקרת איכות קפדנית, ממוספר לפי תכנית ההתקנה ונארז בבטחה למשלוח מהיר לאתר הפרויקט." },
+  { title: "התקנה יבשה, נקייה ומהירה", text: "יישום הלוחות בשטח באמצעות מערכות Z-Clips או תלייה יבשה אחרת. התהליך מהיר בעשרות אחוזים מחיפוי רגיל, ללא צורך בחיזוקי קונסטרוקציה מורכבים." },
+];
+
 // בינתיים: 3 תמונות אבן טבעית מ-Unsplash. להחלפה לתמונות משלכם — העלו ל־public/images/stone/
 const STONE_IMAGES = [
   "https://images.unsplash.com/photo-1615873968403-89e068629265?w=1200&q=80", // שיש / אבן טבעית
@@ -919,9 +928,12 @@ export default function Home() {
       {/* סקשן פרויקטים ועבודות — תמונה רוחב מלא + 3 נקודות אנכיות שמחליפות תוכן בינלאומי */}
       <ProjectsInternationalSection />
 
-      {/* 5. תהליך העבודה */}
+      {/* 5. תהליך העבודה: ממחצבות העילית ועד לקיר המבנה */}
       <section className="bg-white pt-8 pb-4 md:py-6 relative" dir="rtl">
         <div className="w-full px-8 md:px-16 lg:px-24">
+          <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] text-center mb-8 md:mb-10">
+            תהליך העבודה: ממחצבות העילית ועד לקיר המבנה
+          </h2>
           <div className="relative">
             {/* Mobile/Tablet: Slider */}
             <div
@@ -931,109 +943,34 @@ export default function Home() {
               dir="rtl"
             >
               <div className="flex gap-0 px-0">
-                {/* Slide 1 */}
-                <div className="step-card snap-start flex-[0_0_100%] sm:flex-[0_0_100%] md:flex-[0_0_100%] lg:flex-[0_0_100%]">
-                  <div className="bg-white rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
-                    <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
-                      <span className="text-4xl md:text-5xl font-bold text-[#1a1a2e]">1</span>
+                {WORK_STEPS.map((step, i) => (
+                  <div key={i} className="step-card snap-start flex-[0_0_100%] min-w-0">
+                    <div className="bg-white rounded-lg p-8 text-center min-h-[280px] md:min-h-[300px] flex flex-col justify-start">
+                      <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
+                        <span className="text-4xl md:text-5xl font-bold text-[#1a1a2e]">{i + 1}</span>
                       </div>
-                    <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">בחירת דגם וטקסטורה</h3>
-                    <p className="text-gray-700 leading-relaxed text-base">נכנסים להדמייה LIVE, בוחרים צורה, חומר ומעקה.</p>
-                    
-                      </div>
+                      <h3 className="text-xl md:text-2xl font-semibold text-[#1a1a2e] mb-2">{step.title}</h3>
+                      <p className="text-gray-700 leading-relaxed text-base">{step.text}</p>
                     </div>
-                {/* Slide 2 */}
-                <div className="step-card snap-start flex-[0_0_100%] sm:flex-[0_0_100%] md:flex-[0_0_100%] lg:flex-[0_0_100%]">
-                  <div className="bg-white rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
-                    <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
-                      <span className="text-4xl md:text-5xl font-bold text-[#1a1a2e]">2</span>
                   </div>
-                    <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">מחיר מיידי</h3>
-                    <p className="text-gray-700 leading-relaxed text-base">רואים את המחיר מתעדכן בזמן אמת לפי הבחירות שלכם.</p>
-                    
+                ))}
               </div>
             </div>
-                {/* Slide 3 */}
-                <div className="step-card snap-start flex-[0_0_100%] sm:flex-[0_0_100%] md:flex-[0_0_100%] lg:flex-[0_0_100%]">
-                  <div className="bg-white rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
-                    <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
-                      <span className="text-4xl md:text-5xl font-bold text-[#1a1a2e]">3</span>
-          </div>
-                    <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">תיאום מדידה בשטח</h3>
-                    <p className="text-gray-700 leading-relaxed text-base">קובעים ביקור למדידה, התאמות וסגירת מפרט.</p>
-                    
-              </div>
-            </div>
-                {/* Slide 4 */}
-                <div className="step-card snap-start flex-[0_0_100%] sm:flex-[0_0_100%] md:flex-[0_0_100%] lg:flex-[0_0_100%]">
-                  <div className="bg-white rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
-                    <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
-                      <span className="text-4xl md:text-5xl font-bold text-[#1a1a2e]">4</span>
-              </div>
-                    <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">תכנון וייצור</h3>
-                    <p className="text-gray-700 leading-relaxed text-base">מהנדס מלווה, תכנון מוקפד וייצור קפדני.</p>
-                    
-              </div>
-            </div>
-                {/* Slide 5 */}
-                <div className="step-card snap-start flex-[0_0_100%] sm:flex-[0_0_100%] md:flex-[0_0_100%] lg:flex-[0_0_100%]">
-                  <div className="bg-white rounded-lg p-8 text-center min-h-[260px] md:min-h-[280px] flex flex-col justify-start">
-                    <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
-                      <span className="text-4xl md:text-5xl font-bold text-[#1a1a2e]">5</span>
-              </div>
-                    <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">התקנה נקייה ומהירה</h3>
-                    <p className="text-gray-700 leading-relaxed text-base">צוות התקנה מקצועי, עמידה בזמנים ותוצאה מושלמת.</p>
-                    
-              </div>
-            </div>
-          </div>
-          </div>
 
             {/* Desktop: straight row right-to-left */}
             <div className="hidden lg:block">
               <div className="grid grid-cols-5 gap-6 xl:gap-8 w-full" dir="rtl">
-                {/* 1 */}
-                <div className="bg-white rounded-lg p-8 text-center min-h-[260px] flex flex-col justify-start" dir="rtl">
-                  <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
-                    <span className="text-5xl font-bold text-[#1a1a2e]">1</span>
-            </div>
-                  <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">בחירת דגם וטקסטורה</h3>
-                  <p className="text-gray-700 leading-relaxed text-base">נכנסים להדמייה LIVE, בוחרים צורה, חומר ומעקה.</p>
+                {WORK_STEPS.map((step, i) => (
+                  <div key={i} className="bg-white rounded-lg p-8 text-center min-h-[300px] flex flex-col justify-start" dir="rtl">
+                    <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
+                      <span className="text-5xl font-bold text-[#1a1a2e]">{i + 1}</span>
+                    </div>
+                    <h3 className="text-xl font-semibold text-[#1a1a2e] mb-2">{step.title}</h3>
+                    <p className="text-gray-700 leading-relaxed text-sm">{step.text}</p>
+                  </div>
+                ))}
               </div>
-                {/* 2 */}
-                <div className="bg-white rounded-lg p-8 text-center min-h-[260px] flex flex-col justify-start" dir="rtl">
-                  <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
-                    <span className="text-5xl font-bold text-[#1a1a2e]">2</span>
-                </div>
-                  <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">מחיר מיידי</h3>
-                  <p className="text-gray-700 leading-relaxed text-base">רואים את המחיר מתעדכן בזמן אמת לפי הבחירות שלכם.</p>
-                      </div>
-                {/* 3 */}
-                <div className="bg-white rounded-lg p-8 text-center min-h-[260px] flex flex-col justify-start" dir="rtl">
-                  <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
-                    <span className="text-5xl font-bold text-[#1a1a2e]">3</span>
-                    </div>
-                  <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">תיאום מדידה בשטח</h3>
-                  <p className="text-gray-700 leading-relaxed text-base">קובעים ביקור למדידה, התאמות וסגירת מפרט.</p>
-                      </div>
-                {/* 4 */}
-                <div className="bg-white rounded-lg p-8 text-center min-h-[260px] flex flex-col justify-start" dir="rtl">
-                  <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
-                    <span className="text-5xl font-bold text-[#1a1a2e]">4</span>
-                    </div>
-                  <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">תכנון וייצור</h3>
-                  <p className="text-gray-700 leading-relaxed text-base">מהנדס מלווה, תכנון מוקפד וייצור קפדני.</p>
-                      </div>
-                {/* 5 */}
-                <div className="bg-white rounded-lg p-8 text-center min-h-[260px] flex flex-col justify-start" dir="rtl">
-                  <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
-                    <span className="text-5xl font-bold text-[#1a1a2e]">5</span>
-                  </div>
-                  <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">התקנה נקייה ומהירה</h3>
-                  <p className="text-gray-700 leading-relaxed text-base">צוות התקנה מקצועי, עמידה בזמנים ותוצאה מושלמת.</p>
-                    </div>
-                  </div>
-                </div>
+            </div>
 
             {/* Dots pagination */}
             <div className="flex items-center justify-center gap-3 mt-2 lg:hidden">

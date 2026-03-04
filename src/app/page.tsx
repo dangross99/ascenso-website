@@ -1087,7 +1087,7 @@ export default function Home() {
               </p>
               <div className="flex flex-wrap items-center justify-center gap-3">
                 <a href="/live" className="inline-block px-8 py-3 bg-[#1a1a2e] text-white text-sm font-bold tracking-widest rounded-md hover:opacity-90">
-                  להדמייה החיה
+                  להדמייה LIVE
                 </a>
                 <a href="/materials" className="inline-block px-8 py-3 border-2 border-[#1a1a2e] text-[#1a1a2e] text-sm font-bold rounded-md hover:bg-[#1a1a2e] hover:text-white transition-colors">
                   לקטלוג החומרים

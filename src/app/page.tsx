@@ -754,14 +754,14 @@ export default function Home() {
                         <Geography
                           key={geo.rsmKey}
                           geography={geo}
-                          fill={isHighlight ? "#1a1a2e" : "#e2e8f0"}
+                          fill="#e2e8f0"
                           stroke="#cbd5e1"
                           strokeWidth={0.4}
                           onMouseEnter={() => info && setTooltip(`${info.flag} ${info.name} — ${info.title}`)}
                           onMouseLeave={() => setTooltip("")}
                           style={{
                             default: { outline: "none" },
-                            hover: { fill: isHighlight ? "#16213e" : "#cbd5e1", cursor: "pointer" },
+                            hover: { fill: isHighlight ? "#1a1a2e" : "#cbd5e1", outline: "none", cursor: isHighlight ? "pointer" : "default" },
                             pressed: { outline: "none" },
                           }}
                         />

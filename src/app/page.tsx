@@ -729,7 +729,7 @@ export default function Home() {
           <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] text-center mt-4 md:mt-6 mb-2">
             +400 דגמי אבן טבעית נבחרים מכל העולם
           </h2>
-          <p className="text-gray-600 text-center max-w-2xl mx-auto mb-6">
+          <p className="text-gray-600 text-center max-w-2xl mx-auto mb-3">
             איטליה, ברזיל, הודו, בלגיה, לוקסמבורג ועוד — מקורות מהשורה הראשונה.
           </p>
           <div className="relative w-full rounded-xl overflow-hidden bg-gray-100 aspect-[16/9] min-h-[400px] md:min-h-[500px] lg:min-h-[600px]">

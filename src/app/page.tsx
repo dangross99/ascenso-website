@@ -65,14 +65,63 @@ function PanelPreview({ sectionView = false }: { sectionView?: boolean }) {
 
 // סקשן פרויקטים: 3 תמונות אבן טבעית מתחלפות + 3 נקודות (ללא מלל)
 const PROJECT_DOTS_COUNT = 3;
-// תהליך העבודה — 5 שלבים (ממחצבות העילית ועד לקיר המבנה)
+// תהליך העבודה — 5 שלבים + אייקון מותאם לכל שלב
 const WORK_STEPS = [
   { title: "בחירת אבן ומפרט טכני", text: "נכנסים לקטלוג, בוחרים את סוג האבן הטבעית (שיש, גרניט או טרוורטין) ומגדירים את עובי הלוח וסוג הליבה הנדרש לפרויקט." },
   { title: "תכנון הנדסי ופריסה (Shop Drawings)", text: "הצוות ההנדסי שלנו מכין תכנית פריסה מדויקת המותאמת למידות המבנה, תוך אופטימיזציה של הלוחות ומיקום מערכות התלייה." },
   { title: "ייצור טכנולוגי בסטנדרט תעופתי", text: "חיתוך האבן לפרוסות דקות וייצור הלוח בשילוב ליבת ה-Honeycomb וגב האלומיניום, ליצירת מוצר חזק במיוחד וקל משקל." },
   { title: "בקרת איכות וסימון לוחות", text: "כל לוח עובר בקרת איכות קפדנית, ממוספר לפי תכנית ההתקנה ונארז בבטחה למשלוח מהיר לאתר הפרויקט." },
-  { title: "התקנה יבשה, נקייה ומהירה", text: "יישום הלוחות בשטח באמצעות מערכות Z-Clips או תלייה יבשה אחרת. התהליך מהיר בעשרות אחוזים מחיפוי רגיל, ללא צורך בחיזוקי קונסטרוקציה מורכבים." },
+  { title: "התקנה יבשה, נקייה ומהירה", text: "יישום הלוחות בשטח באמצעות מערכות Z-Clips או תלייה יבשה אחרת. התהליך מהיר בעשרות אחוזים מחיפוי רגיל." },
 ];
+
+// אייקונים מותאמים לשלבי תהליך העבודה (SVG)
+function WorkStepIcon({ index }: { index: number }) {
+  const c = "#1a1a2e";
+  const size = 48;
+  switch (index) {
+    case 0:
+      return (
+        <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+          <rect x="6" y="6" width="16" height="16" rx="2" stroke={c} strokeWidth="2"/>
+          <rect x="26" y="6" width="16" height="16" rx="2" stroke={c} strokeWidth="2"/>
+          <rect x="6" y="26" width="16" height="16" rx="2" stroke={c} strokeWidth="2"/>
+          <rect x="26" y="26" width="16" height="16" rx="2" stroke={c} strokeWidth="2"/>
+        </svg>
+      );
+    case 1:
+      return (
+        <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+          <path d="M8 12h32v24H8z" stroke={c} strokeWidth="2"/>
+          <path d="M8 20h32M8 28h32M16 12v24M24 12v24M32 12v24" stroke={c} strokeWidth="1.5"/>
+        </svg>
+      );
+    case 2:
+      return (
+        <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+          <circle cx="24" cy="24" r="10" stroke={c} strokeWidth="2"/>
+          <path d="M24 14v-2M24 36v2M14 24h-2M36 24h2M17.5 17.5l-1.4-1.4M31.9 31.9l1.4 1.4M17.5 30.5l-1.4 1.4M31.9 16.1l1.4-1.4" stroke={c} strokeWidth="1.5"/>
+          <circle cx="24" cy="24" r="3" stroke={c} strokeWidth="2"/>
+        </svg>
+      );
+    case 3:
+      return (
+        <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+          <circle cx="24" cy="24" r="14" stroke={c} strokeWidth="2"/>
+          <path d="M18 24l4 4 8-10" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      );
+    case 4:
+      return (
+        <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+          <rect x="6" y="14" width="12" height="20" rx="1" stroke={c} strokeWidth="2"/>
+          <rect x="20" y="10" width="12" height="24" rx="1" stroke={c} strokeWidth="2"/>
+          <rect x="34" y="18" width="8" height="16" rx="1" stroke={c} strokeWidth="2"/>
+        </svg>
+      );
+    default:
+      return null;
+  }
+}
 
 // בינתיים: 3 תמונות אבן טבעית מ-Unsplash. להחלפה לתמונות משלכם — העלו ל־public/images/stone/
 const STONE_IMAGES = [
@@ -928,12 +977,9 @@ export default function Home() {
       {/* סקשן פרויקטים ועבודות — תמונה רוחב מלא + 3 נקודות אנכיות שמחליפות תוכן בינלאומי */}
       <ProjectsInternationalSection />
 
-      {/* 5. תהליך העבודה: ממחצבות העילית ועד לקיר המבנה */}
+      {/* 5. תהליך העבודה */}
       <section className="bg-white pt-8 pb-4 md:py-6 relative" dir="rtl">
         <div className="w-full px-8 md:px-16 lg:px-24">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] text-center mb-8 md:mb-10">
-            תהליך העבודה: ממחצבות העילית ועד לקיר המבנה
-          </h2>
           <div className="relative">
             {/* Mobile/Tablet: Slider */}
             <div
@@ -946,8 +992,8 @@ export default function Home() {
                 {WORK_STEPS.map((step, i) => (
                   <div key={i} className="step-card snap-start flex-[0_0_100%] min-w-0">
                     <div className="bg-white rounded-lg p-8 text-center min-h-[280px] md:min-h-[300px] flex flex-col justify-start">
-                      <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
-                        <span className="text-4xl md:text-5xl font-bold text-[#1a1a2e]">{i + 1}</span>
+                      <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center text-[#1a1a2e]">
+                        <WorkStepIcon index={i} />
                       </div>
                       <h3 className="text-xl md:text-2xl font-semibold text-[#1a1a2e] mb-2">{step.title}</h3>
                       <p className="text-gray-700 leading-relaxed text-base">{step.text}</p>
@@ -962,8 +1008,8 @@ export default function Home() {
               <div className="grid grid-cols-5 gap-6 xl:gap-8 w-full" dir="rtl">
                 {WORK_STEPS.map((step, i) => (
                   <div key={i} className="bg-white rounded-lg p-8 text-center min-h-[300px] flex flex-col justify-start" dir="rtl">
-                    <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center">
-                      <span className="text-5xl font-bold text-[#1a1a2e]">{i + 1}</span>
+                    <div className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-[#1a1a2e] flex items-center justify-center text-[#1a1a2e]">
+                      <WorkStepIcon index={i} />
                     </div>
                     <h3 className="text-xl font-semibold text-[#1a1a2e] mb-2">{step.title}</h3>
                     <p className="text-gray-700 leading-relaxed text-sm">{step.text}</p>

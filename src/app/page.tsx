@@ -726,13 +726,15 @@ export default function Home() {
       {/* סקשן מפת העולם – מקורות אבן טבעית (ברקע בגלילה) */}
       <section className="w-full bg-white -mt-4 md:-mt-6 pt-0 pb-8 md:pb-12 z-0 relative" dir="rtl">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] text-center mt-4 md:mt-6 mb-2">
-            +400 דגמי אבן טבעית נבחרים מכל העולם
-          </h2>
-          <p className="text-gray-600 text-center max-w-2xl mx-auto mb-3">
-            איטליה, ברזיל, הודו, בלגיה, לוקסמבורג ועוד — מקורות מהשורה הראשונה.
-          </p>
-          <div className="relative w-full rounded-xl overflow-hidden bg-gray-100 aspect-[16/9] min-h-[400px] md:min-h-[500px] lg:min-h-[600px] -mt-3 md:-mt-5">
+          <div className="relative z-10">
+            <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] text-center mt-4 md:mt-6 mb-2">
+              +400 דגמי אבן טבעית נבחרים מכל העולם
+            </h2>
+            <p className="text-gray-600 text-center max-w-2xl mx-auto mb-3">
+              איטליה, ברזיל, הודו, בלגיה, לוקסמבורג ועוד — מקורות מהשורה הראשונה.
+            </p>
+          </div>
+          <div className="relative z-0 w-full rounded-xl overflow-hidden bg-gray-100 aspect-[16/9] min-h-[400px] md:min-h-[500px] lg:min-h-[600px] -mt-3 md:-mt-5">
             <ComposableMap
               projectionConfig={{ scale: 200 }}
               style={{ width: "100%", height: "100%" }}
@@ -824,7 +826,7 @@ export default function Home() {
       />
 
       {/* High-end Materials Section – “swatch” cards with overlay text */}
-      <section className="w-full mt-8 md:mt-0 pt-4 pb-0 md:py-8" dir="rtl">
+      <section className="w-full mt-8 md:mt-0 pt-4 pb-0 md:py-8 relative z-10 bg-white -mt-24 md:-mt-32" dir="rtl">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-2 md:gap-x-20 md:gap-y-12 lg:gap-x-24 lg:gap-y-16 xl:gap-x-28 xl:gap-y-20 overflow-visible">
             {/* Stone */}

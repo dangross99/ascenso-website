@@ -63,8 +63,14 @@ function PanelPreview({ sectionView = false }: { sectionView?: boolean }) {
   );
 }
 
-// סקשן פרויקטים: תמונה רוחב מלא + 3 נקודות אנכיות (ללא מלל)
+// סקשן פרויקטים: 3 תמונות אבן טבעית מתחלפות + 3 נקודות (ללא מלל)
 const PROJECT_DOTS_COUNT = 3;
+// בינתיים: 3 תמונות אבן טבעית מ-Unsplash. להחלפה לתמונות משלכם — העלו ל־public/images/stone/
+const STONE_IMAGES = [
+  "https://images.unsplash.com/photo-1615873968403-89e068629265?w=1200&q=80", // שיש / אבן טבעית
+  "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80", // קיר אבן
+  "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=1200&q=80", // אבן טבעית
+];
 
 function ProjectsInternationalSection() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -83,10 +89,10 @@ function ProjectsInternationalSection() {
     >
       <div className="absolute inset-0">
         <Image
-          src={HERO_IMAGE}
-          alt=""
+          src={STONE_IMAGES[activeIndex]}
+          alt="אבן טבעית"
           fill
-          className="object-cover"
+          className="object-cover transition-opacity duration-500"
           sizes="100vw"
           priority={false}
         />

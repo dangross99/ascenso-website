@@ -724,7 +724,7 @@ export default function Home() {
       </section>
 
       {/* סקשן מפת העולם – מקורות אבן טבעית (ברקע בגלילה, מתחת לסקשן 1) */}
-      <section className="w-full bg-white -mt-12 md:-mt-20 pt-12 md:pt-16 pb-8 md:pb-12 z-0 relative" dir="rtl">
+      <section className="w-full bg-white -mt-12 md:-mt-20 pt-8 md:pt-12 pb-8 md:pb-12 z-0 relative" dir="rtl">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="relative z-10">
             <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] text-center mb-2">

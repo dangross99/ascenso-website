@@ -748,17 +748,14 @@ export default function Home() {
           <div className="relative z-0 flex flex-row-reverse gap-4 md:gap-6 items-start -mt-32 md:-mt-40">
             {/* רשימת מדינות – צד שמאל, 2 טורים */}
             <div className="relative z-10 flex-shrink-0 w-52 md:w-64 pt-16 md:pt-24">
-              <p className="text-xs font-bold text-[#1a1a2e] uppercase tracking-widest mb-4 text-right border-b border-slate-200 pb-2">
-                מדינות מובילות באבן טבעית
-              </p>
-              <ul className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-gray-600 text-right" dir="rtl">
+              <ul className="grid grid-cols-2 gap-x-4 gap-y-2 text-right" dir="rtl">
                 {stoneCountries.map((c) => (
                   <li
                     key={c.id}
                     onMouseEnter={() => setHoveredCountryId(c.id)}
                     onMouseLeave={() => setHoveredCountryId(null)}
-                    className={`py-1.5 px-2 rounded-md transition-all cursor-default ${
-                      hoveredCountryId === c.id ? "bg-[#1a1a2e] text-white font-medium" : "hover:bg-slate-100 hover:text-[#1a1a2e]"
+                    className={`text-xs font-bold text-[#1a1a2e] uppercase tracking-widest py-1.5 px-2 rounded-md transition-all cursor-default ${
+                      hoveredCountryId === c.id ? "bg-[#1a1a2e] text-white" : "hover:bg-slate-100"
                     }`}
                   >
                     {c.name}

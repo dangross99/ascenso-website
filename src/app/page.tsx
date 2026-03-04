@@ -630,8 +630,8 @@ export default function Home() {
         `}</style>
       </section>
 
-      {/* טקסטורות מובילות */}
-      <section className="bg-white mt-4 md:mt-6 py-4 md:py-6">
+      {/* טקסטורות מובילות – גולל מעל המפה כרקע */}
+      <section className="bg-white mt-4 md:mt-6 py-4 md:py-6 relative z-10">
         <div className="container mx-auto px-1">
           
           <div className="relative">
@@ -723,8 +723,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* סקשן מפת העולם – מקורות אבן טבעית (ברקע בגלילה) */}
-      <section className="w-full bg-white -mt-4 md:-mt-6 pt-0 pb-8 md:pb-12 z-0 relative" dir="rtl">
+      {/* סקשן מפת העולם – מקורות אבן טבעית (ברקע בגלילה, מתחת לסקשן 1) */}
+      <section className="w-full bg-white -mt-32 md:-mt-48 pt-0 pb-8 md:pb-12 z-0 relative" dir="rtl">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="relative z-10">
             <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] text-center mt-8 md:mt-10 mb-2">

@@ -740,8 +740,8 @@ export default function Home() {
               style={{ width: "100%", height: "100%" }}
             >
               <ZoomableGroup
-                center={[20, 22]}
-                zoom={1}
+                center={[0, 22]}
+                zoom={0.72}
                 disablePanning
                 filterZoomEvent={() => false}
               >

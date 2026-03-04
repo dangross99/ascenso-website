@@ -5,6 +5,9 @@ import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
+import dynamic from "next/dynamic";
+
+const Panel3D = dynamic(() => import("./live/Panel3D").then((m) => m.default), { ssr: false });
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps";
 // 3D demo imports הוסרו
 
@@ -23,45 +26,6 @@ type MaterialRecord = {
   images?: string[];
   variants?: Record<string, string[]>;
 };
-
-// לוח חיפוי — מידות כמו בהדמייה (live): 2900×1450 מ"מ = 2.9×1.45 מ', עובי 25 מ"מ
-function PanelPreview({ sectionView = false }: { sectionView?: boolean }) {
-  const widthM = 1.45;   // רוחב 1.45 מ' (1450 מ"מ)
-  const heightM = 2.9;   // גובה 2.9 מ' (2900 מ"מ)
-  const thicknessM = 0.025;       // עובי 25 מ"מ
-  const stoneLayer = 0.006;      // שכבת אבן ~6 מ"מ (תואם Panel3D ל־25 מ"מ)
-  const honeycombCore = 0.017;   // ליבת Honeycomb ~17 מ"מ
-  const aluminumBack = 0.001;    // גב אלומיניום ~1 מ"מ
-
-  if (sectionView) {
-    return (
-      <group position={[0, heightM / 2, 0.5]} rotation={[0, Math.PI / 6, 0]}>
-        {/* חתך לוח: אבן (למעלה) | Honeycomb (אפור) | אלומיניום (מתכת) */}
-        <mesh position={[0, 0, (thicknessM / 2) - stoneLayer / 2]} castShadow receiveShadow>
-          <boxGeometry args={[widthM, heightM, stoneLayer]} />
-          <meshStandardMaterial color="#e8e4df" roughness={0.6} metalness={0.1} />
-        </mesh>
-        <mesh position={[0, 0, (thicknessM / 2) - stoneLayer - honeycombCore / 2]} castShadow receiveShadow>
-          <boxGeometry args={[widthM, heightM, honeycombCore]} />
-          <meshStandardMaterial color="#9ca3af" roughness={0.8} metalness={0.05} />
-        </mesh>
-        <mesh position={[0, 0, -(aluminumBack / 2)]} castShadow receiveShadow>
-          <boxGeometry args={[widthM, heightM, aluminumBack]} />
-          <meshStandardMaterial color="#94a3b8" metalness={0.9} roughness={0.25} />
-        </mesh>
-      </group>
-    );
-  }
-
-  return (
-    <group position={[0, heightM / 2, 0.5]} rotation={[0, Math.PI / 6, 0]}>
-      <mesh castShadow receiveShadow>
-        <boxGeometry args={[widthM, heightM, thicknessM]} />
-        <meshStandardMaterial color="#e8e4df" roughness={0.5} metalness={0.15} />
-      </mesh>
-    </group>
-  );
-}
 
 // סקשן פרויקטים: 3 תמונות אבן טבעית מתחלפות + 3 נקודות (ללא מלל)
 const PROJECT_DOTS_COUNT = 3;
@@ -359,7 +323,6 @@ export default function Home() {
 
   // רמז אינטראקטיביות לתלת‑ממד – כפתור “סיבוב”
   const [show3DHint, setShow3DHint] = React.useState(true);
-  const [panelSectionView, setPanelSectionView] = React.useState(false);
 
   // Timeline visibility + count-up animation for durations
   const timelineRef = React.useRef<HTMLDivElement>(null);
@@ -1045,22 +1008,24 @@ export default function Home() {
                   <ambientLight intensity={0.8} />
                   <directionalLight position={[6, 10, 4]} intensity={0.3} />
                   <directionalLight position={[-6, 8, -4]} intensity={0.22} />
-                  <PanelPreview sectionView={panelSectionView} />
+                  <React.Suspense fallback={null}>
+                  <Panel3D
+                    thicknessMm={25}
+                    explodedView={false}
+                    textureUrl="/images/materials/amazonas-brazil.png"
+                    materialKind="stone"
+                    widthM={1.45}
+                    heightM={2.9}
+                  />
+                </React.Suspense>
                   <OrbitControls
                     ref={previewOrbitRef}
                     enablePan={false}
                     enableZoom={false}
                     rotateSpeed={0.6}
-                    target={[0, 0.75, 0.5]}
+                    target={[0, 1.45, 0]}
                 />
                 </Canvas>
-                <button
-                  type="button"
-                  onClick={() => setPanelSectionView((v) => !v)}
-                  className="absolute bottom-2 left-2 z-20 px-3 py-1.5 rounded bg-[#1a1a2e]/80 text-white text-xs font-medium hover:bg-[#1a1a2e]"
-                >
-                  {panelSectionView ? 'תצוגה רגילה' : 'מבט חתך'}
-                </button>
                 {show3DHint && (
                   <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
             <button
@@ -1083,7 +1048,7 @@ export default function Home() {
                 הדמייה 3D
               </h2>
               <p className="text-gray-700 leading-relaxed mb-5 text-base md:text-lg max-w-xl mx-auto">
-                כאן תוכלו לראות את הלוח בתלת־ממד — במבט רגיל או במבט חתך — ולהבין את המבנה: שכבת אבן, ליבת Honeycomb וגב אלומיניום. בהדמייה החיה (LIVE) תבחרו חומר, מידות לוח ומידות קיר — ותראו שטח במטראז׳, מספר לוחות ומחיר לפי הבחירות. הזינו רוחב וגובה קיר וקבלו תשובה מיידית.
+                כאן תוכלו לראות לוח אבן בתלת־ממד עם טקסטורה אמיתית. המבנה: שכבת אבן, ליבת Honeycomb וגב אלומיניום. בהדמייה החיה (LIVE) תבחרו חומר, מידות לוח ומידות קיר — ותראו שטח במטראז׳, מספר לוחות ומחיר לפי הבחירות. הזינו רוחב וגובה קיר וקבלו תשובה מיידית.
               </p>
               <div className="flex flex-wrap items-center justify-center gap-3">
                 <a href="/live" className="inline-block px-8 py-3 bg-[#1a1a2e] text-white text-sm font-bold tracking-widest rounded-md hover:opacity-90">

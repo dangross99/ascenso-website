@@ -82,17 +82,15 @@ function WorkStepIcon({ index }: { index: number }) {
     case 0:
       return (
         <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-          <rect x="6" y="6" width="16" height="16" rx="2" stroke={c} strokeWidth="2"/>
-          <rect x="26" y="6" width="16" height="16" rx="2" stroke={c} strokeWidth="2"/>
-          <rect x="6" y="26" width="16" height="16" rx="2" stroke={c} strokeWidth="2"/>
-          <rect x="26" y="26" width="16" height="16" rx="2" stroke={c} strokeWidth="2"/>
+          <circle cx="20" cy="20" r="8" stroke={c} strokeWidth="2"/>
+          <path d="M26 26l10 10" stroke={c} strokeWidth="2" strokeLinecap="round"/>
         </svg>
       );
     case 1:
       return (
         <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-          <path d="M8 12h32v24H8z" stroke={c} strokeWidth="2"/>
-          <path d="M8 20h32M8 28h32M16 12v24M24 12v24M32 12v24" stroke={c} strokeWidth="1.5"/>
+          <rect x="6" y="8" width="36" height="24" rx="2" stroke={c} strokeWidth="2"/>
+          <path d="M14 40h20M24 32v8" stroke={c} strokeWidth="2" strokeLinecap="round"/>
         </svg>
       );
     case 2:

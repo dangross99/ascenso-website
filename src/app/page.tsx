@@ -96,9 +96,10 @@ function WorkStepIcon({ index }: { index: number }) {
     case 2:
       return (
         <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-          <circle cx="24" cy="24" r="10" stroke={c} strokeWidth="2"/>
-          <path d="M24 14v-2M24 36v2M14 24h-2M36 24h2M17.5 17.5l-1.4-1.4M31.9 31.9l1.4 1.4M17.5 30.5l-1.4 1.4M31.9 16.1l1.4-1.4" stroke={c} strokeWidth="1.5"/>
-          <circle cx="24" cy="24" r="3" stroke={c} strokeWidth="2"/>
+          <path d="M6 40V20l10-8 8 4 8-4 10 8v20" stroke={c} strokeWidth="2"/>
+          <path d="M6 20h36M16 20v20M26 20v20M36 20v20" stroke={c} strokeWidth="2"/>
+          <rect x="32" y="8" width="6" height="8" rx="1" stroke={c} strokeWidth="2"/>
+          <path d="M35 6v2" stroke={c} strokeWidth="1.5"/>
         </svg>
       );
     case 3:

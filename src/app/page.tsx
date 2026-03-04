@@ -1074,7 +1074,7 @@ export default function Home() {
               </div>
                 </div>
             {/* טקסט */}
-            <div className="order-2 lg:order-1 text-center self-start pt-2 mt-6 md:mt-8">
+            <div className="order-2 lg:order-1 text-center self-start pt-2 mt-12 md:mt-16">
               <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-5">
                 הדמייה 3D
               </h2>

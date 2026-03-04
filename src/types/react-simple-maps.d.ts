@@ -22,6 +22,7 @@ declare module "react-simple-maps" {
     center?: [number, number];
     zoom?: number;
     disablePanning?: boolean;
+    filterZoomEvent?: (ev: { type: string }) => boolean;
     children?: React.ReactNode;
   }>;
 }

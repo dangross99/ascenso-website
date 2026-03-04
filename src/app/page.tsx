@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import React from "react";
 import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
@@ -86,6 +86,13 @@ const INTERNATIONAL_POINTS = [
 function ProjectsInternationalSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const point = INTERNATIONAL_POINTS[activeIndex];
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setActiveIndex((i) => (i + 1) % INTERNATIONAL_POINTS.length);
+    }, 4000);
+    return () => clearInterval(t);
+  }, []);
 
   return (
     <section

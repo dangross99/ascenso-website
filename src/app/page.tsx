@@ -1033,39 +1033,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5.5. תמונה אחת רוחב מלא */}
-      <section className="w-full bg-white py-2 md:py-4" dir="rtl">
-        <div
-          className="relative w-screen"
-          style={{ marginLeft: "calc(50% - 50vw)", width: "100vw" }}
-        >
-          <div className="relative h-[180px] sm:h-[220px] md:h-[300px] lg:h-[380px] overflow-hidden">
-            <img
-              src={encodeURI("/images/צילום מסך 2026-01-07 233213.png")}
-              alt="ASCENSO showcase"
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
-            {/* Central fashion-style banner overlay */}
-            <div className="absolute inset-0 bg-black/35 z-10" aria-hidden="true"></div>
-            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4 select-none">
-              <div className="text-white/85 text-xs md:text-sm mb-1">
-                מערכות כבלים 8 מ"מ בציפוי PVD
-                      </div>
-              <div className="text-white font-prosto tracking-[0.1em] leading-none text-4xl md:text-7xl lg:text-8xl">
-                OFF 10%
-                        </div>
-              <div className="text-white/85 text-xs md:text-sm mt-1">
-                בתוקף עד סוף חודש פברואר
-                      </div>
-              <a href="/materials" className="mt-3 md:mt-5 inline-block px-14 py-3.5 rounded-md bg-white text-[#1a1a2e] text-sm md:text-base font-bold tracking-widest transition-colors duration-300 hover:bg-white/95">
-                Explore the Collection
-              </a>
-                    </div>
-                  </div>
-              </div>
-      </section>
-
       {/* 6. תלת‑ממד – סקירה קצרה (במיקום ובצבע הרקע הקודמים) */}
       <section className="w-full bg-gray-200 py-4 md:py-6" dir="rtl">
         <div className="w-full px-8 md:px-16 lg:px-24">

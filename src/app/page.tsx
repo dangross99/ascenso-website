@@ -64,6 +64,110 @@ function PanelPreview({ sectionView = false }: { sectionView?: boolean }) {
   );
 }
 
+// סקשן פרויקטים בינלאומי: תמונה רוחב מלא + 3 נקודות אנכיות שמחליפות תוכן
+const INTERNATIONAL_POINTS = [
+  {
+    label: "אירופה",
+    title: "פרויקטים באירופה",
+    text: "חיפויי אבן ומתכת במבני יוקרה, משרדים ומגורים — שותפויות עם אדריכלים ויזמים מובילים.",
+  },
+  {
+    label: "מזרח תיכון",
+    title: "פרויקטים במזרח התיכון",
+    text: "מתקנים מסחריים ומגורים, לוחות גדולי ממד ופתרונות תלייה מותאמים לאקלים.",
+  },
+  {
+    label: "אמריקה",
+    title: "פרויקטים באמריקה",
+    text: "פרויקטים גלובליים עם סטנדרטים בינלאומיים — ייבוא, ייעוץ והתקנה.",
+  },
+];
+
+function ProjectsInternationalSection() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const point = INTERNATIONAL_POINTS[activeIndex];
+
+  return (
+    <section
+      className="w-full relative overflow-hidden min-h-[420px] md:min-h-[520px] flex items-center"
+      dir="rtl"
+    >
+      {/* תמונה על רוחב מלא */}
+      <div className="absolute inset-0">
+        <Image
+          src={HERO_IMAGE}
+          alt="פרויקטים ועבודות ברמה בינלאומית"
+          fill
+          className="object-cover"
+          sizes="100vw"
+          priority={false}
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background: "linear-gradient(to left, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.15) 100%)",
+          }}
+        />
+      </div>
+
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 py-12 md:py-16 flex flex-col md:flex-row gap-8 md:gap-12 items-start">
+        {/* טקסט ראשי */}
+        <div className="flex-1 text-white">
+          <p className="text-white/80 text-xs font-semibold uppercase tracking-[0.2em] mb-2">
+            תיק עבודות
+          </p>
+          <h2 className="text-3xl md:text-4xl font-bold mb-2">
+            פרויקטים ועבודות
+          </h2>
+          <p className="text-white/90 text-lg mb-6">
+            ברמה בינלאומית
+          </p>
+          {/* התוכן שמחליף לפי הנקודה הנבחרת */}
+          <div className="min-h-[120px] transition-opacity duration-300">
+            <h3 className="text-xl md:text-2xl font-semibold text-white mb-2">{point.title}</h3>
+            <p className="text-white/90 text-base leading-relaxed max-w-lg">{point.text}</p>
+          </div>
+          <a
+            href="/projects"
+            className="inline-block mt-6 px-6 py-3 bg-white text-[#1a1a2e] font-bold text-sm tracking-widest rounded-md hover:bg-white/90 transition-colors"
+          >
+            לכל הפרויקטים
+          </a>
+        </div>
+
+        {/* 3 נקודות אנכית — לחיצה מחליפה את התוכן */}
+        <div className="flex flex-col gap-4 md:gap-6">
+          {INTERNATIONAL_POINTS.map((item, i) => (
+            <button
+              key={item.label}
+              type="button"
+              onClick={() => setActiveIndex(i)}
+              className="flex items-center gap-3 text-right group"
+              aria-pressed={activeIndex === i}
+              aria-label={`${item.label} — ${item.title}`}
+            >
+              <span
+                className={`flex-shrink-0 w-3 h-3 rounded-full border-2 transition-all duration-300 ${
+                  activeIndex === i
+                    ? "bg-white border-white scale-125"
+                    : "bg-transparent border-white/60 group-hover:border-white"
+                }`}
+              />
+              <span
+                className={`text-sm font-medium transition-colors ${
+                  activeIndex === i ? "text-white" : "text-white/70 group-hover:text-white"
+                }`}
+              >
+                {item.label}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // Magnifier for desktop: circular lens that follows cursor over an image
 function MagnifyImage(props: { src: string; alt: string; className?: string }) {
   const { src, alt, className } = props;
@@ -850,45 +954,8 @@ export default function Home() {
         }}
       />
 
-      {/* סקשן פרויקטים ועבודות */}
-      <section
-        className="w-full py-16 md:py-24 relative overflow-hidden"
-        dir="rtl"
-        style={{
-          background: "linear-gradient(160deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%)",
-        }}
-      >
-        <div className="max-w-7xl mx-auto px-4 md:px-8 text-center">
-          <p className="text-white/70 text-xs font-semibold uppercase tracking-[0.2em] mb-3">
-            תיק עבודות
-          </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            פרויקטים ועבודות
-          </h2>
-          <p className="text-white/80 text-lg max-w-2xl mx-auto mb-12">
-            חיפויי אבן ומתכת במבני יוקרה, משרדים ומגורים — מהתכנון ועד ההתקנה.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="group rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 aspect-[4/3] min-h-[200px] flex items-end"
-              >
-                <div className="w-full p-6 text-right">
-                  <h3 className="text-white font-semibold text-lg">פרויקט {i}</h3>
-                  <p className="text-white/70 text-sm mt-1">חיפוי אבן טבעית / מערכות תלייה</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <a
-            href="/projects"
-            className="inline-block mt-10 px-8 py-3.5 bg-white text-[#1a1a2e] font-bold text-sm tracking-widest rounded-md hover:bg-white/90 transition-colors"
-          >
-            לכל הפרויקטים
-          </a>
-        </div>
-      </section>
+      {/* סקשן פרויקטים ועבודות — תמונה רוחב מלא + 3 נקודות אנכיות שמחליפות תוכן בינלאומי */}
+      <ProjectsInternationalSection />
 
       {/* 5. תהליך העבודה */}
       <section className="bg-white pt-8 pb-4 md:py-6 relative" dir="rtl">

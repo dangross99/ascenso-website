@@ -1028,11 +1028,6 @@ export default function Home() {
                     ))}
                 </div>
 
-            <div className="text-center mt-2 flex flex-wrap justify-center gap-3">
-              <a href="/materials" className="inline-block px-10 py-3 bg-[#1a1a2e] text-white text-sm font-bold rounded-md hover:opacity-90">Explore the Collection</a>
-              <a href="/materials#specs" className="inline-block px-10 py-3 border-2 border-[#1a1a2e] text-[#1a1a2e] text-sm font-bold rounded-md hover:bg-[#1a1a2e] hover:text-white">Technical Specifications</a>
-              <a href="/materials#samples" className="inline-block px-10 py-3 border-2 border-[#1a1a2e] text-[#1a1a2e] text-sm font-bold rounded-md hover:bg-[#1a1a2e] hover:text-white">Order Sample Box</a>
-            </div>
           </div>
         </div>
       </section>

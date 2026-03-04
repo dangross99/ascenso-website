@@ -14,9 +14,9 @@ type Product = {
 type CartItem = Product & { quantity: number };
 
 const categories: { label: string; href: string }[] = [
-  { label: 'דגמים — טכנולוגיית Honeycomb', href: '/models' },
+  { label: 'טכנולוגיית Honeycomb', href: '/models' },
   { label: 'הדמייה LIVE', href: '/live' },
-  { label: 'טקסטורות — קולקציות אבן', href: '/materials' },
+  { label: 'קולקציות אבן', href: '/materials' },
   { label: 'שאלות תשובות', href: '/faq' },
 ];
 

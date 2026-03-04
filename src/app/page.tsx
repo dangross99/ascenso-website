@@ -772,7 +772,7 @@ export default function Home() {
               </ZoomableGroup>
             </ComposableMap>
             {tooltip && (
-              <div className="absolute bottom-4 right-4 left-4 bg-[#1a1a2e] text-white text-sm font-medium py-2 px-3 rounded-lg shadow-lg text-center">
+              <div className="absolute bottom-4 right-4 left-4 bg-slate-600/95 text-white text-sm font-medium py-2 px-3 rounded-lg shadow-lg text-center backdrop-blur-sm">
                 {tooltip}
               </div>
             )}

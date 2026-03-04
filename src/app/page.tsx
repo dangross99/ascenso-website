@@ -747,7 +747,7 @@ export default function Home() {
           </div>
           <div className="relative z-0 flex flex-row-reverse gap-4 md:gap-6 items-start -mt-32 md:-mt-40">
             {/* רשימת מדינות – צד שמאל, 2 טורים */}
-            <div className="relative z-10 flex-shrink-0 w-52 md:w-64 pt-16 md:pt-24">
+            <div className="relative z-10 flex-shrink-0 w-52 md:w-64 pt-32 md:pt-48">
               <ul className="grid grid-cols-2 gap-x-4 gap-y-2 text-right" dir="rtl">
                 {stoneCountries.map((c) => (
                   <li

@@ -747,7 +747,7 @@ export default function Home() {
           </div>
           <div className="relative z-0 flex flex-row-reverse gap-4 md:gap-6 items-start -mt-32 md:-mt-40">
             {/* רשימת מדינות – צד שמאל, 2 טורים */}
-            <div className="relative z-10 flex-shrink-0 w-52 md:w-64 pt-28 md:pt-40">
+            <div className="relative z-20 flex-shrink-0 w-52 md:w-64 pt-28 md:pt-40 bg-white/80 backdrop-blur-[1px] isolate">
               <ul className="grid grid-cols-2 gap-x-4 gap-y-2 text-right" dir="rtl">
                 {stoneCountries.map((c) => (
                   <li
@@ -777,18 +777,20 @@ export default function Home() {
                 <Geographies geography={geoUrl}>
                   {({ geographies }) =>
                     geographies.map((geo) => {
-                      const info = countriesInfo[geo.id as keyof typeof countriesInfo];
+                      const geoId = String((geo as { id?: string; properties?: { id?: string } }).id ?? (geo as { properties?: { id?: string } }).properties?.id ?? "");
+                      const info = countriesInfo[geoId as keyof typeof countriesInfo];
                       const isHighlight = !!info;
+                      const isHovered = hoveredCountryId !== null && geoId === String(hoveredCountryId);
                       return (
                         <Geography
                           key={geo.rsmKey}
                           geography={geo}
-                          fill={String(geo.id) === hoveredCountryId ? "#1a1a2e" : "#e2e8f0"}
+                          fill={isHovered ? "#1a1a2e" : "#e2e8f0"}
                           stroke="#cbd5e1"
                           strokeWidth={0.4}
                           style={{
                             default: { outline: "none" },
-                            hover: { fill: String(geo.id) === hoveredCountryId || isHighlight ? "#1a1a2e" : "#cbd5e1", outline: "none", cursor: "default" },
+                            hover: { fill: isHovered || isHighlight ? "#1a1a2e" : "#cbd5e1", outline: "none", cursor: "default" },
                             pressed: { outline: "none" },
                           }}
                         />

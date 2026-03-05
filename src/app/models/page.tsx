@@ -6,26 +6,30 @@ import Link from 'next/link';
 export default function HoneycombTechnologyPage() {
   return (
     <main className="min-h-screen bg-white" dir="rtl">
-      {/* Hero */}
-      <section className="relative bg-[#1a1a2e] text-white py-16 md:py-24">
-        <div className="max-w-4xl mx-auto px-4 md:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight">
+      {/* Hero — מינימל אופנה */}
+      <section className="relative bg-[#1a1a2e] text-white py-20 md:py-28">
+        <div className="max-w-3xl mx-auto px-4 md:px-8 text-center">
+          <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase text-white/50 mb-6">
+            טכנולוגיה
+          </p>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-light mb-6 tracking-tight">
             טכנולוגיית Honeycomb
           </h1>
-          <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">
-            לוחות חיפוי קלי משקל — אבן טבעית או מתכת, ליבת חלת דבש אלומיניום וגב אלומיניום. עוצמה של סלע, קלות של טכנולוגיה.
+          <p className="text-base md:text-lg text-white/80 max-w-xl mx-auto font-light leading-relaxed">
+            לוחות חיפוי קלי משקל — אבן טבעית או מתכת, ליבת חלת דבש אלומיניום וגב אלומיניום.
           </p>
         </div>
       </section>
 
       {/* מבנה הלוח */}
-      <section className="max-w-6xl mx-auto px-4 md:px-8 py-12 md:py-16">
-        <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] text-center mb-10">
+      <section className="max-w-6xl mx-auto px-4 md:px-8 py-16 md:py-24">
+        <p className="text-center text-[10px] md:text-xs tracking-[0.3em] uppercase text-neutral-400 mb-4">מבנה</p>
+        <h2 className="text-2xl md:text-3xl font-light text-[#1a1a2e] text-center mb-12 md:mb-14 tracking-tight">
           מבנה הלוח
         </h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 items-center">
           <div className="order-2 lg:order-1">
-            <div className="bg-slate-50 rounded-xl p-6 border border-slate-200">
+            <div className="bg-[#fafafa] p-8 md:p-10">
               <svg viewBox="0 0 400 180" className="w-full h-auto" aria-hidden>
                 <defs>
                   <linearGradient id="stone" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -55,104 +59,115 @@ export default function HoneycombTechnologyPage() {
               </svg>
             </div>
           </div>
-          <ul className="order-1 lg:order-2 space-y-4 text-gray-700 text-base md:text-lg">
-            <li className="flex gap-3 items-start">
-              <span className="flex-shrink-0 w-8 h-8 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center text-sm font-bold">1</span>
-              <span><strong className="text-[#1a1a2e]">שכבת אבן או מתכת</strong> — פרוסה דקה של אבן טבעית (שיש, גרניט, טרוורטין) או לוח מתכת. מראה יוקרתי ועמיד.</span>
+          <ul className="order-1 lg:order-2 space-y-6 text-neutral-600 text-[15px] md:text-base leading-relaxed font-light">
+            <li className="flex gap-4 items-start">
+              <span className="flex-shrink-0 w-7 h-7 rounded-full border border-[#1a1a2e] text-[#1a1a2e] flex items-center justify-center text-xs font-normal">1</span>
+              <span><strong className="font-normal text-[#1a1a2e]">שכבת אבן או מתכת</strong> — פרוסה דקה של אבן טבעית (שיש, גרניט, טרוורטין) או לוח מתכת. מראה יוקרתי ועמיד.</span>
             </li>
-            <li className="flex gap-3 items-start">
-              <span className="flex-shrink-0 w-8 h-8 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center text-sm font-bold">2</span>
-              <span><strong className="text-[#1a1a2e]">ליבת Honeycomb</strong> — חלת דבש אלומיניום. מקנה חוזק וקשיחות במשקל מינימלי, מתאימה ללוחות גדולי ממד.</span>
+            <li className="flex gap-4 items-start">
+              <span className="flex-shrink-0 w-7 h-7 rounded-full border border-[#1a1a2e] text-[#1a1a2e] flex items-center justify-center text-xs font-normal">2</span>
+              <span><strong className="font-normal text-[#1a1a2e]">ליבת Honeycomb</strong> — חלת דבש אלומיניום. מקנה חוזק וקשיחות במשקל מינימלי, מתאימה ללוחות גדולי ממד.</span>
             </li>
-            <li className="flex gap-3 items-start">
-              <span className="flex-shrink-0 w-8 h-8 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center text-sm font-bold">3</span>
-              <span><strong className="text-[#1a1a2e]">גב אלומיניום</strong> — שכבת סגירה וייצוב. המבנה מאפשר תלייה יבשה (Z-Clips ועוד) ללא צורך בקונסטרוקציה כבדה.</span>
+            <li className="flex gap-4 items-start">
+              <span className="flex-shrink-0 w-7 h-7 rounded-full border border-[#1a1a2e] text-[#1a1a2e] flex items-center justify-center text-xs font-normal">3</span>
+              <span><strong className="font-normal text-[#1a1a2e]">גב אלומיניום</strong> — שכבת סגירה וייצוב. המבנה מאפשר תלייה יבשה (Z-Clips ועוד) ללא צורך בקונסטרוקציה כבדה.</span>
             </li>
           </ul>
         </div>
       </section>
 
-      {/* חלת הדבש — רקע מדעי והנדסי (רמת אוניברסיטה) */}
-      <section className="bg-slate-100 py-14 md:py-20">
-        <div className="max-w-4xl mx-auto px-4 md:px-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] text-center mb-3">
-            חלת הדבש — רקע מדעי והנדסי
+      {/* בלוק תוכן מינימלי — אופנה: חלת הדבש + משקל */}
+      <section className="w-full bg-[#fafafa] py-20 md:py-28">
+        <div className="max-w-[720px] mx-auto px-6 md:px-10">
+          <p className="text-[10px] md:text-xs tracking-[0.3em] uppercase text-neutral-400 mb-6">
+            רקע מדעי והנדסי
+          </p>
+          <h2 className="text-2xl md:text-3xl font-light text-[#1a1a2e] tracking-tight mb-12 md:mb-14">
+            חלת הדבש
           </h2>
-          <p className="text-center text-gray-500 text-sm mb-10">מבנה, מכניקה ויתרונות מבניים</p>
-          <div className="prose prose-slate prose-lg max-w-none text-gray-700 leading-relaxed space-y-6">
+          <div className="space-y-8 text-neutral-600 text-[15px] md:text-base leading-[1.85] font-light">
             <p>
-              <strong className="text-[#1a1a2e]">מבנה חלת הדבש (Honeycomb)</strong> הוא מבנה תאי המורכב מתאים שש־צלעיים (הקסגונליים), הדומים בצורתם לחלות דבש בטבע. במכניקה של מבנים ובדינמיקה של מבנים נלמד כי למבנה זה יחס קשיחות־למשקל (stiffness-to-weight ratio) מעולה: הוא מקנה חוזק בכפיפה (bending stiffness) ועמידות בפני גליון (shear) תוך משקל נמוך מאוד ביחס לנפח. התאים הסגורים יוצרים מרחק בין שני הפנים (שכבת האבן וגב האלומיניום) ומגדילים את מומנט האינרציה של החתך — ולכן את הקשיחות — בלי להוסיף מסה משמעותית.
+              <strong className="font-normal text-[#1a1a2e]">מבנה חלת הדבש (Honeycomb)</strong> הוא מבנה תאי המורכב מתאים שש־צלעיים (הקסגונליים), הדומים בצורתם לחלות דבש בטבע. במכניקה של מבנים ובדינמיקה של מבנים נלמד כי למבנה זה יחס קשיחות־למשקל (stiffness-to-weight ratio) מעולה: הוא מקנה חוזק בכפיפה (bending stiffness) ועמידות בפני גליון (shear) תוך משקל נמוך מאוד ביחס לנפח. התאים הסגורים יוצרים מרחק בין שני הפנים (שכבת האבן וגב האלומיניום) ומגדילים את מומנט האינרציה של החתך — ולכן את הקשיחות — בלי להוסיף מסה משמעותית.
             </p>
             <p>
-              השימוש בליבת Honeycomb אלומיניום ב<strong className="text-[#1a1a2e]">מבנה סנדוויץ' (Sandwich Panel)</strong> מקובל בתעשיית התעופה והחלל, ברכיבים מבניים ובמעטפות בניין. שני הפנים (אבן ומתכת) נושאים את רוב המאמצים האורכיים, בעוד הליבה מונעת יציבות (מתנגדת לכשל ב־buckling) ומעבירה מאמצי גליון. התוצאה: לוח ששטח הפנים שלו נראה ומתנהג כמו אבן מלאה, אך משקלו קטן בכמה מונים — וכך מתאפשר שימוש בלוחות גדולי ממד על קירות חוץ ופנים ללא עומס מבני כבד.
+              השימוש בליבת Honeycomb אלומיניום ב<strong className="font-normal text-[#1a1a2e]">מבנה סנדוויץ' (Sandwich Panel)</strong> מקובל בתעשיית התעופה והחלל, ברכיבים מבניים ובמעטפות בניין. שני הפנים (אבן ומתכת) נושאים את רוב המאמצים האורכיים, בעוד הליבה מונעת יציבות (מתנגדת לכשל ב־buckling) ומעבירה מאמצי גליון. התוצאה: לוח ששטח הפנים שלו נראה ומתנהג כמו אבן מלאה, אך משקלו קטן בכמה מונים — וכך מתאפשר שימוש בלוחות גדולי ממד על קירות חוץ ופנים ללא עומס מבני כבד.
             </p>
             <p>
-              בחירת <strong className="text-[#1a1a2e]">אלומיניום</strong> לליבה נובעת מקלות, עמידות לקורוזיה וזמינות. גודל התא ועובי דפנות התא נקבעים לפי דרישות העומס והתקן. בלוחות חיפוי למבנים משתמשים בליבת חלת דבש אלומיניום המותאמת לעובי לוח כולל של כ־16–29 מ"מ, תוך שמירה על עמידות מכנית ותאימות למערכות תלייה יבשה.
+              בחירת <strong className="font-normal text-[#1a1a2e]">אלומיניום</strong> לליבה נובעת מקלות, עמידות לקורוזיה וזמינות. גודל התא ועובי דפנות התא נקבעים לפי דרישות העומס והתקן. בלוחות חיפוי למבנים משתמשים בליבת חלת דבש אלומיניום המותאמת לעובי לוח כולל של כ־16–29 מ"מ, תוך שמירה על עמידות מכנית ותאימות למערכות תלייה יבשה.
             </p>
           </div>
-        </div>
-      </section>
 
-      {/* משקל הלוח — הסבר והשוואה */}
-      <section className="max-w-4xl mx-auto px-4 md:px-8 py-14 md:py-20">
-        <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] text-center mb-10">
-          משקל הלוח — הסבר והשוואה
-        </h2>
-        <div className="space-y-6 text-gray-700 leading-relaxed">
-          <p>
-            <strong className="text-[#1a1a2e]">לוח אבן מלאה</strong> בעובי 20–30 מ"מ (שיש, גרניט) שוקל כ־55–85 ק"ג למ"ר, בהתאם לסוג האבן ולעובי. לוח Honeycomb עם שכבת אבן דקה (כ־6–7 מ"מ), ליבת חלת דבש אלומיניום וגב אלומיניום שוקל כ־<strong className="text-[#1a1a2e]">15–25 ק"ג למ"ר</strong> — כלומר הפחתה של כ־70% ויותר במשקל ביחס לאבן מלאה באותו שטח.
+          <div className="w-12 h-px bg-neutral-300 my-16 md:my-20" aria-hidden />
+
+          <p className="text-[10px] md:text-xs tracking-[0.3em] uppercase text-neutral-400 mb-6">
+            משקל והשוואה
           </p>
-          <p>
-            המשמעות המעשית: עומס על הקונסטרוקציה והמשטח קטן משמעותית; הובלה והרמה פשוטות ובטוחות יותר; והתקנה על קירות גבוהים או על קונסטרוקציה קלה אפשרית בלי חיזוקים כבדים. בנוסף, הפחתת המשקל מקטינה את כוחות האינרציה ברעידות אדמה ומקלה על עמידות מבנית. לכן לוחות Honeycomb מתאימים במיוחד לחיפוי חוץ ופנים במבני ציבור, משרדים ומגורים — גם כשמדובר בלוחות גדולי ממד (למשל 2900×1450 מ"מ).
-          </p>
-          <div className="bg-slate-50 rounded-xl p-6 border border-slate-200 mt-8">
-            <h3 className="text-lg font-bold text-[#1a1a2e] mb-3">השוואת משקל (אומדן למ"ר)</h3>
-            <ul className="space-y-2 text-sm">
-              <li className="flex justify-between gap-4"><span>אבן מלאה 30 מ"מ (שיש/גרניט)</span><span className="font-semibold text-[#1a1a2e]">~55–85 ק"ג/מ"ר</span></li>
-              <li className="flex justify-between gap-4"><span>לוח Honeycomb (אבן + אלומיניום, עובי כולל ~25–29 מ"מ)</span><span className="font-semibold text-[#1a1a2e]">~15–25 ק"ג/מ"ר</span></li>
-              <li className="flex justify-between gap-4 pt-2 border-t border-slate-200"><span>חיסכון במשקל</span><span className="font-semibold text-green-700">כ־70% ומעלה</span></li>
+          <h2 className="text-2xl md:text-3xl font-light text-[#1a1a2e] tracking-tight mb-12 md:mb-14">
+            משקל הלוח
+          </h2>
+          <div className="space-y-8 text-neutral-600 text-[15px] md:text-base leading-[1.85] font-light">
+            <p>
+              <strong className="font-normal text-[#1a1a2e]">לוח אבן מלאה</strong> בעובי 20–30 מ"מ (שיש, גרניט) שוקל כ־55–85 ק"ג למ"ר, בהתאם לסוג האבן ולעובי. לוח Honeycomb עם שכבת אבן דקה (כ־6–7 מ"מ), ליבת חלת דבש אלומיניום וגב אלומיניום שוקל כ־<strong className="font-normal text-[#1a1a2e]">15–25 ק"ג למ"ר</strong> — כלומר הפחתה של כ־70% ויותר במשקל ביחס לאבן מלאה באותו שטח.
+            </p>
+            <p>
+              המשמעות המעשית: עומס על הקונסטרוקציה והמשטח קטן משמעותית; הובלה והרמה פשוטות ובטוחות יותר; והתקנה על קירות גבוהים או על קונסטרוקציה קלה אפשרית בלי חיזוקים כבדים. בנוסף, הפחתת המשקל מקטינה את כוחות האינרציה ברעידות אדמה ומקלה על עמידות מבנית. לכן לוחות Honeycomb מתאימים במיוחד לחיפוי חוץ ופנים במבני ציבור, משרדים ומגורים — גם כשמדובר בלוחות גדולי ממד (למשל 2900×1450 מ"מ).
+            </p>
+            <ul className="space-y-4 pt-6 text-sm font-light">
+              <li className="flex justify-between gap-6 py-3 border-b border-neutral-200 last:border-0">
+                <span className="text-neutral-500">אבן מלאה 30 מ"מ (שיש/גרניט)</span>
+                <span className="text-[#1a1a2e] font-normal">~55–85 ק"ג/מ"ר</span>
+              </li>
+              <li className="flex justify-between gap-6 py-3 border-b border-neutral-200 last:border-0">
+                <span className="text-neutral-500">לוח Honeycomb (עובי ~25–29 מ"מ)</span>
+                <span className="text-[#1a1a2e] font-normal">~15–25 ק"ג/מ"ר</span>
+              </li>
+              <li className="flex justify-between gap-6 py-3">
+                <span className="text-neutral-500">חיסכון במשקל</span>
+                <span className="text-[#1a1a2e] font-normal">כ־70% ומעלה</span>
+              </li>
             </ul>
           </div>
         </div>
       </section>
 
-      {/* יתרונות */}
-      <section className="bg-slate-50 py-12 md:py-16">
+      {/* יתרונות — מינימל */}
+      <section className="py-20 md:py-28 border-t border-neutral-200">
         <div className="max-w-6xl mx-auto px-4 md:px-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] text-center mb-10">
+          <p className="text-center text-[10px] md:text-xs tracking-[0.3em] uppercase text-neutral-400 mb-4">יתרונות</p>
+          <h2 className="text-2xl md:text-3xl font-light text-[#1a1a2e] text-center mb-14 md:mb-16 tracking-tight">
             יתרונות הטכנולוגיה
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
             {[
               { title: 'קל משקל', desc: 'משקל נמוך ביחס לאבן מלאה — מתאים לחיפוי קירות גבוהים ולחיזוק מינימלי.' },
               { title: 'חזק ויציב', desc: 'ליבת Honeycomb מספקת קשיחות ועמידות בפני עומסים ורוח.' },
               { title: 'גדולי ממד', desc: 'לוחות עד 2900×1450 מ"מ ויותר — פחות תפרים, מראה אחיד.' },
               { title: 'תלייה יבשה', desc: 'מערכות Z-Clips ותלייה יבשה — התקנה מהירה, ללא דבקים כבדים.' },
             ].map((item, i) => (
-              <div key={i} className="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
-                <h3 className="text-lg font-bold text-[#1a1a2e] mb-2">{item.title}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">{item.desc}</p>
+              <div key={i} className="text-center md:text-right">
+                <h3 className="text-base font-normal text-[#1a1a2e] mb-3 tracking-tight">{item.title}</h3>
+                <p className="text-neutral-500 text-sm leading-relaxed font-light">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="max-w-4xl mx-auto px-4 md:px-8 py-12 md:py-16 text-center">
-        <p className="text-gray-700 text-lg mb-8">
+      {/* CTA — מינימל */}
+      <section className="max-w-[720px] mx-auto px-4 md:px-8 py-20 md:py-28 text-center border-t border-neutral-200">
+        <p className="text-neutral-500 text-[15px] md:text-base font-light mb-10 leading-relaxed">
           רוצים לראות את הלוח בתלת־ממד, לבחור חומר ולקבל מחיר? גלשו להדמייה החיה או לקטלוג האבן.
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-6">
           <Link
             href="/live"
-            className="inline-block px-8 py-4 bg-[#1a1a2e] text-white font-bold rounded-md hover:opacity-90 transition-opacity"
+            className="inline-block px-10 py-3.5 bg-[#1a1a2e] text-white text-sm font-normal tracking-widest hover:opacity-90 transition-opacity uppercase"
           >
             להדמייה LIVE
           </Link>
           <Link
             href="/materials"
-            className="inline-block px-8 py-4 border-2 border-[#1a1a2e] text-[#1a1a2e] font-bold rounded-md hover:bg-[#1a1a2e] hover:text-white transition-colors"
+            className="inline-block px-10 py-3.5 border border-[#1a1a2e] text-[#1a1a2e] text-sm font-normal tracking-widest hover:bg-[#1a1a2e] hover:text-white transition-colors uppercase"
           >
             קולקציות אבן
           </Link>

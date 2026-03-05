@@ -72,6 +72,50 @@ export default function HoneycombTechnologyPage() {
         </div>
       </section>
 
+      {/* חלת הדבש — רקע מדעי והנדסי (רמת אוניברסיטה) */}
+      <section className="bg-slate-100 py-14 md:py-20">
+        <div className="max-w-4xl mx-auto px-4 md:px-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] text-center mb-3">
+            חלת הדבש — רקע מדעי והנדסי
+          </h2>
+          <p className="text-center text-gray-500 text-sm mb-10">מבנה, מכניקה ויתרונות מבניים</p>
+          <div className="prose prose-slate prose-lg max-w-none text-gray-700 leading-relaxed space-y-6">
+            <p>
+              <strong className="text-[#1a1a2e]">מבנה חלת הדבש (Honeycomb)</strong> הוא מבנה תאי המורכב מתאים שש־צלעיים (הקסגונליים), הדומים בצורתם לחלות דבש בטבע. במכניקה של מבנים ובדינמיקה של מבנים נלמד כי למבנה זה יחס קשיחות־למשקל (stiffness-to-weight ratio) מעולה: הוא מקנה חוזק בכפיפה (bending stiffness) ועמידות בפני גליון (shear) תוך משקל נמוך מאוד ביחס לנפח. התאים הסגורים יוצרים מרחק בין שני הפנים (שכבת האבן וגב האלומיניום) ומגדילים את מומנט האינרציה של החתך — ולכן את הקשיחות — בלי להוסיף מסה משמעותית.
+            </p>
+            <p>
+              השימוש בליבת Honeycomb אלומיניום ב<strong className="text-[#1a1a2e]">מבנה סנדוויץ' (Sandwich Panel)</strong> מקובל בתעשיית התעופה והחלל, ברכיבים מבניים ובמעטפות בניין. שני הפנים (אבן ומתכת) נושאים את רוב המאמצים האורכיים, בעוד הליבה מונעת יציבות (מתנגדת לכשל ב־buckling) ומעבירה מאמצי גליון. התוצאה: לוח ששטח הפנים שלו נראה ומתנהג כמו אבן מלאה, אך משקלו קטן בכמה מונים — וכך מתאפשר שימוש בלוחות גדולי ממד על קירות חוץ ופנים ללא עומס מבני כבד.
+            </p>
+            <p>
+              בחירת <strong className="text-[#1a1a2e]">אלומיניום</strong> לליבה נובעת מקלות, עמידות לקורוזיה וזמינות. גודל התא ועובי דפנות התא נקבעים לפי דרישות העומס והתקן. בלוחות חיפוי למבנים משתמשים בליבת חלת דבש אלומיניום המותאמת לעובי לוח כולל של כ־16–29 מ"מ, תוך שמירה על עמידות מכנית ותאימות למערכות תלייה יבשה.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* משקל הלוח — הסבר והשוואה */}
+      <section className="max-w-4xl mx-auto px-4 md:px-8 py-14 md:py-20">
+        <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] text-center mb-10">
+          משקל הלוח — הסבר והשוואה
+        </h2>
+        <div className="space-y-6 text-gray-700 leading-relaxed">
+          <p>
+            <strong className="text-[#1a1a2e]">לוח אבן מלאה</strong> בעובי 20–30 מ"מ (שיש, גרניט) שוקל כ־55–85 ק"ג למ"ר, בהתאם לסוג האבן ולעובי. לוח Honeycomb עם שכבת אבן דקה (כ־6–7 מ"מ), ליבת חלת דבש אלומיניום וגב אלומיניום שוקל כ־<strong className="text-[#1a1a2e]">15–25 ק"ג למ"ר</strong> — כלומר הפחתה של כ־70% ויותר במשקל ביחס לאבן מלאה באותו שטח.
+          </p>
+          <p>
+            המשמעות המעשית: עומס על הקונסטרוקציה והמשטח קטן משמעותית; הובלה והרמה פשוטות ובטוחות יותר; והתקנה על קירות גבוהים או על קונסטרוקציה קלה אפשרית בלי חיזוקים כבדים. בנוסף, הפחתת המשקל מקטינה את כוחות האינרציה ברעידות אדמה ומקלה על עמידות מבנית. לכן לוחות Honeycomb מתאימים במיוחד לחיפוי חוץ ופנים במבני ציבור, משרדים ומגורים — גם כשמדובר בלוחות גדולי ממד (למשל 2900×1450 מ"מ).
+          </p>
+          <div className="bg-slate-50 rounded-xl p-6 border border-slate-200 mt-8">
+            <h3 className="text-lg font-bold text-[#1a1a2e] mb-3">השוואת משקל (אומדן למ"ר)</h3>
+            <ul className="space-y-2 text-sm">
+              <li className="flex justify-between gap-4"><span>אבן מלאה 30 מ"מ (שיש/גרניט)</span><span className="font-semibold text-[#1a1a2e]">~55–85 ק"ג/מ"ר</span></li>
+              <li className="flex justify-between gap-4"><span>לוח Honeycomb (אבן + אלומיניום, עובי כולל ~25–29 מ"מ)</span><span className="font-semibold text-[#1a1a2e]">~15–25 ק"ג/מ"ר</span></li>
+              <li className="flex justify-between gap-4 pt-2 border-t border-slate-200"><span>חיסכון במשקל</span><span className="font-semibold text-green-700">כ־70% ומעלה</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
       {/* יתרונות */}
       <section className="bg-slate-50 py-12 md:py-16">
         <div className="max-w-6xl mx-auto px-4 md:px-8">

@@ -1,195 +1,119 @@
- 'use client';
+'use client';
 
-import Image from 'next/image';
 import React from 'react';
+import Link from 'next/link';
 
-type Spec = { label: string; value: string };
-type Shape = {
-  id: string;
-  name: string;
-  code: string;
-  description: string;
-  image: string;
-  specs: Spec[];
-};
-
-const SHAPES: Shape[] = [
-  {
-    id: 'box-thick',
-    name: 'תיבה עבה-דופן',
-    code: 'BX-T',
-    description:
-      'מעטפת תיבה עבה‑דופן המתלבשת על הקונסטרוקציה/המדרגות – מראה נקי ומסיבי, מתאימה לפתחים גדולים ולחיבורים נסתרים.',
-    image: '/images/products/nero-marquina.jpg',
-    specs: [
-      { label: 'גובה', value: '11 ס״מ' },
-      { label: 'חומרים אפשריים', value: 'מתכת, אבן טבעית' },
-      { label: 'תאימות מערכת כבלים', value: '✓' },
-      { label: 'תאימות מעקה זכוכית', value: '✓' },
-      { label: 'תאימות מעקה ברזל', value: '✓' },
-    ],
-  },
-  {
-    id: 'box-thin',
-    name: 'תיבה דקה-דופן',
-    code: 'BX-S',
-    description:
-      'מעטפת תיבה דקה‑דופן המתלבשת על הקונסטרוקציה/המדרגות – שפה מינימליסטית ומשקל קל.',
-    image: '/images/products/white-onyx.jpg',
-    specs: [
-      { label: 'גובה', value: '7 ס״מ' },
-      { label: 'חומרים אפשריים', value: 'מתכת, אבן טבעית' },
-      { label: 'תאימות מערכת כבלים', value: '✓' },
-      { label: 'תאימות מעקה זכוכית', value: '✓' },
-      { label: 'תאימות מעקה ברזל', value: '✓' },
-    ],
-  },
-];
-
-function SpecTable({ specs }: { specs: Spec[] }) {
+export default function HoneycombTechnologyPage() {
   return (
-    <table className="w-full text-sm text-gray-700">
-      <tbody>
-        {specs.map(s => (
-          <tr key={s.label} className="border-b last:border-0">
-            <td className="py-2 font-semibold w-1/2">{s.label}</td>
-            <td className="py-2">
-              {s.value === '✓' || s.value === '✔' ? (
-                <span className="text-green-600 font-semibold">✓</span>
-              ) : (
-                s.value
-              )}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-}
+    <main className="min-h-screen bg-white" dir="rtl">
+      {/* Hero */}
+      <section className="relative bg-[#1a1a2e] text-white py-16 md:py-24">
+        <div className="max-w-4xl mx-auto px-4 md:px-8 text-center">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight">
+            טכנולוגיית Honeycomb
+          </h1>
+          <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">
+            לוחות חיפוי קלי משקל — אבן טבעית או מתכת, ליבת חלת דבש אלומיניום וגב אלומיניום. עוצמה של סלע, קלות של טכנולוגיה.
+          </p>
+        </div>
+      </section>
 
-function Schematic({ type }: { type: string }) {
-  // SVG סכמטי כללי, לא בקנה מידה אמיתי – הבהרת הגיאומטריה והמידות העיקריות
-  // מותאם RTL באמצעות כתביות בעברית
-  const common = { stroke: '#1f2937', strokeWidth: 2, fill: 'none' };
-  switch (type) {
-    case 'box-thick':
-      return (
-        <svg viewBox="0 0 360 160" className="w-full h-auto bg-white border">
-          {/* תיבה עבה-דופן */}
-          <rect x="40" y="40" width="280" height="80" rx="2" {...common} strokeWidth={3} />
-          {/* חץ חתך (גובה) */}
-          <line x1="330" y1="40" x2="330" y2="120" stroke="#6b7280" strokeWidth="1.5" />
-          <polygon points="327,40 333,40 330,32" fill="#6b7280" />
-          <polygon points="327,120 333,120 330,128" fill="#6b7280" />
-          <text x="350" y="82" textAnchor="middle" fontSize="12" fill="#6b7280" transform="rotate(-90 350,82)">11 ס"מ</text>
-        </svg>
-      );
-    case 'box-thin':
-      return (
-        <svg viewBox="0 0 360 160" className="w-full h-auto bg-white border">
-          {/* קורה קופסתית */}
-          <rect x="40" y="60" width="280" height="40" rx="2" {...common} />
-          {/* חץ חתך */}
-          <line x1="330" y1="60" x2="330" y2="100" stroke="#6b7280" strokeWidth="1.5" />
-          <polygon points="327,60 333,60 330,52" fill="#6b7280" />
-          <polygon points="327,100 333,100 330,108" fill="#6b7280" />
-          <text x="350" y="83" textAnchor="middle" fontSize="12" fill="#6b7280" transform="rotate(-90 350,83)">7 ס"מ</text>
-        </svg>
-      );
-    case 'box':
-      return (
-        <svg viewBox="0 0 360 160" className="w-full h-auto bg-white border">
-          {/* קורה קופסתית */}
-          <rect x="40" y="60" width="280" height="40" rx="2" {...common} />
-          {/* חץ חתך */}
-          <line x1="330" y1="60" x2="330" y2="100" stroke="#6b7280" strokeWidth="1.5" />
-          <polygon points="327,60 333,60 330,52" fill="#6b7280" />
-          <polygon points="327,100 333,100 330,108" fill="#6b7280" />
-          <text x="350" y="83" textAnchor="middle" fontSize="12" fill="#6b7280" transform="rotate(-90 350,83)">7 ס"מ</text>
-        </svg>
-      );
-    case 'triangle':
-      return (
-        <svg viewBox="0 0 360 160" className="w-full h-auto bg-white border">
-          {/* קורה משולשת */}
-          <polygon points="40,100 320,100 40,60" {...common} />
-          {/* מידות */}
-          <line x1="40" y1="110" x2="320" y2="110" stroke="#6b7280" strokeWidth="1.5" />
-          <polygon points="40,107 40,113 32,110" fill="#6b7280" />
-          <polygon points="320,107 320,113 328,110" fill="#6b7280" />
-          <text x="180" y="125" textAnchor="middle" fontSize="12" fill="#6b7280">מפתח</text>
-          <line x1="28" y1="60" x2="28" y2="100" stroke="#6b7280" strokeWidth="1.5" />
-          <polygon points="25,60 31,60 28,52" fill="#6b7280" />
-          <polygon points="25,100 31,100 28,108" fill="#6b7280" />
-          <text x="20" y="83" fontSize="12" fill="#6b7280" transform="rotate(-90 20,83)">גובה</text>
-        </svg>
-      );
-    case 'mono':
-      return (
-        <svg viewBox="0 0 360 160" className="w-full h-auto bg-white border">
-          {/* קורה מרכזית */}
-          <line x1="40" y1="80" x2="320" y2="80" {...common} />
-          {/* מדרגות סכמטיות */}
-          {[0, 1, 2, 3, 4, 5].map(i => (
-            <line key={i} x1={60 + i * 40} y1="80" x2={60 + i * 40} y2="60" stroke="#9ca3af" strokeWidth="2" />
-          ))}
-          {/* מפתח */}
-          <line x1="40" y1="100" x2="320" y2="100" stroke="#6b7280" strokeWidth="1.5" />
-          <polygon points="40,97 40,103 32,100" fill="#6b7280" />
-          <polygon points="320,97 320,103 328,100" fill="#6b7280" />
-          <text x="180" y="115" textAnchor="middle" fontSize="12" fill="#6b7280">מפתח</text>
-        </svg>
-      );
-    case 'double':
-      return (
-        <svg viewBox="0 0 360 160" className="w-full h-auto bg-white border">
-          {/* שתי קורות */}
-          <line x1="40" y1="60" x2="320" y2="60" {...common} />
-          <line x1="40" y1="100" x2="320" y2="100" {...common} />
-          {/* חתך/מרחק בין קורות */}
-          <line x1="330" y1="60" x2="330" y2="100" stroke="#6b7280" strokeWidth="1.5" />
-          <polygon points="327,60 333,60 330,52" fill="#6b7280" />
-          <polygon points="327,100 333,100 330,108" fill="#6b7280" />
-          <text x="336" y="83" fontSize="12" fill="#6b7280" transform="rotate(-90 336,83)">מרחק קורות</text>
-        </svg>
-      );
-    default:
-      return null;
-  }
-}
-
-export default function ModelsPage() {
-  return (
-	    <main className="max-w-7xl mx-auto px-4 py-8" dir="rtl">
-      
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {SHAPES.map(shape => (
-          <section key={shape.id} id={shape.id} className="border bg-white">
-            <div className="p-4">
-              <div className="mb-1 text-center">
-                <h2 className="text-xl font-bold text-gray-900">{shape.name}</h2>
-              </div>
-              <div className="mb-4">
-                <Schematic type={shape.id} />
-              </div>
-              <SpecTable specs={shape.specs} />
-              <div className="mt-4 flex justify-center">
-                <a
-                  href={`/live?shape=${encodeURIComponent(shape.id)}&code=${encodeURIComponent(
-                    shape.code
-                  )}&name=${encodeURIComponent(shape.name)}`}
-                  className="inline-block px-4 py-2 bg-[#1a1a2e] text-white text-sm rounded-md cursor-pointer transition-colors duration-200 hover:opacity-90 shadow-sm"
-                >
-                  פתח הדמייה LIVE
-                </a>
-              </div>
+      {/* מבנה הלוח */}
+      <section className="max-w-6xl mx-auto px-4 md:px-8 py-12 md:py-16">
+        <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] text-center mb-10">
+          מבנה הלוח
+        </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+          <div className="order-2 lg:order-1">
+            <div className="bg-slate-50 rounded-xl p-6 border border-slate-200">
+              <svg viewBox="0 0 400 180" className="w-full h-auto" aria-hidden>
+                <defs>
+                  <linearGradient id="stone" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#e2e8f0" />
+                    <stop offset="100%" stopColor="#cbd5e1" />
+                  </linearGradient>
+                  <linearGradient id="honey" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#94a3b8" />
+                    <stop offset="100%" stopColor="#64748b" />
+                  </linearGradient>
+                  <linearGradient id="alum" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#94a3b8" />
+                    <stop offset="100%" stopColor="#475569" />
+                  </linearGradient>
+                </defs>
+                {/* שכבת אבן */}
+                <rect x="40" y="30" width="320" height="24" rx="2" fill="url(#stone)" stroke="#64748b" strokeWidth="1" />
+                <text x="200" y="47" textAnchor="middle" fontSize="11" fill="#475569" fontWeight="600">שכבת אבן / מתכת</text>
+                {/* פייבר גלס */}
+                <rect x="40" y="56" width="320" height="6" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="0.5" />
+                {/* חלת דבש */}
+                <rect x="40" y="64" width="320" height="80" rx="1" fill="url(#honey)" stroke="#475569" strokeWidth="1" />
+                <text x="200" y="108" textAnchor="middle" fontSize="12" fill="white" fontWeight="600">ליבת Honeycomb אלומיניום</text>
+                {/* גב אלומיניום */}
+                <rect x="40" y="146" width="320" height="8" fill="url(#alum)" stroke="#334155" strokeWidth="0.5" />
+                <text x="200" y="163" textAnchor="middle" fontSize="10" fill="white">גב אלומיניום</text>
+              </svg>
             </div>
-          </section>
-        ))}
-      </div>
+          </div>
+          <ul className="order-1 lg:order-2 space-y-4 text-gray-700 text-base md:text-lg">
+            <li className="flex gap-3 items-start">
+              <span className="flex-shrink-0 w-8 h-8 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center text-sm font-bold">1</span>
+              <span><strong className="text-[#1a1a2e]">שכבת אבן או מתכת</strong> — פרוסה דקה של אבן טבעית (שיש, גרניט, טרוורטין) או לוח מתכת. מראה יוקרתי ועמיד.</span>
+            </li>
+            <li className="flex gap-3 items-start">
+              <span className="flex-shrink-0 w-8 h-8 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center text-sm font-bold">2</span>
+              <span><strong className="text-[#1a1a2e]">ליבת Honeycomb</strong> — חלת דבש אלומיניום. מקנה חוזק וקשיחות במשקל מינימלי, מתאימה ללוחות גדולי ממד.</span>
+            </li>
+            <li className="flex gap-3 items-start">
+              <span className="flex-shrink-0 w-8 h-8 rounded-full bg-[#1a1a2e] text-white flex items-center justify-center text-sm font-bold">3</span>
+              <span><strong className="text-[#1a1a2e]">גב אלומיניום</strong> — שכבת סגירה וייצוב. המבנה מאפשר תלייה יבשה (Z-Clips ועוד) ללא צורך בקונסטרוקציה כבדה.</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      {/* יתרונות */}
+      <section className="bg-slate-50 py-12 md:py-16">
+        <div className="max-w-6xl mx-auto px-4 md:px-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a2e] text-center mb-10">
+            יתרונות הטכנולוגיה
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { title: 'קל משקל', desc: 'משקל נמוך ביחס לאבן מלאה — מתאים לחיפוי קירות גבוהים ולחיזוק מינימלי.' },
+              { title: 'חזק ויציב', desc: 'ליבת Honeycomb מספקת קשיחות ועמידות בפני עומסים ורוח.' },
+              { title: 'גדולי ממד', desc: 'לוחות עד 2900×1450 מ"מ ויותר — פחות תפרים, מראה אחיד.' },
+              { title: 'תלייה יבשה', desc: 'מערכות Z-Clips ותלייה יבשה — התקנה מהירה, ללא דבקים כבדים.' },
+            ].map((item, i) => (
+              <div key={i} className="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
+                <h3 className="text-lg font-bold text-[#1a1a2e] mb-2">{item.title}</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="max-w-4xl mx-auto px-4 md:px-8 py-12 md:py-16 text-center">
+        <p className="text-gray-700 text-lg mb-8">
+          רוצים לראות את הלוח בתלת־ממד, לבחור חומר ולקבל מחיר? גלשו להדמייה החיה או לקטלוג האבן.
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          <Link
+            href="/live"
+            className="inline-block px-8 py-4 bg-[#1a1a2e] text-white font-bold rounded-md hover:opacity-90 transition-opacity"
+          >
+            להדמייה LIVE
+          </Link>
+          <Link
+            href="/materials"
+            className="inline-block px-8 py-4 border-2 border-[#1a1a2e] text-[#1a1a2e] font-bold rounded-md hover:bg-[#1a1a2e] hover:text-white transition-colors"
+          >
+            קולקציות אבן
+          </Link>
+        </div>
+      </section>
     </main>
   );
 }
-
-
